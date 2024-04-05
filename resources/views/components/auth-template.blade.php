@@ -30,22 +30,24 @@
 
 <body class="font-primary">
 
-    <div class="{{ isset($reverse) ? 'flex-row-reverse' : 'flex-row' }} flex h-screen w-screen bg-primary">
+    <div class="{{ isset($reverse) ? 'flex-row-reverse' : 'flex-row' }} flex h-screen w-screen overflow-y-auto bg-primary">
         <div class="relative flex h-full w-full items-center justify-center">
             <div class="absolute z-0 h-full w-full bg-[url('{{ asset('storage/assets/authentication/line.svg') }}')] bg-contain bg-[left_-25px_top_-20px] bg-no-repeat">
             </div>
             <div class="absolute z-0 h-full w-full rotate-180 bg-[url('{{ asset('storage/assets/authentication/line.svg') }}')] bg-contain bg-[left_-25px_top_-20px] bg-no-repeat">
             </div>
-            <div class="relative flex flex-col items-center rounded-lg bg-white p-10">
-                <img src="{{ url(asset('storage/assets/fti-banner.svg')) }}" alt="fti-banner" class="mb-4 w-80">
-                <h2 class="text-xl font-semibold">{{ $title }}</h2>
-                <p class="text-slate-500">Selamat Datang Di SICAKI</p>
+            <div class="min-w-64 relative flex w-3/4 max-w-[750px] flex-col items-center rounded-lg bg-white p-10 max-2xl:w-[30rem] max-sm:w-10/12 max-sm:p-7 max-sm:text-sm max-[320px]:text-xs">
+                <img src="{{ url(asset('storage/assets/fti-banner.svg')) }}" alt="fti-banner" class="mb-5 w-full">
+                <h2 class="text-xl font-semibold max-sm:text-base" title="{{ $title }}">{{ $title }}</h2>
+                <p class="text-slate-500" title="Selamat Datang Di Sistem Informasi Capaian Kinerja FTI ITERA">Selamat Datang Di SICAKI</p>
 
-                {{ $slot }}
+                <form action="" class="mt-4 flex w-full flex-col gap-2">
+                    {{ $slot }}
+                </form>
 
             </div>
         </div>
-        <div class="relative flex h-full w-full items-center justify-center bg-white">
+        <div class="relative flex h-full w-full items-center justify-center bg-white max-lg:hidden">
             <div class="flex flex-col gap-7">
                 <img src="{{ url(asset('storage/assets/fti-logo.png')) }}" alt="fti-banner" class="w-96">
                 <h1 class="rounded-xl bg-primary py-1 text-center text-xl font-semibold text-white"><span class="text-8xl">SICAKI</span><br> Sistem Informasi Capaian Kinerja</h1>
