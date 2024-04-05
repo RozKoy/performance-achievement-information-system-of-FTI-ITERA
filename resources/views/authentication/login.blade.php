@@ -1,10 +1,10 @@
 <x-auth-template title="MASUK" description="Selamat Datang Di SICAKI">
     <form action="" class="mt-4 flex w-full flex-col gap-2">
-        <label for="user" title="Email atau Nama Pengguna">Email / Nama Pengguna</label>
+        <label for="user" title="Email atau nama pengguna">Email / Nama Pengguna</label>
         <input type="text" name="user" id="user" placeholder="Masukkan email atau nama pengguna" title="Email atau nama pengguna" oninvalid="inputCustomMessage(this)" oninput="inputCustomMessage(this)" class="rounded-lg border-2 border-slate-100 px-3 py-1.5 focus:text-primary focus:outline-primary" autofocus required>
-        <label for="password" title="Kata Sandi">Kata Sandi</label>
+        <label for="password" title="Kata sandi">Kata Sandi</label>
         <div class="relative">
-            <input type="password" name="password" id="password" placeholder="******" title="Kata Sandi" minlength="6" oninvalid="inputCustomMessage(this)" oninput="inputCustomMessage(this)" class="w-full rounded-lg border-2 border-slate-100 px-3 py-1.5 focus:text-primary focus:outline-primary" required>
+            <input type="password" name="password" id="password" placeholder="******" title="Kata sandi" minlength="6" oninvalid="inputCustomMessage(this)" oninput="inputCustomMessage(this)" class="w-full rounded-lg border-2 border-slate-100 px-3 py-1.5 focus:text-primary focus:outline-primary" required>
             <button type="button" id="eye-open" onclick="togglePassword()" title="Lihat kata sandi" class="absolute bottom-0 right-2 top-0 my-auto">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="18">
                     <g fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" transform="translate(1 1)" class="stroke-primary">
