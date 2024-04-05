@@ -24,3 +24,7 @@ Route::get('/masuk', function () {
 Route::get('/lupa-kata-sandi', function () {
     return view('authentication.forget-password');
 })->name('forget-password');
+
+Route::get('/ubah-kata-sandi', function () {
+    return view('authentication.change-password');
+})->name('changePassword');
