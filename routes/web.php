@@ -20,3 +20,7 @@ Route::get('/', function () {
 Route::get('/masuk', function () {
     return view('authentication.login');
 })->name('login');
+
+Route::get('/lupa-kata-sandi', function () {
+    return view('authentication.forget-password');
+})->name('forget-password');
