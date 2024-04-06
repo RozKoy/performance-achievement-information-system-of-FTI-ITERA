@@ -29,29 +29,3 @@
         </div>
     </div>
 @endsection
-
-@push('script')
-    <script>
-        function togglePassword() {
-            let password = document.getElementById('password');
-            password.type = password.type === 'password' ? 'text' : 'password';
-            password.placeholder = password.type === 'password' ? '******' : 'Masukkan kata sandi';
-
-            document.getElementById('eye-open').classList.toggle('hidden');
-            document.getElementById('eye-closed').classList.toggle('hidden');
-        }
-
-        function inputCustomMessage(component) {
-            const state = component.validity;
-            const title = component.title;
-
-            if (state.valueMissing) {
-                component.setCustomValidity(title + ' wajib diisi');
-            } else if (state.tooShort) {
-                component.setCustomValidity(title + ' tidak boleh dibawah 6 karakter');
-            } else {
-                component.setCustomValidity('');
-            }
-        }
-    </script>
-@endpush
