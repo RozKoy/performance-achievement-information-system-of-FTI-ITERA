@@ -1,35 +1,6 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('template')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-    <title>{{ $title }} | {{ env('APP_NAME') }}</title>
-
-    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                fontFamily: {
-                    primary: ['Poppins']
-                },
-                extend: {
-                    colors: {
-                        primary: '#7C6343',
-                    }
-                }
-            }
-        }
-    </script>
-
-</head>
-
-<body class="font-primary">
-
+@section('content')
     <div class="{{ isset($reverse) ? 'flex-row-reverse' : 'flex-row' }} flex min-h-screen w-screen bg-primary">
         <div class="relative flex min-h-full w-full items-center justify-center px-3 py-5">
             <div class="absolute z-0 h-full w-full bg-[url('{{ asset('storage/assets/authentication/line.svg') }}')] bg-contain bg-[left_-25px_top_-20px] bg-no-repeat">
@@ -41,8 +12,11 @@
                 <h2 class="text-xl font-semibold uppercase max-sm:text-base" title="{{ $title }}">{{ $title }}</h2>
                 <p class="text-slate-500" title="Selamat Datang Di Sistem Informasi Capaian Kinerja FTI ITERA">Selamat Datang Di SICAKI</p>
 
-                <form action="" class="mt-4 flex w-full flex-col gap-2">
+                <form method="POST" class="mt-4 flex w-full flex-col gap-2">
+                    @csrf
+
                     {{ $slot }}
+
                 </form>
 
             </div>
@@ -78,7 +52,4 @@
             }
         }
     </script>
-
-</body>
-
-</html>
+@endsection
