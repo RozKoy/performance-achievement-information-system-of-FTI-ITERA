@@ -28,7 +28,9 @@
             </div>
         </div>
     </div>
+@endsection
 
+@push('script')
     <script>
         function togglePassword() {
             let password = document.getElementById('password');
@@ -52,4 +54,4 @@
             }
         }
     </script>
-@endsection
+@endpush
