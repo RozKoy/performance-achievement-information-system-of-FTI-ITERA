@@ -1,4 +1,4 @@
-<x-auth-template title="UBAH KATA SANDI" reverse>
+<x-auth-template title="Ubah Kata Sandi" reverse>
     <p class="text-center text-primary" title="Email anda">okkoy.1401@gmail.com</p>
     <label for="password" title="Kata sandi baru">Kata Sandi Baru</label>
     <div class="relative">

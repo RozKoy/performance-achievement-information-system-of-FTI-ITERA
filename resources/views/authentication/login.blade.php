@@ -1,4 +1,4 @@
-<x-auth-template title="MASUK" description="Selamat Datang Di SICAKI">
+<x-auth-template title="Masuk" description="Selamat Datang Di SICAKI">
     <label for="user" title="Email atau nama pengguna">Email / Nama Pengguna</label>
     <input type="text" name="user" id="user" placeholder="Masukkan email atau nama pengguna" title="Email atau nama pengguna" oninvalid="inputCustomMessage(this)" oninput="inputCustomMessage(this)" class="rounded-lg border-2 border-slate-100 px-3 py-1.5 focus:text-primary focus:outline-primary" autofocus required>
     <label for="password" title="Kata sandi">Kata Sandi</label>
