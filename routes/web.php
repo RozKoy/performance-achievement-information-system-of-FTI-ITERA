@@ -27,4 +27,4 @@ Route::get('/lupa-kata-sandi', function () {
 
 Route::get('/ubah-kata-sandi', function () {
     return view('authentication.change-password');
-})->name('changePassword');
+})->name('change-password');
