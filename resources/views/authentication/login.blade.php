@@ -1,9 +1,9 @@
 <x-auth-template title="Masuk" description="Selamat Datang Di SICAKI">
     <label for="user" title="Email atau nama pengguna">Email / Nama Pengguna</label>
-    <input type="text" name="user" id="user" placeholder="Masukkan email atau nama pengguna" title="Email atau nama pengguna" oninvalid="inputCustomMessage(this)" oninput="inputCustomMessage(this)" class="rounded-lg border-2 border-slate-100 px-3 py-1.5 focus:text-primary focus:outline-primary" autofocus required>
+    <input type="text" name="user" id="user" placeholder="Masukkan email atau nama pengguna" title="Email atau nama pengguna" oninvalid="inputCustomMessage(this)" oninput="inputCustomMessage(this)" class="rounded-lg border-2 border-slate-100 px-3 py-1.5 text-primary focus:border-transparent focus:outline-primary focus:ring-primary" autofocus required>
     <label for="password" title="Kata sandi">Kata Sandi</label>
     <div class="relative">
-        <input type="password" name="password" id="password" placeholder="******" title="Kata sandi" minlength="6" oninvalid="inputCustomMessage(this)" oninput="inputCustomMessage(this)" class="w-full rounded-lg border-2 border-slate-100 px-3 py-1.5 focus:text-primary focus:outline-primary" required>
+        <input type="password" name="password" id="password" placeholder="******" title="Kata sandi" minlength="6" oninvalid="inputCustomMessage(this)" oninput="inputCustomMessage(this)" class="w-full rounded-lg border-2 border-slate-100 px-3 py-1.5 text-primary focus:border-transparent focus:outline-primary focus:ring-primary" required>
         <button type="button" id="eye-open" onclick="togglePassword()" title="Lihat kata sandi" class="absolute bottom-0 right-2 top-0 my-auto">
             <svg itemref="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 fill-primary">
                 <g>

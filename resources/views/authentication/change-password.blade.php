@@ -2,7 +2,7 @@
     <p class="text-center text-primary" title="Email anda">okkoy.1401@gmail.com</p>
     <label for="password" title="Kata sandi baru">Kata Sandi Baru</label>
     <div class="relative">
-        <input type="password" name="password" id="password" placeholder="******" title="Kata sandi baru" minlength="6" oninvalid="inputCustomMessage(this)" oninput="inputCustomMessage(this)" class="w-full rounded-lg border-2 border-slate-100 px-3 py-1.5 focus:text-primary focus:outline-primary" autofocus required>
+        <input type="password" name="password" id="password" placeholder="******" title="Kata sandi baru" minlength="6" oninvalid="inputCustomMessage(this)" oninput="inputCustomMessage(this)" class="w-full rounded-lg border-2 border-slate-100 px-3 py-1.5 text-primary focus:border-transparent focus:outline-primary focus:ring-primary" autofocus required>
         <button type="button" id="eye-open" onclick="togglePassword()" title="Lihat kata sandi" class="absolute bottom-0 right-2 top-0 my-auto">
             <svg itemref="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 fill-primary">
                 <g>
