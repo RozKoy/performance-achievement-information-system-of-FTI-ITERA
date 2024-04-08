@@ -129,5 +129,9 @@
             {{ $slot }}
 
         </div>
+
+        <footer class="pt-2 text-center max-sm:text-xs">
+            <p>Copyright &copy; {{ \Carbon\Carbon::now()->format('Y') }} Fakultas Teknologi Industri - ITERA</p>
+        </footer>
     </div>
 @endsection
