@@ -56,7 +56,11 @@ Route::group([
         return 'Halaman Pengguna';
     })->name('super-admin-users');
 
-    Route::get('/organisasi', function () {
-        return view('super-admin.organization.home');
-    })->name('super-admin-organization');
+
+    Route::group([
+        'prefix' => '/organisasi'
+    ], function () {
+        Route::view('/', 'super-admin.organization.home')->name('super-admin-organization');
+        Route::view('/tambah', 'super-admin.organization.add')->name('super-admin-organization-add');
+    });
 });
