@@ -1,62 +1,6 @@
 @extends('template')
 
 @section('content')
-    <nav class="fixed top-0 z-50 w-full border-b-2 border-primary bg-white">
-        <div class="px-3 py-3 lg:px-5 lg:pl-3">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center justify-start rtl:justify-end">
-                    <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center rounded-lg p-2 text-sm text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 sm:hidden">
-                        <span class="sr-only">Open sidebar</span>
-                        <svg class="h-6 w-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
-                        </svg>
-                    </button>
-                    <a href="{{ url(route('super-admin-dashboard')) }}" title="Halaman beranda" class="group/logo ms-2 flex md:me-24">
-                        <img src="{{ url(asset('storage/assets/fti-logo.png')) }}" class="me-1 h-7 sm:me-2 sm:h-8" alt="FTI Logo" />
-                        <span class="self-center whitespace-nowrap border-l-2 border-gray-200 px-0.5 text-lg font-semibold text-primary before:content-['SICAKI'] group-hover/logo:underline sm:px-1.5 sm:text-2xl sm:before:content-['Sistem_Informasi_Capaian_Kinerja']"></span>
-                    </a>
-                </div>
-                <div class="flex items-center">
-                    <div class="ms-3 flex items-center gap-2">
-                        <p title="Editor Access" class="inline-flex items-center justify-center rounded-full bg-primary px-2 text-xs font-semibold uppercase text-white sm:text-sm">editor</p>
-                        <div>
-                            <button type="button" class="flex rounded-full fill-primary text-sm focus:ring-4 focus:ring-gray-300" aria-expanded="false" data-dropdown-toggle="dropdown-user">
-                                <span class="sr-only">Open user menu</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 24 24" class="h-6 w-6 sm:h-8 sm:w-8">
-                                    <path d="m12,0C5.383,0,0,5.383,0,12s5.383,12,12,12,12-5.383,12-12S18.617,0,12,0Zm-4,21.164v-2.164c0-.552.449-1,1-1h6c.551,0,1,.448,1,1v2.164c-1.226.537-2.578.836-4,.836s-2.774-.299-4-.836Zm10-1.169v-.995c0-1.654-1.346-3-3-3h-6c-1.654,0-3,1.346-3,3v.995c-2.427-1.826-4-4.73-4-7.995C2,6.486,6.486,2,12,2s10,4.486,10,10c0,3.264-1.573,6.169-4,7.995Zm-6-13.995c-2.206,0-4,1.794-4,4s1.794,4,4,4,4-1.794,4-4-1.794-4-4-4Zm0,6c-1.103,0-2-.897-2-2s.897-2,2-2,2,.897,2,2-.897,2-2,2Z" />
-                                </svg>
-
-                            </button>
-                        </div>
-                        <div class="z-50 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white text-base shadow shadow-primary" id="dropdown-user">
-                            <div class="cursor-default px-4 py-3 text-sm text-primary" role="none">
-                                <p role="none" title="Neil Sims">
-                                    Neil Sims
-                                </p>
-                                <p class="truncate font-semibold" role="none" title="neil.sims@flowbite.com">
-                                    neil.sims@flowbite.com
-                                </p>
-                            </div>
-                            <ul class="py-1" role="none">
-                                <li>
-                                    <a href="{{ url(route('logout')) }}" title="Keluar" class="flex items-center justify-start gap-1 fill-red-500 px-4 py-2 text-sm text-red-500 hover:bg-gray-100" role="menuitem">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5">
-                                            <g>
-                                                <path d="M15,2.426v2.1a9,9,0,1,1-6,0v-2.1a11,11,0,1,0,6,0Z" />
-                                                <rect x="11" width="2" height="8" />
-                                            </g>
-                                        </svg>
-                                        Keluar
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
     <aside id="logo-sidebar" class="fixed left-0 top-0 z-40 h-screen w-72 -translate-x-full bg-white pt-16 text-base transition-transform sm:translate-x-0" aria-label="Sidebar">
         <div class="h-full divide-y-2 divide-primary overflow-y-auto bg-white px-3 pb-4 text-primary">
             <ul class="space-y-2 py-1.5 font-medium">
@@ -122,6 +66,62 @@
             </ul>
         </div>
     </aside>
+
+    <nav class="fixed top-0 z-40 w-full border-b-2 border-primary bg-white">
+        <div class="px-3 py-3 lg:px-5 lg:pl-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center justify-start rtl:justify-end">
+                    <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center rounded-lg p-2 text-sm text-primary hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 sm:hidden">
+                        <span class="sr-only">Open sidebar</span>
+                        <svg class="h-6 w-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+                        </svg>
+                    </button>
+                    <a href="{{ url(route('super-admin-dashboard')) }}" title="Halaman beranda" class="group/logo ms-2 flex md:me-24">
+                        <img src="{{ url(asset('storage/assets/fti-logo.png')) }}" class="me-1 h-7 sm:me-2 sm:h-8" alt="FTI Logo" />
+                        <span class="self-center whitespace-nowrap border-l-2 border-gray-200 px-0.5 text-lg font-semibold text-primary before:content-['SICAKI'] group-hover/logo:underline sm:px-1.5 sm:text-2xl sm:before:content-['Sistem_Informasi_Capaian_Kinerja']"></span>
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <div class="ms-3 flex items-center gap-2">
+                        <p title="Editor Access" class="inline-flex items-center justify-center rounded-full bg-primary px-2 py-1 text-xs font-semibold uppercase text-white sm:text-sm">editor</p>
+                        <div>
+                            <button type="button" class="flex rounded-full fill-primary text-sm focus:ring-4 focus:ring-gray-300" aria-expanded="false" data-dropdown-toggle="dropdown-user">
+                                <span class="sr-only">Open user menu</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 24 24" class="h-6 w-6 sm:h-8 sm:w-8">
+                                    <path d="m12,0C5.383,0,0,5.383,0,12s5.383,12,12,12,12-5.383,12-12S18.617,0,12,0Zm-4,21.164v-2.164c0-.552.449-1,1-1h6c.551,0,1,.448,1,1v2.164c-1.226.537-2.578.836-4,.836s-2.774-.299-4-.836Zm10-1.169v-.995c0-1.654-1.346-3-3-3h-6c-1.654,0-3,1.346-3,3v.995c-2.427-1.826-4-4.73-4-7.995C2,6.486,6.486,2,12,2s10,4.486,10,10c0,3.264-1.573,6.169-4,7.995Zm-6-13.995c-2.206,0-4,1.794-4,4s1.794,4,4,4,4-1.794,4-4-1.794-4-4-4Zm0,6c-1.103,0-2-.897-2-2s.897-2,2-2,2,.897,2,2-.897,2-2,2Z" />
+                                </svg>
+
+                            </button>
+                        </div>
+                        <div class="z-40 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white text-base shadow shadow-primary" id="dropdown-user">
+                            <div class="cursor-default px-4 py-3 text-sm text-primary" role="none">
+                                <p role="none" title="Neil Sims">
+                                    Neil Sims
+                                </p>
+                                <p class="truncate font-semibold" role="none" title="neil.sims@flowbite.com">
+                                    neil.sims@flowbite.com
+                                </p>
+                            </div>
+                            <ul class="py-1" role="none">
+                                <li>
+                                    <a href="{{ url(route('logout')) }}" title="Keluar" class="flex items-center justify-start gap-1 fill-red-500 px-4 py-2 text-sm text-red-500 hover:bg-gray-100" role="menuitem">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5">
+                                            <g>
+                                                <path d="M15,2.426v2.1a9,9,0,1,1-6,0v-2.1a11,11,0,1,0,6,0Z" />
+                                                <rect x="11" width="2" height="8" />
+                                            </g>
+                                        </svg>
+                                        Keluar
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <div class="p-4 sm:ml-72">
         <div class="mt-14 rounded-lg border-2 border-dashed border-primary p-4">
