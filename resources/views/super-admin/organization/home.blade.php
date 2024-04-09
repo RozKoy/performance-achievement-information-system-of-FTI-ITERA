@@ -4,7 +4,7 @@
 <x-super-admin-template title="Organisasi - Super Admin">
     <div class="flex flex-col gap-5 2xl:mx-auto 2xl:max-w-[2000px]">
         <h2 title="Halaman manajemen organisasi" class="text-xl font-semibold text-primary sm:text-2xl">Manajemen Organisasi</h2>
-        <div class="max-[320px]:flex-col flex gap-3">
+        <div class="flex gap-3 max-sm:flex-col">
             <form class="m-0 flex w-full">
                 <div class="relative flex-1 text-primary">
                     <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
@@ -18,7 +18,7 @@
                 </div>
                 <button type="submit" title="Tombol cari" class="rounded-r-lg !bg-primary/80 px-2 text-xs font-medium text-white hover:!bg-primary/70 focus:outline-none focus:ring-2 focus:ring-primary sm:px-4 sm:text-sm">Cari</button>
             </form>
-            <a href="{{ url('') }}" title="Tombol tambah" class="max-[320px]:w-fit max-[320px]:ml-auto flex items-center gap-1 rounded-lg bg-green-500 px-2.5 py-1 text-center text-xs text-white hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-green-600 sm:text-sm">
+            <a href="{{ url('') }}" title="Tombol tambah" class="flex items-center gap-1 rounded-lg bg-green-500 px-2.5 py-1 text-center text-xs text-white hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-green-600 max-sm:ml-auto max-sm:w-fit sm:text-sm">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="aspect-square w-3 sm:w-4">
                     <path d="m12 0a12 12 0 1 0 12 12 12.013 12.013 0 0 0 -12-12zm0 22a10 10 0 1 1 10-10 10.011 10.011 0 0 1 -10 10zm1-11h4v2h-4v4h-2v-4h-4v-2h4v-4h2z" />
                 </svg>
@@ -78,5 +78,4 @@
             </table>
         </div>
     </div>
-
 </x-super-admin-template>
