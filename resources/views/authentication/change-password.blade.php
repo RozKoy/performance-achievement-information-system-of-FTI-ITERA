@@ -3,5 +3,5 @@
     <x-partials.label.default for="password" title="Kata sandi baru" text="Kata Sandi Baru" required />
     <x-partials.input.password name="password" title="Kata sandi baru" autofocus required />
     <x-partials.button.submit title="ubah kata sandi" />
-    <a href="{{ url(route('login')) }}" title="Halaman masuk" class="text-center text-primary underline">Masuk</a>
+    <x-partials.link.default route="login" title="masuk" name="Masuk" center />
 </x-auth-template>
