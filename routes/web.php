@@ -52,9 +52,14 @@ Route::group([
         return 'Halaman Indikator Kinerja Utama';
     })->name('super-admin-iku');
 
-    Route::get('/pengguna', function () {
-        return 'Halaman Pengguna';
-    })->name('super-admin-users');
+
+    Route::group([
+        'prefix' => '/pengguna'
+    ], function () {
+        Route::view('/', 'super-admin.users.home')->name('super-admin-users');
+        Route::view('/tambah', 'super-admin.users.add')->name('super-admin-users-add');
+        Route::view('/{id}/ubah', 'super-admin.users.edit')->name('super-admin-users-edit');
+    });
 
 
     Route::group([
