@@ -20,7 +20,7 @@
                 </g>
             </svg>
         </a>
-        <h2 title="Halaman manajemen organisasi" class="text-xl font-semibold text-primary sm:text-2xl">Tambah Organisasi</h2>
+        <h2 title="Halaman tambah organisasi" class="text-xl font-semibold text-primary sm:text-2xl">Tambah Organisasi</h2>
     </div>
     @php
         $users = [
