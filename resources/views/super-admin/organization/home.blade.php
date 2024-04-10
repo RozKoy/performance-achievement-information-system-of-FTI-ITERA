@@ -44,15 +44,15 @@
             </thead>
             <tbody class="border-b-2 border-primary/80 text-center">
                 @foreach ($data as $item)
-                    <tr class="*:py-1 *:px-5">
+                    @php
+                        $modalData = '{"nama_organisasi":"' . $item['name'] . '","jumlah_pengguna":"' . $item['users'] . '"}';
+                    @endphp
+                    <tr class="*:py-1 *:px-5 *:max-w-96 *:overflow-hidden *:truncate">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                         <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['users'] }}">{{ $item['users'] }}</td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.edit link="{{ route('super-admin-organization-edit', ['id' => $item['id']]) }}" />
-                            @php
-                                $modalData = '{"nama_organisasi":"' . $item['name'] . '","jumlah_pengguna":"' . $item['users'] . '"}';
-                            @endphp
                             <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$modalData" />
                         </td>
                     </tr>
