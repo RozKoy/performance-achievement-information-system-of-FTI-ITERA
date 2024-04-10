@@ -49,11 +49,7 @@
                         <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['users'] }}">{{ $item['users'] }}</td>
                         <td class="flex items-center justify-center gap-1">
-                            <a href="{{ url(route('super-admin-organization-edit', ['id' => $item['id']])) }}" title="Ubah" class="text-yellow-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
-                                    <path d="m12,0C5.383,0,0,5.383,0,12s5.383,12,12,12,12-5.383,12-12S18.617,0,12,0Zm0,22c-5.514,0-10-4.486-10-10S6.486,2,12,2s10,4.486,10,10-4.486,10-10,10Zm1.379-15.621l-7.379,7.379v4.242h4.242l7.379-7.379c1.17-1.17,1.17-3.072,0-4.242s-3.072-1.17-4.242,0Zm-3.965,9.621h-1.414v-1.414l4.336-4.336,1.414,1.414-4.336,4.336Zm6.793-6.793l-1.043,1.043-1.414-1.414,1.043-1.043c.391-.391,1.023-.391,1.414,0s.39,1.024,0,1.414Z" />
-                                </svg>
-                            </a>
+                            <x-partials.button.edit link="{{ route('super-admin-organization-edit', ['id' => $item['id']]) }}" />
                             <button type="button" title="Hapus" data-id="{{ $item['id'] }}" onclick="pushDeleteId(this)" data-modal-target="delete-modal" data-modal-toggle="delete-modal" data-body='{"nama_organisasi":"{{ $item['name'] }}", "jumlah_pengguna":"{{ $item['users'] }}"}' class="text-red-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
                                     <path d="m12,0C5.383,0,0,5.383,0,12s5.383,12,12,12,12-5.383,12-12S18.617,0,12,0Zm0,22c-5.514,0-10-4.486-10-10S6.486,2,12,2s10,4.486,10,10-4.486,10-10,10Zm-5-11h10v2H7v-2Z" />

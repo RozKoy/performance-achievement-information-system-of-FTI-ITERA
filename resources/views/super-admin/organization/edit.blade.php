@@ -120,6 +120,6 @@
                 </div>
             @endforeach
         </div>
-        <x-partials.button.add submit />
+        <x-partials.button.edit />
     </form>
 </x-super-admin-template>
