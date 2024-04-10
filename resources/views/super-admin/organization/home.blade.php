@@ -50,11 +50,10 @@
                         <td title="{{ $item['users'] }}">{{ $item['users'] }}</td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.edit link="{{ route('super-admin-organization-edit', ['id' => $item['id']]) }}" />
-                            <button type="button" title="Hapus" data-id="{{ $item['id'] }}" onclick="pushDeleteId(this)" data-modal-target="delete-modal" data-modal-toggle="delete-modal" data-body='{"nama_organisasi":"{{ $item['name'] }}", "jumlah_pengguna":"{{ $item['users'] }}"}' class="text-red-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
-                                    <path d="m12,0C5.383,0,0,5.383,0,12s5.383,12,12,12,12-5.383,12-12S18.617,0,12,0Zm0,22c-5.514,0-10-4.486-10-10S6.486,2,12,2s10,4.486,10,10-4.486,10-10,10Zm-5-11h10v2H7v-2Z" />
-                                </svg>
-                            </button>
+                            @php
+                                $modalData = '{"nama_organisasi":"' . $item['name'] . '","jumlah_pengguna":"' . $item['users'] . '"}';
+                            @endphp
+                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$modalData" />
                         </td>
                     </tr>
                 @endforeach
