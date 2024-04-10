@@ -15,7 +15,7 @@
                         <svg class="mx-0.5 h-3 w-3 text-gray-400 rtl:rotate-180 md:mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
                         </svg>
-                        <a href="{{ url(route($item['link'])) }}" class="@if (request()->routeIs($item['link'])) pointer-events-none text-primary/75 @else text-gray-500 hover:text-primary @endif ms-0 truncate font-medium md:ms-2">{{ $item['name'] }}</a>
+                        <a href="{{ url(route($item['link'], isset($item['params']) ?? $item['params'])) }}" class="@if (request()->routeIs($item['link'])) pointer-events-none text-primary/75 @else text-gray-500 hover:text-primary @endif ms-0 truncate font-medium md:ms-2">{{ $item['name'] }}</a>
                     </div>
                 </li>
             @endforeach

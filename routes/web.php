@@ -62,5 +62,6 @@ Route::group([
     ], function () {
         Route::view('/', 'super-admin.organization.home')->name('super-admin-organization');
         Route::view('/tambah', 'super-admin.organization.add')->name('super-admin-organization-add');
+        Route::view('/{id}/ubah', 'super-admin.organization.edit')->name('super-admin-organization-edit');
     });
 });
