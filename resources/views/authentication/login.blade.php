@@ -4,5 +4,5 @@
     <x-partials.label.default for="password" title="Kata sandi" text="Kata Sandi" required />
     <x-partials.input.password name="password" title="Kata sandi" required />
     <a href="{{ url(route('forget-password')) }}" title="Halaman lupa kata sandi" class="text-right text-primary underline">Lupa Kata Sandi?</a>
-    <button type="submit" title="Tombol masuk" class="rounded-lg bg-primary py-2 text-white">Masuk</button>
+    <x-partials.button.submit title="masuk" />
 </x-auth-template>
