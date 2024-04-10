@@ -8,7 +8,7 @@
 @endphp
 <x-super-admin-template title="Organisasi - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <h2 title="Halaman manajemen organisasi" class="text-xl font-semibold text-primary sm:text-2xl">Manajemen Organisasi</h2>
+    <x-partials.heading.h2 text="manajemen organisasi" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
         <x-partials.button.add href="super-admin-organization-add" />
