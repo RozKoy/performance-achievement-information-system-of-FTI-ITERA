@@ -77,11 +77,11 @@
                         <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['unit'] }}">{{ $item['unit'] }}</td>
                         <td title="{{ $item['supdoc'] }}">{{ $item['supdoc'] }}</td>
-                        <td title="Status : {{ $item['status'] === 'active' ? 'aktif' : 'tidak aktif' }}">
+                        <td title="Status : {{ $item['status'] === 'active' ? 'aktif' : 'tidak aktif' }} {{ $item['supdoc'] === '0' ? '- Isi data dukung terlebih dahulu' : '' }}">
                             <div class="flex items-center justify-center">
-                                <label class="relative inline-flex cursor-pointer items-center">
-                                    <input type="checkbox" value="{{ $item['status'] }}" class="peer sr-only" @if ($item['status'] === 'active') checked @endif>
-                                    <div class="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-400 rtl:peer-checked:after:-translate-x-full"></div>
+                                <label class="relative inline-flex items-center">
+                                    <input type="checkbox" value="{{ $item['status'] }}" class="peer sr-only" @if ($item['status'] === 'active') checked @endif @if ($item['supdoc'] === '0') disabled @endif>
+                                    <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 peer-disabled:cursor-not-allowed peer-disabled:bg-slate-300 peer-disabled:after:border-slate-300 rtl:peer-checked:after:-translate-x-full"></div>
                                 </label>
                             </div>
                         </td>
