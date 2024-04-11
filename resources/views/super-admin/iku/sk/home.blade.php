@@ -97,6 +97,7 @@
                         <td title="{{ $item['sk'] }}" class="text-left">{{ $item['sk'] }}</td>
                         <td title="{{ $item['ikk'] }}">{{ $item['ikk'] }}</td>
                         <td class="flex items-center justify-center gap-1">
+                            <x-partials.button.manage link="/" />
                             <x-partials.button.edit link="{{ route('super-admin-iku-sk-edit', ['id' => $item['id']]) }}" />
                             <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$modalData" />
                         </td>
