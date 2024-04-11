@@ -52,7 +52,7 @@
             </div>
         </div>
         <div id="admin-selection">
-            <select title="Pilih organisasi" name="organization" class="focus:border-primary focus:outline-none focus:ring-0" required>
+            <select title="Pilih organisasi" name="organization" oninvalid="inputTextCustomMessage(this)" class="focus:border-primary focus:outline-none focus:ring-0" required>
                 <option value="">Pilih Program Studi</option>
                 <option value="243rei9rr339">Teknik Informatika</option>
             </select>
