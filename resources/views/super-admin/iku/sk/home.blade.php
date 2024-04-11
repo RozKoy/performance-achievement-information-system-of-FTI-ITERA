@@ -18,62 +18,34 @@
             [
                 'id' => 'ckdjdk',
                 'sk' => 'Sasaran kinerja 1',
-                'ikk' => '0',
+                'ikk' => [
+                    'active' => 1,
+                    'inactive' => 2,
+                ],
             ],
             [
-                'id' => 'kjffsf',
-                'sk' => 'Sasaran kinerja ckdmkcd kcjkdjcdk dkjck djcd k cjdkcjd jcd',
-                'ikk' => '3',
+                'id' => 'fkfsfkf',
+                'sk' => 'Sasaran kinerja 2',
+                'ikk' => [
+                    'active' => 0,
+                    'inactive' => 0,
+                ],
             ],
             [
-                'id' => 'dgjggdf',
-                'sk' => 'Sasaran kinerja kerja kerja kerja',
-                'ikk' => '1',
+                'id' => 'sfdfhf',
+                'sk' => 'Sasaran kinerja 3',
+                'ikk' => [
+                    'active' => 1,
+                    'inactive' => 0,
+                ],
             ],
             [
-                'id' => 'ckdjdk',
-                'sk' => 'Sasaran kinerja 1',
-                'ikk' => '0',
-            ],
-            [
-                'id' => 'kjffsf',
-                'sk' => 'Sasaran kinerja ckdmkcd kcjkdjcdk dkjck djcd k cjdkcjd jcd',
-                'ikk' => '3',
-            ],
-            [
-                'id' => 'dgjggdf',
-                'sk' => 'Sasaran kinerja kerja kerja kerja',
-                'ikk' => '1',
-            ],
-            [
-                'id' => 'ckdjdk',
-                'sk' => 'Sasaran kinerja 1',
-                'ikk' => '0',
-            ],
-            [
-                'id' => 'kjffsf',
-                'sk' => 'Sasaran kinerja ckdmkcd kcjkdjcdk dkjck djcd k cjdkcjd jcd',
-                'ikk' => '3',
-            ],
-            [
-                'id' => 'dgjggdf',
-                'sk' => 'Sasaran kinerja kerja kerja kerja',
-                'ikk' => '1',
-            ],
-            [
-                'id' => 'ckdjdk',
-                'sk' => 'Sasaran kinerja 1',
-                'ikk' => '0',
-            ],
-            [
-                'id' => 'kjffsf',
-                'sk' => 'Sasaran kinerja ckdmkcd kcjkdjcdk dkjck djcd k cjdkcjd jcd',
-                'ikk' => '3',
-            ],
-            [
-                'id' => 'dgjggdf',
-                'sk' => 'Sasaran kinerja kerja kerja kerja',
-                'ikk' => '1',
+                'id' => 'fkfdfdfsfkf',
+                'sk' => 'Sasaran kinerja 4',
+                'ikk' => [
+                    'active' => 0,
+                    'inactive' => 3,
+                ],
             ],
         ];
     @endphp
@@ -90,12 +62,19 @@
             <tbody class="border-b-2 border-primary/80 text-center">
                 @foreach ($data as $item)
                     @php
-                        $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_kinerja":"' . $item['sk'] . '","indikator_kinerja_kegiatan":"' . $item['ikk'] . '"}';
+                        $sum = $item['ikk']['active'] + $item['ikk']['inactive'];
+                        $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_kinerja":"' . $item['sk'] . '","indikator_kinerja_kegiatan":"Total : ' . $sum . ', aktif : ' . $item['ikk']['active'] . ', tidak aktif : ' . $item['ikk']['inactive'] . '"}';
                     @endphp
                     <tr class="*:py-1 *:px-5 *:max-w-96 *:overflow-hidden *:truncate">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                         <td title="{{ $item['sk'] }}" class="text-left">{{ $item['sk'] }}</td>
-                        <td title="{{ $item['ikk'] }}">{{ $item['ikk'] }}</td>
+                        <td>
+                            <div class="*:p-1 *:overflow-hidden *:truncate *:w-1/3 *:whitespace-nowrap max-w-80 mx-auto flex items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
+                                <p title="Total : {{ $sum }}">Total : {{ $sum }}</p>
+                                <p title="Aktif : {{ $item['ikk']['active'] }}">Aktif : {{ $item['ikk']['active'] }}</p>
+                                <p title="Tidak aktif : {{ $item['ikk']['inactive'] }}">Tidak Aktif : {{ $item['ikk']['inactive'] }}</p>
+                            </div>
+                        </td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.manage link="{{ route('super-admin-iku-ikk', ['sk' => $item['id']]) }}" />
                             <x-partials.button.edit link="{{ route('super-admin-iku-sk-edit', ['id' => $item['id']]) }}" />
