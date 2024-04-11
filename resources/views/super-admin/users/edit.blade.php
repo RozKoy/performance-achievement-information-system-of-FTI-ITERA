@@ -10,6 +10,24 @@
             'name' => 'Ubah',
         ],
     ];
+    $data = [
+        [
+            'value' => '',
+            'text' => 'Pilih Program Studi',
+        ],
+        [
+            'value' => 'fdkdncd',
+            'text' => 'Teknik Informatika',
+        ],
+        [
+            'value' => 'ckddfdg',
+            'text' => 'Teknik Elektro',
+        ],
+        [
+            'value' => 'kdckdmkfdg',
+            'text' => 'Sains Aktuaria',
+        ],
+    ];
 @endphp
 <x-super-admin-template title="Ubah Pengguna - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
@@ -26,7 +44,7 @@
                 <button id="super-admin-button" type="button" title="Tombol akses super admin" class="outline outline-2 outline-offset-1 outline-primary hover:bg-primary/70">Super Admin</button>
                 <button id="admin-button" type="button" title="Tombol akses admin" onclick="switchSelection('admin-button', 'super-admin-button')" class="hover:bg-primary/70">Admin</button>
             </div>
-            <div id="selection" class="*:rounded-lg *:border *:border-primary *:shadow *:p-1.5 *:gap-1 flex flex-wrap items-center justify-center gap-2">
+            <div id="selection" class="*:rounded-lg *:border *:border-slate-100 *:shadow *:p-1.5 *:gap-1 flex flex-wrap items-center justify-center gap-2 text-primary">
                 <div class="flex items-center justify-center">
                     <input type="radio" title="Super admin semua akses" name="access" id="editor" value="super-admin-editor" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" checked required>
                     <label for="editor" title="Super admin semua akses">Semua akses</label>
@@ -52,10 +70,7 @@
             </div>
         </div>
         <div id="admin-selection">
-            <select title="Pilih organisasi" name="organization" oninvalid="inputTextCustomMessage(this)" class="focus:border-primary focus:outline-none focus:ring-0" required>
-                <option value="">Pilih Program Studi</option>
-                <option value="243rei9rr339">Teknik Informatika</option>
-            </select>
+            <x-partials.input.select name="organisasi" title="Pilih organisasi" :$data required />
             <div class="flex items-center justify-center">
                 <input type="checkbox" title="Admin akses hanya melihat" name="access" id="viewer-admin" value="admin-viewer" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90">
                 <label for="viewer-admin" title="Admin akses hanya melihat">Hanya melihat</label>
