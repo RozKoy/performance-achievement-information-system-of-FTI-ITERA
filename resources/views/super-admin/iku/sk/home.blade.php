@@ -90,7 +90,7 @@
             <tbody class="border-b-2 border-primary/80 text-center">
                 @foreach ($data as $item)
                     @php
-                        $modalData = '{"sasaran_kinerja":"' . $item['sk'] . '","indikator_kinerja_kegiatan":"' . $item['ikk'] . '"}';
+                        $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_kinerja":"' . $item['sk'] . '","indikator_kinerja_kegiatan":"' . $item['ikk'] . '"}';
                     @endphp
                     <tr class="*:py-1 *:px-5 *:max-w-96 *:overflow-hidden *:truncate">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
