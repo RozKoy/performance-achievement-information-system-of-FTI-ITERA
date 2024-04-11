@@ -16,13 +16,7 @@
 <x-super-admin-template title="IKU - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="manajemen indikator kinerja utama - indikator kinerja kegiatan" previous="super-admin-iku-sk" />
-    <div class="flex flex-wrap items-center gap-3">
-        <h3 title="Sasaran kinerja" class="text-lg font-semibold capitalize text-primary sm:text-xl">sasaran kinerja :</h3>
-        <div class="*:px-2.5 *:py-1 *:truncate flex min-w-[60%] flex-1 items-center overflow-hidden rounded-lg border border-slate-200 text-primary max-sm:text-sm">
-            <p title="2" class="max-w-20 bg-primary/80 text-center text-white">2</p>
-            <p title="Sasaran Kinerja blabla blab lanc balncj ncjecn" class="flex-1 bg-primary/10">Sasaran Kinerja blabla blab lanc balncj ncjecn</p>
-        </div>
-    </div>
+    <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="2" dataText="Sasaran Kinerja blabla blab lanc balncj ncjecn" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
         <x-partials.button.add route="{{ route('super-admin-iku-ikk-add', ['sk' => 'cdmkcmdc']) }}" />

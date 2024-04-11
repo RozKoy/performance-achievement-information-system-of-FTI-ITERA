@@ -43,6 +43,7 @@
 <x-super-admin-template title="Tambah Indikator Kinerja Kegiatan - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="tambah indikator kinerja kegiatan" previousRoute="{{ route('super-admin-iku-ikk', ['sk' => 'hahahah']) }}" />
+    <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="2" dataText="Sasaran Kinerja blabla blab lanc balncj ncjecn" />
     <form action="" class="flex flex-col gap-2">
         <div class="flex flex-wrap gap-2">
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
