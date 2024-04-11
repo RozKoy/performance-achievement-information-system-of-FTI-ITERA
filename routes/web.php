@@ -59,6 +59,14 @@ Route::group([
             Route::view('/tambah', 'super-admin.iku.sk.add')->name('super-admin-iku-sk-add');
             Route::view('/{id}/ubah', 'super-admin.iku.sk.edit')->name('super-admin-iku-sk-edit');
         });
+
+        Route::group([
+            'prefix' => '/{sk}/indikator-kinerja-kegiatan'
+        ], function () {
+            Route::view('/', 'super-admin.iku.ikk.home')->name('super-admin-iku-ikk');
+            Route::view('/tambah', 'super-admin.iku.ikk.add')->name('super-admin-iku-ikk-add');
+            Route::view('/{id}/ubah', 'super-admin.iku.ikk.edit')->name('super-admin-iku-ikk-edit');
+        });
     });
 
 
