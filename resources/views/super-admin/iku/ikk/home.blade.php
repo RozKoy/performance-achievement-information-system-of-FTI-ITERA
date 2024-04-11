@@ -27,31 +27,29 @@
                 'id' => 'ckdjdk',
                 'name' => 'indikator kinerja kegiatan 1',
                 'unit' => 'mahasiswa',
+                'status' => 'active',
+                'supdoc' => '5',
             ],
             [
-                'id' => 'ksjkds',
+                'id' => 'sdksdss',
                 'name' => 'indikator kinerja kegiatan 2',
-                'unit' => 'lulusan',
-            ],
-            [
-                'id' => 'ckdjdk',
-                'name' => 'indikator kinerja kegiatan 1',
                 'unit' => 'mahasiswa',
+                'status' => 'inactive',
+                'supdoc' => '0',
             ],
             [
-                'id' => 'ksjkds',
-                'name' => 'indikator kinerja kegiatan 2',
+                'id' => 'dfhghhff',
+                'name' => 'indikator kinerja kegiatan 3',
                 'unit' => 'lulusan',
+                'status' => 'active',
+                'supdoc' => '2',
             ],
             [
-                'id' => 'ckdjdk',
-                'name' => 'indikator kinerja kegiatan 1',
+                'id' => 'mgfdffdg',
+                'name' => 'indikator kinerja kegiatan 4',
                 'unit' => 'mahasiswa',
-            ],
-            [
-                'id' => 'ksjkds',
-                'name' => 'indikator kinerja kegiatan 2',
-                'unit' => 'lulusan',
+                'status' => 'inactive',
+                'supdoc' => '1',
             ],
         ];
     @endphp
@@ -62,18 +60,31 @@
                     <th title="Nomor">No</th>
                     <th title="Indikator kinerja kegiatan">Indikator Kinerja Kegiatan</th>
                     <th title="Satuan">Satuan</th>
+                    <th title="Data dukung">Data Dukung</th>
+                    <th title="Status">Status</th>
                     <th title="Aksi">Aksi</th>
                 </tr>
             </thead>
             <tbody class="border-b-2 border-primary/80 text-center">
                 @foreach ($data as $item)
                     @php
-                        $modalData = '{"nomor":"' . $loop->iteration . '","indikator_kinerja_kegiatan":"' . $item['name'] . '","satuan":"' . $item['unit'] . '"}';
+                        $modalData = '{"nomor":"' . $loop->iteration . '","indikator_kinerja_kegiatan":"' . $item['name'] . '","satuan":"' . $item['unit'] . '","data_dukung":"' . $item['supdoc'] . '","status":';
+                        $modalData .= $item['status'] === 'active' ? '"aktif"' : '"tidak aktif"';
+                        $modalData .= '}';
                     @endphp
                     <tr class="*:py-1 *:px-5 *:max-w-96 *:overflow-hidden *:truncate">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                         <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['unit'] }}">{{ $item['unit'] }}</td>
+                        <td title="{{ $item['supdoc'] }}">{{ $item['supdoc'] }}</td>
+                        <td title="Status : {{ $item['status'] === 'active' ? 'aktif' : 'tidak aktif' }}">
+                            <div class="flex items-center justify-center">
+                                <label class="relative inline-flex cursor-pointer items-center">
+                                    <input type="checkbox" value="{{ $item['status'] }}" class="peer sr-only" @if ($item['status'] === 'active') checked @endif>
+                                    <div class="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-400 rtl:peer-checked:after:-translate-x-full"></div>
+                                </label>
+                            </div>
+                        </td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.manage link="/" />
                             <x-partials.button.edit link="{{ route('super-admin-iku-ikk-edit', ['id' => $item['id'], 'sk' => 'hahaha']) }}" />
