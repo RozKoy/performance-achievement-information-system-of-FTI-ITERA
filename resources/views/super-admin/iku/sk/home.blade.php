@@ -52,7 +52,7 @@
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
-                <tr class="*:font-normal *:px-5 *:py-1 divide-x bg-primary/80 text-white">
+                <tr class="*:font-normal *:px-5 *:py-2.5 divide-x bg-primary/80 text-white">
                     <th title="Nomor">No</th>
                     <th title="Sasaran kinerja">Sasaran Kinerja</th>
                     <th title="Indikator kinerja kegiatan">Indikator Kinerja Kegiatan</th>
@@ -65,7 +65,7 @@
                         $sum = $item['ikk']['active'] + $item['ikk']['inactive'];
                         $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_kinerja":"' . $item['sk'] . '","indikator_kinerja_kegiatan":"Total : ' . $sum . ', aktif : ' . $item['ikk']['active'] . ', tidak aktif : ' . $item['ikk']['inactive'] . '"}';
                     @endphp
-                    <tr class="*:py-1 *:px-5 *:max-w-96 *:overflow-hidden *:truncate">
+                    <tr class="*:py-2 *:px-5 *:max-w-96 *:overflow-hidden *:truncate">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                         <td title="{{ $item['sk'] }}" class="text-left">{{ $item['sk'] }}</td>
                         <td>
