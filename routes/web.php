@@ -48,9 +48,18 @@ Route::group([
         return 'Halaman Rencana Strategis';
     })->name('super-admin-rs');
 
-    Route::get('/indikator-kinerja-utama', function () {
-        return 'Halaman Indikator Kinerja Utama';
-    })->name('super-admin-iku');
+
+    Route::group([
+        'prefix' => '/iku'
+    ], function () {
+        Route::group([
+            'prefix' => '/sasaran-kinerja'
+        ], function () {
+            Route::view('/', 'super-admin.iku.sk.home')->name('super-admin-iku-sk');
+            Route::view('/tambah', 'super-admin.iku.sk.add')->name('super-admin-iku-sk-add');
+            Route::view('/{id}/ubah', 'super-admin.iku.sk.edit')->name('super-admin-iku-sk-edit');
+        });
+    });
 
 
     Route::group([
