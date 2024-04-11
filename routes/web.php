@@ -52,6 +52,10 @@ Route::group([
     Route::group([
         'prefix' => '/iku'
     ], function () {
+        Route::get('/', function () {
+            return redirect()->route('super-admin-iku-sk');
+        })->name('super-admin-iku');
+
         Route::group([
             'prefix' => '/sasaran-kinerja'
         ], function () {

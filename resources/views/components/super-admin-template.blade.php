@@ -28,7 +28,7 @@
                     </x-partials.link.sidebar>
                 </li>
                 <li>
-                    <x-partials.link.sidebar route="super-admin-iku-sk" name="indikator kinerja utama">
+                    <x-partials.link.sidebar route="super-admin-iku" name="indikator kinerja utama">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5 transition duration-75" fill="currentColor">
                             <path d="m12,2.5c0-1.381,1.119-2.5,2.5-2.5s2.5,1.119,2.5,2.5-1.119,2.5-2.5,2.5-2.5-1.119-2.5-2.5ZM3.5,10c1.381,0,2.5-1.119,2.5-2.5s-1.119-2.5-2.5-2.5-2.5,1.119-2.5,2.5,1.119,2.5,2.5,2.5Zm20.533,2.141v2.267l-13.825,9.593h-3.208v-4H2.987l-.033,2.531-.463,1.469H.393l.607-1.924v-8.076c0-1.24.745-2.336,1.898-2.791l5.696-1.134,3.21-3.112.004.004c.548-.591,1.325-.967,2.192-.967h5V0h1l4,2.5-3,1.875v3.625h-4v5h2v2.633l5.033-3.492Zm-11.033,7.656l4-2.796v-2h-4v4.796Zm0-10.796v4h2v-5h-1c-.551,0-1,.448-1,1ZM3,18h2v-5.182l-1.437.281c-.345.167-.563.513-.563.9v4Zm8,3.184v-10.655l-1.439,1.396-2.561.502v5.574h2v4.572l2-1.388Z" />
                         </svg>
