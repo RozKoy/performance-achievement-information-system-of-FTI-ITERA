@@ -12,14 +12,14 @@
             ],
         ],
         [
-            'link' => 'super-admin-iku-ikk-add',
-            'name' => 'Tambah',
+            'link' => 'super-admin-iku-ikk-edit',
             'params' => [
+                'id' => '1',
                 'sk' => 'cdmkcmdc',
             ],
+            'name' => 'Ubah',
         ],
     ];
-
     $data = [
         [
             'value' => '1',
@@ -40,9 +40,9 @@
         ],
     ];
 @endphp
-<x-super-admin-template title="Tambah Indikator Kinerja Kegiatan - Super Admin">
+<x-super-admin-template title="Ubah Indikator Kinerja Kegiatan - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="tambah indikator kinerja kegiatan" previousRoute="{{ route('super-admin-iku-ikk', ['sk' => 'hahahah']) }}" />
+    <x-partials.heading.h2 text="ubah indikator kinerja kegiatan" previousRoute="{{ route('super-admin-iku-ikk', ['sk' => 'hahahah']) }}" />
     <form action="" class="flex flex-col gap-2">
         <div class="flex flex-wrap gap-2">
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
@@ -58,6 +58,6 @@
                 <x-partials.input.text name="unit" title="Satuan" required />
             </div>
         </div>
-        <x-partials.button.add submit />
+        <x-partials.button.edit />
     </form>
 </x-super-admin-template>
