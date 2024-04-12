@@ -71,6 +71,14 @@ Route::group([
             Route::view('/tambah', 'super-admin.iku.ikk.add')->name('super-admin-iku-ikk-add');
             Route::view('/{id}/ubah', 'super-admin.iku.ikk.edit')->name('super-admin-iku-ikk-edit');
         });
+
+        Route::group([
+            'prefix' => '/{sk}/{ikk}/data-dukung'
+        ], function () {
+            Route::view('/', 'super-admin.iku.dd.home')->name('super-admin-iku-dd');
+            Route::view('/tambah', 'super-admin.iku.dd.add')->name('super-admin-iku-dd-add');
+            Route::view('/{id}/ubah', 'super-admin.iku.dd.edit')->name('super-admin-iku-dd-edit');
+        });
     });
 
 
