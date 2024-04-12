@@ -84,7 +84,7 @@
                             </div>
                         </td>
                         <td class="flex items-center justify-center gap-1">
-                            <x-partials.button.manage link="/" />
+                            <x-partials.button.manage link="{{ route('super-admin-rs-ik', ['ss' => 'hahaha', 'k' => 'hihihi']) }}" />
                             <x-partials.button.edit link="{{ route('super-admin-rs-k-edit', ['id' => $item['id'], 'ss' => 'hahaha']) }}" />
                             <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$modalData" />
                         </td>

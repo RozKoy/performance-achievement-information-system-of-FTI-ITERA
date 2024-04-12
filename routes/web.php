@@ -71,6 +71,14 @@ Route::group([
             Route::view('/tambah', 'super-admin.rs.k.add')->name('super-admin-rs-k-add');
             Route::view('/{id}/ubah', 'super-admin.rs.k.edit')->name('super-admin-rs-k-edit');
         });
+
+        Route::group([
+            'prefix' => '/{ss}/{k}/indikator-kinerja'
+        ], function () {
+            Route::view('/', 'super-admin.rs.ik.home')->name('super-admin-rs-ik');
+            Route::view('/tambah', 'super-admin.rs.ik.add')->name('super-admin-rs-ik-add');
+            Route::view('/{id}/ubah', 'super-admin.rs.ik.edit')->name('super-admin-rs-ik-edit');
+        });
     });
 
 
