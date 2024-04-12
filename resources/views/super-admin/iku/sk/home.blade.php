@@ -69,7 +69,7 @@
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                         <td title="{{ $item['sk'] }}" class="text-left">{{ $item['sk'] }}</td>
                         <td>
-                            <div class="*:p-1 *:overflow-hidden *:truncate *:w-1/3 *:whitespace-nowrap max-w-80 mx-auto flex items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
+                            <div class="*:p-1 *:overflow-hidden *:truncate *:w-1/3 *:whitespace-nowrap mx-auto flex max-w-full items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
                                 <p title="Total : {{ $sum }}">Total : {{ $sum }}</p>
                                 <p title="Aktif : {{ $item['ikk']['active'] }}">Aktif : {{ $item['ikk']['active'] }}</p>
                                 <p title="Tidak aktif : {{ $item['ikk']['inactive'] }}">Tidak Aktif : {{ $item['ikk']['inactive'] }}</p>

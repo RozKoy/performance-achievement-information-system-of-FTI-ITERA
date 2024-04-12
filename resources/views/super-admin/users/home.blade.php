@@ -89,7 +89,7 @@
                         <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['email'] }}">{{ $item['email'] }}</td>
                         <td>
-                            <div class="*:p-1 *:overflow-hidden *:truncate *:w-1/3 *:whitespace-nowrap max-w-60 mx-auto flex items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
+                            <div class="*:p-1 *:overflow-hidden *:truncate *:w-1/3 *:whitespace-nowrap mx-auto flex max-w-full items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
                                 <p title="{{ $item['role'] === 'superAdmin' ? 'Super Admin' : 'Admin' }}">{{ $item['role'] === 'superAdmin' ? 'Super Admin' : 'Admin' }}</p>
                                 <p title="{{ $item['access'] === 'editor' ? 'Editor' : 'Viewer' }}">{{ $item['access'] === 'editor' ? 'Editor' : 'Viewer' }}</p>
                                 <p title="{{ isset($item['organization']) ? $item['organization'] : 'NULL' }}">{{ isset($item['organization']) ? $item['organization'] : 'NULL' }}</p>
