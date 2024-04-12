@@ -50,6 +50,23 @@ Route::group([
 
 
     Route::group([
+        'prefix' => '/rencana-strategis'
+    ], function () {
+        Route::get('/', function () {
+            return redirect()->route('super-admin-rs-ss');
+        })->name('super-admin-rs');
+
+        Route::group([
+            'prefix' => '/sasaran-strategis'
+        ], function () {
+            Route::view('/', 'super-admin.rs.ss.home')->name('super-admin-rs-ss');
+            Route::view('/tambah', 'super-admin.rs.ss.add')->name('super-admin-rs-ss-add');
+            Route::view('/{id}/ubah', 'super-admin.rs.ss.edit')->name('super-admin-rs-ss-edit');
+        });
+    });
+
+
+    Route::group([
         'prefix' => '/indikator-kinerja-utama'
     ], function () {
         Route::get('/', function () {
