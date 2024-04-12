@@ -74,11 +74,11 @@
         <div class="flex flex-wrap gap-2">
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
-                <x-partials.input.select name="number" title="Nomor" :$data autofocus required />
+                <x-partials.input.select name="number" title="Nomor" :$data required />
             </div>
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="name" title="Indikator kinerja" text="Indikator Kinerja" required />
-                <x-partials.input.text name="name" title="Indikator kinerja" required />
+                <x-partials.input.text name="name" title="Indikator kinerja" autofocus required />
             </div>
             <div class="flex flex-col gap-2 max-xl:flex-1">
                 <x-partials.label.default for="type" title="Tipe data" text="Tipe Data" required />

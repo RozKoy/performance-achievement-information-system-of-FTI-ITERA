@@ -58,11 +58,11 @@
         <div class="flex flex-wrap gap-2">
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
-                <x-partials.input.select name="number" title="Nomor" :$data autofocus required />
+                <x-partials.input.select name="number" title="Nomor" :$data required />
             </div>
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="name" title="Data dukung" text="Data Dukung" required />
-                <x-partials.input.text name="name" title="Data dukung" required />
+                <x-partials.input.text name="name" title="Data dukung" autofocus required />
             </div>
         </div>
         <div class="flex items-center justify-start gap-2">
