@@ -47,7 +47,7 @@
                     @php
                         $modalData = '{"nama_organisasi":"' . $item['name'] . '","jumlah_pengguna":"' . $item['users'] . '"}';
                     @endphp
-                    <tr class="*:py-2 *:px-5 *:max-w-96 *:overflow-hidden *:truncate">
+                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:overflow-hidden *:truncate">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                         <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['users'] }}">{{ $item['users'] }}</td>

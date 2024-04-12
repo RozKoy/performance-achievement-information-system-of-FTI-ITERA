@@ -65,7 +65,7 @@
                         $sum = $item['ikk']['active'] + $item['ikk']['inactive'];
                         $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_kinerja":"' . $item['sk'] . '","indikator_kinerja_kegiatan":"Total : ' . $sum . ', aktif : ' . $item['ikk']['active'] . ', tidak aktif : ' . $item['ikk']['inactive'] . '"}';
                     @endphp
-                    <tr class="*:py-2 *:px-5 *:max-w-96 *:overflow-hidden *:truncate">
+                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:overflow-hidden *:truncate">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                         <td title="{{ $item['sk'] }}" class="text-left">{{ $item['sk'] }}</td>
                         <td>
