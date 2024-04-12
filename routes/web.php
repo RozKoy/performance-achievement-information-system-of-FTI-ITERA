@@ -50,7 +50,7 @@ Route::group([
 
 
     Route::group([
-        'prefix' => '/iku'
+        'prefix' => '/indikator-kinerja-utama'
     ], function () {
         Route::get('/', function () {
             return redirect()->route('super-admin-iku-sk');
