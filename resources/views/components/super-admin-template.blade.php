@@ -86,7 +86,7 @@
                     <div class="ms-3 flex items-center gap-2">
                         <p title="Editor Access" class="inline-flex items-center justify-center rounded-full bg-primary px-2 py-1 text-xs font-semibold uppercase text-white sm:text-sm">editor</p>
                         <div>
-                            <button type="button" class="flex rounded-full fill-primary text-sm focus:ring-4 focus:ring-gray-300" aria-expanded="false" data-dropdown-toggle="dropdown-user">
+                            <button type="button" class="flex rounded-full fill-primary text-sm focus:ring-4 focus:ring-gray-300" aria-expanded="false" data-dropdown-toggle="user-menu">
                                 <span class="sr-only">Open user menu</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 24 24" class="h-6 w-6 sm:h-8 sm:w-8">
                                     <path d="m12,0C5.383,0,0,5.383,0,12s5.383,12,12,12,12-5.383,12-12S18.617,0,12,0Zm-4,21.164v-2.164c0-.552.449-1,1-1h6c.551,0,1,.448,1,1v2.164c-1.226.537-2.578.836-4,.836s-2.774-.299-4-.836Zm10-1.169v-.995c0-1.654-1.346-3-3-3h-6c-1.654,0-3,1.346-3,3v.995c-2.427-1.826-4-4.73-4-7.995C2,6.486,6.486,2,12,2s10,4.486,10,10c0,3.264-1.573,6.169-4,7.995Zm-6-13.995c-2.206,0-4,1.794-4,4s1.794,4,4,4,4-1.794,4-4-1.794-4-4-4Zm0,6c-1.103,0-2-.897-2-2s.897-2,2-2,2,.897,2,2-.897,2-2,2Z" />
@@ -94,7 +94,7 @@
 
                             </button>
                         </div>
-                        <div class="z-40 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white text-base shadow shadow-primary" id="dropdown-user">
+                        <div class="z-40 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white text-base shadow shadow-primary" id="user-menu">
                             <div class="cursor-default px-4 py-3 text-sm text-primary" role="none">
                                 <p role="none" title="Neil Sims">
                                     Neil Sims
