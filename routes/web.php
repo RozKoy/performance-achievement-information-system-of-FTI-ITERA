@@ -63,6 +63,14 @@ Route::group([
             Route::view('/tambah', 'super-admin.rs.ss.add')->name('super-admin-rs-ss-add');
             Route::view('/{id}/ubah', 'super-admin.rs.ss.edit')->name('super-admin-rs-ss-edit');
         });
+
+        Route::group([
+            'prefix' => '/{ss}/kegiatan'
+        ], function () {
+            Route::view('/', 'super-admin.rs.k.home')->name('super-admin-rs-k');
+            Route::view('/tambah', 'super-admin.rs.k.add')->name('super-admin-rs-k-add');
+            Route::view('/{id}/ubah', 'super-admin.rs.k.edit')->name('super-admin-rs-k-edit');
+        });
     });
 
 

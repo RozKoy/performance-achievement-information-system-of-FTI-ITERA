@@ -67,7 +67,7 @@
                         <td title="{{ $item['ss'] }}" class="text-left">{{ $item['ss'] }}</td>
                         <td title="{{ $item['k'] }}">{{ $item['k'] }}</td>
                         <td class="flex items-center justify-center gap-1">
-                            <x-partials.button.manage link="/" />
+                            <x-partials.button.manage link="{{ route('super-admin-rs-k', ['ss' => 'hahaha']) }}" />
                             <x-partials.button.edit link="{{ route('super-admin-rs-ss-edit', ['id' => $item['id']]) }}" />
                             <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$modalData" />
                         </td>
