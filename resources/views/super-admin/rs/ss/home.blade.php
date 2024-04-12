@@ -17,32 +17,32 @@
         $data = [
             [
                 'id' => 'ckdjdk',
-                'ss' => 'Sasaran strategis 1',
+                'name' => 'Sasaran strategis 1',
                 'k' => '2',
             ],
             [
                 'id' => 'mkmkdv',
-                'ss' => 'Sasaran strategis 2',
+                'name' => 'Sasaran strategis 2',
                 'k' => '0',
             ],
             [
                 'id' => 'kdfjdn',
-                'ss' => 'Sasaran strategis 3',
+                'name' => 'Sasaran strategis 3',
                 'k' => '1',
             ],
             [
                 'id' => 'ckdjdk',
-                'ss' => 'Sasaran strategis 1',
+                'name' => 'Sasaran strategis 1',
                 'k' => '2',
             ],
             [
                 'id' => 'mkmkdv',
-                'ss' => 'Sasaran strategis 2',
+                'name' => 'Sasaran strategis 2',
                 'k' => '0',
             ],
             [
                 'id' => 'kdfjdn',
-                'ss' => 'Sasaran strategis 3',
+                'name' => 'Sasaran strategis 3',
                 'k' => '1',
             ],
         ];
@@ -60,11 +60,11 @@
             <tbody class="border-b-2 border-primary/80 text-center">
                 @foreach ($data as $item)
                     @php
-                        $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_strategis":"' . $item['ss'] . '","jumlah_kegiatan":"' . $item['k'] . '"}';
+                        $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_strategis":"' . $item['name'] . '","jumlah_kegiatan":"' . $item['k'] . '"}';
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:overflow-hidden *:truncate">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
-                        <td title="{{ $item['ss'] }}" class="text-left">{{ $item['ss'] }}</td>
+                        <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['k'] }}">{{ $item['k'] }}</td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.manage link="{{ route('super-admin-rs-k', ['ss' => 'hahaha']) }}" />

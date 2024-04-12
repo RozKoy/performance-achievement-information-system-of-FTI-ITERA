@@ -17,7 +17,7 @@
         $data = [
             [
                 'id' => 'ckdjdk',
-                'sk' => 'Sasaran kinerja 1',
+                'name' => 'Sasaran kinerja 1',
                 'ikk' => [
                     'active' => 1,
                     'inactive' => 2,
@@ -25,7 +25,7 @@
             ],
             [
                 'id' => 'fkfsfkf',
-                'sk' => 'Sasaran kinerja 2',
+                'name' => 'Sasaran kinerja 2',
                 'ikk' => [
                     'active' => 0,
                     'inactive' => 0,
@@ -33,7 +33,7 @@
             ],
             [
                 'id' => 'sfdfhf',
-                'sk' => 'Sasaran kinerja 3',
+                'name' => 'Sasaran kinerja 3',
                 'ikk' => [
                     'active' => 1,
                     'inactive' => 0,
@@ -41,7 +41,7 @@
             ],
             [
                 'id' => 'fkfdfdfsfkf',
-                'sk' => 'Sasaran kinerja 4',
+                'name' => 'Sasaran kinerja 4',
                 'ikk' => [
                     'active' => 0,
                     'inactive' => 3,
@@ -63,11 +63,11 @@
                 @foreach ($data as $item)
                     @php
                         $sum = $item['ikk']['active'] + $item['ikk']['inactive'];
-                        $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_kinerja":"' . $item['sk'] . '","indikator_kinerja_kegiatan":"Total : ' . $sum . ', aktif : ' . $item['ikk']['active'] . ', tidak aktif : ' . $item['ikk']['inactive'] . '"}';
+                        $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_kinerja":"' . $item['name'] . '","indikator_kinerja_kegiatan":"Total : ' . $sum . ', aktif : ' . $item['ikk']['active'] . ', tidak aktif : ' . $item['ikk']['inactive'] . '"}';
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:overflow-hidden *:truncate">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
-                        <td title="{{ $item['sk'] }}" class="text-left">{{ $item['sk'] }}</td>
+                        <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
                         <td>
                             <div class="*:p-1 *:overflow-hidden *:truncate *:w-1/3 *:whitespace-nowrap mx-auto flex max-w-full items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
                                 <p title="Total : {{ $sum }}">Total : {{ $sum }}</p>
