@@ -123,6 +123,52 @@
         </div>
     </nav>
 
+    <div class="fixed bottom-5 right-5 rounded-full">
+        <div>
+            <button type="button" class="flex animate-bounce rounded-full bg-primary/90 fill-white p-0.5 text-sm shadow-sm shadow-primary/80 duration-1000 hover:animate-none hover:bg-primary/100 focus:animate-none focus:bg-primary/100 focus:ring-2 focus:ring-primary/90" aria-expanded="false" data-dropdown-toggle="time-information">
+                <span class="sr-only">Open user menu</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="aspect-square w-7 sm:w-8">
+                    <g>
+                        <path d="M12,24A12,12,0,1,1,24,12,12.013,12.013,0,0,1,12,24ZM12,2A10,10,0,1,0,22,12,10.011,10.011,0,0,0,12,2Z" />
+                        <path d="M13,15H11v-.743a3.954,3.954,0,0,1,1.964-3.5,2,2,0,0,0,1-2.125,2.024,2.024,0,0,0-1.6-1.595A2,2,0,0,0,10,9H8a4,4,0,1,1,5.93,3.505A1.982,1.982,0,0,0,13,14.257Z" />
+                        <rect x="11" y="17" width="2" height="2" />
+                    </g>
+                </svg>
+            </button>
+        </div>
+        <div class="z-40 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white shadow shadow-primary" id="time-information">
+            <div class="cursor-default px-4 py-3 text-sm text-primary" role="none">
+                <p role="none" title="Rencana strategis">
+                    Rencana Strategis
+                </p>
+                <div title="Januari - Juni | 2024" class="*:p-1 my-1 flex items-center gap-1 divide-x rounded-lg border">
+                    <p class="truncate font-semibold" role="none" title="Januari - Juni">
+                        Januari - Juni
+                    </p>
+                    <p class="truncate font-semibold" role="none" title="2024">
+                        2024
+                    </p>
+                </div>
+            </div>
+            <div class="cursor-default px-4 py-3 text-sm text-primary" role="none">
+                <p role="none" title="Indikator kinerja utama">
+                    Indikator Kinerja Utama
+                </p>
+                <div title="TW 1 | Januari - Maret | 2024" class="*:p-1 my-1 flex items-center gap-1 divide-x rounded-lg border">
+                    <p class="truncate font-semibold" role="none" title="TW 1">
+                        TW 1
+                    </p>
+                    <p class="truncate font-semibold" role="none" title="Januari - Maret">
+                        Januari - Maret
+                    </p>
+                    <p class="truncate font-semibold" role="none" title="2024">
+                        2024
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="p-4 sm:ml-72">
         <div class="mt-14 rounded-lg border-2 border-dashed border-primary p-4">
             <div class="flex flex-col gap-5 2xl:mx-auto 2xl:max-w-[2000px]">
