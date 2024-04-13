@@ -44,10 +44,6 @@ Route::group([
         return 'Halaman Capaian Kinerja';
     })->name('super-admin-achievement');
 
-    Route::get('/rencana-strategis', function () {
-        return 'Halaman Rencana Strategis';
-    })->name('super-admin-rs');
-
 
     Route::group([
         'prefix' => '/rencana-strategis'
