@@ -51,19 +51,6 @@
                     </x-partials.link.sidebar>
                 </li>
             </ul>
-            <ul class="space-y-2 py-1.5 font-medium">
-                <li>
-                    <a href="#" class="group flex items-center rounded-lg p-2 hover:bg-gray-100 hover:text-gray-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5 transition duration-75" fill="currentColor">
-                            <g>
-                                <path d="M23.259,16.2l-2.6-9.371A9.321,9.321,0,0,0,2.576,7.3L.565,16.35A3,3,0,0,0,3.493,20H7.1a5,5,0,0,0,9.8,0h3.47a3,3,0,0,0,2.89-3.8ZM12,22a3,3,0,0,1-2.816-2h5.632A3,3,0,0,1,12,22Zm9.165-4.395a.993.993,0,0,1-.8.395H3.493a1,1,0,0,1-.976-1.217l2.011-9.05a7.321,7.321,0,0,1,14.2-.372l2.6,9.371A.993.993,0,0,1,21.165,17.605Z" />
-                            </g>
-                        </svg>
-                        <span class="ms-3 flex-1 whitespace-nowrap">Pengumuman</span>
-                        <span class="ms-3 inline-flex h-3 w-3 items-center justify-center rounded-full bg-blue-100 p-3 text-sm font-medium text-blue-800">3</span>
-                    </a>
-                </li>
-            </ul>
         </div>
     </aside>
 
@@ -126,7 +113,7 @@
     <div class="fixed bottom-5 right-5 rounded-full">
         <div>
             <button type="button" class="flex animate-bounce rounded-full bg-primary/90 fill-white p-0.5 text-sm shadow-sm shadow-primary/80 duration-1000 hover:animate-none hover:bg-primary/100 focus:animate-none focus:bg-primary/100 focus:ring-2 focus:ring-primary/90" aria-expanded="false" data-dropdown-toggle="time-information">
-                <span class="sr-only">Open user menu</span>
+                <span class="sr-only">Open time information</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="aspect-square w-7 sm:w-8">
                     <g>
                         <path d="M12,24A12,12,0,1,1,24,12,12.013,12.013,0,0,1,12,24ZM12,2A10,10,0,1,0,22,12,10.011,10.011,0,0,0,12,2Z" />
@@ -136,16 +123,16 @@
                 </svg>
             </button>
         </div>
-        <div class="z-40 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white shadow shadow-primary" id="time-information">
+        <div class="*:whitespace-nowrap z-40 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white shadow shadow-primary" id="time-information">
             <div class="cursor-default px-4 py-3 text-sm text-primary" role="none">
                 <p role="none" title="Rencana strategis">
                     Rencana Strategis
                 </p>
-                <div title="Januari - Juni | 2024" class="*:p-1 my-1 flex items-center gap-1 divide-x rounded-lg border">
-                    <p class="truncate font-semibold" role="none" title="Januari - Juni">
+                <div title="Januari - Juni | 2024" class="*:p-1.5 my-1 flex items-center gap-1 divide-x divide-white rounded-lg bg-primary/80 text-white">
+                    <p role="none" title="Januari - Juni">
                         Januari - Juni
                     </p>
-                    <p class="truncate font-semibold" role="none" title="2024">
+                    <p role="none" title="2024">
                         2024
                     </p>
                 </div>
@@ -154,14 +141,14 @@
                 <p role="none" title="Indikator kinerja utama">
                     Indikator Kinerja Utama
                 </p>
-                <div title="TW 1 | Januari - Maret | 2024" class="*:p-1 my-1 flex items-center gap-1 divide-x rounded-lg border">
-                    <p class="truncate font-semibold" role="none" title="TW 1">
+                <div title="TW 1 | Januari - Maret | 2024" class="*:p-1.5 my-1 flex items-center gap-1 divide-x divide-white rounded-lg bg-primary/80 text-white">
+                    <p role="none" title="TW 1">
                         TW 1
                     </p>
-                    <p class="truncate font-semibold" role="none" title="Januari - Maret">
+                    <p role="none" title="Januari - Maret">
                         Januari - Maret
                     </p>
-                    <p class="truncate font-semibold" role="none" title="2024">
+                    <p role="none" title="2024">
                         2024
                     </p>
                 </div>
