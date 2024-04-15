@@ -66,7 +66,7 @@
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
-                <tr class="*:font-normal *:px-5 *:py-2.5 divide-x bg-primary/80 text-white">
+                <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
                     <th title="Nomor">No</th>
                     <th title="Nama pengguna">Nama Pengguna</th>
                     <th title="Alamat email">Email</th>
