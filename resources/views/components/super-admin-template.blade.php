@@ -110,7 +110,7 @@
         </div>
     </nav>
 
-    <div class="fixed bottom-5 right-5 rounded-full">
+    <div class="fixed bottom-5 right-5 z-20 rounded-full">
         <div>
             <button type="button" class="flex animate-bounce rounded-full bg-primary/90 fill-white p-0.5 text-sm shadow-sm shadow-primary/80 duration-1000 hover:animate-none hover:bg-primary/100 focus:animate-none focus:bg-primary/100 focus:ring-2 focus:ring-primary/90" aria-expanded="false" data-dropdown-toggle="time-information">
                 <span class="sr-only">Open time information</span>
