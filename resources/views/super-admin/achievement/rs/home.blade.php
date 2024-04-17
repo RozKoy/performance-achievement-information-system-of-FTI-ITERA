@@ -21,7 +21,7 @@
     $period = request()->query('period') !== null ? request()->query('period') : '2';
     $badge = [$periods[intval($period) - 1]['title'], $year];
 @endphp
-<x-super-admin-template title="Pengguna - Super Admin">
+<x-super-admin-template title="Renstra - Capaian Kinerja - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.filter.achievement />
     <div id="filter" class="hidden flex-col gap-5">
