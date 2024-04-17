@@ -158,7 +158,7 @@
 
     <div class="p-4 sm:ml-72">
         <div class="mt-14 rounded-lg border-2 border-dashed border-primary p-4">
-            <div class="flex flex-col gap-5 2xl:mx-auto 2xl:max-w-[2000px]">
+            <div class="flex flex-col gap-5 2xl:mx-auto 2xl:min-w-[75vw] 2xl:max-w-max">
 
                 {{ $slot }}
 
