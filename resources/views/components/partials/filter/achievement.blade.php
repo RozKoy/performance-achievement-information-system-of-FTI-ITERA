@@ -1,0 +1,4 @@
+<div class="*:flex-1 *:rounded-lg *:p-1 *:border-2 *:border-transparent *:bg-primary/80 flex gap-2.5 text-center text-white max-md:text-sm max-sm:text-xs">
+    <a href="{{ url(route('super-admin-achievement-rs')) }}" title="Halaman Rencana Strategis" class="@if (request()->routeIs('super-admin-achievement-rs')) font-semibold outline outline-2 outline-offset-2 outline-primary/80 @endif hover:border-primary/80 hover:bg-white hover:text-primary">Rencana Strategis</a>
+    <a href="{{ url(route('super-admin-achievement-iku')) }}" title="Halaman Indikator Kinerja Utama" class="@if (request()->routeIs('super-admin-achievement-iku')) font-semibold outline outline-2 outline-offset-2 outline-primary/80 @endif hover:border-primary/80 hover:bg-white hover:text-primary">Indikator Kinerja Utama</a>
+</div>
