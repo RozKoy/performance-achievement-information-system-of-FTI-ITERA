@@ -124,34 +124,17 @@
             </button>
         </div>
         <div class="*:whitespace-nowrap z-40 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white shadow shadow-primary" id="time-information">
-            <div class="cursor-default px-4 py-3 text-sm text-primary" role="none">
+            <div class="*:my-1 cursor-default px-4 py-2.5 text-sm text-primary" role="none">
                 <p role="none" title="Rencana strategis">
                     Rencana Strategis
                 </p>
-                <div title="Januari - Juni | 2024" class="*:p-1.5 my-1 flex items-center gap-1 divide-x divide-white rounded-lg bg-primary/80 text-white">
-                    <p role="none" title="Januari - Juni">
-                        Januari - Juni
-                    </p>
-                    <p role="none" title="2024">
-                        2024
-                    </p>
-                </div>
+                <x-partials.badge.time :data="['Januari - Juni', '2024']" />
             </div>
-            <div class="cursor-default px-4 py-3 text-sm text-primary" role="none">
+            <div class="*:my-1 cursor-default px-4 py-2.5 text-sm text-primary" role="none">
                 <p role="none" title="Indikator kinerja utama">
                     Indikator Kinerja Utama
                 </p>
-                <div title="TW 1 | Januari - Maret | 2024" class="*:p-1.5 my-1 flex items-center gap-1 divide-x divide-white rounded-lg bg-primary/80 text-white">
-                    <p role="none" title="TW 1">
-                        TW 1
-                    </p>
-                    <p role="none" title="Januari - Maret">
-                        Januari - Maret
-                    </p>
-                    <p role="none" title="2024">
-                        2024
-                    </p>
-                </div>
+                <x-partials.badge.time :data="['TW 1', 'Januari - Maret', '2024']" />
             </div>
         </div>
     </div>
