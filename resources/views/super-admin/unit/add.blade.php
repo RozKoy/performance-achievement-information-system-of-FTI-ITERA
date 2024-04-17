@@ -1,18 +1,18 @@
 @php
     $breadCrumbs = [
         [
-            'link' => 'super-admin-organization',
-            'name' => 'Organisasi',
+            'link' => 'super-admin-unit',
+            'name' => 'Unit',
         ],
         [
-            'link' => 'super-admin-organization-add',
+            'link' => 'super-admin-unit-add',
             'name' => 'Tambah',
         ],
     ];
 @endphp
-<x-super-admin-template title="Tambah Organisasi - Super Admin">
+<x-super-admin-template title="Tambah Unit - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="tambah organisasi" previous="super-admin-organization" />
+    <x-partials.heading.h2 text="tambah unit" previous="super-admin-unit" />
     @php
         $users = [
             [
@@ -60,8 +60,8 @@
         ];
     @endphp
     <form action="" class="flex flex-col gap-2">
-        <x-partials.label.default for="name" title="Nama organisasi" text="Nama Organisasi" required />
-        <x-partials.input.text name="name" title="Nama organisasi" autofocus required />
+        <x-partials.label.default for="name" title="Nama unit" text="Nama Unit" required />
+        <x-partials.input.text name="name" title="Nama unit" autofocus required />
         <p class="text-sm sm:text-base">Pilih Pengguna</p>
         <div class="*:border *:rounded-lg flex flex-wrap gap-1">
             @foreach ($users as $user)

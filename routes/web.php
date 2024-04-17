@@ -132,10 +132,10 @@ Route::group([
 
 
     Route::group([
-        'prefix' => '/organisasi'
+        'prefix' => '/unit'
     ], function () {
-        Route::view('/', 'super-admin.organization.home')->name('super-admin-organization');
-        Route::view('/tambah', 'super-admin.organization.add')->name('super-admin-organization-add');
-        Route::view('/{id}/ubah', 'super-admin.organization.edit')->name('super-admin-organization-edit');
+        Route::view('/', 'super-admin.unit.home')->name('super-admin-unit');
+        Route::view('/tambah', 'super-admin.unit.add')->name('super-admin-unit-add');
+        Route::view('/{id}/ubah', 'super-admin.unit.edit')->name('super-admin-unit-edit');
     });
 });
