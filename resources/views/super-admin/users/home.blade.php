@@ -35,7 +35,7 @@
                 'email' => 'Rozkoy@student.gmail.com',
                 'role' => 'admin',
                 'access' => 'editor',
-                'organization' => 'Teknik Informatika',
+                'unit' => 'Teknik Informatika',
             ],
             [
                 'id' => '4',
@@ -43,7 +43,7 @@
                 'email' => 'Rozkoy@student.gmail.com',
                 'role' => 'admin',
                 'access' => 'viewer',
-                'organization' => 'Teknik Informatika Fakultas Teknologi Sumatera',
+                'unit' => 'Teknik Informatika Fakultas Teknologi Sumatera',
             ],
             [
                 'id' => '5',
@@ -51,7 +51,7 @@
                 'email' => 'Rozkoy@student.gmail.com',
                 'role' => 'admin',
                 'access' => 'editor',
-                'organization' => null,
+                'unit' => null,
             ],
             [
                 'id' => '6',
@@ -59,7 +59,7 @@
                 'email' => 'Rozkoy@student.gmail.com',
                 'role' => 'admin',
                 'access' => 'viewer',
-                'organization' => null,
+                'unit' => null,
             ],
         ];
     @endphp
@@ -77,11 +77,16 @@
             <tbody class="border-b-2 border-primary/80 text-center">
                 @foreach ($data as $item)
                     @php
-                        $modalData = '{"nama_pengguna":"' . $item['name'] . '","email":"' . $item['email'] . '","hak_akses":"' . $item['role'] . '","jenis_akses":"' . $item['access'] . '","organisasi":';
-                        if (!isset($item['organization'])) {
-                            $modalData .= '"NULL"}';
+                        $modalData = '{"nomor":"' . $loop->iteration . '","nama_pengguna":"' . $item['name'] . '","email":"' . $item['email'] . '","hak_akses":"' . $item['role'] . '","jenis_akses":"' . $item['access'] . '"';
+                        if ($item['role'] !== 'superAdmin') {
+                            $modalData .= ',"organisasi":';
+                            if (!isset($item['unit'])) {
+                                $modalData .= '"NULL"}';
+                            } else {
+                                $modalData .= '"' . $item['unit'] . '"}';
+                            }
                         } else {
-                            $modalData .= '"' . $item['organization'] . '"}';
+                            $modalData .= '}';
                         }
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:overflow-hidden *:truncate">
@@ -92,7 +97,9 @@
                             <div class="*:p-1 *:overflow-hidden *:truncate *:w-1/3 *:whitespace-nowrap mx-auto flex max-w-full items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
                                 <p title="{{ $item['role'] === 'superAdmin' ? 'Super Admin' : 'Admin' }}">{{ $item['role'] === 'superAdmin' ? 'Super Admin' : 'Admin' }}</p>
                                 <p title="{{ $item['access'] === 'editor' ? 'Editor' : 'Viewer' }}">{{ $item['access'] === 'editor' ? 'Editor' : 'Viewer' }}</p>
-                                <p title="{{ isset($item['organization']) ? $item['organization'] : 'NULL' }}">{{ isset($item['organization']) ? $item['organization'] : 'NULL' }}</p>
+                                @if ($item['role'] !== 'superAdmin')
+                                    <p title="{{ isset($item['unit']) ? $item['unit'] : 'NULL' }}">{{ isset($item['unit']) ? $item['unit'] : 'NULL' }}</p>
+                                @endif
                             </div>
                         </td>
                         <td class="flex items-center justify-center gap-1">

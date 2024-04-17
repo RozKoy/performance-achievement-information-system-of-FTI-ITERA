@@ -45,7 +45,7 @@
             <tbody class="border-b-2 border-primary/80 text-center">
                 @foreach ($data as $item)
                     @php
-                        $modalData = '{"nama_unit":"' . $item['name'] . '","jumlah_pengguna":"' . $item['users'] . '"}';
+                        $modalData = '{"nomor":"' . $loop->iteration . '","nama_unit":"' . $item['name'] . '","jumlah_pengguna":"' . $item['users'] . '"}';
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:overflow-hidden *:truncate">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>

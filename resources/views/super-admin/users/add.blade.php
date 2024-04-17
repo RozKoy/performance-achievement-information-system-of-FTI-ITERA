@@ -12,7 +12,7 @@
     $data = [
         [
             'value' => '',
-            'text' => 'Pilih Program Studi',
+            'text' => 'Pilih Unit',
         ],
         [
             'value' => 'fdkdncd',
@@ -69,7 +69,7 @@
             </div>
         </div>
         <div id="admin-selection">
-            <x-partials.input.select name="organisasi" title="Pilih organisasi" :$data required />
+            <x-partials.input.select name="unit" title="Pilih unit" :$data required />
             <div class="flex items-center justify-center">
                 <input type="checkbox" title="Admin akses hanya melihat" name="access" id="viewer-admin" value="admin-viewer" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90">
                 <label for="viewer-admin" title="Admin akses hanya melihat">Hanya melihat</label>
