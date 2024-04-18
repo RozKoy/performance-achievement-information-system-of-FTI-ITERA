@@ -192,7 +192,6 @@
             <thead>
                 <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
                     <th title="Nomor">No</th>
-                    <th title="Kode">Kode</th>
                     <th title="Sasaran strategis">Sasaran Strategis</th>
                     <th title="Kegiatan">Kegiatan</th>
                     <th title="Indikator kinerja">Indikator Kinerja</th>
@@ -214,7 +213,6 @@
                                 @if ($loop->iteration === 1)
                                     @if ($loop->parent->iteration === 1)
                                         <td title="{{ $loop->parent->parent->iteration }}" rowspan="{{ $ss['rowspan'] }}">{{ $loop->parent->parent->iteration }}</td>
-                                        <td title="SS-{{ $loop->parent->parent->iteration }}" rowspan="{{ $ss['rowspan'] }}">SS-{{ $loop->parent->parent->iteration }}</td>
                                         <td title="{{ $ss['ss'] }}" rowspan="{{ $ss['rowspan'] }}" class="min-w-72 group relative z-10 w-max text-left">
                                             {{ $ss['ss'] }}
                                             <x-partials.button.edit link="{{ route('super-admin-rs-ss-edit', ['id' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
