@@ -15,7 +15,7 @@
 @endphp
 <x-super-admin-template title="IKU - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="manajemen indikator kinerja utama - indikator kinerja kegiatan" />
+    <x-partials.heading.h2 text="manajemen indikator kinerja utama - indikator kinerja kegiatan" previous="super-admin-iku-sk" />
     <x-partials.heading.h3 title="Sasaran kegiatan" dataNumber="10" dataText="Sasaran Kegiatan blabla blab lanc balncj ncjecn" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
@@ -65,7 +65,7 @@
                         <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['ps'] }}">{{ $item['ps'] }}</td>
                         <td class="flex items-center justify-center gap-1">
-                            <x-partials.button.manage link="/" />
+                            <x-partials.button.manage link="{{ route('super-admin-iku-ps', ['sk' => 'hahaha', 'ikk' => 'hihihi']) }}" />
                             <x-partials.button.edit link="{{ route('super-admin-iku-ikk-edit', ['id' => $item['id'], 'sk' => 'cdmkcmdc']) }}" />
                             <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$modalData" />
                         </td>

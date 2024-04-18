@@ -113,6 +113,14 @@ Route::group([
         });
 
         Route::group([
+            'prefix' => '/{sk}/{ikk}/program-strategis'
+        ], function () {
+            Route::view('/', 'super-admin.iku.ps.home')->name('super-admin-iku-ps');
+            Route::view('/tambah', 'super-admin.iku.ps.add')->name('super-admin-iku-ps-add');
+            Route::view('/{id}/ubah', 'super-admin.iku.ps.edit')->name('super-admin-iku-ps-edit');
+        });
+
+        Route::group([
             'prefix' => '/{sk}/{ikk}/data-dukung'
         ], function () {
             Route::view('/', 'super-admin.iku.dd.home')->name('super-admin-iku-dd');
