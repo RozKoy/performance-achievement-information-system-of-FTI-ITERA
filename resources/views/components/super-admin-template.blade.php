@@ -73,7 +73,7 @@
                     <div class="ms-3 flex items-center gap-2">
                         <p title="Editor Access" class="inline-flex items-center justify-center rounded-full bg-primary px-2 py-1 text-xs font-semibold uppercase text-white sm:text-sm">editor</p>
                         <div>
-                            <button type="button" class="flex rounded-full fill-primary text-sm focus:ring-4 focus:ring-gray-300" aria-expanded="false" data-dropdown-toggle="user-menu">
+                            <button type="button" title="Tombol profil" class="flex rounded-full fill-primary text-sm focus:ring-4 focus:ring-gray-300" aria-expanded="false" data-dropdown-toggle="user-menu">
                                 <span class="sr-only">Open user menu</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 24 24" class="h-6 w-6 sm:h-8 sm:w-8">
                                     <path d="m12,0C5.383,0,0,5.383,0,12s5.383,12,12,12,12-5.383,12-12S18.617,0,12,0Zm-4,21.164v-2.164c0-.552.449-1,1-1h6c.551,0,1,.448,1,1v2.164c-1.226.537-2.578.836-4,.836s-2.774-.299-4-.836Zm10-1.169v-.995c0-1.654-1.346-3-3-3h-6c-1.654,0-3,1.346-3,3v.995c-2.427-1.826-4-4.73-4-7.995C2,6.486,6.486,2,12,2s10,4.486,10,10c0,3.264-1.573,6.169-4,7.995Zm-6-13.995c-2.206,0-4,1.794-4,4s1.794,4,4,4,4-1.794,4-4-1.794-4-4-4Zm0,6c-1.103,0-2-.897-2-2s.897-2,2-2,2,.897,2,2-.897,2-2,2Z" />
@@ -112,7 +112,7 @@
 
     <div class="fixed bottom-5 right-5 z-20 rounded-full">
         <div>
-            <button type="button" class="flex animate-bounce rounded-full bg-primary/90 fill-white p-0.5 text-sm shadow-sm shadow-primary/80 duration-1000 hover:animate-none hover:bg-primary/100 focus:animate-none focus:bg-primary/100 focus:ring-2 focus:ring-primary/90" aria-expanded="false" data-dropdown-toggle="time-information">
+            <button type="button" title="Tombol informasi waktu" class="flex animate-bounce rounded-full bg-primary/90 fill-white p-0.5 text-sm shadow-sm shadow-primary/80 duration-1000 hover:animate-none hover:bg-primary/100 focus:animate-none focus:bg-primary/100 focus:ring-2 focus:ring-primary/90" aria-expanded="false" data-dropdown-toggle="time-information">
                 <span class="sr-only">Open time information</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="aspect-square w-7 sm:w-8">
                     <g>
