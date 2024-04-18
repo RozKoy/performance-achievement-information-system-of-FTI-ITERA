@@ -240,7 +240,7 @@
                                     <td title="{{ $ik['realization'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}">{{ $ik['realization'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}</td>
                                 @endif
                                 <td title="{{ $ik['done'] === true ? 'Tercapai' : 'Tidak tercapai' }}">{{ $ik['done'] === true ? 'Iya' : 'Tidak' }}</td>
-                                <td title="{{ $ik['evaluation'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}">{{ $ik['evaluation'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}</td>
+                                <td title="{{ $ik['evaluation'] }}">{{ $ik['evaluation'] }}</td>
                                 <td title="{{ $ik['follow_up'] }}">{{ $ik['follow_up'] }}</td>
                                 <td title="{{ $ik['status'] === 'active' ? 'Aktif' : 'Tidak aktif' }}" class="{{ $ik['status'] === 'active' ? 'text-green-500' : 'text-red-500' }} whitespace-nowrap">{{ $ik['status'] === 'active' ? 'Aktif' : 'Tidak Aktif' }}</td>
                                 @php
