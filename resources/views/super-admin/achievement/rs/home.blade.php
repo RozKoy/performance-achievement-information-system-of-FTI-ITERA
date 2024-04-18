@@ -17,8 +17,12 @@
             'title' => 'Juli - Desember',
             'value' => '2',
         ],
+        [
+            'title' => 'Januari - Desember',
+            'value' => '3',
+        ],
     ];
-    $period = request()->query('period') !== null ? request()->query('period') : '2';
+    $period = request()->query('period') !== null ? request()->query('period') : '3';
     $badge = [$periods[intval($period) - 1]['title'], $year];
 @endphp
 <x-super-admin-template title="Renstra - Capaian Kinerja - Super Admin">
@@ -34,7 +38,7 @@
         <x-partials.badge.time :data="$badge" />
         <x-partials.button.filter />
     </div>
-    <div class="flex items-center justify-between">
+    <div class="flex flex-wrap items-center justify-between">
         <div class="flex items-center justify-center">
             <label title="Tombol power [status: {{ $system === 'active' ? 'Aktif' : 'Tidak aktif' }}]" class="relative inline-flex items-center">
                 <input type="checkbox" value="{{ $system }}" class="peer sr-only" @if ($system === 'active') checked @endif>
@@ -188,7 +192,7 @@
                     <th title="Realisasi FTI">Realisasi FTI</th>
                     <th title="Evaluasi">Evaluasi</th>
                     <th title="Tindak lanjut">Tindak Lanjut</th>
-                    <th title="Status">Status</th>
+                    <th title="Status penugasan">Status Penugasan</th>
                     <th title="Status pengisian">Status Pengisian</th>
                     <th title="Aksi">Aksi</th>
                 </tr>
@@ -229,9 +233,19 @@
                                 <td title="{{ $ik['evaluation'] }}">{{ $ik['evaluation'] }}</td>
                                 <td title="{{ $ik['follow_up'] }}">{{ $ik['follow_up'] }}</td>
                                 <td title="{{ $ik['status'] === 'active' ? 'Aktif' : 'Tidak aktif' }}" class="{{ $ik['status'] === 'active' ? 'text-green-500' : 'text-red-500' }} whitespace-nowrap">{{ $ik['status'] === 'active' ? 'Aktif' : 'Tidak Aktif' }}</td>
-                                <td title="{{ $ik['count'] }}/21">{{ $ik['count'] }}/21 ({{ number_format((floatval($ik['count']) * 100) / 21, 2) }}%)</td>
+                                @php
+                                    $progress = number_format((floatval($ik['count']) * 100) / 21, 2);
+                                @endphp
+                                <td title="Status pengisian : {{ $progress }}%">
+                                    <div class="flex flex-col gap-1">
+                                        <p>{{ $ik['count'] }}/21</p>
+                                        <div class="w-full rounded-full bg-gray-200">
+                                            <div class="@if ($progress <= 50) bg-red-500 text-red-100 @else @if ($progress <= 70) bg-yellow-500 text-yellow-100 @else bg-green-500 text-green-100 @endif @endif rounded-full p-0.5 text-center text-xs font-medium leading-none" style="width: {{ $progress }}%">{{ $progress }}%</div>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td class="flex items-start justify-center gap-1">
-                                    <x-partials.button.detail link="/" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                    <x-partials.button.detail link="/" />
                                 </td>
                             </tr>
                         @endforeach
