@@ -56,6 +56,7 @@
             </svg>
         </button>
     </div>
+    <p class="text-primary max-xl:text-sm max-sm:text-xs">Status Pengisian : <span>85%</span>, Tercapai : <span>23</span>, Tidak tercapai : <span>3</span></p>
     @php
         $data = [
             [
@@ -73,6 +74,7 @@
                                 'ik' => 'Jumlah matakuliah yang menerapkan pendekatan pembelajaran SCL pada PS di bawah naungan FTI',
                                 'type' => 'number',
                                 'status' => 'inactive',
+                                'done' => false,
                                 'target' => '238',
                                 'realization' => '142',
                                 'evaluation' => 'Tidak terdata dengan baik',
@@ -91,6 +93,7 @@
                                 'ik' => 'Persentase dosen FTI yang memiliki sertifikat pelatihan pembelajaran berbasis TIK',
                                 'type' => 'percent',
                                 'status' => 'active',
+                                'done' => false,
                                 'target' => '15',
                                 'realization' => '0',
                                 'evaluation' => 'Keterbatasan Anggaran',
@@ -116,6 +119,7 @@
                                 'ik' => 'Jumlah matakuliah yang menerapkan pendekatan pembelajaran SCL pada PS di bawah naungan FTI',
                                 'type' => 'string',
                                 'status' => 'active',
+                                'done' => true,
                                 'target' => 'tersedia',
                                 'realization' => 'tersedia',
                                 'evaluation' => 'Tidak terdata dengan baik',
@@ -127,6 +131,7 @@
                                 'ik' => 'Jumlah matakuliah yang menerapkan pendekatan pembelajaran SCL pada PS di bawah naungan FTI',
                                 'type' => 'number',
                                 'status' => 'inactive',
+                                'done' => false,
                                 'target' => '238',
                                 'realization' => '142',
                                 'evaluation' => 'Tidak terdata dengan baik',
@@ -138,6 +143,7 @@
                                 'ik' => 'Jumlah matakuliah yang menerapkan pendekatan pembelajaran SCL pada PS di bawah naungan FTI',
                                 'type' => 'percent',
                                 'status' => 'active',
+                                'done' => true,
                                 'target' => '75',
                                 'realization' => '80',
                                 'evaluation' => 'Tidak terdata dengan baik',
@@ -156,6 +162,7 @@
                                 'ik' => 'Persentase dosen FTI yang memiliki sertifikat pelatihan pembelajaran berbasis TIK',
                                 'type' => 'percent',
                                 'status' => 'active',
+                                'done' => false,
                                 'target' => '15',
                                 'realization' => '0',
                                 'evaluation' => 'Keterbatasan Anggaran',
@@ -167,6 +174,7 @@
                                 'ik' => 'Persentase dosen FTI yang memiliki sertifikat pelatihan pembelajaran berbasis TIK',
                                 'type' => 'number',
                                 'status' => 'active',
+                                'done' => false,
                                 'target' => '15',
                                 'realization' => '0',
                                 'evaluation' => 'Keterbatasan Anggaran',
@@ -190,6 +198,7 @@
                     <th title="Indikator kinerja">Indikator Kinerja</th>
                     <th title="Target FTI">Target FTI</th>
                     <th title="Realisasi FTI">Realisasi FTI</th>
+                    <th title="Tercapai">Tercapai</th>
                     <th title="Evaluasi">Evaluasi</th>
                     <th title="Tindak lanjut">Tindak Lanjut</th>
                     <th title="Status penugasan">Status Penugasan</th>
@@ -220,17 +229,18 @@
                                     {{ $ik['ik'] }}
                                     <x-partials.button.edit link="{{ route('super-admin-rs-ik-edit', ['id' => $ik['id'], 'k' => $k['id'], 'ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                 </td>
-                                <td title="{{ $ik['target'] }}">{{ $ik['target'] }}</td>
+                                <td title="{{ $ik['target'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}">{{ $ik['target'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}</td>
                                 @if ($ik['type'] !== 'string')
                                     @if (floatval($ik['target']) <= floatval($ik['realization']))
-                                        <td title="{{ $ik['realization'] }}" class="text-green-500">{{ $ik['realization'] }}</td>
+                                        <td title="{{ $ik['realization'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}" class="text-green-500">{{ $ik['realization'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}</td>
                                     @else
-                                        <td title="{{ $ik['realization'] }}" class="text-red-500">{{ $ik['realization'] }}</td>
+                                        <td title="{{ $ik['realization'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}" class="text-red-500">{{ $ik['realization'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}</td>
                                     @endif
                                 @else
-                                    <td title="{{ $ik['realization'] }}">{{ $ik['realization'] }}</td>
+                                    <td title="{{ $ik['realization'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}">{{ $ik['realization'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}</td>
                                 @endif
-                                <td title="{{ $ik['evaluation'] }}">{{ $ik['evaluation'] }}</td>
+                                <td title="{{ $ik['done'] === true ? 'Tercapai' : 'Tidak tercapai' }}">{{ $ik['done'] === true ? 'Iya' : 'Tidak' }}</td>
+                                <td title="{{ $ik['evaluation'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}">{{ $ik['evaluation'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}</td>
                                 <td title="{{ $ik['follow_up'] }}">{{ $ik['follow_up'] }}</td>
                                 <td title="{{ $ik['status'] === 'active' ? 'Aktif' : 'Tidak aktif' }}" class="{{ $ik['status'] === 'active' ? 'text-green-500' : 'text-red-500' }} whitespace-nowrap">{{ $ik['status'] === 'active' ? 'Aktif' : 'Tidak Aktif' }}</td>
                                 @php
@@ -240,7 +250,15 @@
                                     <div class="flex flex-col gap-1">
                                         <p>{{ $ik['count'] }}/21</p>
                                         <div class="w-full rounded-full bg-gray-200">
-                                            <div class="@if ($progress <= 50) bg-red-500 text-red-100 @else @if ($progress <= 70) bg-yellow-500 text-yellow-100 @else bg-green-500 text-green-100 @endif @endif rounded-full p-0.5 text-center text-xs font-medium leading-none" style="width: {{ $progress }}%">{{ $progress }}%</div>
+                                            @if ($progress <= 50)
+                                                <div class="rounded-full bg-red-500 p-0.5 text-center text-xs font-medium leading-none text-red-100" style="width: {{ $progress }}%">{{ $progress }}%</div>
+                                            @else
+                                                @if ($progress <= 70)
+                                                    <div class="rounded-full bg-yellow-500 p-0.5 text-center text-xs font-medium leading-none text-yellow-100" style="width: {{ $progress }}%">{{ $progress }}%</div>
+                                                @else
+                                                    <div class="rounded-full bg-green-500 p-0.5 text-center text-xs font-medium leading-none text-green-100" style="width: {{ $progress }}%">{{ $progress }}%</div>
+                                                @endif
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
