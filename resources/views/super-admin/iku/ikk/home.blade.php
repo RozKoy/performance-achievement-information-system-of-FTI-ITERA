@@ -2,21 +2,21 @@
     $breadCrumbs = [
         [
             'link' => 'super-admin-iku-sk',
-            'name' => 'IKU - Sasaran Kinerja',
+            'name' => 'IKU - Sasaran Kegiatan',
         ],
         [
             'link' => 'super-admin-iku-ikk',
             'name' => 'IKU - Indikator Kinerja Kegiatan',
             'params' => [
-                'sk' => 'cdmkcmdc',
+                'sk' => 'hahahah',
             ],
         ],
     ];
 @endphp
 <x-super-admin-template title="IKU - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="manajemen indikator kinerja utama - indikator kinerja kegiatan" previous="super-admin-iku-sk" />
-    <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="2" dataText="Sasaran Kinerja blabla blab lanc balncj ncjecn" />
+    <x-partials.heading.h2 text="manajemen indikator kinerja utama - indikator kinerja kegiatan" />
+    <x-partials.heading.h3 title="Sasaran kegiatan" dataNumber="10" dataText="Sasaran Kegiatan blabla blab lanc balncj ncjecn" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
         <x-partials.button.add route="{{ route('super-admin-iku-ikk-add', ['sk' => 'cdmkcmdc']) }}" />
@@ -25,31 +25,23 @@
         $data = [
             [
                 'id' => 'ckdjdk',
-                'name' => 'indikator kinerja kegiatan 1',
-                'unit' => 'mahasiswa',
-                'status' => 'active',
-                'dd' => '5',
+                'name' => 'Indikator kinerja kegiatan 1',
+                'ps' => '0',
             ],
             [
-                'id' => 'sdksdss',
-                'name' => 'indikator kinerja kegiatan 2',
-                'unit' => 'mahasiswa',
-                'status' => 'inactive',
-                'dd' => '0',
+                'id' => 'fkfsfkf',
+                'name' => 'Indikator kinerja kegiatan 2',
+                'ps' => '3',
             ],
             [
-                'id' => 'dfhghhff',
-                'name' => 'indikator kinerja kegiatan 3',
-                'unit' => 'lulusan',
-                'status' => 'active',
-                'dd' => '2',
+                'id' => 'sfdfhf',
+                'name' => 'Indikator kinerja kegiatan 3',
+                'ps' => '2',
             ],
             [
-                'id' => 'mgfdffdg',
-                'name' => 'indikator kinerja kegiatan 4',
-                'unit' => 'mahasiswa',
-                'status' => 'inactive',
-                'dd' => '1',
+                'id' => 'fkfdfdfsfkf',
+                'name' => 'Indikator kinerja kegiatan 4',
+                'ps' => '4',
             ],
         ];
     @endphp
@@ -59,35 +51,22 @@
                 <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
                     <th title="Nomor">No</th>
                     <th title="Indikator kinerja kegiatan">Indikator Kinerja Kegiatan</th>
-                    <th title="Satuan">Satuan</th>
-                    <th title="Data dukung">Data Dukung</th>
-                    <th title="Status">Status</th>
+                    <th title="Jumlah program strategis">Jumlah Program Strategis</th>
                     <th title="Aksi">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="border-b-2 border-primary/80 text-center">
+            <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
                 @foreach ($data as $item)
                     @php
-                        $modalData = '{"nomor":"' . $loop->iteration . '","indikator_kinerja_kegiatan":"' . $item['name'] . '","satuan":"' . $item['unit'] . '","data_dukung":"' . $item['dd'] . '","status":';
-                        $modalData .= $item['status'] === 'active' ? '"aktif"' : '"tidak aktif"';
-                        $modalData .= '}';
+                        $modalData = '{"nomor":"' . $loop->iteration . '","indikator_kinerja_kegiatan":"' . $item['name'] . '","jumlah_program_strategis":"' . $item['ps'] . '"}';
                     @endphp
-                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:overflow-hidden *:truncate">
+                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:break-words border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
-                        <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
-                        <td title="{{ $item['unit'] }}">{{ $item['unit'] }}</td>
-                        <td title="{{ $item['dd'] }}">{{ $item['dd'] }}</td>
-                        <td title="Status : {{ $item['status'] === 'active' ? 'aktif' : 'tidak aktif' }} {{ $item['dd'] === '0' ? '- Isi data dukung terlebih dahulu' : '' }}">
-                            <div class="flex items-center justify-center">
-                                <label class="relative inline-flex items-center">
-                                    <input type="checkbox" value="{{ $item['status'] }}" class="peer sr-only" @if ($item['status'] === 'active') checked @endif @if ($item['dd'] === '0') disabled @endif>
-                                    <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 peer-disabled:cursor-not-allowed peer-disabled:bg-slate-300 peer-disabled:after:border-slate-300 rtl:peer-checked:after:-translate-x-full"></div>
-                                </label>
-                            </div>
-                        </td>
+                        <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
+                        <td title="{{ $item['ps'] }}">{{ $item['ps'] }}</td>
                         <td class="flex items-center justify-center gap-1">
-                            <x-partials.button.manage link="{{ route('super-admin-iku-dd', ['sk' => 'mkdcmkd', 'ikk' => 'ncdndncd']) }}" />
-                            <x-partials.button.edit link="{{ route('super-admin-iku-ikk-edit', ['id' => $item['id'], 'sk' => 'hahaha']) }}" />
+                            <x-partials.button.manage link="/" />
+                            <x-partials.button.edit link="{{ route('super-admin-iku-ikk-edit', ['id' => $item['id'], 'sk' => 'cdmkcmdc']) }}" />
                             <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$modalData" />
                         </td>
                     </tr>
