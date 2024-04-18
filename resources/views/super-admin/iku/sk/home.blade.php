@@ -2,13 +2,13 @@
     $breadCrumbs = [
         [
             'link' => 'super-admin-iku-sk',
-            'name' => 'IKU - Sasaran Kinerja',
+            'name' => 'IKU - Sasaran Kegiatan',
         ],
     ];
 @endphp
 <x-super-admin-template title="IKU - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="manajemen indikator kinerja utama - sasaran kinerja" />
+    <x-partials.heading.h2 text="manajemen indikator kinerja utama - sasaran kegiatan" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
         <x-partials.button.add href="super-admin-iku-sk-add" />
@@ -17,35 +17,23 @@
         $data = [
             [
                 'id' => 'ckdjdk',
-                'name' => 'Sasaran kinerja 1',
-                'ikk' => [
-                    'active' => 1,
-                    'inactive' => 2,
-                ],
+                'name' => 'Sasaran kegiatan 1',
+                'ikk' => '0',
             ],
             [
                 'id' => 'fkfsfkf',
-                'name' => 'Sasaran kinerja 2',
-                'ikk' => [
-                    'active' => 0,
-                    'inactive' => 0,
-                ],
+                'name' => 'Sasaran kegiatan 2',
+                'ikk' => '3',
             ],
             [
                 'id' => 'sfdfhf',
-                'name' => 'Sasaran kinerja 3',
-                'ikk' => [
-                    'active' => 1,
-                    'inactive' => 0,
-                ],
+                'name' => 'Sasaran kegiatan 3',
+                'ikk' => '2',
             ],
             [
                 'id' => 'fkfdfdfsfkf',
-                'name' => 'Sasaran kinerja 4',
-                'ikk' => [
-                    'active' => 0,
-                    'inactive' => 3,
-                ],
+                'name' => 'Sasaran kegiatan 4',
+                'ikk' => '4',
             ],
         ];
     @endphp
@@ -54,27 +42,20 @@
             <thead>
                 <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
                     <th title="Nomor">No</th>
-                    <th title="Sasaran kinerja">Sasaran Kinerja</th>
-                    <th title="Indikator kinerja kegiatan">Indikator Kinerja Kegiatan</th>
+                    <th title="Sasaran kegiatan">Sasaran Kegiatan</th>
+                    <th title="Jumlah indikator kinerja kegiatan">Jumlah IKK</th>
                     <th title="Aksi">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="border-b-2 border-primary/80 text-center">
+            <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
                 @foreach ($data as $item)
                     @php
-                        $sum = $item['ikk']['active'] + $item['ikk']['inactive'];
-                        $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_kinerja":"' . $item['name'] . '","indikator_kinerja_kegiatan":"Total : ' . $sum . ', aktif : ' . $item['ikk']['active'] . ', tidak aktif : ' . $item['ikk']['inactive'] . '"}';
+                        $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_kegiatan":"' . $item['name'] . '","jumlah_indikator_kinerja_kegiatan":"' . $item['ikk'] . '"}';
                     @endphp
-                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:overflow-hidden *:truncate">
+                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:break-words border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
-                        <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
-                        <td>
-                            <div class="*:p-1 *:overflow-hidden *:truncate *:w-1/3 *:whitespace-nowrap mx-auto flex max-w-full items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
-                                <p title="Total : {{ $sum }}">Total : {{ $sum }}</p>
-                                <p title="Aktif : {{ $item['ikk']['active'] }}">Aktif : {{ $item['ikk']['active'] }}</p>
-                                <p title="Tidak aktif : {{ $item['ikk']['inactive'] }}">Tidak Aktif : {{ $item['ikk']['inactive'] }}</p>
-                            </div>
-                        </td>
+                        <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
+                        <td title="{{ $item['ikk'] }}">{{ $item['ikk'] }}</td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.manage link="{{ route('super-admin-iku-ikk', ['sk' => $item['id']]) }}" />
                             <x-partials.button.edit link="{{ route('super-admin-iku-sk-edit', ['id' => $item['id']]) }}" />

@@ -97,7 +97,7 @@ Route::group([
         })->name('super-admin-iku');
 
         Route::group([
-            'prefix' => '/sasaran-kinerja'
+            'prefix' => '/sasaran-kegiatan'
         ], function () {
             Route::view('/', 'super-admin.iku.sk.home')->name('super-admin-iku-sk');
             Route::view('/tambah', 'super-admin.iku.sk.add')->name('super-admin-iku-sk-add');
