@@ -89,12 +89,12 @@
                             $modalData .= '}';
                         }
                     @endphp
-                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:overflow-hidden *:truncate">
+                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:overflow-hidden *:truncate border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                         <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['email'] }}">{{ $item['email'] }}</td>
                         <td>
-                            <div class="*:p-1 *:overflow-hidden *:truncate *:w-1/3 *:whitespace-nowrap mx-auto flex max-w-full items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
+                            <div class="*:p-1 *:overflow-hidden *:truncate *:flex-1 *:whitespace-nowrap mx-auto flex max-w-[300px] items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
                                 <p title="{{ $item['role'] === 'superAdmin' ? 'Super Admin' : 'Admin' }}">{{ $item['role'] === 'superAdmin' ? 'Super Admin' : 'Admin' }}</p>
                                 <p title="{{ $item['access'] === 'editor' ? 'Editor' : 'Viewer' }}">{{ $item['access'] === 'editor' ? 'Editor' : 'Viewer' }}</p>
                                 @if ($item['role'] !== 'superAdmin')

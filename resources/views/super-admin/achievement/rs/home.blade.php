@@ -202,17 +202,17 @@
                                     @if ($loop->parent->iteration === 1)
                                         <td title="{{ $loop->parent->parent->iteration }}" rowspan="{{ $ss['rowspan'] }}">{{ $loop->parent->parent->iteration }}</td>
                                         <td title="SS-{{ $loop->parent->parent->iteration }}" rowspan="{{ $ss['rowspan'] }}">SS-{{ $loop->parent->parent->iteration }}</td>
-                                        <td title="{{ $ss['ss'] }}" rowspan="{{ $ss['rowspan'] }}" class="min-w-96 group relative z-10 text-left">
+                                        <td title="{{ $ss['ss'] }}" rowspan="{{ $ss['rowspan'] }}" class="min-w-72 group relative z-10 w-max text-left">
                                             {{ $ss['ss'] }}
                                             <x-partials.button.edit link="{{ route('super-admin-rs-ss-edit', ['id' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                         </td>
                                     @endif
-                                    <td title="{{ $k['k'] }}" rowspan="{{ $k['rowspan'] }}" class="min-w-96 group relative z-10 text-left">
+                                    <td title="{{ $k['k'] }}" rowspan="{{ $k['rowspan'] }}" class="min-w-72 group relative z-10 w-max text-left">
                                         {{ $k['k'] }}
                                         <x-partials.button.edit link="{{ route('super-admin-rs-k-edit', ['id' => $k['id'], 'ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                     </td>
                                 @endif
-                                <td title="{{ $ik['ik'] }}" class="min-w-96 group relative z-10 text-left">
+                                <td title="{{ $ik['ik'] }}" class="min-w-72 group relative z-10 w-max text-left">
                                     {{ $ik['ik'] }}
                                     <x-partials.button.edit link="{{ route('super-admin-rs-ik-edit', ['id' => $ik['id'], 'k' => $k['id'], 'ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                 </td>

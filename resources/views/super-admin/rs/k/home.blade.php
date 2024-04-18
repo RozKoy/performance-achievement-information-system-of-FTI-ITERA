@@ -67,17 +67,17 @@
                     <th title="Aksi">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="border-b-2 border-primary/80 text-center">
+            <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
                 @foreach ($data as $item)
                     @php
                         $sum = $item['ik']['active'] + $item['ik']['inactive'];
                         $modalData = '{"nomor":"' . $loop->iteration . '","kegiatan":"' . $item['name'] . '","indikator_kinerja":"Total : ' . $sum . ', aktif : ' . $item['ik']['active'] . ', tidak aktif : ' . $item['ik']['inactive'] . '"}';
                     @endphp
-                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:overflow-hidden *:truncate">
+                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:break-words border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
-                        <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
+                        <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
                         <td>
-                            <div class="*:p-1 *:overflow-hidden *:truncate *:w-1/3 *:whitespace-nowrap mx-auto flex max-w-full items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
+                            <div class="*:p-1 *:min-w-max *:flex-1 *:mx-auto mx-auto flex max-w-full items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
                                 <p title="Total : {{ $sum }}">Total : {{ $sum }}</p>
                                 <p title="Aktif : {{ $item['ik']['active'] }}">Aktif : {{ $item['ik']['active'] }}</p>
                                 <p title="Tidak aktif : {{ $item['ik']['inactive'] }}">Tidak Aktif : {{ $item['ik']['inactive'] }}</p>

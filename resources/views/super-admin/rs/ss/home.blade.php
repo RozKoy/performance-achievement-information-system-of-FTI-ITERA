@@ -57,14 +57,14 @@
                     <th title="Aksi">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="border-b-2 border-primary/80 text-center">
+            <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
                 @foreach ($data as $item)
                     @php
                         $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_strategis":"' . $item['name'] . '","jumlah_kegiatan":"' . $item['k'] . '"}';
                     @endphp
-                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:overflow-hidden *:truncate">
+                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:break-words border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
-                        <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
+                        <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['k'] }}">{{ $item['k'] }}</td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.manage link="{{ route('super-admin-rs-k', ['ss' => 'hahaha']) }}" />

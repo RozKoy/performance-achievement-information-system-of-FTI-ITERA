@@ -69,7 +69,7 @@
                     <th title="Aksi">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="border-b-2 border-primary/80 text-center">
+            <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
                 @foreach ($data as $item)
                     @php
                         $type = '';
@@ -84,9 +84,9 @@
                         $modalData .= $item['status'] === 'active' ? '"aktif"' : '"tidak aktif"';
                         $modalData .= '}';
                     @endphp
-                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:overflow-hidden *:truncate">
+                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:break-words border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
-                        <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
+                        <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
                         <td title="{{ $type }}">{{ $type }}</td>
                         <td title="Status : {{ $item['status'] === 'active' ? 'aktif' : 'tidak aktif' }}">
                             <div class="flex items-center justify-center">
