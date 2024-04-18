@@ -121,11 +121,11 @@ Route::group([
         });
 
         Route::group([
-            'prefix' => '/{sk}/{ikk}/data-dukung'
+            'prefix' => '/{sk}/{ikk}/{ps}/indikator-kinerja-program'
         ], function () {
-            Route::view('/', 'super-admin.iku.dd.home')->name('super-admin-iku-dd');
-            Route::view('/tambah', 'super-admin.iku.dd.add')->name('super-admin-iku-dd-add');
-            Route::view('/{id}/ubah', 'super-admin.iku.dd.edit')->name('super-admin-iku-dd-edit');
+            Route::view('/', 'super-admin.iku.ikp.home')->name('super-admin-iku-ikp');
+            Route::view('/tambah', 'super-admin.iku.ikp.add')->name('super-admin-iku-ikp-add');
+            Route::view('/{id}/ubah', 'super-admin.iku.ikp.edit')->name('super-admin-iku-ikp-edit');
         });
     });
 

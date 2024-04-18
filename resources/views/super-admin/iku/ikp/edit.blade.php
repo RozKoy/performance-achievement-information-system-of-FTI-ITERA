@@ -2,7 +2,7 @@
     $breadCrumbs = [
         [
             'link' => 'super-admin-iku-sk',
-            'name' => 'IKU - Sasaran Kinerja',
+            'name' => 'IKU - Sasaran Kegiatan',
         ],
         [
             'link' => 'super-admin-iku-ikk',
@@ -12,23 +12,34 @@
             ],
         ],
         [
-            'link' => 'super-admin-iku-dd',
-            'name' => 'IKU - Data Dukung',
+            'link' => 'super-admin-iku-ps',
+            'name' => 'IKU - Program Strategis',
             'params' => [
-                'sk' => 'cdmkcmdc',
-                'ikk' => 'cdmkcmdc',
+                'sk' => 'hahaha',
+                'ikk' => 'hihihi',
             ],
         ],
         [
-            'link' => 'super-admin-iku-dd-edit',
+            'link' => 'super-admin-iku-ikp',
+            'name' => 'IKU - Indikator Kinerja Program',
             'params' => [
-                'id' => '1',
                 'sk' => 'cdmkcmdc',
                 'ikk' => 'cdmkcmdc',
+                'ps' => 'hohoho',
             ],
+        ],
+        [
+            'link' => 'super-admin-iku-ikp-edit',
             'name' => 'Ubah',
+            'params' => [
+                'id' => 'cdmkcmdc',
+                'sk' => 'cdmkcmdc',
+                'ikk' => 'cdmkcmdc',
+                'ps' => 'hohoho',
+            ],
         ],
     ];
+
     $data = [
         [
             'value' => '1',
@@ -48,22 +59,43 @@
             'selected' => true,
         ],
     ];
+
+    $types = [
+        [
+            'value' => 'iku',
+            'text' => 'IKU',
+            'selected' => true,
+        ],
+        [
+            'value' => 'ikt',
+            'text' => 'IKT',
+        ],
+    ];
 @endphp
-<x-super-admin-template title="Ubah Data Dukung - Super Admin">
+<x-super-admin-template title="Ubah Indikator Kinerja Program - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="ubah data dukung" previousRoute="{{ route('super-admin-iku-dd', ['sk' => 'hahahah', 'ikk' => 'hahaha']) }}" />
+    <x-partials.heading.h2 text="ubah indikator kinerja program" previousRoute="{{ route('super-admin-iku-ikp', ['sk' => 'cdmkcmdc', 'ikk' => 'cdmkcmdc', 'ps' => 'hohoho']) }}" />
     <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="2" dataText="Sasaran Kinerja blabla blab lanc balncj ncjecn" />
     <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="4" dataText="Indikator kinerja kegiatan blabla blab lanc balncj ncjecn" />
+    <x-partials.heading.h3 title="Program strategis" dataNumber="3" dataText="Program Strategis blabla blab lanc balncj ncjecn" />
     <form action="" class="flex flex-col gap-2">
         <div class="flex flex-wrap gap-2">
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
                 <x-partials.input.select name="number" title="Nomor" :$data required />
             </div>
-            <div class="flex flex-1 flex-col gap-2">
-                <x-partials.label.default for="name" title="Data dukung" text="Data Dukung" required />
-                <x-partials.input.text name="name" title="Data dukung" autofocus required />
+            <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
+                <x-partials.label.default for="type" title="Tipe pendukung" text="Tipe Pendukung" required />
+                <x-partials.input.select name="type" title="Tipe pendukung" :data="$types" required />
             </div>
+            <div class="flex flex-1 flex-col gap-2">
+                <x-partials.label.default for="name" title="Indikator kinerja program" text="Indikator Kinerja Program" required />
+                <x-partials.input.text name="name" title="Indikator kinerja program" autofocus required />
+            </div>
+        </div>
+        <div class="flex flex-1 flex-col gap-2">
+            <x-partials.label.default for="definition" title="Definisi operasional" text="Definisi Operasional" required />
+            <x-partials.input.text name="definition" title="Definisi operasional" required />
         </div>
         <div class="flex items-center justify-start gap-2">
             <x-partials.label.default for="columns[]" title="Kolom" text="Kolom" required />
