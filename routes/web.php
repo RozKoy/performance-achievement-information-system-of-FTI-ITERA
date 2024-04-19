@@ -40,10 +40,6 @@ Route::group([
         return view('super-admin.home');
     })->name('super-admin-dashboard');
 
-    Route::get('/capaian-kinerja', function () {
-        return 'Halaman Capaian Kinerja';
-    })->name('super-admin-achievement');
-
 
     Route::group([
         'prefix' => '/capaian-kinerja'
