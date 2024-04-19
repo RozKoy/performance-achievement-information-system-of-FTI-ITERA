@@ -256,21 +256,13 @@
                                     @endforeach
 
                                     @foreach ($ikp['realization'] as $index => $realization)
-                                        @if ($realization >= $ikp['target'][$index])
-                                            <td title="{{ $realization }}" class="text-green-500">{{ $realization }}</td>
-                                        @else
-                                            <td title="{{ $realization }}" class="text-red-500">{{ $realization }}</td>
-                                        @endif
+                                        <td title="{{ $realization }}" class="{{ $realization >= $ikp['target'][$index] ? 'text-green-500' : 'text-red-500' }}">{{ $realization }}</td>
                                     @endforeach
 
                                     <td title="{{ $ikp['constraint'] }}">{{ $ikp['constraint'] }}</td>
                                     <td title="{{ $ikp['follow_up'] }}">{{ $ikp['follow_up'] }}</td>
 
-                                    @if ($ikp['status'] === 'aktif')
-                                        <td title="{{ $ikp['status'] }}" class="capitalize text-green-500">{{ $ikp['status'] }}</td>
-                                    @else
-                                        <td title="{{ $ikp['status'] }}" class="capitalize text-red-500">{{ $ikp['status'] }}</td>
-                                    @endif
+                                    <td title="{{ $ikp['status'] }}" class="{{ $ikp['status'] === 'aktif' ? 'text-green-500' : 'text-red-500' }} capitalize">{{ $ikp['status'] }}</td>
 
                                     <td class="flex items-start justify-center gap-1">
                                         <x-partials.button.detail link="/" />
