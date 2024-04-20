@@ -48,7 +48,7 @@
                 'definition' => 'Lulusan yang mendapat pekerjaan dalam rentang waktu 12 (dua belas) bulan terhitung mulai tanggal setelah terbit ijazah',
                 'column' => '5',
                 'type' => 'iku',
-                'status' => 'active',
+                'status' => 'aktif',
             ],
             [
                 'id' => 'jajcjdndnjnvjdnjd',
@@ -56,7 +56,7 @@
                 'definition' => 'Lulusan yang melanjutkan studi pada jenjang S2/S2 terapan atau profesi di dalam atau diluar negeri dalam rentang waktu 12 (dua belas) bulan terhitung mulai tanggal setelah terbit ijazah',
                 'column' => '10',
                 'type' => 'iku',
-                'status' => 'inactive',
+                'status' => 'tidak aktif',
             ],
             [
                 'id' => 'jkcdkdfdfkdfdkf',
@@ -64,7 +64,7 @@
                 'definition' => 'Lulusan yang menempuh studi <= 4 tahun',
                 'column' => '6',
                 'type' => 'ikt',
-                'status' => 'active',
+                'status' => 'aktif',
             ],
         ];
     @endphp
@@ -83,8 +83,7 @@
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
                 @foreach ($data as $item)
                     @php
-                        $status = $item['status'] === 'active' ? 'Aktif' : 'Tidak aktif';
-                        $modalData = '{"nomor":"' . $loop->iteration . '","indikator_kinerja_program":"' . $item['name'] . '","definisi_operasional":"' . $item['definition'] . '","kolom":"' . $item['column'] . '","jenis":"' . $item['type'] . '","status":"' . $status . '"}';
+                        $modalData = '{"nomor":"' . $loop->iteration . '","indikator_kinerja_program":"' . $item['name'] . '","definisi_operasional":"' . $item['definition'] . '","kolom":"' . $item['column'] . '","jenis":"' . $item['type'] . '","status":"' . $item['status'] . '"}';
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:break-words border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
@@ -94,10 +93,10 @@
                         </td>
                         <td title="{{ $item['definition'] }}" class="min-w-72 w-max text-left">{{ $item['definition'] }}</td>
                         <td title="{{ $item['column'] }}">{{ $item['column'] }}</td>
-                        <td title="{{ $status }}">
+                        <td title="{{ $item['status'] }}">
                             <div class="flex items-center justify-center">
                                 <label class="relative inline-flex items-center">
-                                    <input type="checkbox" value="{{ $item['status'] }}" class="peer sr-only" @if ($item['status'] === 'active') checked @endif>
+                                    <input type="checkbox" value="{{ $item['status'] }}" class="peer sr-only" @if ($item['status'] === 'aktif') checked @endif>
                                     <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
                                 </label>
                             </div>

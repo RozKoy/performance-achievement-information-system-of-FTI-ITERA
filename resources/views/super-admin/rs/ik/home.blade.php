@@ -36,25 +36,25 @@
                 'id' => 'ckdjdk',
                 'name' => 'indikator kinerja 1',
                 'type' => 'number',
-                'status' => 'active',
+                'status' => 'aktif',
             ],
             [
                 'id' => 'sdksdss',
                 'name' => 'indikator kinerja 2',
                 'type' => 'string',
-                'status' => 'inactive',
+                'status' => 'tidak aktif',
             ],
             [
                 'id' => 'dfhghhff',
                 'name' => 'indikator kinerja 3',
                 'type' => 'percent',
-                'status' => 'active',
+                'status' => 'aktif',
             ],
             [
                 'id' => 'mgfdffdg',
                 'name' => 'indikator kinerja 4',
                 'type' => 'string',
-                'status' => 'inactive',
+                'status' => 'tidak aktif',
             ],
         ];
     @endphp
@@ -80,18 +80,16 @@
                         } else {
                             $type = 'Teks';
                         }
-                        $modalData = '{"nomor":"' . $loop->iteration . '","indikator_kinerja":"' . $item['name'] . '","tipe_data":"' . $type . '","status":';
-                        $modalData .= $item['status'] === 'active' ? '"aktif"' : '"tidak aktif"';
-                        $modalData .= '}';
+                        $modalData = '{"nomor":"' . $loop->iteration . '","indikator_kinerja":"' . $item['name'] . '","tipe_data":"' . $type . '","status":"' . $item['status'] . '"}';
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:break-words border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                         <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
                         <td title="{{ $type }}">{{ $type }}</td>
-                        <td title="Status : {{ $item['status'] === 'active' ? 'aktif' : 'tidak aktif' }}">
+                        <td title="Status : {{ $item['status'] }}">
                             <div class="flex items-center justify-center">
                                 <label class="relative inline-flex items-center">
-                                    <input type="checkbox" value="{{ $item['status'] }}" class="peer sr-only" @if ($item['status'] === 'active') checked @endif>
+                                    <input type="checkbox" value="{{ $item['status'] }}" class="peer sr-only" @if ($item['status'] === 'aktif') checked @endif>
                                     <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
                                 </label>
                             </div>
