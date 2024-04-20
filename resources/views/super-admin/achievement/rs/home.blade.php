@@ -195,7 +195,6 @@
                     <th title="Sasaran strategis">Sasaran Strategis</th>
                     <th title="Kegiatan">Kegiatan</th>
                     <th title="Indikator kinerja">Indikator Kinerja</th>
-                    <th title="Tipe data">Tipe Data</th>
                     <th title="Target FTI">Target FTI</th>
                     <th title="Realisasi FTI">Realisasi FTI</th>
                     <th title="Tercapai">Tercapai</th>
@@ -231,9 +230,8 @@
                                 <td title="{{ $ik['ik'] }}" class="min-w-72 group relative z-10 w-max text-left">
                                     {{ $ik['ik'] }}
                                     <x-partials.button.edit link="{{ route('super-admin-rs-ik-edit', ['id' => $ik['id'], 'k' => $k['id'], 'ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                    <span title="{{ $ik['type'] }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ik['type'] }}</span>
                                 </td>
-
-                                <td title="{{ $ik['type'] }}">{{ $ik['type'] }}</td>
 
                                 <td title="{{ $ik['target'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}">{{ $ik['target'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}</td>
 
