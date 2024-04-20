@@ -35,25 +35,25 @@
             [
                 'id' => 'ckdjdk',
                 'name' => 'indikator kinerja 1',
-                'type' => 'number',
+                'type' => 'angka',
                 'status' => 'aktif',
             ],
             [
                 'id' => 'sdksdss',
                 'name' => 'indikator kinerja 2',
-                'type' => 'string',
+                'type' => 'teks',
                 'status' => 'tidak aktif',
             ],
             [
                 'id' => 'dfhghhff',
                 'name' => 'indikator kinerja 3',
-                'type' => 'percent',
+                'type' => 'persen',
                 'status' => 'aktif',
             ],
             [
                 'id' => 'mgfdffdg',
                 'name' => 'indikator kinerja 4',
-                'type' => 'string',
+                'type' => 'teks',
                 'status' => 'tidak aktif',
             ],
         ];
@@ -73,9 +73,9 @@
                 @foreach ($data as $item)
                     @php
                         $type = '';
-                        if ($item['type'] === 'number') {
+                        if ($item['type'] === 'angka') {
                             $type = 'Angka';
-                        } elseif ($item['type'] === 'percent') {
+                        } elseif ($item['type'] === 'persen') {
                             $type = 'Persen';
                         } else {
                             $type = 'Teks';

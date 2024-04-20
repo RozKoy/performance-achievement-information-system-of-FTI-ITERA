@@ -51,16 +51,16 @@
 
     $type = [
         [
-            'value' => 'string',
+            'value' => 'teks',
             'text' => 'Teks',
             'selected' => true,
         ],
         [
-            'value' => 'number',
+            'value' => 'angka',
             'text' => 'Angka',
         ],
         [
-            'value' => 'percent',
+            'value' => 'persen',
             'text' => 'Persen',
         ],
     ];
