@@ -72,7 +72,7 @@
                             [
                                 'id' => 'mkckhlfppmvrv',
                                 'ik' => 'Jumlah matakuliah yang menerapkan pendekatan pembelajaran SCL pada PS di bawah naungan FTI',
-                                'type' => 'number',
+                                'type' => 'angka',
                                 'status' => 'tidak aktif',
                                 'done' => false,
                                 'target' => '238',
@@ -91,7 +91,7 @@
                             [
                                 'id' => 'pnjnjdmjnvurnvr',
                                 'ik' => 'Persentase dosen FTI yang memiliki sertifikat pelatihan pembelajaran berbasis TIK',
-                                'type' => 'percent',
+                                'type' => 'persen',
                                 'status' => 'aktif',
                                 'done' => false,
                                 'target' => '15',
@@ -117,7 +117,7 @@
                             [
                                 'id' => 'mkckhlfppmvrv',
                                 'ik' => 'Jumlah matakuliah yang menerapkan pendekatan pembelajaran SCL pada PS di bawah naungan FTI',
-                                'type' => 'string',
+                                'type' => 'teks',
                                 'status' => 'aktif',
                                 'done' => true,
                                 'target' => 'tersedia',
@@ -129,7 +129,7 @@
                             [
                                 'id' => 'mkckhlfppmvrv',
                                 'ik' => 'Jumlah matakuliah yang menerapkan pendekatan pembelajaran SCL pada PS di bawah naungan FTI',
-                                'type' => 'number',
+                                'type' => 'angka',
                                 'status' => 'tidak aktif',
                                 'done' => false,
                                 'target' => '238',
@@ -141,7 +141,7 @@
                             [
                                 'id' => 'mkckhlfppmvrv',
                                 'ik' => 'Jumlah matakuliah yang menerapkan pendekatan pembelajaran SCL pada PS di bawah naungan FTI',
-                                'type' => 'percent',
+                                'type' => 'persen',
                                 'status' => 'aktif',
                                 'done' => true,
                                 'target' => '75',
@@ -160,7 +160,7 @@
                             [
                                 'id' => 'pnjnjdmjnvurnvr',
                                 'ik' => 'Persentase dosen FTI yang memiliki sertifikat pelatihan pembelajaran berbasis TIK',
-                                'type' => 'percent',
+                                'type' => 'persen',
                                 'status' => 'aktif',
                                 'done' => false,
                                 'target' => '15',
@@ -172,7 +172,7 @@
                             [
                                 'id' => 'pnjnjdmjnvurnvr',
                                 'ik' => 'Persentase dosen FTI yang memiliki sertifikat pelatihan pembelajaran berbasis TIK',
-                                'type' => 'number',
+                                'type' => 'angka',
                                 'status' => 'aktif',
                                 'done' => false,
                                 'target' => '15',
@@ -195,6 +195,7 @@
                     <th title="Sasaran strategis">Sasaran Strategis</th>
                     <th title="Kegiatan">Kegiatan</th>
                     <th title="Indikator kinerja">Indikator Kinerja</th>
+                    <th title="Tipe data">Tipe Data</th>
                     <th title="Target FTI">Target FTI</th>
                     <th title="Realisasi FTI">Realisasi FTI</th>
                     <th title="Tercapai">Tercapai</th>
@@ -232,14 +233,16 @@
                                     <x-partials.button.edit link="{{ route('super-admin-rs-ik-edit', ['id' => $ik['id'], 'k' => $k['id'], 'ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                 </td>
 
-                                <td title="{{ $ik['target'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}">{{ $ik['target'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}</td>
+                                <td title="{{ $ik['type'] }}">{{ $ik['type'] }}</td>
 
-                                @if ($ik['type'] !== 'string')
-                                    <td title="{{ $ik['realization'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}" class="{{ floatval($ik['target']) <= floatval($ik['realization']) ? 'text-green-500' : 'text-red-500' }}">
-                                        {{ $ik['realization'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}
+                                <td title="{{ $ik['target'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}">{{ $ik['target'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}</td>
+
+                                @if ($ik['type'] !== 'teks')
+                                    <td title="{{ $ik['realization'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}" class="{{ floatval($ik['target']) <= floatval($ik['realization']) ? 'text-green-500' : 'text-red-500' }}">
+                                        {{ $ik['realization'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}
                                     </td>
                                 @else
-                                    <td title="{{ $ik['realization'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}">{{ $ik['realization'] }}{{ $ik['type'] === 'percent' ? '%' : '' }}</td>
+                                    <td title="{{ $ik['realization'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}">{{ $ik['realization'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}</td>
                                 @endif
 
                                 <td title="{{ $ik['done'] === true ? 'Tercapai' : 'Tidak tercapai' }}">{{ $ik['done'] === true ? 'Iya' : 'Tidak' }}</td>
