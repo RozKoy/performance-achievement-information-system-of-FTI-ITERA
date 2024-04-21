@@ -209,7 +209,7 @@
                 @foreach ($data as $ss)
                     @foreach ($ss['k'] as $k)
                         @foreach ($k['ik'] as $ik)
-                            <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[75vw] *:break-words border-y">
+                            <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
 
                                 @if ($loop->iteration === 1)
                                     @if ($loop->parent->iteration === 1)

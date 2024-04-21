@@ -82,7 +82,7 @@
                         }
                         $modalData = '{"nomor":"' . $loop->iteration . '","indikator_kinerja":"' . $item['name'] . '","tipe_data":"' . $type . '","status":"' . $item['status'] . '"}';
                     @endphp
-                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:break-words border-y">
+                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                         <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
                         <td title="{{ $type }}">{{ $type }}</td>

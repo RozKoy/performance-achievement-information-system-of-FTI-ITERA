@@ -310,15 +310,6 @@
                 ],
             ],
         ];
-
-        // function rederData($arr)
-        // {
-        //     foreach ($arr as $key => $value) {
-
-        //         rederData($arr['child']);
-        //     }
-        // }
-
     @endphp
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full text-sm max-md:text-xs">
@@ -358,11 +349,6 @@
                             </tr>
                         @endfor
                     @endforeach
-                    {{-- <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[75vw] *:break-words border-y">
-                        <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
-                        <td title="{{ $item['unit'] }}" class="min-w-72 w-max text-left">{{ $item['unit'] }}</td>
-                        <td title="{{ $item['realization'] }}">{{ $item['realization'] }}</td>
-                    </tr> --}}
                 @endforeach
 
             </tbody>

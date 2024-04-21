@@ -62,7 +62,7 @@
                     @php
                         $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_strategis":"' . $item['name'] . '","jumlah_kegiatan":"' . $item['k'] . '"}';
                     @endphp
-                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[75vw] *:break-words border-y">
+                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                         <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['k'] }}">{{ $item['k'] }}</td>
