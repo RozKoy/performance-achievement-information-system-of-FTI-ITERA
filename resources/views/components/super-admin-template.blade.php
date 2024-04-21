@@ -82,11 +82,11 @@
                             </button>
                         </div>
                         <div class="z-40 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white text-base shadow shadow-primary" id="user-menu">
-                            <div class="cursor-default px-4 py-3 text-sm text-primary" role="none">
+                            <div class="*:overflow-hidden *:truncate *:max-w-40 sm:*:max-w-60 2xl:*:max-w-96 cursor-default px-4 py-3 text-sm text-primary" role="none">
                                 <p role="none" title="Neil Sims">
                                     Neil Sims
                                 </p>
-                                <p class="truncate font-semibold" role="none" title="neil.sims@flowbite.com">
+                                <p class="font-semibold" role="none" title="neil.sims@flowbite.com">
                                     neil.sims@flowbite.com
                                 </p>
                             </div>
