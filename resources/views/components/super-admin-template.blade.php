@@ -71,7 +71,7 @@
                 </div>
                 <div class="flex items-center">
                     <div class="ms-3 flex items-center gap-2">
-                        <p title="Editor Access" class="inline-flex items-center justify-center rounded-full bg-primary px-2 py-1 text-xs font-semibold uppercase text-white sm:text-sm">editor</p>
+                        <p title="Editor Access" class="inline-flex items-center justify-center truncate rounded-full bg-primary px-2 py-1 text-xs font-semibold uppercase text-white max-[400px]:hidden lg:text-sm 2xl:text-base">editor</p>
                         <div>
                             <button type="button" title="Tombol profil" class="flex rounded-full fill-primary text-sm focus:ring-4 focus:ring-gray-300" aria-expanded="false" data-dropdown-toggle="user-menu">
                                 <span class="sr-only">Open user menu</span>
