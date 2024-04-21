@@ -171,7 +171,11 @@ Route::group([
         return 'Riwayat';
     })->name('admin-history');
 
-    Route::get('/pengguna', function () {
-        return 'Pengguna';
-    })->name('admin-users');
+    Route::group([
+        'prefix' => '/pengguna'
+    ], function () {
+        Route::view('/', 'admin.users.home')->name('admin-users');
+        Route::view('/tambah', 'admin.users.add')->name('admin-users-add');
+        Route::view('/{id}/ubah', 'admin.users.edit')->name('admin-users-edit');
+    });
 });
