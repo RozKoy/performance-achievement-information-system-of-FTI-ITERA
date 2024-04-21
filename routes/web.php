@@ -13,10 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
+
+// Authentication
 Route::get('/masuk', function () {
     return view('authentication.login');
 })->name('login');
@@ -33,6 +35,8 @@ Route::get('/keluar', function () {
     return 'Anda Telah Keluar';
 })->name('logout');
 
+
+// Super Admin
 Route::group([
     'prefix' => '/super-admin'
 ], function () {
@@ -144,4 +148,30 @@ Route::group([
         Route::view('/tambah', 'super-admin.unit.add')->name('super-admin-unit-add');
         Route::view('/{id}/ubah', 'super-admin.unit.edit')->name('super-admin-unit-edit');
     });
+});
+
+
+// Admin
+Route::group([
+    'prefix' => '/'
+], function () {
+    Route::get('/', function () {
+        return view('admin.home');
+    })->name('admin-dashboard');
+
+    Route::get('/rencana-strategis', function () {
+        return 'Rencana Strategis';
+    })->name('admin-rs');
+
+    Route::get('/indikator-kinerja-utama', function () {
+        return 'Indikator Kinerja Utama';
+    })->name('admin-iku');
+
+    Route::get('/riwayat', function () {
+        return 'Riwayat';
+    })->name('admin-history');
+
+    Route::get('/pengguna', function () {
+        return 'Pengguna';
+    })->name('admin-users');
 });
