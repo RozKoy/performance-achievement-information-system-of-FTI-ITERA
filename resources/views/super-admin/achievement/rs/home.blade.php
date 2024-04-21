@@ -272,7 +272,7 @@
                                 </td>
 
                                 <td class="flex items-start justify-center gap-1">
-                                    <x-partials.button.detail link="/" />
+                                    <x-partials.button.detail link="{{ route('super-admin-achievement-rs-detail', ['id' => $ik['id'], 'period' => $period]) }}" />
                                 </td>
 
                             </tr>

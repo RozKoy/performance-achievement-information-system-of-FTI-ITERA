@@ -49,6 +49,7 @@ Route::group([
         })->name('super-admin-achievement');
 
         Route::view('/rencana-strategis', 'super-admin.achievement.rs.home')->name('super-admin-achievement-rs');
+        Route::view('/rencana-strategis/{id}/detail', 'super-admin.achievement.rs.detail')->name('super-admin-achievement-rs-detail');
         Route::view('/indikator-kinerja-utama', 'super-admin.achievement.iku.home')->name('super-admin-achievement-iku');
     });
 
