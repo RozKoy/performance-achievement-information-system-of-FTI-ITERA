@@ -95,7 +95,7 @@
                         <td>
                             <div class="*:p-1 *:overflow-hidden *:truncate *:flex-1 *:whitespace-nowrap mx-auto flex max-w-[300px] items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
                                 <p title="{{ $item['role'] === 'superAdmin' ? 'Super Admin' : 'Admin' }}">{{ $item['role'] === 'superAdmin' ? 'Super Admin' : 'Admin' }}</p>
-                                <p title="{{ $item['access'] === 'editor' ? 'Editor' : 'Viewer' }}">{{ $item['access'] === 'editor' ? 'Editor' : 'Viewer' }}</p>
+                                <p title="{{ ucfirst($item['access']) }}">{{ ucfirst($item['access']) }}</p>
                                 @if ($item['role'] !== 'superAdmin')
                                     <p title="{{ isset($item['unit']) ? $item['unit'] : 'NULL' }}">{{ isset($item['unit']) ? $item['unit'] : 'NULL' }}</p>
                                 @endif
