@@ -77,16 +77,15 @@
             <tbody class="border-b-2 border-primary/80 text-center">
                 @foreach ($data as $item)
                     @php
-                        $modalData = '{"nomor":"' . $loop->iteration . '","nama_pengguna":"' . $item['name'] . '","email":"' . $item['email'] . '","hak_akses":"' . $item['role'] . '","jenis_akses":"' . $item['access'] . '"';
+                        $deleteData = [
+                            'nomor' => $loop->iteration,
+                            'nama pengguna' => $item['name'],
+                            'email' => $item['email'],
+                            'hak akses' => $item['role'],
+                            'jenis akses' => $item['access'],
+                        ];
                         if ($item['role'] !== 'superAdmin') {
-                            $modalData .= ',"organisasi":';
-                            if (!isset($item['unit'])) {
-                                $modalData .= '"NULL"}';
-                            } else {
-                                $modalData .= '"' . $item['unit'] . '"}';
-                            }
-                        } else {
-                            $modalData .= '}';
+                            $deleteData['unit'] = isset($item['unit']) ? $item['unit'] : 'NULL';
                         }
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:overflow-hidden *:truncate border-y">
@@ -104,7 +103,7 @@
                         </td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.edit link="{{ route('super-admin-users-edit', ['id' => $item['id']]) }}" />
-                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$modalData" />
+                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
                         </td>
                     </tr>
                 @endforeach

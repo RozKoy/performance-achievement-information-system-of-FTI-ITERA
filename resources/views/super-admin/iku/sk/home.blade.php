@@ -51,6 +51,11 @@
                 @foreach ($data as $item)
                     @php
                         $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_kegiatan":"' . $item['name'] . '","jumlah_indikator_kinerja_kegiatan":"' . $item['ikk'] . '"}';
+                        $deleteData = [
+                            'nomor' => $loop->iteration,
+                            'sasaran kegiatan' => $item['name'],
+                            'jumlah indikator kinerja kegiatan' => $item['ikk'],
+                        ];
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
@@ -59,7 +64,7 @@
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.manage link="{{ route('super-admin-iku-ikk', ['sk' => $item['id']]) }}" />
                             <x-partials.button.edit link="{{ route('super-admin-iku-sk-edit', ['id' => $item['id']]) }}" />
-                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$modalData" />
+                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
                         </td>
                     </tr>
                 @endforeach

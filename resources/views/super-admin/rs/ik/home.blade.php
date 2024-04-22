@@ -72,20 +72,17 @@
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
                 @foreach ($data as $item)
                     @php
-                        $type = '';
-                        if ($item['type'] === 'angka') {
-                            $type = 'Angka';
-                        } elseif ($item['type'] === 'persen') {
-                            $type = 'Persen';
-                        } else {
-                            $type = 'Teks';
-                        }
-                        $modalData = '{"nomor":"' . $loop->iteration . '","indikator_kinerja":"' . $item['name'] . '","tipe_data":"' . $type . '","status":"' . $item['status'] . '"}';
+                        $deleteData = [
+                            'nomor' => $loop->iteration,
+                            'indikator kinerja' => $item['name'],
+                            'tipe data' => $item['type'],
+                            'status' => $item['status'],
+                        ];
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                         <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
-                        <td title="{{ $type }}">{{ $type }}</td>
+                        <td title="{{ $item['type'] }}">{{ $item['type'] }}</td>
                         <td title="Status : {{ $item['status'] }}">
                             <div class="flex items-center justify-center">
                                 <label class="relative inline-flex items-center">
@@ -96,7 +93,7 @@
                         </td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.edit link="{{ route('super-admin-rs-ik-edit', ['id' => $item['id'], 'ss' => 'hahaha', 'k' => 'hihihihih']) }}" />
-                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$modalData" />
+                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
                         </td>
                     </tr>
                 @endforeach

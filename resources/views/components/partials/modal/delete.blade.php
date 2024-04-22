@@ -32,7 +32,7 @@
             let keys = Object.keys(data);
             let info = '';
             keys.forEach(item => {
-                info += `<p><span class="capitalize font-semibold">${ item.replaceAll('_', ' ') }</span> = ${ data[item] }</p>`;
+                info += `<p><span class="capitalize font-semibold">${ item }</span> = ${ data[item] }</p>`;
             });
             document.getElementById('data-body').innerHTML = info;
             document.getElementById('delete-confirm').setAttribute('data-id', id);

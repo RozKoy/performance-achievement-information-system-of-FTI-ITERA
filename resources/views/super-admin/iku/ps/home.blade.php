@@ -80,7 +80,11 @@
                 @foreach ($data as $item)
                     @php
                         $sum = $item['ikp']['active'] + $item['ikp']['inactive'];
-                        $modalData = '{"nomor":"' . $loop->iteration . '","program_strategis":"' . $item['name'] . '","indikator_kinerja_program":"Total : ' . $sum . ', aktif : ' . $item['ikp']['active'] . ', tidak aktif : ' . $item['ikp']['inactive'] . '"}';
+                        $deleteData = [
+                            'nomor' => $loop->iteration,
+                            'program strategis' => $item['name'],
+                            'indikator kinerja program' => "Total : {$sum}, Aktif : {$item['ikp']['active']}, Tidak Aktif : {$item['ikp']['inactive']}",
+                        ];
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
@@ -95,7 +99,7 @@
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.manage link="{{ route('super-admin-iku-ikp', ['sk' => 'hahaha', 'ikk' => 'hihihi', 'ps' => 'hohoho']) }}" />
                             <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['id' => $item['id'], 'sk' => 'hahaha', 'ikk' => 'hihihi']) }}" />
-                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$modalData" />
+                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
                         </td>
                     </tr>
                 @endforeach
