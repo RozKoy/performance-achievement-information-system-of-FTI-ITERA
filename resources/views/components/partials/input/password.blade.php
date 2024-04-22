@@ -1,5 +1,5 @@
 <div class="relative">
-    <input type="password" name="{{ $name }}" id="{{ $name }}" code="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" title="{{ ucfirst($title) }}" minlength="6" oninvalid="inputPasswordCustomMessage(this)" oninput="inputPasswordCustomMessage(this)" class="{{ isset($style) ?? $style }} w-full rounded-lg border-2 border-slate-100 px-2 py-1.5 text-primary focus:border-primary focus:outline-none focus:ring-0 max-sm:text-sm" @isset($autofocus) autofocus @endisset @required(isset($required))>
+    <input type="password" name="{{ $name }}" id="{{ $name }}" code="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" title="{{ ucfirst($title) }}" oninvalid="inputPasswordCustomMessage(this)" oninput="inputPasswordCustomMessage(this)" class="{{ isset($style) ?? $style }} w-full rounded-lg border-2 border-slate-100 px-2 py-1.5 text-primary focus:border-primary focus:outline-none focus:ring-0 max-sm:text-sm" @isset($autofocus) autofocus @endisset @required(isset($required))>
     <button type="button" id="eye-open-{{ $name }}" target="{{ $name }}" onclick="togglePassword(this)" title="Lihat kata sandi" class="absolute bottom-0 right-2 top-0 my-auto">
         <svg itemref="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-4 fill-primary sm:w-6">
             <g>
@@ -36,8 +36,6 @@
 
             if (state.valueMissing) {
                 component.setCustomValidity(title + ' wajib diisi');
-            } else if (state.tooShort) {
-                component.setCustomValidity(title + ' tidak boleh dibawah 6 karakter');
             } else {
                 component.setCustomValidity('');
             }
