@@ -5,7 +5,6 @@
             'name' => 'Capaian Kinerja - Rencana Strategis',
         ],
     ];
-    $system = 'active';
     $years = ['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'];
     $year = request()->query('year') !== null ? request()->query('year') : \Carbon\Carbon::now()->format('Y');
     $periods = [
@@ -36,7 +35,7 @@
         ],
     ];
 @endphp
-<x-admin-template title="Renstra - Capaian Kinerja - Super Admin">
+<x-admin-template title="Renstra - Capaian Kinerja - Teknik Informatika">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.filter.year :$years :$year />
     <x-partials.filter.period :$periods :$period />
@@ -145,7 +144,7 @@
                     <th title="Sasaran strategis">Sasaran Strategis</th>
                     <th title="Kegiatan">Kegiatan</th>
                     <th title="Indikator kinerja">Indikator Kinerja</th>
-                    <th title="Realisasi FTI">Realisasi FTI</th>
+                    <th title="Realisasi FTI">Realisasi</th>
                 </tr>
             </thead>
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
