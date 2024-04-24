@@ -45,11 +45,11 @@
             </div>
             <div id="selection" class="*:rounded-lg *:border *:border-slate-100 *:shadow *:p-1.5 *:gap-1 flex flex-wrap items-center justify-center gap-2 text-primary">
                 <div class="flex items-center justify-center">
-                    <input type="radio" title="Super admin semua akses" name="access" id="editor" value="super-admin-editor" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" checked required>
+                    <x-partials.input.radio title="Super admin semua akses" name="access" id="editor" value="super-admin-editor" checked required />
                     <label for="editor" title="Super admin semua akses">Semua akses</label>
                 </div>
                 <div class="flex items-center justify-center">
-                    <input type="radio" title="Super admin akses hanya melihat" name="access" id="viewer-super-admin" value="super-admin-viewer" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" required>
+                    <x-partials.input.radio title="Super admin akses hanya melihat" name="access" id="viewer-super-admin" value="super-admin-viewer" required />
                     <label for="viewer-super-admin" title="Super admin akses hanya melihat">Hanya melihat</label>
                 </div>
             </div>
@@ -60,11 +60,11 @@
     <div class="hidden">
         <div id="super-admin-selection">
             <div class="flex items-center justify-center">
-                <input type="radio" title="Super admin semua akses" name="access" id="editor" value="super-admin-editor" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" checked required>
+                <x-partials.input.radio title="Super admin semua akses" name="access" id="editor" value="super-admin-editor" checked required />
                 <label for="editor" title="Super admin semua akses">Semua akses</label>
             </div>
             <div class="flex items-center justify-center">
-                <input type="radio" title="Super admin akses hanya melihat" name="access" id="viewer-super-admin" value="super-admin-viewer" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" required>
+                <x-partials.input.radio title="Super admin akses hanya melihat" name="access" id="viewer-super-admin" value="super-admin-viewer" required />
                 <label for="viewer-super-admin" title="Super admin akses hanya melihat">Hanya melihat</label>
             </div>
         </div>
