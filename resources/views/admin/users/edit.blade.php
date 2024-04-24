@@ -14,7 +14,7 @@
     ];
 @endphp
 <x-admin-template title="Ubah Pengguna - Teknik Informatika">
-    <x-partials.breadcrumbs.default :$breadCrumbs />
+    <x-partials.breadcrumbs.default :$breadCrumbs admin />
     <x-partials.heading.h2 text="ubah pengguna" previous="admin-users" />
     <form action="" class="flex flex-col gap-2">
         <x-partials.label.default for="name" title="Nama pengguna" text="Nama Pengguna" required />

@@ -36,7 +36,7 @@
     ];
 @endphp
 <x-admin-template title="Renstra - Capaian Kinerja - Teknik Informatika">
-    <x-partials.breadcrumbs.default :$breadCrumbs />
+    <x-partials.breadcrumbs.default :$breadCrumbs admin />
     <x-partials.filter.year :$years :$year />
     <x-partials.filter.period :$periods :$period />
     <x-partials.heading.h2 text="capaian kinerja - rencana strategis" />
