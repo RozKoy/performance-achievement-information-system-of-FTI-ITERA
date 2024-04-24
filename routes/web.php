@@ -159,9 +159,7 @@ Route::group([
         return view('admin.home');
     })->name('admin-dashboard');
 
-    Route::get('/rencana-strategis', function () {
-        return 'Rencana Strategis';
-    })->name('admin-rs');
+    Route::view('/rencana-strategis', 'admin.rs.home')->name('admin-rs');
 
     Route::get('/indikator-kinerja-utama', function () {
         return 'Indikator Kinerja Utama';
