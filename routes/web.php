@@ -161,9 +161,7 @@ Route::group([
 
     Route::view('/rencana-strategis', 'admin.rs.home')->name('admin-rs');
 
-    Route::get('/indikator-kinerja-utama', function () {
-        return 'Indikator Kinerja Utama';
-    })->name('admin-iku');
+    Route::view('/indikator-kinerja-utama', 'admin.iku.home')->name('admin-iku');
 
     Route::get('/riwayat', function () {
         return 'Riwayat';
