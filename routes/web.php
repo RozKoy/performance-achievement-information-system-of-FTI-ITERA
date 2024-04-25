@@ -172,6 +172,7 @@ Route::group([
 
         Route::view('/rencana-strategis', 'admin.history.rs.home')->name('admin-history-rs');
         Route::view('/indikator-kinerja-utama', 'admin.history.iku.home')->name('admin-history-iku');
+        Route::view('/indikator-kinerja-utama/{id}/detail', 'admin.history.iku.detail')->name('admin-history-iku-detail');
     });
 
     Route::group([
