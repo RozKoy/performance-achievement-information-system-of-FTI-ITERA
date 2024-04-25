@@ -163,9 +163,16 @@ Route::group([
 
     Route::view('/indikator-kinerja-utama', 'admin.iku.home')->name('admin-iku');
 
-    Route::get('/riwayat', function () {
-        return 'Riwayat';
-    })->name('admin-history');
+    Route::group([
+        'prefix' => '/riwayat'
+    ], function () {
+        Route::get('/', function () {
+            return redirect()->route('admin-history-rs');
+        })->name('admin-history');
+
+        Route::view('/rencana-strategis', 'admin.history.rs.home')->name('admin-history-rs');
+        Route::view('/indikator-kinerja-utama', 'admin.history.iku.home')->name('admin-history-iku');
+    });
 
     Route::group([
         'prefix' => '/pengguna'
