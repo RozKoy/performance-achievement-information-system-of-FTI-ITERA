@@ -21,6 +21,10 @@ return new class extends Migration {
             $table->primary('id');
             $table->unique('name');
         });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignUuid('unit_id')->nullable()->constrained('units');
+        });
     }
 
     /**
