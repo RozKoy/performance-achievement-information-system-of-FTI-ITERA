@@ -59,14 +59,15 @@
             ],
         ];
     @endphp
-    <form action="" class="flex flex-col gap-2">
+    <form action="" method="POST" class="flex flex-col gap-2">
+        @csrf
         <x-partials.label.default for="name" title="Nama unit" text="Nama Unit" required />
-        <x-partials.input.text name="name" title="Nama unit" autofocus required />
+        <x-partials.input.text name="name" title="Nama unit" value="{{ old('name') }}" autofocus required />
         <p class="text-sm sm:text-base">Pilih Pengguna</p>
         <div class="*:border *:rounded-lg flex flex-wrap gap-1">
             @foreach ($users as $user)
                 <div class="min-w-40 relative flex flex-1 items-center gap-1.5 px-2 py-1">
-                    <input type="checkbox" name="users[]" id="user-{{ $loop->iteration }}" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90">
+                    <input type="checkbox" name="users[]" id="user-{{ $loop->iteration }}" value="{{ $user['id'] }}" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90">
                     <label for="user-{{ $loop->iteration }}" class="*:truncate flex-1 overflow-hidden text-xs text-primary sm:text-sm">
                         <div class="flex items-center gap-1 font-semibold">
                             <p title="{{ $user['access'] === 'editor' ? 'Semua akses' : 'Hanya melihat' }}">
