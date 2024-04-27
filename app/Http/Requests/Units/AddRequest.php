@@ -23,7 +23,7 @@ class AddRequest extends FormRequest
     {
         return [
             'name' => ['bail', 'required', 'unique:units'],
-            'users' => ['bail', 'nullable', 'array']
+            'users' => ['bail', 'nullable', 'array', 'exists:users,id']
         ];
     }
 
@@ -38,6 +38,7 @@ class AddRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'exists' => ':attribute tidak dapat ditemukan',
             'array' => ':attribute harus berupa array',
             'unique' => ':attribute sudah digunakan',
             'required' => ':attribute wajib diisi'

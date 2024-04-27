@@ -150,7 +150,7 @@ Route::group([
         'controller' => UnitsController::class
     ], function () {
         Route::view('/', 'super-admin.unit.home')->name('super-admin-unit');
-        Route::view('/tambah', 'super-admin.unit.add')->name('super-admin-unit-add');
+        Route::get('/tambah', 'addView')->name('super-admin-unit-add');
         Route::post('/tambah', 'add');
         Route::view('/{id}/ubah', 'super-admin.unit.edit')->name('super-admin-unit-edit');
     });

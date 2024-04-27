@@ -13,52 +13,6 @@
 <x-super-admin-template title="Tambah Unit - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="tambah unit" previous="super-admin-unit" />
-    @php
-        $users = [
-            [
-                'id' => '1',
-                'username' => 'RozKoy',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'viewer',
-            ],
-            [
-                'id' => '1',
-                'username' => 'RozKoy asy syaddad',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'editor',
-            ],
-            [
-                'id' => '1',
-                'username' => 'RozKoy',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'viewer',
-            ],
-            [
-                'id' => '1',
-                'username' => 'RozKoy',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'editor',
-            ],
-            [
-                'id' => '1',
-                'username' => 'RozKoy',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'editor',
-            ],
-            [
-                'id' => '1',
-                'username' => 'RozKoy',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'viewer',
-            ],
-            [
-                'id' => '1',
-                'username' => 'RozKoy',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'editor',
-            ],
-        ];
-    @endphp
     <form action="" method="POST" class="flex flex-col gap-2">
         @csrf
         <x-partials.label.default for="name" title="Nama unit" text="Nama Unit" required />
@@ -93,6 +47,12 @@
                 </div>
             @endforeach
         </div>
+        @if (!count($users))
+            <p class="text-center text-red-500">Tidak ada pengguna yang tersedia</p>
+        @endif
+        @error('users')
+            <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+        @enderror
         <x-partials.button.add submit />
     </form>
 </x-super-admin-template>
