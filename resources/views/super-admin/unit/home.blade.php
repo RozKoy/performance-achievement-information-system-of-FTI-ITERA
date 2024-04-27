@@ -13,25 +13,6 @@
         <x-partials.search.default />
         <x-partials.button.add href="super-admin-unit-add" />
     </div>
-    @php
-        $data = [
-            [
-                'id' => '1',
-                'name' => 'Teknik Informatika',
-                'users' => 2,
-            ],
-            [
-                'id' => '2',
-                'name' => 'Perencanaan Wilayah dan Kota',
-                'users' => 1,
-            ],
-            [
-                'id' => '3',
-                'name' => 'Teknik Elektro',
-                'users' => 0,
-            ],
-        ];
-    @endphp
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
@@ -64,6 +45,10 @@
             </tbody>
         </table>
     </div>
+
+    @if (!count($data))
+        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data unit</p>
+    @endif
 
     <x-partials.modal.delete id="delete-modal" />
 </x-super-admin-template>

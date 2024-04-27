@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\UsersController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -149,7 +150,7 @@ Route::group([
         'prefix' => '/unit',
         'controller' => UnitsController::class
     ], function () {
-        Route::view('/', 'super-admin.unit.home')->name('super-admin-unit');
+        Route::get('/', 'homeView')->name('super-admin-unit');
         Route::get('/tambah', 'addView')->name('super-admin-unit-add');
         Route::post('/tambah', 'add');
         Route::view('/{id}/ubah', 'super-admin.unit.edit')->name('super-admin-unit-edit');
