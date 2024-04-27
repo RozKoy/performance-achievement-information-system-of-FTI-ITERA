@@ -48,7 +48,7 @@
             @endforeach
         </div>
         @if (!count($users))
-            <p class="text-center text-red-500">Tidak ada pengguna yang tersedia</p>
+            <p class="text-center text-red-500 max-sm:text-sm">Tidak ada pengguna yang tersedia</p>
         @endif
         @error('users')
             <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
