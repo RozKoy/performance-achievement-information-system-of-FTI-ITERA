@@ -153,7 +153,7 @@ Route::group([
         Route::get('/', 'homeView')->name('super-admin-unit');
         Route::get('/tambah', 'addView')->name('super-admin-unit-add');
         Route::post('/tambah', 'add');
-        Route::view('/{id}/ubah', 'super-admin.unit.edit')->name('super-admin-unit-edit');
+        Route::get('/{id}/ubah', 'editView')->name('super-admin-unit-edit');
     });
 });
 

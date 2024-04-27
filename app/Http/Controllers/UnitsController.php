@@ -47,4 +47,22 @@ class UnitsController extends Controller
 
         return redirect()->route('super-admin-unit');
     }
+
+    public function editView($id)
+    {
+        $unit = Unit::whereKey($id)->with('users')->first(['id', 'name']);
+
+        if ($unit !== null) {
+            $user_list = User::where('role', 'admin')->whereNull('unit_id')->get(['id', 'name AS username', 'email', 'access'])->toArray();
+
+            $users = $unit->users()->get(['id', 'name AS username', 'email', 'access'])->toArray();
+
+            $data = $unit->toArray();
+            unset($data['users']);
+
+            return view('super-admin.unit.edit', compact(['data', 'users', 'user_list']));
+        }
+
+        abort(404);
+    }
 }

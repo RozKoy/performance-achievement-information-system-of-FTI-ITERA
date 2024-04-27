@@ -14,60 +14,16 @@
 <x-super-admin-template title="Ubah Unit - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="ubah unit" previous="super-admin-unit" />
-    @php
-        $users = [
-            [
-                'id' => '1',
-                'username' => 'RozKoy',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'viewer',
-            ],
-            [
-                'id' => '2',
-                'username' => 'RozKoy asy syaddad',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'editor',
-            ],
-            [
-                'id' => '3',
-                'username' => 'RozKoy',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'viewer',
-            ],
-            [
-                'id' => '4',
-                'username' => 'RozKoy',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'editor',
-            ],
-            [
-                'id' => '5',
-                'username' => 'RozKoy',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'editor',
-            ],
-            [
-                'id' => '6',
-                'username' => 'RozKoy',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'viewer',
-            ],
-            [
-                'id' => '7',
-                'username' => 'RozKoy',
-                'email' => 'rozkoy@gmail.com',
-                'access' => 'editor',
-            ],
-        ];
-    @endphp
-    <form action="" class="flex flex-col gap-2">
+    <form action="" method="POST" class="flex flex-col gap-2">
+        @csrf
+        @method('PUT')
         <x-partials.label.default for="name" title="Nama unit" text="Nama Unit" required />
-        <x-partials.input.text name="name" title="Nama unit" value="Teknik Informatika" autofocus required />
+        <x-partials.input.text name="name" title="Nama unit" value="{{ $data['name'] }}" autofocus required />
         <p class="text-sm sm:text-base">Pilih Pengguna</p>
         <div class="*:border *:rounded-lg flex flex-wrap gap-1">
             @foreach ($users as $user)
                 <div class="min-w-40 relative flex flex-1 items-center gap-1.5 px-2 py-1">
-                    <input type="checkbox" name="users[]" id="user-{{ $loop->iteration }}" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" checked>
+                    <input type="checkbox" name="users['old'][]" value="{{ $user['id'] }}" id="user-{{ $loop->iteration }}" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" checked>
                     <label for="user-{{ $loop->iteration }}" class="*:truncate flex-1 overflow-hidden text-xs text-primary sm:text-sm">
                         <div class="flex items-center gap-1 font-semibold">
                             <p title="{{ $user['access'] === 'editor' ? 'Semua akses' : 'Hanya melihat' }}">
@@ -92,10 +48,10 @@
                     </label>
                 </div>
             @endforeach
-            @foreach ($users as $user)
+            @foreach ($user_list as $user)
                 <div class="min-w-40 relative flex flex-1 items-center gap-1.5 px-2 py-1">
-                    <input type="checkbox" name="users[]" id="user-{{ $loop->iteration }}" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90">
-                    <label for="user-{{ $loop->iteration }}" class="*:truncate flex-1 overflow-hidden text-xs text-primary sm:text-sm">
+                    <input type="checkbox" name="users['new'][]" value="{{ $user['id'] }}" id="user-{{ count($users) + $loop->iteration }}" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90">
+                    <label for="user-{{ count($users) + $loop->iteration }}" class="*:truncate flex-1 overflow-hidden text-xs text-primary sm:text-sm">
                         <div class="flex items-center gap-1 font-semibold">
                             <p title="{{ $user['access'] === 'editor' ? 'Semua akses' : 'Hanya melihat' }}">
                                 @if ($user['access'] === 'viewer')
@@ -120,6 +76,9 @@
                 </div>
             @endforeach
         </div>
+        @if (!count($users) && !count($user_list))
+            <p class="text-center text-red-500 max-sm:text-sm">Tidak ada pengguna yang tersedia</p>
+        @endif
         <x-partials.button.edit />
     </form>
 </x-super-admin-template>
