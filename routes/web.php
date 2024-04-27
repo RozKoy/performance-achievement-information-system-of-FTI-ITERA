@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\UnitsController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -134,10 +135,12 @@ Route::group([
 
 
     Route::group([
-        'prefix' => '/pengguna'
+        'prefix' => '/pengguna',
+        'controller' => UsersController::class
     ], function () {
         Route::view('/', 'super-admin.users.home')->name('super-admin-users');
         Route::view('/tambah', 'super-admin.users.add')->name('super-admin-users-add');
+        Route::post('/tambah', 'add');
         Route::view('/{id}/ubah', 'super-admin.users.edit')->name('super-admin-users-edit');
     });
 

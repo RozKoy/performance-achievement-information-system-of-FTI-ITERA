@@ -15,7 +15,7 @@
             'text' => 'Pilih Unit',
         ],
         [
-            'value' => 'fdkdncd',
+            'value' => '9be5763d-debc-4773-a06b-1d06c1d40e57',
             'text' => 'Teknik Informatika',
         ],
         [
@@ -31,11 +31,12 @@
 <x-super-admin-template title="Tambah Pengguna - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="tambah pengguna" previous="super-admin-users" />
-    <form action="" class="flex flex-col gap-2">
+    <form action="" method="POST" class="flex flex-col gap-2">
+        @csrf
         <x-partials.label.default for="name" title="Nama pengguna" text="Nama Pengguna" required />
-        <x-partials.input.text name="name" title="Nama pengguna" autofocus required />
+        <x-partials.input.text name="name" title="Nama pengguna" value="{{ old('name') }}" autofocus required />
         <x-partials.label.default for="email" title="Email" text="Email" required />
-        <x-partials.input.text name="email" title="Email" required />
+        <x-partials.input.text name="email" title="Email" value="{{ old('email') }}" required />
         <x-partials.label.default for="password" title="Kata sandi" text="Kata Sandi" required />
         <x-partials.input.text name="password" title="Kata sandi" disabled required />
         <div class="*:p-2.5 max-sm:text-sm max-[320px]:text-xs">
@@ -54,6 +55,12 @@
                 </div>
             </div>
         </div>
+        @error('access')
+            <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+        @enderror
+        @error('unit')
+            <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+        @enderror
         <x-partials.button.add submit />
     </form>
 
@@ -69,7 +76,7 @@
             </div>
         </div>
         <div id="admin-selection">
-            <x-partials.input.select name="unit" title="Pilih unit" :$data required />
+            <x-partials.input.select name="unit" title="Pilih unit" :$data />
             <div class="flex items-center justify-center">
                 <input type="checkbox" title="Admin akses hanya melihat" name="access" id="viewer-admin" value="admin-viewer" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90">
                 <label for="viewer-admin" title="Admin akses hanya melihat">Hanya melihat</label>
@@ -77,8 +84,20 @@
         </div>
     </div>
 
+    @if ($errors->has('unit'))
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('admin-button').click();
+            });
+        </script>
+    @endif
+
     @pushOnce('script')
         <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('password').value = document.getElementById('name').value.replaceAll(' ', '_');
+            });
+
             document.getElementById('name').addEventListener('input', function(event) {
                 document.getElementById('password').value = event.target.value.replaceAll(' ', '_');
             });
