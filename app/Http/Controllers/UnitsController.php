@@ -16,7 +16,7 @@ class UnitsController extends Controller
             if ($request->search) {
                 $query->where('name', 'LIKE', "%{$request->search}%");
             }
-        })->with('users')->get(['id', 'name'])->toArray();
+        })->with('users')->latest()->get(['id', 'name'])->toArray();
 
         for ($i = 0; $i < count($data); $i++) {
             $data[$i]['users'] = count($data[$i]['users']);
