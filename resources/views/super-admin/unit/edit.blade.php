@@ -6,8 +6,10 @@
         ],
         [
             'link' => 'super-admin-unit-edit',
-            'params' => ['id' => '1'],
             'name' => 'Ubah',
+            'params' => [
+                'id' => $data['id'],
+            ],
         ],
     ];
 @endphp
