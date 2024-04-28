@@ -17,14 +17,21 @@ class UnitsController extends Controller
             if ($request->search) {
                 $query->where('name', 'LIKE', "%{$request->search}%");
             }
-        })->select(['id', 'name'])->withCount('users AS users')->latest()->get()->toArray();
+        })->select(['id', 'name'])
+            ->withCount('users AS users')
+            ->latest()
+            ->get()
+            ->toArray();
 
         return view('super-admin.unit.home', compact('data'));
     }
 
     public function addView()
     {
-        $users = User::where('role', 'admin')->whereNull('unit_id')->get(['id', 'name AS username', 'email', 'access'])->toArray();
+        $users = User::where('role', 'admin')
+            ->whereNull('unit_id')
+            ->get(['id', 'name AS username', 'email', 'access'])
+            ->toArray();
 
         return view('super-admin.unit.add', compact('users'));
     }
@@ -47,7 +54,9 @@ class UnitsController extends Controller
 
     public function editView($id)
     {
-        $unit = Unit::whereKey($id)->with('users')->first(['id', 'name']);
+        $unit = Unit::whereKey($id)
+            ->with('users')
+            ->first(['id', 'name']);
 
         if ($unit !== null) {
             $usersExists = $unit->users()
@@ -79,7 +88,9 @@ class UnitsController extends Controller
             $newName = $request->safe()['name'];
 
             if ($unit->name !== $newName) {
-                $temp = Unit::whereKeyNot($id)->where('name', $newName)->first();
+                $temp = Unit::whereKeyNot($id)
+                    ->where('name', $newName)
+                    ->first();
 
                 if ($temp !== null) {
                     return back()->withInput()->withErrors(['name' => 'Nama unit sudah digunakan']);
