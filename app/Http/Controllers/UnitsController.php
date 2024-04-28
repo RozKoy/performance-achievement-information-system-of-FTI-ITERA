@@ -17,11 +17,7 @@ class UnitsController extends Controller
             if ($request->search) {
                 $query->where('name', 'LIKE', "%{$request->search}%");
             }
-        })->with('users')->latest()->get(['id', 'name'])->toArray();
-
-        for ($i = 0; $i < count($data); $i++) {
-            $data[$i]['users'] = count($data[$i]['users']);
-        }
+        })->select(['id', 'name'])->withCount('users AS users')->latest()->get()->toArray();
 
         return view('super-admin.unit.home', compact('data'));
     }
