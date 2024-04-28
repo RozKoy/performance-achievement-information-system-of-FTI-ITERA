@@ -50,14 +50,22 @@ class UnitsController extends Controller
         $unit = Unit::whereKey($id)->with('users')->first(['id', 'name']);
 
         if ($unit !== null) {
-            $user_list = User::where('role', 'admin')->whereNull('unit_id')->get(['id', 'name AS username', 'email', 'access'])->toArray();
+            $usersExists = $unit->users()
+                ->select(['id', 'name AS username', 'email', 'access'])
+                ->selectRaw('true AS checked')
+                ->get()
+                ->toArray();
+            $usersList = User::where('role', 'admin')
+                ->whereNull('unit_id')
+                ->get(['id', 'name AS username', 'email', 'access'])
+                ->toArray();
 
-            $users = $unit->users()->get(['id', 'name AS username', 'email', 'access'])->toArray();
+            $users = array_merge($usersExists, $usersList);
 
             $data = $unit->toArray();
             unset($data['users']);
 
-            return view('super-admin.unit.edit', compact(['data', 'users', 'user_list']));
+            return view('super-admin.unit.edit', compact(['data', 'users']));
         }
 
         abort(404);
