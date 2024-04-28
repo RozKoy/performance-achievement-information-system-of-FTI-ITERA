@@ -6,87 +6,99 @@
         ],
         [
             'link' => 'super-admin-users-edit',
-            'params' => ['id' => '1'],
             'name' => 'Ubah',
-        ],
-    ];
-    $data = [
-        [
-            'value' => '',
-            'text' => 'Pilih Unit',
-        ],
-        [
-            'value' => 'fdkdncd',
-            'text' => 'Teknik Informatika',
-        ],
-        [
-            'value' => 'ckddfdg',
-            'text' => 'Teknik Elektro',
-        ],
-        [
-            'value' => 'kdckdmkfdg',
-            'text' => 'Sains Aktuaria',
+            'params' => [
+                'id' => 'hay',
+            ],
         ],
     ];
 @endphp
 <x-super-admin-template title="Ubah Pengguna - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="ubah pengguna" previous="super-admin-users" />
-    <form action="" class="flex flex-col gap-2">
+    <form action="" method="POST" class="flex flex-col gap-2">
+        @csrf
+        @method('PUT')
         <x-partials.label.default for="name" title="Nama pengguna" text="Nama Pengguna" required />
-        <x-partials.input.text name="name" title="Nama pengguna" autofocus required />
+        <x-partials.input.text name="name" title="Nama pengguna" value="{{ old('name') ? old('name') : $user['name'] }}" autofocus required />
         <x-partials.label.default for="email" title="Email" text="Email" required />
-        <x-partials.input.text name="email" title="Email" required />
-        <x-partials.label.default for="password" title="Kata sandi" text="Kata Sandi" required />
-        <x-partials.input.text name="password" title="Kata sandi" disabled required />
+        <x-partials.input.text name="email" title="Email" value="{{ old('email') ? old('email') : $user['email'] }}" required />
         <div class="*:p-2.5 max-sm:text-sm max-[320px]:text-xs">
             <div class="*:flex-1 *:rounded-lg *:p-1 *:bg-primary/80 flex gap-2.5 text-white">
-                <button id="super-admin-button" type="button" title="Tombol akses super admin" class="outline outline-2 outline-offset-1 outline-primary hover:bg-primary/70">Super Admin</button>
+                <button id="super-admin-button" type="button" title="Tombol akses super admin" onclick="switchSelection('super-admin-button', 'admin-button')" class="hover:bg-primary/70">Super Admin</button>
                 <button id="admin-button" type="button" title="Tombol akses admin" onclick="switchSelection('admin-button', 'super-admin-button')" class="hover:bg-primary/70">Admin</button>
             </div>
             <div id="selection" class="*:rounded-lg *:border *:border-slate-100 *:shadow *:p-1.5 *:gap-1 flex flex-wrap items-center justify-center gap-2 text-primary">
-                <div class="flex items-center justify-center">
-                    <x-partials.input.radio title="Super admin semua akses" name="access" id="editor" value="super-admin-editor" checked required />
-                    <label for="editor" title="Super admin semua akses">Semua akses</label>
-                </div>
-                <div class="flex items-center justify-center">
-                    <x-partials.input.radio title="Super admin akses hanya melihat" name="access" id="viewer-super-admin" value="super-admin-viewer" required />
-                    <label for="viewer-super-admin" title="Super admin akses hanya melihat">Hanya melihat</label>
-                </div>
             </div>
         </div>
+        @error('access')
+            <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+        @enderror
+        @error('unit')
+            <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+        @enderror
         <x-partials.button.edit />
     </form>
 
     <div class="hidden">
         <div id="super-admin-selection">
             <div class="flex items-center justify-center">
-                <x-partials.input.radio title="Super admin semua akses" name="access" id="editor" value="super-admin-editor" checked required />
+                @if ($user['role'] === 'super admin' && $user['access'] === 'editor')
+                    <x-partials.input.radio title="Super admin semua akses" name="access" id="editor" value="super-admin-editor" checked required />
+                @else
+                    <x-partials.input.radio title="Super admin semua akses" name="access" id="editor" value="super-admin-editor" required />
+                @endif
                 <label for="editor" title="Super admin semua akses">Semua akses</label>
             </div>
             <div class="flex items-center justify-center">
-                <x-partials.input.radio title="Super admin akses hanya melihat" name="access" id="viewer-super-admin" value="super-admin-viewer" required />
+                @if ($user['role'] === 'super admin' && $user['access'] === 'viewer')
+                    <x-partials.input.radio title="Super admin akses hanya melihat" name="access" id="viewer-super-admin" value="super-admin-viewer" checked required />
+                @else
+                    <x-partials.input.radio title="Super admin akses hanya melihat" name="access" id="viewer-super-admin" value="super-admin-viewer" required />
+                @endif
                 <label for="viewer-super-admin" title="Super admin akses hanya melihat">Hanya melihat</label>
             </div>
         </div>
         <div id="admin-selection">
-            <x-partials.input.select name="unit" title="Pilih unit" :$data required />
+            <x-partials.input.select name="unit" title="Pilih unit" :$data />
             <div class="flex items-center justify-center">
-                <input type="checkbox" title="Admin akses hanya melihat" name="access" id="viewer-admin" value="admin-viewer" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90">
+                <input type="checkbox" title="Admin akses hanya melihat" name="access" id="viewer-admin" value="admin-viewer" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" @checked($user['role'] === 'admin' && $user['access'] === 'viewer')>
                 <label for="viewer-admin" title="Admin akses hanya melihat">Hanya melihat</label>
             </div>
         </div>
     </div>
 
+    @if ($errors->has('unit') || $user['role'] === 'admin')
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('admin-button').click();
+            });
+        </script>
+    @else
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('super-admin-button').click();
+            });
+        </script>
+    @endif
+
     @pushOnce('script')
         <script>
-            document.getElementById('name').addEventListener('input', function(event) {
-                document.getElementById('password').value = event.target.value.replaceAll(' ', '_');
-            });
+            function addClass(id, arr) {
+                let elementClass = document.getElementById(id).classList;
+                arr.forEach(item => {
+                    if (!elementClass.contains(item)) {
+                        elementClass.add(item);
+                    }
+                });
+            }
 
-            function classToggle(id, arr) {
-                arr.forEach(element => {
-                    document.getElementById(id).classList.toggle(element);
+            function removeClass(id, arr) {
+                let elementClass = document.getElementById(id).classList;
+                arr.forEach(item => {
+                    if (elementClass.contains(item)) {
+                        elementClass.remove(item);
+                    }
                 });
             }
 
@@ -94,13 +106,11 @@
                 document.getElementById(first).removeAttribute('onclick');
                 document.getElementById(second).setAttribute('onclick', `switchSelection('${ second }', '${ first }')`);
 
-                classToggle('super-admin-button', ['outline', 'outline-2', 'outline-offset-1', 'outline-primary']);
-                classToggle('admin-button', ['outline', 'outline-2', 'outline-offset-1', 'outline-primary']);
+                addClass(first, ['outline', 'outline-2', 'outline-offset-1', 'outline-primary']);
+                removeClass(second, ['outline', 'outline-2', 'outline-offset-1', 'outline-primary']);
 
                 let newSelection = document.getElementById(first === 'super-admin-button' ? 'super-admin-selection' : 'admin-selection');
                 document.getElementById('selection').innerHTML = newSelection.innerHTML;
-
-                console.log(newSelection);
             }
         </script>
     @endPushOnce
