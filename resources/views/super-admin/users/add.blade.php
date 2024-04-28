@@ -111,8 +111,6 @@
 
                 let newSelection = document.getElementById(first === 'super-admin-button' ? 'super-admin-selection' : 'admin-selection');
                 document.getElementById('selection').innerHTML = newSelection.innerHTML;
-
-                console.log(newSelection);
             }
         </script>
     @endPushOnce
