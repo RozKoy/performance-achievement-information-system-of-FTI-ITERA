@@ -18,12 +18,12 @@
         @csrf
         @method('PUT')
         <x-partials.label.default for="name" title="Nama unit" text="Nama Unit" required />
-        <x-partials.input.text name="name" title="Nama unit" value="{{ $data['name'] }}" autofocus required />
+        <x-partials.input.text name="name" title="Nama unit" value="{{ old('name') ? old('name') : $data['name'] }}" autofocus required />
         <p class="text-sm sm:text-base">Pilih Pengguna</p>
         <div class="*:border *:rounded-lg flex flex-wrap gap-1">
             @foreach ($users as $user)
                 <div class="min-w-40 relative flex flex-1 items-center gap-1.5 px-2 py-1">
-                    <input type="checkbox" name="users['old'][]" value="{{ $user['id'] }}" id="user-{{ $loop->iteration }}" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" checked>
+                    <input type="checkbox" name="users[old][]" value="{{ $user['id'] }}" id="user-{{ $loop->iteration }}" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" checked>
                     <label for="user-{{ $loop->iteration }}" class="*:truncate flex-1 overflow-hidden text-xs text-primary sm:text-sm">
                         <div class="flex items-center gap-1 font-semibold">
                             <p title="{{ $user['access'] === 'editor' ? 'Semua akses' : 'Hanya melihat' }}">
@@ -50,7 +50,7 @@
             @endforeach
             @foreach ($user_list as $user)
                 <div class="min-w-40 relative flex flex-1 items-center gap-1.5 px-2 py-1">
-                    <input type="checkbox" name="users['new'][]" value="{{ $user['id'] }}" id="user-{{ count($users) + $loop->iteration }}" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90">
+                    <input type="checkbox" name="users[new][]" value="{{ $user['id'] }}" id="user-{{ count($users) + $loop->iteration }}" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90">
                     <label for="user-{{ count($users) + $loop->iteration }}" class="*:truncate flex-1 overflow-hidden text-xs text-primary sm:text-sm">
                         <div class="flex items-center gap-1 font-semibold">
                             <p title="{{ $user['access'] === 'editor' ? 'Semua akses' : 'Hanya melihat' }}">
@@ -79,6 +79,9 @@
         @if (!count($users) && !count($user_list))
             <p class="text-center text-red-500 max-sm:text-sm">Tidak ada pengguna yang tersedia</p>
         @endif
+        @error('users.*')
+            <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+        @enderror
         <x-partials.button.edit />
     </form>
 </x-super-admin-template>

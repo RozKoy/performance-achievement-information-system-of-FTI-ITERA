@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
+use App\Http\Requests\Units\EditRequest;
 use App\Http\Requests\Units\AddRequest;
 use Illuminate\Http\Request;
 use App\Models\Unit;
@@ -61,6 +62,56 @@ class UnitsController extends Controller
             unset($data['users']);
 
             return view('super-admin.unit.edit', compact(['data', 'users', 'user_list']));
+        }
+
+        abort(404);
+    }
+
+    public function edit(EditRequest $request, $id)
+    {
+        $unit = Unit::find($id);
+
+        if ($unit !== null) {
+            $newName = $request->safe()['name'];
+
+            if ($unit->name !== $newName) {
+                $temp = Unit::whereKeyNot($id)->where('name', $newName)->first();
+
+                if ($temp !== null) {
+                    return back()->withInput()->withErrors(['name' => 'Nama unit sudah digunakan']);
+                }
+
+                $unit->name = $newName;
+                $unit->save();
+            }
+
+            $oldUsers = [];
+            $newUsers = [];
+
+            if (isset($request->safe()['users'])) {
+                if (isset($request->safe()['users']['old'])) {
+                    $oldUsers = $request->safe()['users']['old'];
+                }
+                if (isset($request->safe()['users']['new'])) {
+                    $newUsers = $request->safe()['users']['new'];
+                }
+            }
+
+            $unit->users()->each(function ($user) use ($oldUsers) {
+                if (!in_array($user->id, $oldUsers)) {
+                    $user->unit()->dissociate();
+                    $user->save();
+                }
+            });
+
+            $users = User::findMany($newUsers);
+
+            foreach ($users as $key => $user) {
+                $user->unit()->associate($unit);
+                $user->save();
+            }
+
+            return redirect()->route('super-admin-unit');
         }
 
         abort(404);
