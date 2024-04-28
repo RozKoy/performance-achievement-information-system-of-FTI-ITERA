@@ -22,6 +22,10 @@ return new class extends Migration {
 
             $table->primary('id');
         });
+
+        Schema::table('sasaran_strategis', function (Blueprint $table) {
+            $table->foreignUuid('time_id')->constrained('rs_time');
+        });
     }
 
     /**
