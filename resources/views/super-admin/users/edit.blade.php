@@ -8,7 +8,7 @@
             'link' => 'super-admin-users-edit',
             'name' => 'Ubah',
             'params' => [
-                'id' => 'hay',
+                'id' => $user['id'],
             ],
         ],
     ];
