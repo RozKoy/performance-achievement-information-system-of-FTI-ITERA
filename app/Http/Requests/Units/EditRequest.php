@@ -22,24 +22,25 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['bail', 'required'],
             'users.old' => ['bail', 'nullable', 'array', 'exists:users,id'],
             'users.new' => ['bail', 'nullable', 'array', 'exists:users,id'],
+            'name' => ['bail', 'required', 'max:255'],
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'name' => 'Nama unit',
             'users.old' => 'Pengguna',
-            'users.new' => 'Pengguna'
+            'users.new' => 'Pengguna',
+            'name' => 'Nama unit',
         ];
     }
 
     public function messages(): array
     {
         return [
+            'max' => ':attribute tidak boleh melebihi 255 karakter',
             'exists' => ':attribute tidak dapat ditemukan',
             'array' => ':attribute harus berupa array',
             'required' => ':attribute wajib diisi'

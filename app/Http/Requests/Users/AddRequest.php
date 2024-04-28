@@ -24,9 +24,9 @@ class AddRequest extends FormRequest
     {
         return [
             'access' => ['bail', 'nullable', 'in:super-admin-editor,super-admin-viewer,admin-viewer'],
-            'email' => ['bail', 'required', 'email:rfc,dns', 'unique:users'],
+            'email' => ['bail', 'required', 'max:255', 'email:rfc,dns', 'unique:users'],
             'unit' => ['bail', 'nullable', 'exists:units,id'],
-            'name' => ['bail', 'required'],
+            'name' => ['bail', 'required', 'max:255'],
         ];
     }
 
@@ -43,6 +43,7 @@ class AddRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'max' => ':attribute tidak boleh melebihi 255 karakter',
             'exists' => ':attribute tidak dapat ditemukan',
             'unique' => ':attribute sudah digunakan',
             'required' => ':attribute wajib diisi',

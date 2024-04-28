@@ -23,9 +23,9 @@ class EditRequest extends FormRequest
     {
         return [
             'access' => ['bail', 'nullable', 'in:super-admin-editor,super-admin-viewer,admin-viewer'],
+            'email' => ['bail', 'required', 'max:255', 'email:rfc,dns'],
             'unit' => ['bail', 'nullable', 'exists:units,id'],
-            'email' => ['bail', 'required', 'email:rfc,dns'],
-            'name' => ['bail', 'required'],
+            'name' => ['bail', 'required', 'max:255'],
         ];
     }
 
@@ -42,6 +42,7 @@ class EditRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'max' => ':attribute tidak boleh melebihi 255 karakter',
             'exists' => ':attribute tidak dapat ditemukan',
             'required' => ':attribute wajib diisi',
             'email' => ':attribute tidak valid',
