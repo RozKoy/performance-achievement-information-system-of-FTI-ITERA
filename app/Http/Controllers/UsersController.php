@@ -2,12 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\Users\AddRequest;
+use Illuminate\Http\Request;
 use App\Models\Unit;
 use App\Models\User;
 
 class UsersController extends Controller
 {
+    public function homeView(Request $request)
+    {
+        $data = User::doesntHave('unit')
+            ->where(function (Builder $query) use ($request) {
+                if ($request->search) {
+                    $query->whereAny(
+                        [
+                            'access',
+                            'email',
+                            'name',
+                            'role',
+                        ],
+                        'LIKE',
+                        "%{$request->search}%",
+                    );
+                }
+            })
+            ->orWhereHas('unit', function (Builder $query) use ($request) {
+                if ($request->search) {
+                    $query->whereAny(
+                        [
+                            'access',
+                            'email',
+                            'name',
+                            'role',
+                        ],
+                        'LIKE',
+                        "%{$request->search}%",
+                    );
+                }
+            })
+            ->select(['id', 'name', 'email', 'role', 'access'])
+            ->withAggregate('unit AS unit', 'name')
+            ->latest()
+            ->get()
+            ->toArray();
+
+        return view('super-admin.users.home', compact('data'));
+    }
+
     public function addView()
     {
         $units = Unit::get(['id AS value', 'name AS text'])->toArray();

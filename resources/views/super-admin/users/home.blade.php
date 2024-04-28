@@ -13,56 +13,6 @@
         <x-partials.search.default />
         <x-partials.button.add href="super-admin-users-add" />
     </div>
-    @php
-        $data = [
-            [
-                'id' => '1',
-                'name' => 'Rozin',
-                'email' => 'Rozin@gmail.com',
-                'role' => 'superAdmin',
-                'access' => 'editor',
-            ],
-            [
-                'id' => '2',
-                'name' => 'RozKoy',
-                'email' => 'Rozkoy@gmail.com',
-                'role' => 'superAdmin',
-                'access' => 'viewer',
-            ],
-            [
-                'id' => '3',
-                'name' => 'RozKoy koykoy',
-                'email' => 'Rozkoy@student.gmail.com',
-                'role' => 'admin',
-                'access' => 'editor',
-                'unit' => 'Teknik Informatika',
-            ],
-            [
-                'id' => '4',
-                'name' => 'RozKoy koykoy',
-                'email' => 'Rozkoy@student.gmail.com',
-                'role' => 'admin',
-                'access' => 'viewer',
-                'unit' => 'Teknik Informatika Fakultas Teknologi Sumatera',
-            ],
-            [
-                'id' => '5',
-                'name' => 'RozKoy koykoy',
-                'email' => 'Rozkoy@student.gmail.com',
-                'role' => 'admin',
-                'access' => 'editor',
-                'unit' => null,
-            ],
-            [
-                'id' => '6',
-                'name' => 'RozKoy koykoy',
-                'email' => 'Rozkoy@student.gmail.com',
-                'role' => 'admin',
-                'access' => 'viewer',
-                'unit' => null,
-            ],
-        ];
-    @endphp
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
@@ -84,7 +34,7 @@
                             'hak akses' => $item['role'],
                             'jenis akses' => $item['access'],
                         ];
-                        if ($item['role'] !== 'superAdmin') {
+                        if ($item['role'] !== 'super admin') {
                             $deleteData['unit'] = isset($item['unit']) ? $item['unit'] : 'NULL';
                         }
                     @endphp
@@ -94,9 +44,9 @@
                         <td title="{{ $item['email'] }}">{{ $item['email'] }}</td>
                         <td>
                             <div class="*:p-1 *:overflow-hidden *:truncate *:flex-1 *:whitespace-nowrap mx-auto flex max-w-[300px] items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
-                                <p title="{{ $item['role'] === 'superAdmin' ? 'Super Admin' : 'Admin' }}">{{ $item['role'] === 'superAdmin' ? 'Super Admin' : 'Admin' }}</p>
+                                <p title="{{ ucfirst($item['role']) }}">{{ ucfirst($item['role']) }}</p>
                                 <p title="{{ ucfirst($item['access']) }}">{{ ucfirst($item['access']) }}</p>
-                                @if ($item['role'] !== 'superAdmin')
+                                @if ($item['role'] !== 'super admin')
                                     <p title="{{ isset($item['unit']) ? $item['unit'] : 'NULL' }}">{{ isset($item['unit']) ? $item['unit'] : 'NULL' }}</p>
                                 @endif
                             </div>
