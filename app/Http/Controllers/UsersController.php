@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Users\EditRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\Users\AddRequest;
 use Illuminate\Http\Request;
@@ -129,6 +130,61 @@ class UsersController extends Controller
             unset($user['unit_id']);
 
             return view('super-admin.users.edit', compact(['user', 'data']));
+        }
+
+        abort(404);
+    }
+
+    public function edit(EditRequest $request, $id)
+    {
+        $user = User::find($id);
+
+        if ($user !== null) {
+            $newEmail = $request->safe()['email'];
+
+            if ($user->email !== $newEmail) {
+                $temp = User::whereKeyNot($id)
+                    ->where('email', $newEmail)
+                    ->first();
+
+                if ($temp !== null) {
+                    return back()->withInput()->withErrors(['email' => 'Alamat email sudah digunakan']);
+                }
+
+                $user->email = $newEmail;
+            }
+
+            $newName = $request->safe()['name'];
+
+            if ($user->name !== $newName) {
+                $user->name = $newName;
+            }
+
+            if (in_array($request['access'], ['super-admin-editor', 'super-admin-viewer'])) {
+                $user->role = 'super admin';
+                $user->unit_id = null;
+
+                $user->access = 'viewer';
+                if ($request['access'] === 'super-admin-editor') {
+                    $user->access = 'editor';
+                }
+            } else {
+                $user->role = 'admin';
+
+                $user->access = 'viewer';
+                if (!isset($request['access'])) {
+                    $user->access = 'editor';
+                }
+
+                $user->unit_id = null;
+                if (isset($request['unit'])) {
+                    $user->unit_id = $request['unit'];
+                }
+            }
+
+            $user->save();
+
+            return redirect()->route('super-admin-users');
         }
 
         abort(404);
