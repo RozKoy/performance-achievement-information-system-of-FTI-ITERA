@@ -1,1 +1,1 @@
-<input type="radio" title="{{ $title }}" name="{{ $name }}" id="{{ $id }}" value="{{ $value }}" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" @isset($checked) checked @endisset @isset($required) required @endisset>
+<input type="radio" title="{{ $title }}" name="{{ $name }}" id="{{ $id }}" value="{{ $value }}" oninvalid="this.setCustomValidity('Mohon pilih salah satu')" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" @isset($checked) checked @endisset @isset($required) required @endisset>
