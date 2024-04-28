@@ -3,10 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Users\AddRequest;
+use App\Models\Unit;
 use App\Models\User;
 
 class UsersController extends Controller
 {
+    public function addView()
+    {
+        $units = Unit::get(['id AS value', 'name AS text'])->toArray();
+
+        $data = [
+            [
+                'value' => '',
+                'text' => 'Pilih Unit'
+            ],
+            ...$units
+        ];
+
+        return view('super-admin.users.add', compact('data'));
+    }
+
     public function add(AddRequest $request)
     {
         if (in_array($request['access'], ['super-admin-editor', 'super-admin-viewer'])) {

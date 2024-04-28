@@ -140,7 +140,7 @@ Route::group([
         'controller' => UsersController::class
     ], function () {
         Route::view('/', 'super-admin.users.home')->name('super-admin-users');
-        Route::view('/tambah', 'super-admin.users.add')->name('super-admin-users-add');
+        Route::get('/tambah', 'addView')->name('super-admin-users-add');
         Route::post('/tambah', 'add');
         Route::view('/{id}/ubah', 'super-admin.users.edit')->name('super-admin-users-edit');
     });
