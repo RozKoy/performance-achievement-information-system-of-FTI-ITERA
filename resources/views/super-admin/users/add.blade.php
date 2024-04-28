@@ -64,9 +64,7 @@
                 document.getElementById('admin-button').click();
             });
         </script>
-    @endif
-
-    @if (!$errors->has('unit'))
+    @else
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('super-admin-button').click();
