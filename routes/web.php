@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SasaranStrategisController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Artisan;
@@ -69,10 +70,11 @@ Route::group([
         })->name('super-admin-rs');
 
         Route::group([
-            'prefix' => '/sasaran-strategis'
+            'prefix' => '/sasaran-strategis',
+            'controller' => SasaranStrategisController::class
         ], function () {
             Route::view('/', 'super-admin.rs.ss.home')->name('super-admin-rs-ss');
-            Route::view('/tambah', 'super-admin.rs.ss.add')->name('super-admin-rs-ss-add');
+            Route::get('/tambah', 'addView')->name('super-admin-rs-ss-add');
             Route::view('/{id}/ubah', 'super-admin.rs.ss.edit')->name('super-admin-rs-ss-edit');
         });
 
