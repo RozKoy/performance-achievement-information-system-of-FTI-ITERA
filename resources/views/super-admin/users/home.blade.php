@@ -61,5 +61,9 @@
         </table>
     </div>
 
+    @if (!count($data))
+        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data pengguna</p>
+    @endif
+
     <x-partials.modal.delete id="delete-modal" />
 </x-super-admin-template>
