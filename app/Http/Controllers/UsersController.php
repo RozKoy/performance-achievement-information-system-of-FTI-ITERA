@@ -72,18 +72,17 @@ class UsersController extends Controller
             $request['role'] = 'super admin';
             $request['unit_id'] = null;
 
+            $request['access'] = 'viewer';
             if ($request['access'] === 'super-admin-editor') {
                 $request['access'] = 'editor';
-            } else {
-                $request['access'] = 'viewer';
             }
         } else {
             $request['role'] = 'admin';
+            $request['unit_id'] = null;
 
+            $request['access'] = 'viewer';
             if (!isset($request['access'])) {
                 $request['access'] = 'editor';
-            } else {
-                $request['access'] = 'viewer';
             }
 
             if (isset($request['unit'])) {
