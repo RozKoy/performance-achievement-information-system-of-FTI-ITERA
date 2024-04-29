@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Users\EditRequest;
 use Illuminate\Database\Eloquent\Builder;
+use App\Http\Requests\Users\EditRequest;
 use App\Http\Requests\Users\AddRequest;
 use Illuminate\Http\Request;
 use App\Models\Unit;
@@ -72,18 +72,20 @@ class UsersController extends Controller
             $request['role'] = 'super admin';
             $request['unit_id'] = null;
 
-            $request['access'] = 'viewer';
+            $access = 'viewer';
             if ($request['access'] === 'super-admin-editor') {
-                $request['access'] = 'editor';
+                $access = 'editor';
             }
+            $request['access'] = $access;
         } else {
             $request['role'] = 'admin';
             $request['unit_id'] = null;
 
-            $request['access'] = 'viewer';
+            $access = 'viewer';
             if (!isset($request['access'])) {
-                $request['access'] = 'editor';
+                $access = 'editor';
             }
+            $request['access'] = $access;
 
             if (isset($request['unit'])) {
                 $request['unit_id'] = $request['unit'];
