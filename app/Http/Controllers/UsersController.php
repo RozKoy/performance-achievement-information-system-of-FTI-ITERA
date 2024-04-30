@@ -101,93 +101,85 @@ class UsersController extends Controller
     public function editView($id)
     {
         $user = User::whereKey($id)
-            ->first(['id', 'name', 'email', 'role', 'access', 'unit_id']);
+            ->firstOrFail(['id', 'name', 'email', 'role', 'access', 'unit_id']);
 
-        if ($user !== null) {
-            $units = Unit::get(['id AS value', 'name AS text'])->toArray();
-            $user = $user->toArray();
+        $units = Unit::get(['id AS value', 'name AS text'])->toArray();
+        $user = $user->toArray();
 
-            $unit_id = $user['unit_id'];
-            if ($unit_id !== null) {
-                $units = array_map(function ($unit) use ($unit_id) {
-                    if ($unit['value'] === $unit_id) {
-                        $unit = [
-                            ...$unit,
-                            'selected' => true
-                        ];
-                    }
-                    return $unit;
-                }, $units);
-            }
-
-            $data = [
-                [
-                    'value' => '',
-                    'text' => 'Pilih Unit'
-                ],
-                ...$units
-            ];
-
-            unset($user['unit_id']);
-
-            return view('super-admin.users.edit', compact(['user', 'data']));
+        $unit_id = $user['unit_id'];
+        if ($unit_id !== null) {
+            $units = array_map(function ($unit) use ($unit_id) {
+                if ($unit['value'] === $unit_id) {
+                    $unit = [
+                        ...$unit,
+                        'selected' => true
+                    ];
+                }
+                return $unit;
+            }, $units);
         }
 
-        abort(404);
+        $data = [
+            [
+                'value' => '',
+                'text' => 'Pilih Unit'
+            ],
+            ...$units
+        ];
+
+        unset($user['unit_id']);
+
+        return view('super-admin.users.edit', compact(['user', 'data']));
     }
 
     public function edit(EditRequest $request, $id)
     {
-        $user = User::find($id);
+        $user = User::findOrFail($id);
 
-        if ($user !== null) {
-            $newEmail = $request->safe()['email'];
+        $newEmail = $request->safe()['email'];
 
-            if ($user->email !== $newEmail) {
-                $temp = User::whereKeyNot($id)
-                    ->where('email', $newEmail)
-                    ->first();
+        if ($user->email !== $newEmail) {
+            $temp = User::whereKeyNot($id)
+                ->where('email', $newEmail)
+                ->first();
 
-                if ($temp !== null) {
-                    return back()->withInput()->withErrors(['email' => 'Alamat email sudah digunakan']);
-                }
-
-                $user->email = $newEmail;
+            if ($temp !== null) {
+                return back()->withInput()->withErrors(['email' => 'Alamat email sudah digunakan']);
             }
 
-            $newName = $request->safe()['name'];
-
-            if ($user->name !== $newName) {
-                $user->name = $newName;
-            }
-
-            if (in_array($request['access'], ['super-admin-editor', 'super-admin-viewer'])) {
-                $user->role = 'super admin';
-                $user->unit_id = null;
-
-                $user->access = 'viewer';
-                if ($request['access'] === 'super-admin-editor') {
-                    $user->access = 'editor';
-                }
-            } else {
-                $user->role = 'admin';
-
-                $user->access = 'viewer';
-                if (!isset($request['access'])) {
-                    $user->access = 'editor';
-                }
-
-                $user->unit_id = null;
-                if (isset($request['unit'])) {
-                    $user->unit_id = $request['unit'];
-                }
-            }
-
-            $user->save();
-
-            return redirect()->route('super-admin-users');
+            $user->email = $newEmail;
         }
 
-        abort(404);
+        $newName = $request->safe()['name'];
+
+        if ($user->name !== $newName) {
+            $user->name = $newName;
+        }
+
+        if (in_array($request['access'], ['super-admin-editor', 'super-admin-viewer'])) {
+            $user->role = 'super admin';
+            $user->unit_id = null;
+
+            $user->access = 'viewer';
+            if ($request['access'] === 'super-admin-editor') {
+                $user->access = 'editor';
+            }
+        } else {
+            $user->role = 'admin';
+
+            $user->access = 'viewer';
+            if (!isset($request['access'])) {
+                $user->access = 'editor';
+            }
+
+            $user->unit_id = null;
+            if (isset($request['unit'])) {
+                $user->unit_id = $request['unit'];
+            }
+        }
+
+        $user->save();
+
+        return redirect()->route('super-admin-users');
     }
 }
