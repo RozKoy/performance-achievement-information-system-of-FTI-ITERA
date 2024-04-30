@@ -13,40 +13,6 @@
         <x-partials.search.default />
         <x-partials.button.add href="super-admin-rs-ss-add" />
     </div>
-    @php
-        $data = [
-            [
-                'id' => 'ckdjdk',
-                'name' => 'Sasaran strategis 1',
-                'k' => '2',
-            ],
-            [
-                'id' => 'mkmkdv',
-                'name' => 'Sasaran strategis 2',
-                'k' => '0',
-            ],
-            [
-                'id' => 'kdfjdn',
-                'name' => 'Sasaran strategis 3',
-                'k' => '1',
-            ],
-            [
-                'id' => 'ckdjdk',
-                'name' => 'Sasaran strategis 1',
-                'k' => '2',
-            ],
-            [
-                'id' => 'mkmkdv',
-                'name' => 'Sasaran strategis 2',
-                'k' => '0',
-            ],
-            [
-                'id' => 'kdfjdn',
-                'name' => 'Sasaran strategis 3',
-                'k' => '1',
-            ],
-        ];
-    @endphp
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
@@ -61,17 +27,17 @@
                 @foreach ($data as $item)
                     @php
                         $deleteData = [
-                            'nomor' => $loop->iteration,
+                            'nomor' => $item['number'],
                             'sasaran strategis' => $item['name'],
                             'jumlah kegiatan' => $item['k'],
                         ];
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
-                        <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
+                        <td title="{{ $item['number'] }}">{{ $item['number'] }}</td>
                         <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['k'] }}">{{ $item['k'] }}</td>
                         <td class="flex items-center justify-center gap-1">
-                            <x-partials.button.manage link="{{ route('super-admin-rs-k', ['ss' => 'hahaha']) }}" />
+                            <x-partials.button.manage link="{{ route('super-admin-rs-k', ['ss' => $item['id']]) }}" />
                             <x-partials.button.edit link="{{ route('super-admin-rs-ss-edit', ['id' => $item['id']]) }}" />
                             <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
                         </td>
@@ -80,6 +46,10 @@
             </tbody>
         </table>
     </div>
+
+    @if (!count($data))
+        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data sasaran strategis</p>
+    @endif
 
     <x-partials.modal.delete id="delete-modal" />
 </x-super-admin-template>

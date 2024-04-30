@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SasaranStrategis\AddRequest;
 use App\Models\SasaranStrategis;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Models\RSTime;
@@ -16,6 +17,25 @@ class SasaranStrategisController extends Controller
         $year = Carbon::now()->format('Y');
 
         return RSTime::firstOrCreate(['period' => $period, 'year' => $year], ['status' => 'aktif']);
+    }
+
+    public function homeView(Request $request)
+    {
+        $time = $this->getCurrentTime();
+
+        $data = $time->sasaranStrategis()->select(['id', 'name', 'number'])
+            ->where(function (Builder $query) use ($request) {
+                if (isset ($request->search)) {
+                    $query->where('name', 'LIKE', "%{$request->search}%")
+                        ->orWhere('number', $request->search);
+                }
+            })
+            ->withCount('kegiatan AS k')
+            ->orderBy('number')
+            ->get()
+            ->toArray();
+
+        return view('super-admin.rs.ss.home', compact('data'));
     }
 
     public function addView()
