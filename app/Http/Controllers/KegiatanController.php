@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Kegiatan\AddRequest;
+use App\Models\Kegiatan;
 use App\Models\SasaranStrategis;
 use Illuminate\Http\Request;
 
@@ -28,5 +30,32 @@ class KegiatanController extends Controller
         $ss = $ss->only(['id', 'name', 'number']);
 
         return view('super-admin.rs.k.add', compact(['data', 'ss']));
+    }
+
+    public function add(AddRequest $request, $ssId)
+    {
+        $ss = SasaranStrategis::currentOrFail($ssId);
+
+        $number = $request->safe()['number'];
+        $dataCount = $ss->kegiatan->count();
+        if ($number > $dataCount + 1) {
+            return back()
+                ->withInput()
+                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+        }
+
+        if ($number <= $dataCount) {
+            $ss->kegiatan()
+                ->where('number', '>=', $number)
+                ->increment('number');
+        }
+
+        $kegiatan = new Kegiatan($request->safe()->all());
+
+        $kegiatan->sasaranStrategis()->associate($ss);
+
+        $kegiatan->save();
+
+        return redirect()->route('super-admin-rs-k', ['ss' => $ss->id]);
     }
 }
