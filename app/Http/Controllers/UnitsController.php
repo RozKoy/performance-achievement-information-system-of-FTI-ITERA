@@ -70,8 +70,7 @@ class UnitsController extends Controller
 
         $users = array_merge($usersExists, $usersList);
 
-        $data = $unit->toArray();
-        unset($data['users']);
+        $data = $unit->only(['id', 'name']);
 
         return view('super-admin.unit.edit', compact(['data', 'users']));
     }

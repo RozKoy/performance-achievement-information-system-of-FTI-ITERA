@@ -104,9 +104,8 @@ class UsersController extends Controller
             ->firstOrFail(['id', 'name', 'email', 'role', 'access', 'unit_id']);
 
         $units = Unit::get(['id AS value', 'name AS text'])->toArray();
-        $user = $user->toArray();
 
-        $unit_id = $user['unit_id'];
+        $unit_id = $user->unit_id;
         if ($unit_id !== null) {
             $units = array_map(function ($unit) use ($unit_id) {
                 if ($unit['value'] === $unit_id) {
@@ -127,7 +126,7 @@ class UsersController extends Controller
             ...$units
         ];
 
-        unset($user['unit_id']);
+        $user = $user->makeHidden('unit_id')->toArray();
 
         return view('super-admin.users.edit', compact(['user', 'data']));
     }
