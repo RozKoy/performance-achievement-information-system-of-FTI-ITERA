@@ -9,7 +9,7 @@ class KegiatanController extends Controller
 {
     public function addView($ssId)
     {
-        $ss = SasaranStrategis::findOrFail($ssId, ['id', 'name', 'number']);
+        $ss = SasaranStrategis::currentOrFail($ssId);
 
         $count = $ss->kegiatan->count() + 1;
 
@@ -25,7 +25,7 @@ class KegiatanController extends Controller
             'selected' => true,
         ];
 
-        $ss = $ss->toArray();
+        $ss = $ss->only(['id', 'name', 'number']);
 
         return view('super-admin.rs.k.add', compact(['data', 'ss']));
     }
