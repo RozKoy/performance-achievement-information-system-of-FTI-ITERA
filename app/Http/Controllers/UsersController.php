@@ -105,10 +105,10 @@ class UsersController extends Controller
 
         $units = Unit::get(['id AS value', 'name AS text'])->toArray();
 
-        $unit_id = $user->unit_id;
-        if ($unit_id !== null) {
-            $units = array_map(function ($unit) use ($unit_id) {
-                if ($unit['value'] === $unit_id) {
+        $unitId = $user->unit_id;
+        if ($unitId !== null) {
+            $units = array_map(function ($unit) use ($unitId) {
+                if ($unit['value'] === $unitId) {
                     $unit = [
                         ...$unit,
                         'selected' => true

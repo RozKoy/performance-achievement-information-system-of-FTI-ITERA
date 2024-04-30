@@ -65,14 +65,14 @@ class SasaranStrategisController extends Controller
         $time = $this->getCurrentTime();
 
         $number = (int) $request->safe()['number'];
-        $jumlahData = $time->sasaranStrategis->count();
-        if ($number > $jumlahData + 1) {
+        $dataCount = $time->sasaranStrategis->count();
+        if ($number > $dataCount + 1) {
             return back()
                 ->withInput()
                 ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
         }
 
-        if ($number <= $jumlahData) {
+        if ($number <= $dataCount) {
             $time->sasaranStrategis()
                 ->where('number', '>=', $number)
                 ->increment('number');
