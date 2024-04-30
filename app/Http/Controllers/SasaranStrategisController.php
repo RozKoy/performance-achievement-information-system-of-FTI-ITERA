@@ -2,14 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SasaranStrategis;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
+use App\Models\RSTime;
 
 class SasaranStrategisController extends Controller
 {
+    function getCurrentTime(): RSTime
+    {
+        $period = (int) Carbon::now()->format('m') <= 6 ? '1' : '2';
+        $year = Carbon::now()->format('Y');
+
+        return RSTime::firstOrCreate(['period' => $period, 'year' => $year], ['status' => 'aktif']);
+    }
+
     public function addView()
     {
-        $sasaranStrategis = SasaranStrategis::count() + 1;
+        $time = $this->getCurrentTime();
+
+        $sasaranStrategis = $time->sasaranStrategis->count() + 1;
 
         $data = [];
         for ($i = 0; $i < $sasaranStrategis; $i++) {
