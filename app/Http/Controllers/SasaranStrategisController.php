@@ -86,4 +86,28 @@ class SasaranStrategisController extends Controller
 
         return redirect()->route('super-admin-rs-ss');
     }
+
+    public function editView($id)
+    {
+        $sasaranStrategis = SasaranStrategis::whereKey($id)
+            ->firstOrFail(['id', 'name', 'number', 'time_id']);
+
+        $count = $sasaranStrategis->time->sasaranStrategis->count();
+
+        $data = [];
+        for ($i = 0; $i < $count; $i++) {
+            $data[$i] = [
+                "value" => strval($i + 1),
+                "text" => strval($i + 1),
+            ];
+        }
+        $data[$sasaranStrategis->number - 1] = [
+            ...$data[$sasaranStrategis->number - 1],
+            'selected' => true,
+        ];
+
+        $sasaranStrategis = $sasaranStrategis->only(['id', 'name']);
+
+        return view('super-admin.rs.ss.edit', compact(['data', 'sasaranStrategis']));
+    }
 }
