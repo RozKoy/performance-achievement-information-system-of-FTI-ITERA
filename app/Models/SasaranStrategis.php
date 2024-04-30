@@ -12,6 +12,7 @@ class SasaranStrategis extends Model
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
+        'deadline_id',
         'time_id',
         'number',
         'name',

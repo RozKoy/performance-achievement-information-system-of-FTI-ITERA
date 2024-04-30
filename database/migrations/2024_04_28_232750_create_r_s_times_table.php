@@ -24,6 +24,7 @@ return new class extends Migration {
         });
 
         Schema::table('sasaran_strategis', function (Blueprint $table) {
+            $table->foreignUuid('deadline_id')->constrained('rs_time');
             $table->foreignUuid('time_id')->constrained('rs_time');
         });
     }
