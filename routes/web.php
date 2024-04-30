@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\SasaranStrategisController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\UsersController;
@@ -80,10 +81,11 @@ Route::group([
         });
 
         Route::group([
-            'prefix' => '/{ss}/kegiatan'
-        ], function () {
-            Route::view('/', 'super-admin.rs.k.home')->name('super-admin-rs-k');
-            Route::view('/tambah', 'super-admin.rs.k.add')->name('super-admin-rs-k-add');
+            'prefix' => '/{ss}/kegiatan',
+            'controller' => KegiatanController::class
+        ], function ($ss) {
+            Route::view('/', 'super-admin.rs.k.home', compact('ss'))->name('super-admin-rs-k');
+            Route::get('/tambah', 'addView')->name('super-admin-rs-k-add');
             Route::view('/{id}/ubah', 'super-admin.rs.k.edit')->name('super-admin-rs-k-edit');
         });
 

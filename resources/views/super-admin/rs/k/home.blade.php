@@ -8,7 +8,7 @@
             'link' => 'super-admin-rs-k',
             'name' => 'Renstra - Kegiatan',
             'params' => [
-                'ss' => 'hahahah',
+                'ss' => $ss,
             ],
         ],
     ];
@@ -19,7 +19,7 @@
     <x-partials.heading.h3 title="Sasaran strategis" dataNumber="10" dataText="Sasaran Strategis blabla blab lanc balncj ncjecn" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
-        <x-partials.button.add route="{{ route('super-admin-rs-k-add', ['ss' => 'cdmkcmdc']) }}" />
+        <x-partials.button.add route="{{ route('super-admin-rs-k-add', ['ss' => $ss]) }}" />
     </div>
     @php
         $data = [
@@ -88,8 +88,8 @@
                             </div>
                         </td>
                         <td class="flex items-center justify-center gap-1">
-                            <x-partials.button.manage link="{{ route('super-admin-rs-ik', ['ss' => 'hahaha', 'k' => 'hihihi']) }}" />
-                            <x-partials.button.edit link="{{ route('super-admin-rs-k-edit', ['id' => $item['id'], 'ss' => 'hahaha']) }}" />
+                            <x-partials.button.manage link="{{ route('super-admin-rs-ik', ['ss' => $ss, 'k' => 'hihihi']) }}" />
+                            <x-partials.button.edit link="{{ route('super-admin-rs-k-edit', ['id' => $item['id'], 'ss' => $ss]) }}" />
                             <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
                         </td>
                     </tr>
