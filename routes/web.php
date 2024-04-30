@@ -75,6 +75,7 @@ Route::group([
         ], function () {
             Route::view('/', 'super-admin.rs.ss.home')->name('super-admin-rs-ss');
             Route::get('/tambah', 'addView')->name('super-admin-rs-ss-add');
+            Route::post('/tambah', 'add');
             Route::view('/{id}/ubah', 'super-admin.rs.ss.edit')->name('super-admin-rs-ss-edit');
         });
 
