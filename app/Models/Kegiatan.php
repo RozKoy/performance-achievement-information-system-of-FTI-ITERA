@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
@@ -18,4 +19,9 @@ class Kegiatan extends Model
         'number',
         'name',
     ];
+
+    public function sasaranStrategis(): BelongsTo
+    {
+        return $this->belongsTo(SasaranStrategis::class);
+    }
 }
