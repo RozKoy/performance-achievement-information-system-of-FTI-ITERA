@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SasaranStrategis\AddRequest;
+use App\Http\Requests\SasaranStrategis\EditRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\SasaranStrategis;
 use Illuminate\Support\Carbon;
@@ -109,5 +110,40 @@ class SasaranStrategisController extends Controller
         $sasaranStrategis = $sasaranStrategis->only(['id', 'name']);
 
         return view('super-admin.rs.ss.edit', compact(['data', 'sasaranStrategis']));
+    }
+
+    public function edit(EditRequest $request, $id)
+    {
+        $sasaranStrategis = SasaranStrategis::findOrFail($id);
+        $time = $sasaranStrategis->time;
+
+        $number = (int) $request->safe()['number'];
+        if ($number > $time->sasaranStrategis->count()) {
+            return back()
+                ->withInput()
+                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+        }
+
+        $currentNumber = $sasaranStrategis->number;
+        if ($number !== $currentNumber) {
+            $sasaranStrategis->number = $number;
+
+            if ($number < $currentNumber) {
+                $time->sasaranStrategis()
+                    ->where('number', '>=', $number)
+                    ->where('number', '<', $currentNumber)
+                    ->increment('number');
+            } else {
+                $time->sasaranStrategis()
+                    ->where('number', '<=', $number)
+                    ->where('number', '>', $currentNumber)
+                    ->decrement('number');
+            }
+        }
+
+        $sasaranStrategis->name = $request->safe()['name'];
+        $sasaranStrategis->save();
+
+        return redirect()->route('super-admin-rs-ss');
     }
 }
