@@ -56,79 +56,71 @@ class UnitsController extends Controller
     {
         $unit = Unit::whereKey($id)
             ->with('users')
-            ->first(['id', 'name']);
+            ->firstOrFail(['id', 'name']);
 
-        if ($unit !== null) {
-            $usersExists = $unit->users()
-                ->select(['id', 'name AS username', 'email', 'access'])
-                ->selectRaw('true AS checked')
-                ->get()
-                ->toArray();
-            $usersList = User::where('role', 'admin')
-                ->whereNull('unit_id')
-                ->get(['id', 'name AS username', 'email', 'access'])
-                ->toArray();
+        $usersExists = $unit->users()
+            ->select(['id', 'name AS username', 'email', 'access'])
+            ->selectRaw('true AS checked')
+            ->get()
+            ->toArray();
+        $usersList = User::where('role', 'admin')
+            ->whereNull('unit_id')
+            ->get(['id', 'name AS username', 'email', 'access'])
+            ->toArray();
 
-            $users = array_merge($usersExists, $usersList);
+        $users = array_merge($usersExists, $usersList);
 
-            $data = $unit->toArray();
-            unset($data['users']);
+        $data = $unit->toArray();
+        unset($data['users']);
 
-            return view('super-admin.unit.edit', compact(['data', 'users']));
-        }
-
-        abort(404);
+        return view('super-admin.unit.edit', compact(['data', 'users']));
     }
 
     public function edit(EditRequest $request, $id)
     {
-        $unit = Unit::find($id);
+        $unit = Unit::findOrFail($id);
 
-        if ($unit !== null) {
-            $newName = $request->safe()['name'];
+        $newName = $request->safe()['name'];
 
-            if ($unit->name !== $newName) {
-                $temp = Unit::whereKeyNot($id)
-                    ->where('name', $newName)
-                    ->first();
+        if ($unit->name !== $newName) {
+            $temp = Unit::whereKeyNot($id)
+                ->where('name', $newName)
+                ->first();
 
-                if ($temp !== null) {
-                    return back()->withInput()->withErrors(['name' => 'Nama unit sudah digunakan']);
-                }
-
-                $unit->name = $newName;
-                $unit->save();
+            if ($temp !== null) {
+                return back()->withInput()->withErrors(['name' => 'Nama unit sudah digunakan']);
             }
 
-            $oldUsers = [];
-            $newUsers = [];
-
-            if (isset($request->safe()['users'])) {
-                if (isset($request->safe()['users']['old'])) {
-                    $oldUsers = $request->safe()['users']['old'];
-                }
-                if (isset($request->safe()['users']['new'])) {
-                    $newUsers = $request->safe()['users']['new'];
-                }
-            }
-
-            $unit->users()->each(function ($user) use ($oldUsers) {
-                if (!in_array($user->id, $oldUsers)) {
-                    $user->unit()->dissociate();
-                    $user->save();
-                }
-            });
-
-            $users = User::findMany($newUsers);
-
-            foreach ($users as $key => $user) {
-                $user->unit()->associate($unit);
-                $user->save();
-            }
-
-            return redirect()->route('super-admin-unit');
+            $unit->name = $newName;
+            $unit->save();
         }
 
-        abort(404);
+        $oldUsers = [];
+        $newUsers = [];
+
+        if (isset($request->safe()['users'])) {
+            if (isset($request->safe()['users']['old'])) {
+                $oldUsers = $request->safe()['users']['old'];
+            }
+            if (isset($request->safe()['users']['new'])) {
+                $newUsers = $request->safe()['users']['new'];
+            }
+        }
+
+        $unit->users()->each(function ($user) use ($oldUsers) {
+            if (!in_array($user->id, $oldUsers)) {
+                $user->unit()->dissociate();
+                $user->save();
+            }
+        });
+
+        $users = User::findMany($newUsers);
+
+        foreach ($users as $key => $user) {
+            $user->unit()->associate($unit);
+            $user->save();
+        }
+
+        return redirect()->route('super-admin-unit');
     }
 }
