@@ -42,7 +42,7 @@ class EditRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'max' => ':attribute tidak boleh melebihi 255 karakter',
+            'max' => ':attribute tidak boleh melebihi :max karakter',
             'exists' => ':attribute tidak dapat ditemukan',
             'required' => ':attribute wajib diisi',
             'email' => ':attribute tidak valid',

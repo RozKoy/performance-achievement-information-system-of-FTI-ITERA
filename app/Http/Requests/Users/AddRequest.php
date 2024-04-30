@@ -43,7 +43,7 @@ class AddRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'max' => ':attribute tidak boleh melebihi 255 karakter',
+            'max' => ':attribute tidak boleh melebihi :max karakter',
             'exists' => ':attribute tidak dapat ditemukan',
             'unique' => ':attribute sudah digunakan',
             'required' => ':attribute wajib diisi',
