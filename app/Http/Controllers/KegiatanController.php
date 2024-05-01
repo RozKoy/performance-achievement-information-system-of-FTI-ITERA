@@ -89,4 +89,29 @@ class KegiatanController extends Controller
 
         return redirect()->route('super-admin-rs-k', ['ss' => $ss->id]);
     }
+
+    public function editView($ssId, $id)
+    {
+        $ss = SasaranStrategis::findOrFail($ssId);
+        $k = $ss->kegiatan()->findOrFail($id);
+
+        $count = $ss->kegiatan->count();
+
+        $data = [];
+        for ($i = 0; $i < $count; $i++) {
+            $data[$i] = [
+                "value" => strval($i + 1),
+                "text" => strval($i + 1),
+            ];
+        }
+        $data[$k->number - 1] = [
+            ...$data[$k->number - 1],
+            'selected' => true,
+        ];
+
+        $ss = $ss->only(['id', 'name', 'number']);
+        $k = $k->only(['id', 'name']);
+
+        return view('super-admin.rs.k.edit', compact('k', 'ss', 'data'));
+    }
 }
