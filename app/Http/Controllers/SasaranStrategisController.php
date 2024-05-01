@@ -12,17 +12,9 @@ use App\Models\RSTime;
 
 class SasaranStrategisController extends Controller
 {
-    function getCurrentTime(): RSTime
-    {
-        $period = (int) Carbon::now()->format('m') <= 6 ? '1' : '2';
-        $year = Carbon::now()->format('Y');
-
-        return RSTime::firstOrCreate(['period' => $period, 'year' => $year], ['status' => 'aktif']);
-    }
-
     public function homeView(Request $request)
     {
-        $time = $this->getCurrentTime();
+        $time = RSTime::currentTime();
 
         $data = $time->sasaranStrategis()->select(['id', 'name', 'number'])
             ->where(function (Builder $query) use ($request) {
@@ -41,7 +33,7 @@ class SasaranStrategisController extends Controller
 
     public function addView()
     {
-        $time = $this->getCurrentTime();
+        $time = RSTime::currentTime();
 
         $sasaranStrategis = $time->sasaranStrategis->count() + 1;
 
@@ -62,7 +54,7 @@ class SasaranStrategisController extends Controller
 
     public function add(AddRequest $request)
     {
-        $time = $this->getCurrentTime();
+        $time = RSTime::currentTime();
 
         $number = (int) $request->safe()['number'];
         $dataCount = $time->sasaranStrategis->count();

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class RSTime extends Model
 {
@@ -28,5 +29,13 @@ class RSTime extends Model
     public function deadline(): HasMany
     {
         return $this->hasMany(SasaranStrategis::class, 'deadline_id');
+    }
+
+    static function currentTime(): RSTime
+    {
+        $period = (int) Carbon::now()->format('m') <= 6 ? '1' : '2';
+        $year = Carbon::now()->format('Y');
+
+        return RSTime::firstOrCreate(['period' => $period, 'year' => $year], ['status' => 'aktif']);
     }
 }
