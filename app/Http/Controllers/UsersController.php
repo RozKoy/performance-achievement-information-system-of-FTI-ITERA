@@ -138,14 +138,6 @@ class UsersController extends Controller
         $newEmail = $request->safe()['email'];
 
         if ($user->email !== $newEmail) {
-            $temp = User::whereKeyNot($id)
-                ->where('email', $newEmail)
-                ->first();
-
-            if ($temp !== null) {
-                return back()->withInput()->withErrors(['email' => 'Alamat email sudah digunakan']);
-            }
-
             $user->email = $newEmail;
         }
 

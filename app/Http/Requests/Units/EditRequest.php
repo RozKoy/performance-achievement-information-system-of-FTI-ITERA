@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Units;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\Unique;
+use App\Models\Unit;
 
 class EditRequest extends FormRequest
 {
@@ -24,7 +26,7 @@ class EditRequest extends FormRequest
         return [
             'users.old' => ['bail', 'nullable', 'array', 'exists:users,id'],
             'users.new' => ['bail', 'nullable', 'array', 'exists:users,id'],
-            'name' => ['bail', 'required', 'max:255'],
+            'name' => ['bail', 'required', 'max:255', new Unique(new Unit())],
         ];
     }
 

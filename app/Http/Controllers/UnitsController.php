@@ -82,14 +82,6 @@ class UnitsController extends Controller
         $newName = $request->safe()['name'];
 
         if ($unit->name !== $newName) {
-            $temp = Unit::whereKeyNot($id)
-                ->where('name', $newName)
-                ->first();
-
-            if ($temp !== null) {
-                return back()->withInput()->withErrors(['name' => 'Nama unit sudah digunakan']);
-            }
-
             $unit->name = $newName;
             $unit->save();
         }

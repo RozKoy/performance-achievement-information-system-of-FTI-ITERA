@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\Unique;
+use App\Models\User;
 
 class EditRequest extends FormRequest
 {
@@ -23,7 +25,7 @@ class EditRequest extends FormRequest
     {
         return [
             'access' => ['bail', 'nullable', 'in:super-admin-editor,super-admin-viewer,admin-viewer'],
-            'email' => ['bail', 'required', 'max:255', 'email:rfc,dns'],
+            'email' => ['bail', 'required', 'max:255', 'email:rfc,dns', new Unique(new User())],
             'unit' => ['bail', 'nullable', 'exists:units,id'],
             'name' => ['bail', 'required', 'max:255'],
         ];
@@ -44,8 +46,8 @@ class EditRequest extends FormRequest
         return [
             'max' => ':attribute tidak boleh melebihi :max karakter',
             'exists' => ':attribute tidak dapat ditemukan',
+            'email.email' => ':attribute tidak valid',
             'required' => ':attribute wajib diisi',
-            'email' => ':attribute tidak valid',
             'in' => ':attribute tidak sesuai',
         ];
     }
