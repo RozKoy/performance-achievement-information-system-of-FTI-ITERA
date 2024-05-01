@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\IndikatorKinerja\AddRequest;
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\SasaranStrategis;
 use App\Models\IndikatorKinerja;
 use Illuminate\Http\Request;
@@ -24,6 +25,32 @@ class IndikatorKinerjaController extends Controller
             'text' => 'Persen',
         ],
     ];
+
+    public function homeView(Request $request, $ssId, $kId)
+    {
+        $ss = SasaranStrategis::currentOrFail($ssId);
+        $ss->kegiatan()->findOrFail($kId);
+
+        $k = Kegiatan::findOrFail($kId);
+
+        $data = $k->indikatorKinerja()->select(['id', 'name', 'type', 'status', 'number'])
+            ->where(function (Builder $query) use ($request) {
+                if (isset ($request->search)) {
+                    $query->where('name', 'LIKE', "%{$request->search}%")
+                        ->orWhere('type', $request->search)
+                        ->orWhere('status', $request->search)
+                        ->orWhere('number', $request->search);
+                }
+            })
+            ->orderBy('number')
+            ->get()
+            ->toArray();
+
+        $ss = $ss->only(['id', 'name', 'number']);
+        $k = $k->only(['id', 'name', 'number']);
+
+        return view('super-admin.rs.ik.home', compact(['data', 'ss', 'k']));
+    }
 
     public function addView($ssId, $kId)
     {
