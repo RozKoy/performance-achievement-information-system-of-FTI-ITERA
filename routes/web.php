@@ -98,6 +98,7 @@ Route::group([
         ], function ($route) {
             Route::view('/', 'super-admin.rs.ik.home', compact('route'))->name('super-admin-rs-ik');
             Route::get('/tambah', 'addView')->name('super-admin-rs-ik-add');
+            Route::post('/tambah', 'add');
             Route::view('/{id}/ubah', 'super-admin.rs.ik.edit')->name('super-admin-rs-ik-edit');
         });
     });

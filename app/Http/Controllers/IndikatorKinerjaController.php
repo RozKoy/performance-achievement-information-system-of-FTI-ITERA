@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndikatorKinerja\AddRequest;
 use App\Models\SasaranStrategis;
+use App\Models\IndikatorKinerja;
 use Illuminate\Http\Request;
 use App\Models\Kegiatan;
 
@@ -49,5 +51,36 @@ class IndikatorKinerjaController extends Controller
         $type = $this->type;
 
         return view('super-admin.rs.ik.add', compact(['type', 'data', 'ss', 'k']));
+    }
+
+    public function add(AddRequest $request, $ssId, $kId)
+    {
+        $ss = SasaranStrategis::currentOrFail($ssId);
+        $ss->kegiatan()->findOrFail($kId);
+
+        $k = Kegiatan::findOrFail($kId);
+
+        $number = $request->safe()['number'];
+        $dataCount = $k->indikatorKinerja->count();
+        if ($number > $dataCount + 1) {
+            return back()
+                ->withInput()
+                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+        }
+
+        if ($number <= $dataCount) {
+            $k->indikatorKinerja()
+                ->where('number', '>=', $number)
+                ->increment('number');
+        }
+
+        $indikatorKinerja = new IndikatorKinerja($request->safe()->all());
+
+        $indikatorKinerja->kegiatan()->associate($k);
+        $indikatorKinerja->status = 'aktif';
+
+        $indikatorKinerja->save();
+
+        return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
     }
 }
