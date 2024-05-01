@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\SasaranStrategisController;
+use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
