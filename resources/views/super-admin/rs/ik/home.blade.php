@@ -8,27 +8,27 @@
             'link' => 'super-admin-rs-k',
             'name' => 'Renstra - Kegiatan',
             'params' => [
-                'ss' => 'hahahah',
+                'ss' => $ss,
             ],
         ],
         [
             'link' => 'super-admin-rs-ik',
             'name' => 'Renstra - Indikator Kinerja',
             'params' => [
-                'ss' => 'cdmkcmdc',
-                'k' => 'cdmkcmdc',
+                'ss' => $ss,
+                'k' => $k,
             ],
         ],
     ];
 @endphp
 <x-super-admin-template title="Renstra - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="manajemen rencana strategis - indikator kinerja" previousRoute="{{ route('super-admin-rs-k', ['ss' => 'hahaha']) }}" />
+    <x-partials.heading.h2 text="manajemen rencana strategis - indikator kinerja" previousRoute="{{ route('super-admin-rs-k', ['ss' => $ss]) }}" />
     <x-partials.heading.h3 title="Sasaran strategis" dataNumber="10" dataText="Sasaran Strategis blabla blab lanc balncj ncjecn" />
     <x-partials.heading.h3 title="Kegiatan" dataNumber="4" dataText="Kegiatan blabla blab lanc balncj ncjecn" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
-        <x-partials.button.add route="{{ route('super-admin-rs-ik-add', ['ss' => 'cdmkcmdc', 'k' => 'cmkdnfd']) }}" />
+        <x-partials.button.add route="{{ route('super-admin-rs-ik-add', ['ss' => $ss, 'k' => $k]) }}" />
     </div>
     @php
         $data = [
@@ -92,7 +92,7 @@
                             </div>
                         </td>
                         <td class="flex items-center justify-center gap-1">
-                            <x-partials.button.edit link="{{ route('super-admin-rs-ik-edit', ['id' => $item['id'], 'ss' => 'hahaha', 'k' => 'hihihihih']) }}" />
+                            <x-partials.button.edit link="{{ route('super-admin-rs-ik-edit', ['id' => $item['id'], 'ss' => $ss, 'k' => $k]) }}" />
                             <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
                         </td>
                     </tr>
