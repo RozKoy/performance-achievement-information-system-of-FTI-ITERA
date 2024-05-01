@@ -3,12 +3,43 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Kegiatan\AddRequest;
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\SasaranStrategis;
 use Illuminate\Http\Request;
 use App\Models\Kegiatan;
 
 class KegiatanController extends Controller
 {
+    public function homeView(Request $request, $ssId)
+    {
+        $ss = SasaranStrategis::currentOrFail($ssId);
+
+        $data = $ss->kegiatan()->select(['id', 'name', 'number'])
+            ->where(function (Builder $query) use ($request) {
+                if (isset ($request->search)) {
+                    $query->where('name', 'LIKE', "%{$request->search}%")
+                        ->orWhere('number', $request->search);
+                }
+            })
+            ->withCount([
+                'indikatorKinerja AS active' =>
+                    function (Builder $query) {
+                        $query->where('status', 'aktif');
+                    },
+                'indikatorKinerja AS inactive' =>
+                    function (Builder $query) {
+                        $query->where('status', 'tidak aktif');
+                    }
+            ])
+            ->orderBy('number')
+            ->get()
+            ->toArray();
+
+        $ss = $ss->only(['id', 'name', 'number']);
+
+        return view('super-admin.rs.k.home', compact('ss', 'data'));
+    }
+
     public function addView($ssId)
     {
         $ss = SasaranStrategis::currentOrFail($ssId);
