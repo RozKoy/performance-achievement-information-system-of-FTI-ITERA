@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Kegiatan\AddRequest;
+use App\Http\Requests\Kegiatan\EditRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\SasaranStrategis;
 use Illuminate\Http\Request;
@@ -113,5 +114,42 @@ class KegiatanController extends Controller
         $k = $k->only(['id', 'name']);
 
         return view('super-admin.rs.k.edit', compact('k', 'ss', 'data'));
+    }
+
+    public function edit(EditRequest $request, $ssId, $id)
+    {
+        $ss = SasaranStrategis::findOrFail($ssId);
+        $ss->kegiatan()->findOrFail($id);
+
+        $k = Kegiatan::findOrFail($id);
+
+        $number = (int) $request->safe()['number'];
+        if ($number > $ss->kegiatan->count()) {
+            return back()
+                ->withInput()
+                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+        }
+
+        $currentNumber = $k->number;
+        if ($number !== $currentNumber) {
+            $k->number = $number;
+
+            if ($number < $currentNumber) {
+                $ss->kegiatan()
+                    ->where('number', '>=', $number)
+                    ->where('number', '<', $currentNumber)
+                    ->increment('number');
+            } else {
+                $ss->kegiatan()
+                    ->where('number', '<=', $number)
+                    ->where('number', '>', $currentNumber)
+                    ->decrement('number');
+            }
+        }
+
+        $k->name = $request->safe()['name'];
+        $k->save();
+
+        return redirect()->route('super-admin-rs-k', ['ss' => $ss->id]);
     }
 }

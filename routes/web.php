@@ -88,6 +88,7 @@ Route::group([
             Route::get('/tambah', 'addView')->name('super-admin-rs-k-add');
             Route::post('/tambah', 'add');
             Route::get('/{id}/ubah', 'editView')->name('super-admin-rs-k-edit');
+            Route::put('/{id}/ubah', 'edit');
         });
 
         Route::group([
