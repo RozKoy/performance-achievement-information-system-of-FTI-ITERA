@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->softDeletes();
 
             $table->primary('id');
+
+            $table->foreignUuid('sasaran_kegiatan_id')->constrained('sasaran_kegiatan');
         });
     }
 
