@@ -77,4 +77,27 @@ class SasaranKegiatanController extends Controller
 
         return redirect()->route('super-admin-iku-sk');
     }
+
+    public function editView($id)
+    {
+        $sk = SasaranKegiatan::findOrFail($id);
+
+        $count = $sk->time->sasaranKegiatan->count();
+
+        $data = [];
+        for ($i = 0; $i < $count; $i++) {
+            $data[$i] = [
+                "value" => strval($i + 1),
+                "text" => strval($i + 1),
+            ];
+        }
+        $data[$sk->number - 1] = [
+            ...$data[$sk->number - 1],
+            'selected' => true,
+        ];
+
+        $sk = $sk->only(['id', 'name']);
+
+        return view('super-admin.iku.sk.edit', compact(['data', 'sk']));
+    }
 }
