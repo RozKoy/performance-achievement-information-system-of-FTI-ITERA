@@ -35,7 +35,9 @@
     <x-partials.heading.h2 text="ubah indikator kinerja" previousRoute="{{ route('super-admin-rs-ik', ['ss' => $ss['id'], 'k' => $k['id']]) }}" />
     <x-partials.heading.h3 title="Sasaran strategis" dataNumber="{{ $ss['number'] }}" dataText="{{ $ss['name'] }}" />
     <x-partials.heading.h3 title="Kegiatan" dataNumber="{{ $k['number'] }}" dataText="{{ $k['name'] }}" />
-    <form action="" class="flex flex-col gap-2">
+    <form action="" method="POST" class="flex flex-col gap-2">
+        @csrf
+        @method('PUT')
         <div class="flex flex-wrap gap-2">
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
