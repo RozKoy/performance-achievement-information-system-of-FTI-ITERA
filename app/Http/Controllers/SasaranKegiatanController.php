@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SasaranKegiatan\AddRequest;
+use App\Models\SasaranKegiatan;
 use Illuminate\Http\Request;
 use App\Models\IKUTime;
 
@@ -26,5 +28,33 @@ class SasaranKegiatanController extends Controller
         ];
 
         return view('super-admin.iku.sk.add', compact('data'));
+    }
+
+    public function add(AddRequest $request)
+    {
+        $time = IKUTime::currentTime();
+
+        $number = (int) $request->safe()['number'];
+        $dataCount = $time->sasaranKegiatan->count();
+        if ($number > $dataCount + 1) {
+            return back()
+                ->withInput()
+                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+        }
+
+        if ($number <= $dataCount) {
+            $time->sasaranKegiatan()
+                ->where('number', '>=', $number)
+                ->increment('number');
+        }
+
+        $sasaranKegiatan = new SasaranKegiatan($request->safe()->all());
+
+        $sasaranKegiatan->deadline()->associate($time);
+        $sasaranKegiatan->time()->associate($time);
+
+        $sasaranKegiatan->save();
+
+        return redirect()->route('super-admin-iku-sk');
     }
 }
