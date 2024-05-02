@@ -110,4 +110,22 @@ class IndikatorKinerjaController extends Controller
 
         return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
     }
+
+    public function statusToggle($ssId, $kId, $id)
+    {
+        $ss = SasaranStrategis::currentOrFail($ssId);
+        $ss->kegiatan()->findOrFail($kId);
+
+        $k = Kegiatan::findOrFail($kId);
+        $k->indikatorKinerja()->findOrFail($id);
+
+        $ik = IndikatorKinerja::findOrFail($id);
+
+        $newStatus = $ik->status === 'aktif' ? 'tidak aktif' : 'aktif';
+        $ik->status = $newStatus;
+
+        $ik->save();
+
+        return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
+    }
 }
