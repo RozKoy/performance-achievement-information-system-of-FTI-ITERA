@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SasaranKegiatan\EditRequest;
 use App\Http\Requests\SasaranKegiatan\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\SasaranKegiatan;
@@ -99,5 +100,40 @@ class SasaranKegiatanController extends Controller
         $sk = $sk->only(['id', 'name']);
 
         return view('super-admin.iku.sk.edit', compact(['data', 'sk']));
+    }
+
+    public function edit(EditRequest $request, $id)
+    {
+        $sk = SasaranKegiatan::findOrFail($id);
+        $time = $sk->time;
+
+        $number = (int) $request->safe()['number'];
+        if ($number > $time->sasaranKegiatan->count()) {
+            return back()
+                ->withInput()
+                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+        }
+
+        $currentNumber = $sk->number;
+        if ($number !== $currentNumber) {
+            $sk->number = $number;
+
+            if ($number < $currentNumber) {
+                $time->sasaranKegiatan()
+                    ->where('number', '>=', $number)
+                    ->where('number', '<', $currentNumber)
+                    ->increment('number');
+            } else {
+                $time->sasaranKegiatan()
+                    ->where('number', '<=', $number)
+                    ->where('number', '>', $currentNumber)
+                    ->decrement('number');
+            }
+        }
+
+        $sk->name = $request->safe()['name'];
+        $sk->save();
+
+        return redirect()->route('super-admin-iku-sk');
     }
 }
