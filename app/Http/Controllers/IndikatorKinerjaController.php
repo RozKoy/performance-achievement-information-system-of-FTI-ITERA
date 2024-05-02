@@ -138,7 +138,7 @@ class IndikatorKinerjaController extends Controller
 
             $ss = $ss->only(['id', 'name', 'number']);
             $k = $k->only(['id', 'name', 'number']);
-            $ik = $ik->only(['id', 'name']);
+            $ik = $ik->only(['id', 'name', 'status']);
 
             return view('super-admin.rs.ik.edit', compact('data', 'type', 'ss', 'k', 'ik'));
         }
@@ -200,7 +200,7 @@ class IndikatorKinerjaController extends Controller
 
             $ik->save();
 
-            return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
+            return back();
         }
 
         abort(404);
