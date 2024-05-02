@@ -14,6 +14,8 @@ class SasaranKegiatan extends Model
     protected $table = 'sasaran_kegiatan';
 
     protected $fillable = [
+        'deadline_id',
+        'time_id',
         'number',
         'name',
     ];

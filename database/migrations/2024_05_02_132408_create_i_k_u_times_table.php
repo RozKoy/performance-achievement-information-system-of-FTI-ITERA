@@ -22,6 +22,11 @@ return new class extends Migration {
 
             $table->primary('id');
         });
+
+        Schema::table('sasaran_kegiatan', function (Blueprint $table) {
+            $table->foreignUuid('deadline_id')->constrained('iku_time');
+            $table->foreignUuid('time_id')->constrained('iku_time');
+        });
     }
 
     /**
