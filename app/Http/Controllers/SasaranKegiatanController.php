@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\IKUTime;
 use Illuminate\Http\Request;
+use App\Models\IKUTime;
 
 class SasaranKegiatanController extends Controller
 {

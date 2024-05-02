@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\SasaranKegiatanController;
-use App\Http\Controllers\SasaranStrategisController;
 use App\Http\Controllers\IndikatorKinerjaController;
+use App\Http\Controllers\SasaranStrategisController;
+use App\Http\Controllers\SasaranKegiatanController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\UsersController;
