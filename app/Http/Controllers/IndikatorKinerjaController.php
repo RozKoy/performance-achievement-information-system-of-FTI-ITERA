@@ -111,6 +111,42 @@ class IndikatorKinerjaController extends Controller
         return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
     }
 
+    public function editView($ssId, $kId, $id)
+    {
+        $ss = SasaranStrategis::currentOrFail($ssId);
+        $ss->kegiatan()->findOrFail($kId);
+
+        $k = Kegiatan::findOrFail($kId);
+        $ik = $k->indikatorKinerja()->findOrFail($id);
+
+        $count = $k->indikatorKinerja->count();
+
+        $data = [];
+        for ($i = 0; $i < $count; $i++) {
+            $data[$i] = [
+                "value" => strval($i + 1),
+                "text" => strval($i + 1),
+            ];
+        }
+        $data[$ik->number - 1] = [
+            ...$data[$ik->number - 1],
+            'selected' => true,
+        ];
+
+        $type = array_map(function ($item) use ($ik) {
+            if ($ik->type === $item['value']) {
+                $item['selected'] = true;
+            }
+            return $item;
+        }, $this->type);
+
+        $ss = $ss->only(['id', 'name', 'number']);
+        $k = $k->only(['id', 'name', 'number']);
+        $ik = $ik->only(['id', 'name']);
+
+        return view('super-admin.rs.ik.edit', compact('data', 'type', 'ss', 'k', 'ik'));
+    }
+
     public function statusToggle($ssId, $kId, $id)
     {
         $ss = SasaranStrategis::currentOrFail($ssId);

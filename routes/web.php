@@ -99,7 +99,7 @@ Route::group([
             Route::get('/', 'homeView')->name('super-admin-rs-ik');
             Route::get('/tambah', 'addView')->name('super-admin-rs-ik-add');
             Route::post('/tambah', 'add');
-            Route::view('/{id}/ubah', 'super-admin.rs.ik.edit')->name('super-admin-rs-ik-edit');
+            Route::get('/{id}/ubah', 'editView')->name('super-admin-rs-ik-edit');
             Route::get('/{id}/status', 'statusToggle')->name('super-admin-rs-ik-status');
         });
     });
