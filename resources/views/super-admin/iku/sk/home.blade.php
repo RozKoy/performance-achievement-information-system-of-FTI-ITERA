@@ -13,30 +13,6 @@
         <x-partials.search.default />
         <x-partials.button.add href="super-admin-iku-sk-add" />
     </div>
-    @php
-        $data = [
-            [
-                'id' => 'ckdjdk',
-                'name' => 'Sasaran kegiatan 1',
-                'ikk' => '0',
-            ],
-            [
-                'id' => 'fkfsfkf',
-                'name' => 'Sasaran kegiatan 2',
-                'ikk' => '3',
-            ],
-            [
-                'id' => 'sfdfhf',
-                'name' => 'Sasaran kegiatan 3',
-                'ikk' => '2',
-            ],
-            [
-                'id' => 'fkfdfdfsfkf',
-                'name' => 'Sasaran kegiatan 4',
-                'ikk' => '4',
-            ],
-        ];
-    @endphp
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
@@ -50,15 +26,14 @@
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
                 @foreach ($data as $item)
                     @php
-                        $modalData = '{"nomor":"' . $loop->iteration . '","sasaran_kegiatan":"' . $item['name'] . '","jumlah_indikator_kinerja_kegiatan":"' . $item['ikk'] . '"}';
                         $deleteData = [
-                            'nomor' => $loop->iteration,
+                            'nomor' => $item['number'],
                             'sasaran kegiatan' => $item['name'],
                             'jumlah indikator kinerja kegiatan' => $item['ikk'],
                         ];
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
-                        <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
+                        <td title="{{ $item['number'] }}">{{ $item['number'] }}</td>
                         <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['ikk'] }}">{{ $item['ikk'] }}</td>
                         <td class="flex items-center justify-center gap-1">
@@ -71,6 +46,10 @@
             </tbody>
         </table>
     </div>
+
+    @if (!count($data))
+        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data sasaran kegiatan</p>
+    @endif
 
     <x-partials.modal.delete id="delete-modal" />
 </x-super-admin-template>

@@ -3,12 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SasaranKegiatan\AddRequest;
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\SasaranKegiatan;
 use Illuminate\Http\Request;
 use App\Models\IKUTime;
 
 class SasaranKegiatanController extends Controller
 {
+    public function homeView(Request $request)
+    {
+        $time = IKUTime::currentTime();
+
+        $data = $time->sasaranKegiatan()->select(['id', 'name', 'number'])
+            ->where(function (Builder $query) use ($request) {
+                if (isset ($request->search)) {
+                    $query->where('name', 'LIKE', "%{$request->search}%")
+                        ->orWhere('number', $request->search);
+                }
+            })
+            ->withCount('indikatorKinerjaKegiatan AS ikk')
+            ->orderBy('number')
+            ->get()
+            ->toArray();
+
+        return view('super-admin.iku.sk.home', compact('data'));
+    }
+
     public function addView()
     {
         $time = IKUTime::currentTime();
