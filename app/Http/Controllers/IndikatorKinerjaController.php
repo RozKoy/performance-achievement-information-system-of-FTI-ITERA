@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\IndikatorKinerja\AddRequest;
+use App\Http\Requests\IndikatorKinerja\EditRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\SasaranStrategis;
 use App\Models\IndikatorKinerja;
@@ -145,6 +146,46 @@ class IndikatorKinerjaController extends Controller
         $ik = $ik->only(['id', 'name']);
 
         return view('super-admin.rs.ik.edit', compact('data', 'type', 'ss', 'k', 'ik'));
+    }
+
+    public function edit(EditRequest $request, $ssId, $kId, $id)
+    {
+        $ss = SasaranStrategis::findOrFail($ssId);
+        $ss->kegiatan()->findOrFail($kId);
+
+        $k = Kegiatan::findOrFail($kId);
+        $k->indikatorKinerja()->findOrFail($id);
+
+        $ik = IndikatorKinerja::findOrFail($id);
+
+        $number = (int) $request->safe()['number'];
+        if ($number > $k->indikatorKinerja->count()) {
+            return back()
+                ->withInput()
+                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+        }
+
+        $currentNumber = $ik->number;
+        if ($number !== $currentNumber) {
+            $ik->number = $number;
+
+            if ($number < $currentNumber) {
+                $k->indikatorKinerja()
+                    ->where('number', '>=', $number)
+                    ->where('number', '<', $currentNumber)
+                    ->increment('number');
+            } else {
+                $k->indikatorKinerja()
+                    ->where('number', '<=', $number)
+                    ->where('number', '>', $currentNumber)
+                    ->decrement('number');
+            }
+        }
+
+        $ik->name = $request->safe()['name'];
+        $ik->save();
+
+        return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
     }
 
     public function statusToggle($ssId, $kId, $id)
