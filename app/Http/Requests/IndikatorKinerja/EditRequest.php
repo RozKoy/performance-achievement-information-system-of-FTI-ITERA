@@ -23,7 +23,6 @@ class EditRequest extends FormRequest
     {
         return [
             'number' => ['bail', 'required', 'numeric', 'integer', 'min:1', 'max_digits:10'],
-            'type' => ['bail', 'required', 'in:persen,angka,teks'],
             'name' => ['bail', 'required', 'max:65000'],
         ];
     }
@@ -31,7 +30,6 @@ class EditRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'type' => 'Tipe data',
             'name' => 'Kegiatan',
             'number' => 'Nomor',
         ];
@@ -46,7 +44,6 @@ class EditRequest extends FormRequest
             'min' => ':attribute tidak boleh kurang dari :min',
             'numeric' => ':attribute harus berupa bilangan',
             'required' => ':attribute wajib diisi',
-            'in' => ':attribute tidak sesuai',
         ];
     }
 }
