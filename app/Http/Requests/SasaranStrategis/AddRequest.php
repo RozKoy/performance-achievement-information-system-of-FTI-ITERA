@@ -30,7 +30,7 @@ class AddRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => 'Sasaran Strategis',
+            'name' => 'Sasaran strategis',
             'number' => 'Nomor',
         ];
     }

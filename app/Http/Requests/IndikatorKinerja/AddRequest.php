@@ -31,8 +31,8 @@ class AddRequest extends FormRequest
     public function attributes(): array
     {
         return [
+            'name' => 'Indikator kinerja',
             'type' => 'Tipe data',
-            'name' => 'Kegiatan',
             'number' => 'Nomor',
         ];
     }

@@ -30,7 +30,7 @@ class EditRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => 'Kegiatan',
+            'name' => 'Indikator kinerja',
             'number' => 'Nomor',
         ];
     }
