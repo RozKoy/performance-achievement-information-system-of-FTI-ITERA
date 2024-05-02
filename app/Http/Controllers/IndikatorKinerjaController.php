@@ -114,90 +114,95 @@ class IndikatorKinerjaController extends Controller
 
     public function editView($ssId, $kId, $id)
     {
-        $ss = SasaranStrategis::findOrFail($ssId);
-        $ss->kegiatan()->findOrFail($kId);
+        $ik = IndikatorKinerja::findOrFail($id);
 
-        $k = Kegiatan::findOrFail($kId);
-        $ik = $k->indikatorKinerja()->findOrFail($id);
+        $k = $ik->kegiatan;
+        $ss = $k->sasaranStrategis;
 
-        $count = $k->indikatorKinerja->count();
+        if ($k->id === $kId && $ss->id === $ssId) {
+            $count = $k->indikatorKinerja->count();
 
-        $data = [];
-        for ($i = 0; $i < $count; $i++) {
-            $data[$i] = [
-                "value" => strval($i + 1),
-                "text" => strval($i + 1),
+            $data = [];
+            for ($i = 0; $i < $count; $i++) {
+                $data[$i] = [
+                    "value" => strval($i + 1),
+                    "text" => strval($i + 1),
+                ];
+            }
+            $data[$ik->number - 1] = [
+                ...$data[$ik->number - 1],
+                'selected' => true,
             ];
+
+            $type = [['value' => $ik->type, 'text' => ucfirst($ik->type)]];
+
+            $ss = $ss->only(['id', 'name', 'number']);
+            $k = $k->only(['id', 'name', 'number']);
+            $ik = $ik->only(['id', 'name']);
+
+            return view('super-admin.rs.ik.edit', compact('data', 'type', 'ss', 'k', 'ik'));
         }
-        $data[$ik->number - 1] = [
-            ...$data[$ik->number - 1],
-            'selected' => true,
-        ];
 
-        $type = [['value' => $ik->type, 'text' => ucfirst($ik->type)]];
-
-        $ss = $ss->only(['id', 'name', 'number']);
-        $k = $k->only(['id', 'name', 'number']);
-        $ik = $ik->only(['id', 'name']);
-
-        return view('super-admin.rs.ik.edit', compact('data', 'type', 'ss', 'k', 'ik'));
+        abort(404);
     }
 
     public function edit(EditRequest $request, $ssId, $kId, $id)
     {
-        $ss = SasaranStrategis::findOrFail($ssId);
-        $ss->kegiatan()->findOrFail($kId);
-
-        $k = Kegiatan::findOrFail($kId);
-        $k->indikatorKinerja()->findOrFail($id);
-
         $ik = IndikatorKinerja::findOrFail($id);
 
-        $number = (int) $request->safe()['number'];
-        if ($number > $k->indikatorKinerja->count()) {
-            return back()
-                ->withInput()
-                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
-        }
+        $k = $ik->kegiatan;
+        $ss = $k->sasaranStrategis;
 
-        $currentNumber = $ik->number;
-        if ($number !== $currentNumber) {
-            $ik->number = $number;
-
-            if ($number < $currentNumber) {
-                $k->indikatorKinerja()
-                    ->where('number', '>=', $number)
-                    ->where('number', '<', $currentNumber)
-                    ->increment('number');
-            } else {
-                $k->indikatorKinerja()
-                    ->where('number', '<=', $number)
-                    ->where('number', '>', $currentNumber)
-                    ->decrement('number');
+        if ($k->id === $kId && $ss->id === $ssId) {
+            $number = (int) $request->safe()['number'];
+            if ($number > $k->indikatorKinerja->count()) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
             }
+
+            $currentNumber = $ik->number;
+            if ($number !== $currentNumber) {
+                $ik->number = $number;
+
+                if ($number < $currentNumber) {
+                    $k->indikatorKinerja()
+                        ->where('number', '>=', $number)
+                        ->where('number', '<', $currentNumber)
+                        ->increment('number');
+                } else {
+                    $k->indikatorKinerja()
+                        ->where('number', '<=', $number)
+                        ->where('number', '>', $currentNumber)
+                        ->decrement('number');
+                }
+            }
+
+            $ik->name = $request->safe()['name'];
+            $ik->save();
+
+            return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
         }
 
-        $ik->name = $request->safe()['name'];
-        $ik->save();
-
-        return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
+        abort(404);
     }
 
     public function statusToggle($ssId, $kId, $id)
     {
-        $ss = SasaranStrategis::currentOrFail($ssId);
-        $ss->kegiatan()->findOrFail($kId);
-
-        $k = Kegiatan::findOrFail($kId);
-        $k->indikatorKinerja()->findOrFail($id);
-
         $ik = IndikatorKinerja::findOrFail($id);
 
-        $newStatus = $ik->status === 'aktif' ? 'tidak aktif' : 'aktif';
-        $ik->status = $newStatus;
+        $k = $ik->kegiatan;
+        $ss = $k->sasaranStrategis;
 
-        $ik->save();
+        if ($k->id === $kId && $ss->id === $ssId) {
+            $newStatus = $ik->status === 'aktif' ? 'tidak aktif' : 'aktif';
+            $ik->status = $newStatus;
 
-        return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
+            $ik->save();
+
+            return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
+        }
+
+        abort(404);
     }
 }

@@ -93,63 +93,69 @@ class KegiatanController extends Controller
 
     public function editView($ssId, $id)
     {
-        $ss = SasaranStrategis::findOrFail($ssId);
-        $k = $ss->kegiatan()->findOrFail($id);
+        $k = Kegiatan::findOrFail($id);
+        $ss = $k->sasaranStrategis;
 
-        $count = $ss->kegiatan->count();
+        if ($ss->id === $ssId) {
+            $count = $ss->kegiatan->count();
 
-        $data = [];
-        for ($i = 0; $i < $count; $i++) {
-            $data[$i] = [
-                "value" => strval($i + 1),
-                "text" => strval($i + 1),
+            $data = [];
+            for ($i = 0; $i < $count; $i++) {
+                $data[$i] = [
+                    "value" => strval($i + 1),
+                    "text" => strval($i + 1),
+                ];
+            }
+            $data[$k->number - 1] = [
+                ...$data[$k->number - 1],
+                'selected' => true,
             ];
+
+            $ss = $ss->only(['id', 'name', 'number']);
+            $k = $k->only(['id', 'name']);
+
+            return view('super-admin.rs.k.edit', compact('k', 'ss', 'data'));
         }
-        $data[$k->number - 1] = [
-            ...$data[$k->number - 1],
-            'selected' => true,
-        ];
 
-        $ss = $ss->only(['id', 'name', 'number']);
-        $k = $k->only(['id', 'name']);
-
-        return view('super-admin.rs.k.edit', compact('k', 'ss', 'data'));
+        abort(404);
     }
 
     public function edit(EditRequest $request, $ssId, $id)
     {
-        $ss = SasaranStrategis::findOrFail($ssId);
-        $ss->kegiatan()->findOrFail($id);
-
         $k = Kegiatan::findOrFail($id);
+        $ss = $k->sasaranStrategis;
 
-        $number = (int) $request->safe()['number'];
-        if ($number > $ss->kegiatan->count()) {
-            return back()
-                ->withInput()
-                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
-        }
-
-        $currentNumber = $k->number;
-        if ($number !== $currentNumber) {
-            $k->number = $number;
-
-            if ($number < $currentNumber) {
-                $ss->kegiatan()
-                    ->where('number', '>=', $number)
-                    ->where('number', '<', $currentNumber)
-                    ->increment('number');
-            } else {
-                $ss->kegiatan()
-                    ->where('number', '<=', $number)
-                    ->where('number', '>', $currentNumber)
-                    ->decrement('number');
+        if ($ss->id === $ssId) {
+            $number = (int) $request->safe()['number'];
+            if ($number > $ss->kegiatan->count()) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
             }
+
+            $currentNumber = $k->number;
+            if ($number !== $currentNumber) {
+                $k->number = $number;
+
+                if ($number < $currentNumber) {
+                    $ss->kegiatan()
+                        ->where('number', '>=', $number)
+                        ->where('number', '<', $currentNumber)
+                        ->increment('number');
+                } else {
+                    $ss->kegiatan()
+                        ->where('number', '<=', $number)
+                        ->where('number', '>', $currentNumber)
+                        ->decrement('number');
+                }
+            }
+
+            $k->name = $request->safe()['name'];
+            $k->save();
+
+            return redirect()->route('super-admin-rs-k', ['ss' => $ss->id]);
         }
 
-        $k->name = $request->safe()['name'];
-        $k->save();
-
-        return redirect()->route('super-admin-rs-k', ['ss' => $ss->id]);
+        abort(404);
     }
 }
