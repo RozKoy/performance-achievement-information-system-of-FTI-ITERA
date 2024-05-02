@@ -114,7 +114,7 @@ class IndikatorKinerjaController extends Controller
 
     public function editView($ssId, $kId, $id)
     {
-        $ss = SasaranStrategis::currentOrFail($ssId);
+        $ss = SasaranStrategis::findOrFail($ssId);
         $ss->kegiatan()->findOrFail($kId);
 
         $k = Kegiatan::findOrFail($kId);
@@ -134,12 +134,7 @@ class IndikatorKinerjaController extends Controller
             'selected' => true,
         ];
 
-        $type = array_map(function ($item) use ($ik) {
-            if ($ik->type === $item['value']) {
-                $item['selected'] = true;
-            }
-            return $item;
-        }, $this->type);
+        $type = [['value' => $ik->type, 'text' => ucfirst($ik->type)]];
 
         $ss = $ss->only(['id', 'name', 'number']);
         $k = $k->only(['id', 'name', 'number']);

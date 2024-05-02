@@ -52,7 +52,7 @@
             </div>
             <div class="flex flex-col gap-2 max-xl:flex-1">
                 <x-partials.label.default for="type" title="Tipe data" text="Tipe Data" required />
-                <x-partials.input.select name="type" title="Tipe data" :data="$type" required />
+                <x-partials.input.select name="type" title="Tipe data" :data="$type" disabled required />
                 @error('type')
                     <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
                 @enderror
