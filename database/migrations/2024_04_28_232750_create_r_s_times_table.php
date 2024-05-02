@@ -14,8 +14,8 @@ return new class extends Migration {
             $table->uuid('id');
 
             $table->string('status', 11);
-            $table->string('period', 1);
-            $table->string('year', 4);
+            $table->char('period', 1);
+            $table->char('year', 4);
 
             $table->timestamps();
             $table->softDeletes();
