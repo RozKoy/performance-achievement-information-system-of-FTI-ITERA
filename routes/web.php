@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SasaranKegiatanController;
 use App\Http\Controllers\SasaranStrategisController;
 use App\Http\Controllers\IndikatorKinerjaController;
 use App\Http\Controllers\KegiatanController;
@@ -114,10 +115,11 @@ Route::group([
         })->name('super-admin-iku');
 
         Route::group([
-            'prefix' => '/sasaran-kegiatan'
+            'prefix' => '/sasaran-kegiatan',
+            'controller' => SasaranKegiatanController::class
         ], function () {
             Route::view('/', 'super-admin.iku.sk.home')->name('super-admin-iku-sk');
-            Route::view('/tambah', 'super-admin.iku.sk.add')->name('super-admin-iku-sk-add');
+            Route::get('/tambah', 'addView')->name('super-admin-iku-sk-add');
             Route::view('/{id}/ubah', 'super-admin.iku.sk.edit')->name('super-admin-iku-sk-edit');
         });
 
