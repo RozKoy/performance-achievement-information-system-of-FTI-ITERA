@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class SasaranKegiatan extends Model
 {
@@ -35,5 +36,27 @@ class SasaranKegiatan extends Model
     public function indikatorKinerjaKegiatan(): HasMany
     {
         return $this->hasMany(IndikatorKinerjaKegiatan::class);
+    }
+
+    static function currentOrFail($id): SasaranKegiatan
+    {
+        $ss = SasaranKegiatan::findOrFail($id);
+
+        $month = (int) Carbon::now()->format('m');
+        $year = Carbon::now()->format('Y');
+        $period = '1';
+        if ($month > 9) {
+            $period = '4';
+        } else if ($month > 6) {
+            $period = '3';
+        } else if ($month > 3) {
+            $period = '2';
+        }
+
+        if ($ss->time->year === $year && $ss->time->period === $period) {
+            return $ss;
+        }
+
+        return abort(404);
     }
 }
