@@ -12,6 +12,7 @@ class ProgramStrategis extends Model
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
+        'indikator_kinerja_kegiatan_id',
         'number',
         'name',
     ];
