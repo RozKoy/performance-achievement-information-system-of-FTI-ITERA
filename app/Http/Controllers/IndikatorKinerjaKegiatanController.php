@@ -5,10 +5,32 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IndikatorKinerjaKegiatan\AddRequest;
 use App\Models\IndikatorKinerjaKegiatan;
 use App\Models\SasaranKegiatan;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class IndikatorKinerjaKegiatanController extends Controller
 {
+    public function homeView(Request $request, $skId)
+    {
+        $sk = SasaranKegiatan::currentOrFail($skId);
+
+        $data = $sk->indikatorKinerjaKegiatan()->select(['id', 'name', 'number'])
+            ->where(function (Builder $query) use ($request) {
+                if (isset ($request->search)) {
+                    $query->where('name', 'LIKE', "%{$request->search}%")
+                        ->orWhere('number', $request->search);
+                }
+            })
+            ->withCount('programStrategis AS ps')
+            ->orderBy('number')
+            ->get()
+            ->toArray();
+
+        $sk = $sk->only(['id', 'name', 'number']);
+
+        return view('super-admin.iku.ikk.home', compact(['data', 'sk']));
+    }
+
     public function addView($skId)
     {
         $sk = SasaranKegiatan::currentOrFail($skId);
