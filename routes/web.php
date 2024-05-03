@@ -132,6 +132,7 @@ Route::group([
         ], function ($route) {
             Route::view('/', 'super-admin.iku.ikk.home')->name('super-admin-iku-ikk');
             Route::get('/tambah', 'addView')->name('super-admin-iku-ikk-add');
+            Route::post('/tambah', 'add');
             Route::view('/{id}/ubah', 'super-admin.iku.ikk.edit')->name('super-admin-iku-ikk-edit');
         });
 
