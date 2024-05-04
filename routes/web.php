@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\IndikatorKinerjaController;
 use App\Http\Controllers\IndikatorKinerjaKegiatanController;
+use App\Http\Controllers\IndikatorKinerjaController;
 use App\Http\Controllers\SasaranStrategisController;
 use App\Http\Controllers\SasaranKegiatanController;
 use App\Http\Controllers\KegiatanController;
