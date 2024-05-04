@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProgramStrategis\EditRequest;
 use App\Http\Requests\ProgramStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\ProgramStrategis;
@@ -119,6 +120,45 @@ class ProgramStrategisController extends Controller
             $sk = $sk->only(['id', 'name', 'number']);
 
             return view('super-admin.iku.ps.edit', compact(['data', 'sk', 'ikk', 'ps']));
+        }
+
+        abort(404);
+    }
+
+    public function edit(EditRequest $request, $skId, $ikkId, $id)
+    {
+        $ps = ProgramStrategis::findOrFail($id);
+        $ikk = $ps->indikatorKinerjaKegiatan;
+        $sk = $ikk->sasaranKegiatan;
+
+        if ($sk->id === $skId && $ikk->id === $ikkId) {
+            $number = (int) $request->safe()['number'];
+            if ($number > $ikk->programStrategis->count()) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+            }
+            $currentNumber = $ps->number;
+            if ($number !== $currentNumber) {
+                $ps->number = $number;
+
+                if ($number < $currentNumber) {
+                    $ikk->programStrategis()
+                        ->where('number', '>=', $number)
+                        ->where('number', '<', $currentNumber)
+                        ->increment('number');
+                } else {
+                    $ikk->programStrategis()
+                        ->where('number', '<=', $number)
+                        ->where('number', '>', $currentNumber)
+                        ->decrement('number');
+                }
+            }
+
+            $ps->name = $request->safe()['name'];
+            $ps->save();
+
+            return redirect()->route('super-admin-iku-ps', ['sk' => $skId, 'ikk' => $ikkId]);
         }
 
         abort(404);
