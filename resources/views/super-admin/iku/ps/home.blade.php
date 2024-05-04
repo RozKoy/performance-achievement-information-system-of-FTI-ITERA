@@ -8,64 +8,28 @@
             'link' => 'super-admin-iku-ikk',
             'name' => 'IKU - Indikator Kinerja Kegiatan',
             'params' => [
-                'sk' => $sk,
+                'sk' => $sk['id'],
             ],
         ],
         [
             'link' => 'super-admin-iku-ps',
             'name' => 'IKU - Program Strategis',
             'params' => [
-                'sk' => $sk,
-                'ikk' => $ikk,
+                'sk' => $sk['id'],
+                'ikk' => $ikk['id'],
             ],
         ],
     ];
 @endphp
 <x-super-admin-template title="IKU - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="manajemen indikator kinerja utama - program strategis" previousRoute="{{ route('super-admin-iku-ikk', ['sk' => $sk]) }}" />
-    <x-partials.heading.h3 title="Sasaran kegiatan" dataNumber="2" dataText="Sasaran Kegiatan blabla blab lanc balncj ncjecn" />
-    <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="5" dataText="Indikator Kinerja Kegiatan blabla blab lanc balncj ncjecn" />
+    <x-partials.heading.h2 text="manajemen indikator kinerja utama - program strategis" previousRoute="{{ route('super-admin-iku-ikk', ['sk' => $sk['id']]) }}" />
+    <x-partials.heading.h3 title="Sasaran kegiatan" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
+    <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="{{ $ikk['number'] }}" dataText="{{ $ikk['name'] }}" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
-        <x-partials.button.add route="{{ route('super-admin-iku-ps-add', ['sk' => $sk, 'ikk' => $ikk]) }}" />
+        <x-partials.button.add route="{{ route('super-admin-iku-ps-add', ['sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" />
     </div>
-    @php
-        $data = [
-            [
-                'id' => 'ckdjdk',
-                'name' => 'program strategis 1',
-                'ikp' => [
-                    'active' => 1,
-                    'inactive' => 2,
-                ],
-            ],
-            [
-                'id' => 'sdksdss',
-                'name' => 'program strategis 2',
-                'ikp' => [
-                    'active' => 0,
-                    'inactive' => 0,
-                ],
-            ],
-            [
-                'id' => 'dfhghhff',
-                'name' => 'program strategis 3',
-                'ikp' => [
-                    'active' => 1,
-                    'inactive' => 1,
-                ],
-            ],
-            [
-                'id' => 'mgfdffdg',
-                'name' => 'program strategis 4',
-                'ikp' => [
-                    'active' => 1,
-                    'inactive' => 0,
-                ],
-            ],
-        ];
-    @endphp
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
@@ -79,26 +43,26 @@
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
                 @foreach ($data as $item)
                     @php
-                        $sum = $item['ikp']['active'] + $item['ikp']['inactive'];
+                        $sum = $item['active'] + $item['inactive'];
                         $deleteData = [
-                            'nomor' => $loop->iteration,
+                            'nomor' => $item['number'],
                             'program strategis' => $item['name'],
-                            'indikator kinerja program' => "Total : {$sum}, Aktif : {$item['ikp']['active']}, Tidak Aktif : {$item['ikp']['inactive']}",
+                            'indikator kinerja program' => "Total : {$sum}, Aktif : {$item['active']}, Tidak Aktif : {$item['inactive']}",
                         ];
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
-                        <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
+                        <td title="{{ $item['number'] }}">{{ $item['number'] }}</td>
                         <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
                         <td>
                             <div class="*:p-1 *:min-w-max *:flex-1 *:mx-auto mx-auto flex max-w-full items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
                                 <p title="Total : {{ $sum }}">Total : {{ $sum }}</p>
-                                <p title="Aktif : {{ $item['ikp']['active'] }}">Aktif : {{ $item['ikp']['active'] }}</p>
-                                <p title="Tidak aktif : {{ $item['ikp']['inactive'] }}">Tidak Aktif : {{ $item['ikp']['inactive'] }}</p>
+                                <p title="Aktif : {{ $item['active'] }}">Aktif : {{ $item['active'] }}</p>
+                                <p title="Tidak aktif : {{ $item['inactive'] }}">Tidak Aktif : {{ $item['inactive'] }}</p>
                             </div>
                         </td>
                         <td class="flex items-center justify-center gap-1">
-                            <x-partials.button.manage link="{{ route('super-admin-iku-ikp', ['sk' => $sk, 'ikk' => $ikk, 'ps' => 'hohoho']) }}" />
-                            <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['id' => $item['id'], 'sk' => $sk, 'ikk' => $ikk]) }}" />
+                            <x-partials.button.manage link="{{ route('super-admin-iku-ikp', ['sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $item['id']]) }}" />
+                            <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['id' => $item['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" />
                             <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
                         </td>
                     </tr>
@@ -106,6 +70,10 @@
             </tbody>
         </table>
     </div>
+
+    @if (!count($data))
+        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data program strategis</p>
+    @endif
 
     <x-partials.modal.delete id="delete-modal" />
 </x-super-admin-template>

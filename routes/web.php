@@ -142,7 +142,7 @@ Route::group([
             'prefix' => '/{sk}/{ikk}/program-strategis',
             'controller' => ProgramStrategisController::class
         ], function ($route) {
-            Route::view('/', 'super-admin.iku.ps.home')->name('super-admin-iku-ps');
+            Route::get('/', 'homeView')->name('super-admin-iku-ps');
             Route::get('/tambah', 'addView')->name('super-admin-iku-ps-add');
             Route::post('/tambah', 'add');
             Route::view('/{id}/ubah', 'super-admin.iku.ps.edit')->name('super-admin-iku-ps-edit');
