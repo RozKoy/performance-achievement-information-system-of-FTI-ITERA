@@ -34,17 +34,17 @@ class SasaranStrategisController extends Controller
     {
         $time = RSTime::currentTime();
 
-        $sasaranStrategis = $time->sasaranStrategis->count() + 1;
+        $count = $time->sasaranStrategis->count() + 1;
 
         $data = [];
-        for ($i = 0; $i < $sasaranStrategis; $i++) {
+        for ($i = 0; $i < $count; $i++) {
             $data[$i] = [
                 "value" => strval($i + 1),
                 "text" => strval($i + 1),
             ];
         }
-        $data[$sasaranStrategis - 1] = [
-            ...$data[$sasaranStrategis - 1],
+        $data[$count - 1] = [
+            ...$data[$count - 1],
             'selected' => true,
         ];
 
@@ -69,22 +69,22 @@ class SasaranStrategisController extends Controller
                 ->increment('number');
         }
 
-        $sasaranStrategis = new SasaranStrategis($request->safe()->all());
+        $ss = new SasaranStrategis($request->safe()->all());
 
-        $sasaranStrategis->deadline()->associate($time);
-        $sasaranStrategis->time()->associate($time);
+        $ss->deadline()->associate($time);
+        $ss->time()->associate($time);
 
-        $sasaranStrategis->save();
+        $ss->save();
 
         return redirect()->route('super-admin-rs-ss');
     }
 
     public function editView($id)
     {
-        $sasaranStrategis = SasaranStrategis::whereKey($id)
+        $ss = SasaranStrategis::whereKey($id)
             ->firstOrFail(['id', 'name', 'number', 'time_id']);
 
-        $count = $sasaranStrategis->time->sasaranStrategis->count();
+        $count = $ss->time->sasaranStrategis->count();
 
         $data = [];
         for ($i = 0; $i < $count; $i++) {
@@ -93,20 +93,20 @@ class SasaranStrategisController extends Controller
                 "text" => strval($i + 1),
             ];
         }
-        $data[$sasaranStrategis->number - 1] = [
-            ...$data[$sasaranStrategis->number - 1],
+        $data[$ss->number - 1] = [
+            ...$data[$ss->number - 1],
             'selected' => true,
         ];
 
-        $sasaranStrategis = $sasaranStrategis->only(['id', 'name']);
+        $ss = $ss->only(['id', 'name']);
 
-        return view('super-admin.rs.ss.edit', compact(['data', 'sasaranStrategis']));
+        return view('super-admin.rs.ss.edit', compact(['data', 'ss']));
     }
 
     public function edit(EditRequest $request, $id)
     {
-        $sasaranStrategis = SasaranStrategis::findOrFail($id);
-        $time = $sasaranStrategis->time;
+        $ss = SasaranStrategis::findOrFail($id);
+        $time = $ss->time;
 
         $number = (int) $request->safe()['number'];
         if ($number > $time->sasaranStrategis->count()) {
@@ -115,9 +115,9 @@ class SasaranStrategisController extends Controller
                 ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
         }
 
-        $currentNumber = $sasaranStrategis->number;
+        $currentNumber = $ss->number;
         if ($number !== $currentNumber) {
-            $sasaranStrategis->number = $number;
+            $ss->number = $number;
 
             if ($number < $currentNumber) {
                 $time->sasaranStrategis()
@@ -132,8 +132,8 @@ class SasaranStrategisController extends Controller
             }
         }
 
-        $sasaranStrategis->name = $request->safe()['name'];
-        $sasaranStrategis->save();
+        $ss->name = $request->safe()['name'];
+        $ss->save();
 
         return redirect()->route('super-admin-rs-ss');
     }

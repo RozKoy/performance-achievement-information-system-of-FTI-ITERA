@@ -24,9 +24,9 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'name' => ['bail', 'required', 'max:255', new Unique(new Unit())],
             'users.old' => ['bail', 'nullable', 'array', 'exists:users,id'],
             'users.new' => ['bail', 'nullable', 'array', 'exists:users,id'],
-            'name' => ['bail', 'required', 'max:255', new Unique(new Unit())],
         ];
     }
 

@@ -69,12 +69,12 @@ class SasaranKegiatanController extends Controller
                 ->increment('number');
         }
 
-        $sasaranKegiatan = new SasaranKegiatan($request->safe()->all());
+        $sk = new SasaranKegiatan($request->safe()->all());
 
-        $sasaranKegiatan->deadline()->associate($time);
-        $sasaranKegiatan->time()->associate($time);
+        $sk->deadline()->associate($time);
+        $sk->time()->associate($time);
 
-        $sasaranKegiatan->save();
+        $sk->save();
 
         return redirect()->route('super-admin-iku-sk');
     }

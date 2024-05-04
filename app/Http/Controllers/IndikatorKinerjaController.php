@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerja;
 use App\Models\SasaranStrategis;
 use Illuminate\Http\Request;
-use App\Models\Kegiatan;
 
 class IndikatorKinerjaController extends Controller
 {
@@ -30,9 +29,7 @@ class IndikatorKinerjaController extends Controller
     public function homeView(Request $request, $ssId, $kId)
     {
         $ss = SasaranStrategis::currentOrFail($ssId);
-        $ss->kegiatan()->findOrFail($kId);
-
-        $k = Kegiatan::findOrFail($kId);
+        $k = $ss->kegiatan()->findOrFail($kId);
 
         $data = $k->indikatorKinerja()->select(['id', 'name', 'type', 'status', 'number'])
             ->where(function (Builder $query) use ($request) {
@@ -56,9 +53,7 @@ class IndikatorKinerjaController extends Controller
     public function addView($ssId, $kId)
     {
         $ss = SasaranStrategis::currentOrFail($ssId);
-        $ss->kegiatan()->findOrFail($kId);
-
-        $k = Kegiatan::findOrFail($kId);
+        $k = $ss->kegiatan()->findOrFail($kId);
 
         $count = $k->indikatorKinerja->count() + 1;
 
@@ -84,9 +79,7 @@ class IndikatorKinerjaController extends Controller
     public function add(AddRequest $request, $ssId, $kId)
     {
         $ss = SasaranStrategis::currentOrFail($ssId);
-        $ss->kegiatan()->findOrFail($kId);
-
-        $k = Kegiatan::findOrFail($kId);
+        $k = $ss->kegiatan()->findOrFail($kId);
 
         $number = $request->safe()['number'];
         $dataCount = $k->indikatorKinerja->count();
@@ -102,14 +95,14 @@ class IndikatorKinerjaController extends Controller
                 ->increment('number');
         }
 
-        $indikatorKinerja = new IndikatorKinerja($request->safe()->all());
+        $ik = new IndikatorKinerja($request->safe()->all());
 
-        $indikatorKinerja->kegiatan()->associate($k);
-        $indikatorKinerja->status = 'aktif';
+        $ik->kegiatan()->associate($k);
+        $ik->status = 'aktif';
 
-        $indikatorKinerja->save();
+        $ik->save();
 
-        return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
+        return redirect()->route('super-admin-rs-ik', ['ss' => $ssId, 'k' => $kId]);
     }
 
     public function editView($ssId, $kId, $id)
@@ -181,7 +174,7 @@ class IndikatorKinerjaController extends Controller
             $ik->name = $request->safe()['name'];
             $ik->save();
 
-            return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
+            return redirect()->route('super-admin-rs-ik', ['ss' => $ssId, 'k' => $kId]);
         }
 
         abort(404);

@@ -79,7 +79,7 @@ class IndikatorKinerjaKegiatanController extends Controller
 
         $ikk->save();
 
-        return redirect()->route('super-admin-iku-ikk', ['sk' => $sk->id]);
+        return redirect()->route('super-admin-iku-ikk', ['sk' => $skId]);
     }
 
     public function editView($skId, $id)
@@ -144,7 +144,7 @@ class IndikatorKinerjaKegiatanController extends Controller
             $ikk->name = $request->safe()['name'];
             $ikk->save();
 
-            return redirect()->route('super-admin-iku-ikk', ['sk' => $sk->id]);
+            return redirect()->route('super-admin-iku-ikk', ['sk' => $skId]);
         }
 
         abort(404);

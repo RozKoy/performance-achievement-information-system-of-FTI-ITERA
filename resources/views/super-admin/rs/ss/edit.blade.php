@@ -8,7 +8,7 @@
             'link' => 'super-admin-rs-ss-edit',
             'name' => 'Ubah',
             'params' => [
-                'id' => $sasaranStrategis['id'],
+                'id' => $ss['id'],
             ],
         ],
     ];
@@ -29,7 +29,7 @@
             </div>
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="name" title="Sasaran strategis" text="Sasaran Strategis" required />
-                <x-partials.input.text name="name" title="Sasaran strategis" value="{{ old('name') ? old('name') : $sasaranStrategis['name'] }}" autofocus required />
+                <x-partials.input.text name="name" title="Sasaran strategis" value="{{ old('name') ? old('name') : $ss['name'] }}" autofocus required />
             </div>
         </div>
         <x-partials.button.edit />

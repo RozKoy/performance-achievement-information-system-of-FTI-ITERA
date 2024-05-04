@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProgramStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\IndikatorKinerjaKegiatan;
 use App\Models\ProgramStrategis;
 use App\Models\SasaranKegiatan;
 use Illuminate\Http\Request;
@@ -14,9 +13,7 @@ class ProgramStrategisController extends Controller
     public function homeView(Request $request, $skId, $ikkId)
     {
         $sk = SasaranKegiatan::currentOrFail($skId);
-        $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
-
-        $ikk = IndikatorKinerjaKegiatan::findOrFail($ikkId);
+        $ikk = $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
 
         $data = $ikk->programStrategis()->select(['id', 'name', 'number'])
             ->where(function (Builder $query) use ($request) {
@@ -48,9 +45,7 @@ class ProgramStrategisController extends Controller
     public function addView($skId, $ikkId)
     {
         $sk = SasaranKegiatan::currentOrFail($skId);
-        $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
-
-        $ikk = IndikatorKinerjaKegiatan::findOrFail($ikkId);
+        $ikk = $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
 
         $count = $ikk->programStrategis->count() + 1;
 
@@ -75,9 +70,7 @@ class ProgramStrategisController extends Controller
     public function add(AddRequest $request, $skId, $ikkId)
     {
         $sk = SasaranKegiatan::currentOrFail($skId);
-        $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
-
-        $ikk = IndikatorKinerjaKegiatan::findOrFail($ikkId);
+        $ikk = $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
 
         $number = $request->safe()['number'];
         $dataCount = $ikk->programStrategis->count();

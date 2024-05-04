@@ -82,13 +82,13 @@ class KegiatanController extends Controller
                 ->increment('number');
         }
 
-        $kegiatan = new Kegiatan($request->safe()->all());
+        $k = new Kegiatan($request->safe()->all());
 
-        $kegiatan->sasaranStrategis()->associate($ss);
+        $k->sasaranStrategis()->associate($ss);
 
-        $kegiatan->save();
+        $k->save();
 
-        return redirect()->route('super-admin-rs-k', ['ss' => $ss->id]);
+        return redirect()->route('super-admin-rs-k', ['ss' => $ssId]);
     }
 
     public function editView($ssId, $id)
@@ -153,7 +153,7 @@ class KegiatanController extends Controller
             $k->name = $request->safe()['name'];
             $k->save();
 
-            return redirect()->route('super-admin-rs-k', ['ss' => $ss->id]);
+            return redirect()->route('super-admin-rs-k', ['ss' => $ssId]);
         }
 
         abort(404);
