@@ -94,4 +94,33 @@ class ProgramStrategisController extends Controller
 
         return redirect()->route('super-admin-iku-ps', ['sk' => $skId, 'ikk' => $ikkId]);
     }
+
+    public function editView($skId, $ikkId, $id)
+    {
+        $ps = ProgramStrategis::findOrFail($id);
+        $ikk = $ps->indikatorKinerjaKegiatan;
+        $sk = $ikk->sasaranKegiatan;
+
+        if ($sk->id === $skId && $ikk->id === $ikkId) {
+            $count = $ikk->programStrategis->count();
+            $data = [];
+            for ($i = 0; $i < $count; $i++) {
+                $data[$i] = [
+                    "value" => strval($i + 1),
+                    "text" => strval($i + 1),
+                ];
+            }
+            $data[$ps->number - 1] = [
+                ...$data[$ps->number - 1],
+                'selected' => true,
+            ];
+
+            $ikk = $ikk->only(['id', 'name', 'number']);
+            $sk = $sk->only(['id', 'name', 'number']);
+
+            return view('super-admin.iku.ps.edit', compact(['data', 'sk', 'ikk', 'ps']));
+        }
+
+        abort(404);
+    }
 }
