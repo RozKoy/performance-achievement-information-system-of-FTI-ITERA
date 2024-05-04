@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->uuid('id');
 
             $table->unsignedInteger('number');
+            $table->string('status', 11);
             $table->text('definition');
             $table->char('type', 3);
             $table->json('column');
@@ -23,6 +24,8 @@ return new class extends Migration {
             $table->softDeletes();
 
             $table->primary('id');
+
+            $table->foreignUuid('program_strategis_id')->constrained('program_strategis');
         });
     }
 
