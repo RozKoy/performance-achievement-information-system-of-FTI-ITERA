@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\IndikatorKinerjaKegiatanController;
 use App\Http\Controllers\IndikatorKinerjaController;
+use App\Http\Controllers\ProgramStrategisController;
 use App\Http\Controllers\SasaranStrategisController;
 use App\Http\Controllers\SasaranKegiatanController;
 use App\Http\Controllers\KegiatanController;
@@ -138,10 +139,11 @@ Route::group([
         });
 
         Route::group([
-            'prefix' => '/{sk}/{ikk}/program-strategis'
-        ], function () {
+            'prefix' => '/{sk}/{ikk}/program-strategis',
+            'controller' => ProgramStrategisController::class
+        ], function ($route) {
             Route::view('/', 'super-admin.iku.ps.home')->name('super-admin-iku-ps');
-            Route::view('/tambah', 'super-admin.iku.ps.add')->name('super-admin-iku-ps-add');
+            Route::get('/tambah', 'addView')->name('super-admin-iku-ps-add');
             Route::view('/{id}/ubah', 'super-admin.iku.ps.edit')->name('super-admin-iku-ps-edit');
         });
 

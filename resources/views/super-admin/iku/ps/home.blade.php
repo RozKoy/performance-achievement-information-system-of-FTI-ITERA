@@ -8,27 +8,27 @@
             'link' => 'super-admin-iku-ikk',
             'name' => 'IKU - Indikator Kinerja Kegiatan',
             'params' => [
-                'sk' => 'cdmkcmdc',
+                'sk' => $sk,
             ],
         ],
         [
             'link' => 'super-admin-iku-ps',
             'name' => 'IKU - Program Strategis',
             'params' => [
-                'sk' => 'hahaha',
-                'ikk' => 'hihihi',
+                'sk' => $sk,
+                'ikk' => $ikk,
             ],
         ],
     ];
 @endphp
 <x-super-admin-template title="IKU - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="manajemen indikator kinerja utama - program strategis" previousRoute="{{ route('super-admin-iku-ikk', ['sk' => 'hahaha']) }}" />
+    <x-partials.heading.h2 text="manajemen indikator kinerja utama - program strategis" previousRoute="{{ route('super-admin-iku-ikk', ['sk' => $sk]) }}" />
     <x-partials.heading.h3 title="Sasaran kegiatan" dataNumber="2" dataText="Sasaran Kegiatan blabla blab lanc balncj ncjecn" />
     <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="5" dataText="Indikator Kinerja Kegiatan blabla blab lanc balncj ncjecn" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
-        <x-partials.button.add route="{{ route('super-admin-iku-ps-add', ['sk' => 'cdmkcmdc', 'ikk' => 'hihihi']) }}" />
+        <x-partials.button.add route="{{ route('super-admin-iku-ps-add', ['sk' => $sk, 'ikk' => $ikk]) }}" />
     </div>
     @php
         $data = [
@@ -97,8 +97,8 @@
                             </div>
                         </td>
                         <td class="flex items-center justify-center gap-1">
-                            <x-partials.button.manage link="{{ route('super-admin-iku-ikp', ['sk' => 'hahaha', 'ikk' => 'hihihi', 'ps' => 'hohoho']) }}" />
-                            <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['id' => $item['id'], 'sk' => 'hahaha', 'ikk' => 'hihihi']) }}" />
+                            <x-partials.button.manage link="{{ route('super-admin-iku-ikp', ['sk' => $sk, 'ikk' => $ikk, 'ps' => 'hohoho']) }}" />
+                            <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['id' => $item['id'], 'sk' => $sk, 'ikk' => $ikk]) }}" />
                             <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
                         </td>
                     </tr>
