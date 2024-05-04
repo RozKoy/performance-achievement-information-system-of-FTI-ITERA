@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndikatorKinerjaKegiatan\EditRequest;
 use App\Http\Requests\IndikatorKinerjaKegiatan\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerjaKegiatan;
@@ -105,6 +106,45 @@ class IndikatorKinerjaKegiatanController extends Controller
             $ikk = $ikk->only(['id', 'name']);
 
             return view('super-admin.iku.ikk.edit', compact(['data', 'ikk', 'sk']));
+        }
+
+        abort(404);
+    }
+
+    public function edit(EditRequest $request, $skId, $id)
+    {
+        $ikk = IndikatorKinerjaKegiatan::findOrFail($id);
+        $sk = $ikk->sasaranKegiatan;
+
+        if ($sk->id === $skId) {
+            $number = (int) $request->safe()['number'];
+            if ($number > $sk->indikatorKinerjaKegiatan->count()) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+            }
+
+            $currentNumber = $ikk->number;
+            if ($number !== $currentNumber) {
+                $ikk->number = $number;
+
+                if ($number < $currentNumber) {
+                    $sk->indikatorKinerjaKegiatan()
+                        ->where('number', '>=', $number)
+                        ->where('number', '<', $currentNumber)
+                        ->increment('number');
+                } else {
+                    $sk->indikatorKinerjaKegiatan()
+                        ->where('number', '<=', $number)
+                        ->where('number', '>', $currentNumber)
+                        ->decrement('number');
+                }
+            }
+
+            $ikk->name = $request->safe()['name'];
+            $ikk->save();
+
+            return redirect()->route('super-admin-iku-ikk', ['sk' => $sk->id]);
         }
 
         abort(404);
