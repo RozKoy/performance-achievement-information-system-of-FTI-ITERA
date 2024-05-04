@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
@@ -14,10 +15,16 @@ class IndikatorKinerjaProgram extends Model
     protected $table = 'indikator_kinerja_program';
 
     protected $fillable = [
+        'program_strategis_id',
         'definition',
         'column',
         'number',
         'type',
         'name',
     ];
+
+    public function programStrategis(): BelongsTo
+    {
+        return $this->belongsTo(ProgramStrategis::class);
+    }
 }
