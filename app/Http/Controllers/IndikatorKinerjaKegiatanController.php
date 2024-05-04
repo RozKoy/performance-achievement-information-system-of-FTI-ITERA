@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndikatorKinerjaKegiatan\EditRequest;
 use App\Http\Requests\IndikatorKinerjaKegiatan\AddRequest;
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerjaKegiatan;
 use App\Models\SasaranKegiatan;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class IndikatorKinerjaKegiatanController extends Controller
@@ -79,5 +80,34 @@ class IndikatorKinerjaKegiatanController extends Controller
         $ikk->save();
 
         return redirect()->route('super-admin-iku-ikk', ['sk' => $sk->id]);
+    }
+
+    public function editView($skId, $id)
+    {
+        $ikk = IndikatorKinerjaKegiatan::findOrFail($id);
+        $sk = $ikk->sasaranKegiatan;
+
+        if ($sk->id === $skId) {
+            $count = $sk->indikatorKinerjaKegiatan->count();
+
+            $data = [];
+            for ($i = 0; $i < $count; $i++) {
+                $data[$i] = [
+                    "value" => strval($i + 1),
+                    "text" => strval($i + 1),
+                ];
+            }
+            $data[$ikk->number - 1] = [
+                ...$data[$ikk->number - 1],
+                'selected' => true,
+            ];
+
+            $sk = $sk->only(['id', 'name', 'number']);
+            $ikk = $ikk->only(['id', 'name']);
+
+            return view('super-admin.iku.ikk.edit', compact(['data', 'ikk', 'sk']));
+        }
+
+        abort(404);
     }
 }
