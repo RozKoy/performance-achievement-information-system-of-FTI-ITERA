@@ -79,6 +79,9 @@
                 </svg>
             </button>
         </div>
+        @error('columns')
+            <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+        @enderror
         <div id="columnList" class="flex flex-wrap gap-2">
             <div class="relative flex flex-1">
                 <x-partials.input.textarea name="columns[]" title="Kolom" style="flex-1 h-full" required />
