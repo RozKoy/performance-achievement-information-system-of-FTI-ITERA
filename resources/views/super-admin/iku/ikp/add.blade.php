@@ -8,93 +8,68 @@
             'link' => 'super-admin-iku-ikk',
             'name' => 'IKU - Indikator Kinerja Kegiatan',
             'params' => [
-                'sk' => 'cdmkcmdc',
+                'sk' => $sk['id'],
             ],
         ],
         [
             'link' => 'super-admin-iku-ps',
             'name' => 'IKU - Program Strategis',
             'params' => [
-                'sk' => 'hahaha',
-                'ikk' => 'hihihi',
+                'sk' => $sk['id'],
+                'ikk' => $ikk['id'],
             ],
         ],
         [
             'link' => 'super-admin-iku-ikp',
             'name' => 'IKU - Indikator Kinerja Program',
             'params' => [
-                'sk' => 'cdmkcmdc',
-                'ikk' => 'cdmkcmdc',
-                'ps' => 'hohoho',
+                'sk' => $sk['id'],
+                'ikk' => $ikk['id'],
+                'ps' => $ps['id'],
             ],
         ],
         [
             'link' => 'super-admin-iku-ikp-add',
             'name' => 'Tambah',
             'params' => [
-                'sk' => 'cdmkcmdc',
-                'ikk' => 'cdmkcmdc',
-                'ps' => 'hohoho',
+                'sk' => $sk['id'],
+                'ikk' => $ikk['id'],
+                'ps' => $ps['id'],
             ],
-        ],
-    ];
-
-    $data = [
-        [
-            'value' => '1',
-            'text' => '1',
-        ],
-        [
-            'value' => '2',
-            'text' => '2',
-        ],
-        [
-            'value' => '3',
-            'text' => '3',
-        ],
-        [
-            'value' => '4',
-            'text' => '4',
-            'selected' => true,
-        ],
-    ];
-
-    $types = [
-        [
-            'value' => 'iku',
-            'text' => 'IKU',
-            'selected' => true,
-        ],
-        [
-            'value' => 'ikt',
-            'text' => 'IKT',
         ],
     ];
 @endphp
 <x-super-admin-template title="Tambah Indikator Kinerja Program - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="tambah indikator kinerja program" previousRoute="{{ route('super-admin-iku-ikp', ['sk' => 'cdmkcmdc', 'ikk' => 'cdmkcmdc', 'ps' => 'hohoho']) }}" />
-    <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="2" dataText="Sasaran Kinerja blabla blab lanc balncj ncjecn" />
-    <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="4" dataText="Indikator kinerja kegiatan blabla blab lanc balncj ncjecn" />
-    <x-partials.heading.h3 title="Program strategis" dataNumber="3" dataText="Program Strategis blabla blab lanc balncj ncjecn" />
-    <form action="" class="flex flex-col gap-2">
+    <x-partials.heading.h2 text="tambah indikator kinerja program" previousRoute="{{ route('super-admin-iku-ikp', ['sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']]) }}" />
+    <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
+    <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="{{ $ikk['number'] }}" dataText="{{ $ikk['name'] }}" />
+    <x-partials.heading.h3 title="Program strategis" dataNumber="{{ $ps['number'] }}" dataText="{{ $ps['name'] }}" />
+    <form action="" method="POST" class="flex flex-col gap-2">
+        @csrf
         <div class="flex flex-wrap gap-2">
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
                 <x-partials.input.select name="number" title="Nomor" :$data required />
+                @error('number')
+                    <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+                @enderror
             </div>
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="type" title="Tipe pendukung" text="Tipe Pendukung" required />
                 <x-partials.input.select name="type" title="Tipe pendukung" :data="$types" required />
+                @error('type')
+                    <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+                @enderror
             </div>
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="name" title="Indikator kinerja program" text="Indikator Kinerja Program" required />
-                <x-partials.input.text name="name" title="Indikator kinerja program" autofocus required />
+                <x-partials.input.text name="name" title="Indikator kinerja program" value="{{ old('name') }}" autofocus required />
             </div>
         </div>
         <div class="flex flex-1 flex-col gap-2">
             <x-partials.label.default for="definition" title="Definisi operasional" text="Definisi Operasional" required />
-            <x-partials.input.text name="definition" title="Definisi operasional" required />
+            <x-partials.input.text name="definition" title="Definisi operasional" value="{{ old('definition') }}" required />
         </div>
         <div class="flex items-center justify-start gap-2">
             <x-partials.label.default for="columns[]" title="Kolom" text="Kolom" required />
