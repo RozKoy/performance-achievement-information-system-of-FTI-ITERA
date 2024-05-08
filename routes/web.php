@@ -154,7 +154,7 @@ Route::group([
             'prefix' => '/{sk}/{ikk}/{ps}/indikator-kinerja-program',
             'controller' => IndikatorKinerjaProgramController::class
         ], function ($route) {
-            Route::view('/', 'super-admin.iku.ikp.home')->name('super-admin-iku-ikp');
+            Route::get('/', 'homeView')->name('super-admin-iku-ikp');
             Route::get('/tambah', 'addView')->name('super-admin-iku-ikp-add');
             Route::post('/tambah', 'add');
             Route::view('/{id}/ubah', 'super-admin.iku.ikp.edit')->name('super-admin-iku-ikp-edit');

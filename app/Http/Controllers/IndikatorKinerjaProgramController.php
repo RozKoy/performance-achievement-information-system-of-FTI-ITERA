@@ -3,12 +3,40 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\IndikatorKinerjaProgram\AddRequest;
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerjaProgram;
 use App\Models\SasaranKegiatan;
 use Illuminate\Http\Request;
 
 class IndikatorKinerjaProgramController extends Controller
 {
+    public function homeView(Request $request, $skId, $ikkId, $psId)
+    {
+        $sk = SasaranKegiatan::currentOrFail($skId);
+        $ikk = $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
+        $ps = $ikk->programStrategis()->findOrFail($psId);
+
+        $data = $ps->indikatorKinerjaProgram()->select(['id', 'name', 'type', 'status', 'column', 'number', 'definition'])
+            ->where(function (Builder $query) use ($request) {
+                if (isset ($request->search)) {
+                    $query->where('name', 'LIKE', "%{$request->search}%")
+                        ->orWhere('definition', 'LIKE', "%{$request->search}%")
+                        ->orWhere('number', $request->search)
+                        ->orWhere('status', $request->search)
+                        ->orWhere('type', $request->search);
+                }
+            })
+            ->orderBy('number')
+            ->get()
+            ->toArray();
+
+        $sk = $sk->only(['id', 'name', 'number']);
+        $ikk = $ikk->only(['id', 'name', 'number']);
+        $ps = $ps->only(['id', 'name', 'number']);
+
+        return view('super-admin.iku.ikp.home', compact(['data', 'sk', 'ikk', 'ps']));
+    }
+
     public function addView($skId, $ikkId, $psId)
     {
         $sk = SasaranKegiatan::currentOrFail($skId);
