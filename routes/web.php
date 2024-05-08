@@ -159,6 +159,7 @@ Route::group([
             Route::post('/tambah', 'add');
             Route::get('/{id}/ubah', 'editView')->name('super-admin-iku-ikp-edit');
             Route::put('/{id}/ubah', 'edit');
+            Route::get('/{id}/status', 'statusToggle')->name('super-admin-iku-ikp-status');
         });
     });
 

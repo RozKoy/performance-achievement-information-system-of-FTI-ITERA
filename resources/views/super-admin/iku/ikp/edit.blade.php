@@ -47,6 +47,12 @@
     <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
     <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="{{ $ikk['number'] }}" dataText="{{ $ikk['name'] }}" />
     <x-partials.heading.h3 title="Program strategis" dataNumber="{{ $ps['number'] }}" dataText="{{ $ps['name'] }}" />
+    <div class="flex items-center justify-start">
+        <label onclick="statusToggle('{{ url(route('super-admin-iku-ikp-status', ['id' => $ikp['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']])) }}')" class="relative inline-flex items-center">
+            <input type="checkbox" value="{{ $ikp['status'] }}" class="peer sr-only" @if ($ikp['status'] === 'aktif') checked @endif disabled>
+            <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
+        </label>
+    </div>
     <form action="" method="POST" class="flex flex-col gap-2">
         @csrf
         @method('PUT')
@@ -122,6 +128,10 @@
             function addColumn() {
                 let columnInput = document.getElementById('columnInput').firstElementChild.cloneNode(true);
                 document.getElementById('columnList').appendChild(columnInput);
+            }
+
+            function statusToggle(url) {
+                window.location.href = url;
             }
         </script>
     @endPushOnce
