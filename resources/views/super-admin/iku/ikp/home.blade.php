@@ -91,6 +91,10 @@
         </table>
     </div>
 
+    @if (!count($data))
+        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data indikator kinerja program</p>
+    @endif
+
     <x-partials.modal.delete id="delete-modal" />
 
     @push('script')
