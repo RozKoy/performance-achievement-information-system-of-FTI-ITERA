@@ -118,6 +118,7 @@ class ProgramStrategisController extends Controller
 
             $ikk = $ikk->only(['id', 'name', 'number']);
             $sk = $sk->only(['id', 'name', 'number']);
+            $ps = $ps->only(['id', 'name']);
 
             return view('super-admin.iku.ps.edit', compact(['data', 'sk', 'ikk', 'ps']));
         }
