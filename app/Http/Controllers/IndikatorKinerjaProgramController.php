@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndikatorKinerjaProgram\EditRequest;
 use App\Http\Requests\IndikatorKinerjaProgram\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerjaProgram;
@@ -116,6 +117,7 @@ class IndikatorKinerjaProgramController extends Controller
     public function editView($skId, $ikkId, $psId, $id)
     {
         $ikp = IndikatorKinerjaProgram::findOrFail($id);
+
         $ps = $ikp->programStrategis;
         $ikk = $ps->indikatorKinerjaKegiatan;
         $sk = $ikk->sasaranKegiatan;
@@ -147,6 +149,52 @@ class IndikatorKinerjaProgramController extends Controller
             $ikp = $ikp->only(['id', 'name', 'status', 'column', 'definition']);
 
             return view('super-admin.iku.ikp.edit', compact(['types', 'data', 'sk', 'ikk', 'ps', 'ikp']));
+        }
+
+        abort(404);
+    }
+
+    public function edit(EditRequest $request, $skId, $ikkId, $psId, $id)
+    {
+        $ikp = IndikatorKinerjaProgram::findOrFail($id);
+
+        $ps = $ikp->programStrategis;
+        $ikk = $ps->indikatorKinerjaKegiatan;
+        $sk = $ikk->sasaranKegiatan;
+
+        if ($ps->id === $psId && $ikk->id === $ikkId && $sk->id === $skId) {
+            $number = (int) $request->safe()['number'];
+            if ($number > $ps->indikatorKinerjaProgram->count()) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+            }
+
+            $currentNumber = $ikp->number;
+            if ($number !== $currentNumber) {
+                $ikp->number = $number;
+
+                if ($number < $currentNumber) {
+                    $ps->indikatorKinerjaProgram()
+                        ->where('number', '>=', $number)
+                        ->where('number', '<', $currentNumber)
+                        ->increment('number');
+                } else {
+                    $ps->indikatorKinerjaProgram()
+                        ->where('number', '<=', $number)
+                        ->where('number', '>', $currentNumber)
+                        ->decrement('number');
+                }
+            }
+
+            $ikp->name = $request->safe()['name'];
+            $ikp->type = $request->safe()['type'];
+            $ikp->definition = $request->safe()['definition'];
+            $ikp->column = json_encode($request->safe()['columns']);
+
+            $ikp->save();
+
+            return redirect()->route('super-admin-iku-ikp', ['sk' => $skId, 'ikk' => $ikkId, 'ps' => $psId]);
         }
 
         abort(404);
