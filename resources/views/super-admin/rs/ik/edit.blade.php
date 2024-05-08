@@ -54,7 +54,7 @@
             </div>
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="name" title="Indikator kinerja" text="Indikator Kinerja" required />
-                <x-partials.input.text name="name" title="Indikator kinerja" value="{{ old('name') ? old('name') : $ik['name'] }}" autofocus required />
+                <x-partials.input.text name="name" title="Indikator kinerja" value="{{ $ik['name'] }}" autofocus required />
             </div>
             <div class="flex flex-col gap-2 max-xl:flex-1">
                 <x-partials.label.default for="type" title="Tipe data" text="Tipe Data" required />

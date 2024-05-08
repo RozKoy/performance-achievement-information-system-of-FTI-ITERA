@@ -67,12 +67,12 @@
             </div>
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="name" title="Indikator kinerja program" text="Indikator Kinerja Program" required />
-                <x-partials.input.text name="name" title="Indikator kinerja program" value="{{ old('name') ? old('name') : $ikp['name'] }}" autofocus required />
+                <x-partials.input.text name="name" title="Indikator kinerja program" value="{{ $ikp['name'] }}" autofocus required />
             </div>
         </div>
         <div class="flex flex-1 flex-col gap-2">
             <x-partials.label.default for="definition" title="Definisi operasional" text="Definisi Operasional" required />
-            <x-partials.input.text name="definition" title="Definisi operasional" value="{{ old('definition') ? old('definition') : $ikp['definition'] }}" required />
+            <x-partials.input.text name="definition" title="Definisi operasional" value="{{ $ikp['definition'] }}" required />
         </div>
         <div class="flex items-center justify-start gap-2">
             <x-partials.label.default for="columns[]" title="Kolom" text="Kolom" required />

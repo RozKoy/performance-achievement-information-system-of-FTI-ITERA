@@ -29,7 +29,7 @@
             </div>
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="name" title="Sasaran kegiatan" text="Sasaran Kegiatan" required />
-                <x-partials.input.text name="name" title="Sasaran kegiatan" value="{{ old('name') ? old('name') : $sk['name'] }}" autofocus required />
+                <x-partials.input.text name="name" title="Sasaran kegiatan" value="{{ $sk['name'] }}" autofocus required />
             </div>
         </div>
         <x-partials.button.edit />

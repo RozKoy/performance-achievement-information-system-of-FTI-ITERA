@@ -38,7 +38,7 @@
             </div>
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="name" title="Indikator kinerja kegiatan" text="Indikator Kinerja Kegiatan" required />
-                <x-partials.input.text name="name" title="Indikator kinerja kegiatan" value="{{ old('name') ? old('name') : $ikk['name'] }}" autofocus required />
+                <x-partials.input.text name="name" title="Indikator kinerja kegiatan" value="{{ $ikk['name'] }}" autofocus required />
             </div>
         </div>
         <x-partials.button.edit />
