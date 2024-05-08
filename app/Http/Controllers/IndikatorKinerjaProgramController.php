@@ -10,6 +10,17 @@ use Illuminate\Http\Request;
 
 class IndikatorKinerjaProgramController extends Controller
 {
+    protected $types = [
+        [
+            'value' => 'iku',
+            'text' => 'IKU',
+        ],
+        [
+            'value' => 'ikt',
+            'text' => 'IKT',
+        ],
+    ];
+
     public function homeView(Request $request, $skId, $ikkId, $psId)
     {
         $sk = SasaranKegiatan::currentOrFail($skId);
@@ -57,16 +68,10 @@ class IndikatorKinerjaProgramController extends Controller
             'selected' => true,
         ];
 
-        $types = [
-            [
-                'value' => 'iku',
-                'text' => 'IKU',
-                'selected' => true,
-            ],
-            [
-                'value' => 'ikt',
-                'text' => 'IKT',
-            ],
+        $types = $this->types;
+        $types[0] = [
+            ...$types[0],
+            'selected' => true
         ];
 
         $sk = $sk->only(['id', 'name', 'number']);
@@ -106,5 +111,44 @@ class IndikatorKinerjaProgramController extends Controller
         $ikp->save();
 
         return redirect()->route('super-admin-iku-ikp', ['sk' => $skId, 'ikk' => $ikkId, 'ps' => $psId]);
+    }
+
+    public function editView($skId, $ikkId, $psId, $id)
+    {
+        $ikp = IndikatorKinerjaProgram::findOrFail($id);
+        $ps = $ikp->programStrategis;
+        $ikk = $ps->indikatorKinerjaKegiatan;
+        $sk = $ikk->sasaranKegiatan;
+
+        if ($ps->id === $psId && $ikk->id === $ikkId && $sk->id === $skId) {
+            $count = $ps->indikatorKinerjaProgram->count();
+            $data = [];
+            for ($i = 0; $i < $count; $i++) {
+                $data[$i] = [
+                    "value" => strval($i + 1),
+                    "text" => strval($i + 1),
+                ];
+            }
+            $data[$ikp->number - 1] = [
+                ...$data[$ikp->number - 1],
+                'selected' => true,
+            ];
+
+            $index = $ikp->type === 'iku' ? 0 : 1;
+            $types = $this->types;
+            $types[$index] = [
+                ...$types[$index],
+                'selected' => true
+            ];
+
+            $sk = $sk->only(['id', 'name', 'number']);
+            $ikk = $ikk->only(['id', 'name', 'number']);
+            $ps = $ps->only(['id', 'name', 'number']);
+            $ikp = $ikp->only(['id', 'name', 'status', 'column', 'definition']);
+
+            return view('super-admin.iku.ikp.edit', compact(['types', 'data', 'sk', 'ikk', 'ps', 'ikp']));
+        }
+
+        abort(404);
     }
 }

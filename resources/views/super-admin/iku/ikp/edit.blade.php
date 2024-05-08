@@ -8,94 +8,71 @@
             'link' => 'super-admin-iku-ikk',
             'name' => 'IKU - Indikator Kinerja Kegiatan',
             'params' => [
-                'sk' => 'cdmkcmdc',
+                'sk' => $sk['id'],
             ],
         ],
         [
             'link' => 'super-admin-iku-ps',
             'name' => 'IKU - Program Strategis',
             'params' => [
-                'sk' => 'hahaha',
-                'ikk' => 'hihihi',
+                'sk' => $sk['id'],
+                'ikk' => $ikk['id'],
             ],
         ],
         [
             'link' => 'super-admin-iku-ikp',
             'name' => 'IKU - Indikator Kinerja Program',
             'params' => [
-                'sk' => 'cdmkcmdc',
-                'ikk' => 'cdmkcmdc',
-                'ps' => 'hohoho',
+                'sk' => $sk['id'],
+                'ikk' => $ikk['id'],
+                'ps' => $ps['id'],
             ],
         ],
         [
             'link' => 'super-admin-iku-ikp-edit',
             'name' => 'Ubah',
             'params' => [
-                'id' => 'cdmkcmdc',
-                'sk' => 'cdmkcmdc',
-                'ikk' => 'cdmkcmdc',
-                'ps' => 'hohoho',
+                'id' => $ikp['id'],
+                'sk' => $sk['id'],
+                'ikk' => $ikk['id'],
+                'ps' => $ps['id'],
             ],
         ],
     ];
-
-    $data = [
-        [
-            'value' => '1',
-            'text' => '1',
-        ],
-        [
-            'value' => '2',
-            'text' => '2',
-        ],
-        [
-            'value' => '3',
-            'text' => '3',
-        ],
-        [
-            'value' => '4',
-            'text' => '4',
-            'selected' => true,
-        ],
-    ];
-
-    $types = [
-        [
-            'value' => 'iku',
-            'text' => 'IKU',
-            'selected' => true,
-        ],
-        [
-            'value' => 'ikt',
-            'text' => 'IKT',
-        ],
-    ];
+    $columns = json_decode($ikp['column']);
 @endphp
 <x-super-admin-template title="Ubah Indikator Kinerja Program - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="ubah indikator kinerja program" previousRoute="{{ route('super-admin-iku-ikp', ['sk' => 'cdmkcmdc', 'ikk' => 'cdmkcmdc', 'ps' => 'hohoho']) }}" />
-    <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="2" dataText="Sasaran Kinerja blabla blab lanc balncj ncjecn" />
-    <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="4" dataText="Indikator kinerja kegiatan blabla blab lanc balncj ncjecn" />
-    <x-partials.heading.h3 title="Program strategis" dataNumber="3" dataText="Program Strategis blabla blab lanc balncj ncjecn" />
-    <form action="" class="flex flex-col gap-2">
+    <x-partials.heading.h2 text="ubah indikator kinerja program" previousRoute="{{ route('super-admin-iku-ikp', ['sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']]) }}" />
+    <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
+    <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="{{ $ikk['number'] }}" dataText="{{ $ikk['name'] }}" />
+    <x-partials.heading.h3 title="Program strategis" dataNumber="{{ $ps['number'] }}" dataText="{{ $ps['name'] }}" />
+    <form action="" method="POST" class="flex flex-col gap-2">
+        @csrf
+        @method('PUT')
         <div class="flex flex-wrap gap-2">
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
                 <x-partials.input.select name="number" title="Nomor" :$data required />
+                @error('number')
+                    <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+                @enderror
             </div>
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="type" title="Tipe pendukung" text="Tipe Pendukung" required />
                 <x-partials.input.select name="type" title="Tipe pendukung" :data="$types" required />
+                @error('type')
+                    <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+                @enderror
             </div>
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="name" title="Indikator kinerja program" text="Indikator Kinerja Program" required />
-                <x-partials.input.text name="name" title="Indikator kinerja program" autofocus required />
+                <x-partials.input.text name="name" title="Indikator kinerja program" value="{{ old('name') ? old('name') : $ikp['name'] }}" autofocus required />
             </div>
         </div>
         <div class="flex flex-1 flex-col gap-2">
             <x-partials.label.default for="definition" title="Definisi operasional" text="Definisi Operasional" required />
-            <x-partials.input.text name="definition" title="Definisi operasional" required />
+            <x-partials.input.text name="definition" title="Definisi operasional" value="{{ old('definition') ? old('definition') : $ikp['definition'] }}" required />
         </div>
         <div class="flex items-center justify-start gap-2">
             <x-partials.label.default for="columns[]" title="Kolom" text="Kolom" required />
@@ -105,10 +82,26 @@
                 </svg>
             </button>
         </div>
+        @error('columns')
+            <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+        @enderror
         <div id="columnList" class="flex flex-wrap gap-2">
-            <div class="relative flex flex-1">
-                <x-partials.input.textarea name="columns[]" title="Kolom" style="flex-1 h-full" required />
-            </div>
+            @foreach ($columns as $column)
+                @if ($loop->iteration === 1)
+                    <div class="relative flex flex-1">
+                        <x-partials.input.textarea name="columns[]" title="Kolom" style="flex-1 h-full" value="{{ $column }}" required />
+                    </div>
+                @else
+                    <div class="relative flex flex-1">
+                        <x-partials.input.textarea name="columns[]" title="Kolom" style="flex-1 peer" value="{{ $column }}" required />
+                        <button type="button" title="Hapus" onclick="this.parentElement.remove()" class="absolute right-1.5 top-2 hidden h-fit rounded-full bg-red-500 p-0.5 text-white hover:block hover:bg-red-400 peer-hover:block peer-focus:block">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-3 sm:w-4">
+                                <path d="m12,0C5.383,0,0,5.383,0,12s5.383,12,12,12,12-5.383,12-12S18.617,0,12,0Zm0,22c-5.514,0-10-4.486-10-10S6.486,2,12,2s10,4.486,10,10-4.486,10-10,10Zm-5-11h10v2H7v-2Z" />
+                            </svg>
+                        </button>
+                    </div>
+                @endif
+            @endforeach
         </div>
         <x-partials.button.edit />
     </form>
