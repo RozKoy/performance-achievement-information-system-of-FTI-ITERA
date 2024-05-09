@@ -5,12 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\Users\EditRequest;
 use App\Http\Requests\Users\AddRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Unit;
 use App\Models\User;
 
 class UsersController extends Controller
 {
+    /*
+    | -----------------------------------------------------------------
+    | SUPER ADMIN
+    | -----------------------------------------------------------------
+    */
+
     public function homeView(Request $request)
     {
         $data = User::doesntHave('unit')
@@ -172,5 +179,60 @@ class UsersController extends Controller
         $user->save();
 
         return redirect()->route('super-admin-users');
+    }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | ADMIN
+    | -----------------------------------------------------------------
+    */
+
+    public function getUsers()
+    {
+        $superAdmin = User::firstOrCreate([
+            'email' => 'superadmin@gmail.com',
+        ], [
+            'name' => 'super admin FTI',
+            'role' => 'super admin',
+            'access' => 'editor',
+            'password' => 'superadmin',
+        ]);
+
+        $unit = Unit::firstOrCreate([
+            'name' => 'Teknik Informatika',
+        ]);
+
+        $admin = User::firstOrCreate([
+            'email' => 'adminif@gmail.com',
+        ], [
+            'name' => 'admin informatika',
+            'role' => 'admin',
+            'access' => 'editor',
+            'password' => 'admin',
+            'unit_id' => $unit->id,
+        ]);
+
+        return [
+            'superAdmin' => $superAdmin,
+            'admin' => $admin,
+        ];
+    }
+
+    public function addViewAdmin()
+    {
+        ['admin' => $admin] = $this->getUsers();
+
+        if ($admin->unit()->exists()) {
+            Auth::login($admin);
+
+            return view('admin.users.add');
+        }
+
+        if (Auth::check()) {
+            Auth::logout();
+        }
+
+        abort(403);
     }
 }

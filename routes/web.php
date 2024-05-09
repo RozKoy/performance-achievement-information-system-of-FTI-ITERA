@@ -214,10 +214,11 @@ Route::group([
     });
 
     Route::group([
-        'prefix' => '/pengguna'
+        'prefix' => '/pengguna',
+        'controller' => UsersController::class
     ], function () {
         Route::view('/', 'admin.users.home')->name('admin-users');
-        Route::view('/tambah', 'admin.users.add')->name('admin-users-add');
+        Route::get('/tambah', 'addViewAdmin')->name('admin-users-add');
         Route::view('/{id}/ubah', 'admin.users.edit')->name('admin-users-edit');
     });
 });
