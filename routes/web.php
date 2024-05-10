@@ -217,7 +217,7 @@ Route::group([
         'prefix' => '/pengguna',
         'controller' => UsersController::class
     ], function () {
-        Route::view('/', 'admin.users.home')->name('admin-users');
+        Route::get('/', 'homeViewAdmin')->name('admin-users');
         Route::get('/tambah', 'addViewAdmin')->name('admin-users-add');
         Route::post('/tambah', 'addAdmin');
         Route::view('/{id}/ubah', 'admin.users.edit')->name('admin-users-edit');

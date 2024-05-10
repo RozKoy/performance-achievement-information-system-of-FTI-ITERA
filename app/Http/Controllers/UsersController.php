@@ -220,6 +220,18 @@ class UsersController extends Controller
         ];
     }
 
+    public function homeViewAdmin()
+    {
+        $data = auth()->user()
+            ->unit
+            ->users()
+            ->select(['id', 'name', 'email', 'access'])
+            ->get()
+            ->toArray();
+
+        return view('admin.users.home', compact('data'));
+    }
+
     public function addViewAdmin()
     {
         ['admin' => $admin] = $this->getUsers();

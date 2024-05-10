@@ -6,41 +6,13 @@
         ],
     ];
 @endphp
-<x-admin-template title="Pengguna - Teknik Informatika">
+<x-admin-template title="Pengguna - {{ auth()->user()->unit->name }}">
     <x-partials.breadcrumbs.default :$breadCrumbs admin />
     <x-partials.heading.h2 text="manajemen pengguna" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
         <x-partials.button.add href="admin-users-add" />
     </div>
-    @php
-        $data = [
-            [
-                'id' => '3',
-                'name' => 'RozKoy koykoy',
-                'email' => 'Rozkoy@student.gmail.com',
-                'access' => 'editor',
-            ],
-            [
-                'id' => '4',
-                'name' => 'RozKoy koykoy',
-                'email' => 'Rozkoy@student.gmail.com',
-                'access' => 'viewer',
-            ],
-            [
-                'id' => '3',
-                'name' => 'RozKoy koykoy',
-                'email' => 'Rozkoy@student.gmail.com',
-                'access' => 'editor',
-            ],
-            [
-                'id' => '4',
-                'name' => 'RozKoy koykoy',
-                'email' => 'Rozkoy@student.gmail.com',
-                'access' => 'viewer',
-            ],
-        ];
-    @endphp
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
