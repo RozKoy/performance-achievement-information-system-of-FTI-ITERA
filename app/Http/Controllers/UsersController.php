@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Users\AddAdminRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\Users\EditRequest;
 use App\Http\Requests\Users\AddRequest;
@@ -234,5 +235,17 @@ class UsersController extends Controller
         }
 
         abort(403);
+    }
+
+    public function addAdmin(AddAdminRequest $request)
+    {
+        $request['access'] = $request['access'] === 'admin-editor' ? 'editor' : 'viewer';
+        $request['password'] = str_replace(" ", "_", $request['name']);
+        $request['unit_id'] = auth()->user()->unit_id;
+        $request['role'] = 'admin';
+
+        User::create($request->only(['name', 'email', 'password', 'access', 'unit_id', 'role']));
+
+        return redirect()->route('admin-users');
     }
 }
