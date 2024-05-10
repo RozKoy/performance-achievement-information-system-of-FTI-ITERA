@@ -66,7 +66,7 @@
                 </div>
                 <div class="flex items-center">
                     <div class="ms-3 flex items-center gap-2">
-                        <p title="Teknik Informatika | Editor Access" class="inline-flex items-center justify-center truncate rounded-full bg-primary px-2 py-1 text-xs font-semibold uppercase text-white max-[400px]:hidden lg:text-sm 2xl:text-base">teknik informatika</p>
+                        <p title="Teknik Informatika | Editor Access" class="inline-flex items-center justify-center truncate rounded-full bg-primary px-2 py-1 text-xs font-semibold uppercase text-white max-[400px]:hidden lg:text-sm 2xl:text-base">{{ auth()->user()->unit->name }}</p>
                         <div>
                             <button type="button" title="Tombol profil" class="flex rounded-full fill-primary text-sm focus:ring-4 focus:ring-gray-300" aria-expanded="false" data-dropdown-toggle="user-menu">
                                 <span class="sr-only">Open user menu</span>
@@ -79,13 +79,13 @@
                         <div class="z-40 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white text-base shadow shadow-primary" id="user-menu">
                             <div class="*:overflow-hidden *:truncate *:max-w-40 sm:*:max-w-60 2xl:*:max-w-96 cursor-default px-4 py-3 text-sm text-primary" role="none">
                                 <p role="none" title="Neil Sims">
-                                    Neil Sims
+                                    {{ auth()->user()->name }}
                                 </p>
                                 <p class="font-semibold" role="none" title="neil.sims@flowbite.com">
-                                    neil.sims@flowbite.com
+                                    {{ auth()->user()->email }}
                                 </p>
                                 <p class="rounded-xl bg-primary px-1 italic text-white" role="none" title="Teknik Informatika">
-                                    Teknik Informatika
+                                    {{ auth()->user()->unit->name }}
                                 </p>
                             </div>
                             <ul class="py-1" role="none">
