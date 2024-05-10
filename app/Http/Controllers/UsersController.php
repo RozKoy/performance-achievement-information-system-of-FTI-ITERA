@@ -220,11 +220,25 @@ class UsersController extends Controller
         ];
     }
 
-    public function homeViewAdmin()
+    public function homeViewAdmin(Request $request)
     {
         $data = auth()->user()
             ->unit
             ->users()
+            ->where(function (Builder $query) use ($request) {
+                if ($request->search) {
+                    $query->whereAny(
+                        [
+                            'access',
+                            'email',
+                            'name',
+                            'role',
+                        ],
+                        'LIKE',
+                        "%{$request->search}%",
+                    );
+                }
+            })
             ->select(['id', 'name', 'email', 'access'])
             ->get()
             ->toArray();
