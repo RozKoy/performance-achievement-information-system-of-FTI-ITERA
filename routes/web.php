@@ -220,6 +220,6 @@ Route::group([
         Route::get('/', 'homeViewAdmin')->name('admin-users');
         Route::get('/tambah', 'addViewAdmin')->name('admin-users-add');
         Route::post('/tambah', 'addAdmin');
-        Route::view('/{id}/ubah', 'admin.users.edit')->name('admin-users-edit');
+        Route::get('/{id}/ubah', 'editViewAdmin')->name('admin-users-edit');
     });
 });

@@ -274,4 +274,16 @@ class UsersController extends Controller
 
         return redirect()->route('admin-users');
     }
+
+    public function editViewAdmin($id)
+    {
+        $user = auth()->user()
+            ->unit
+            ->users()
+            ->findOrFail($id);
+
+        $user = $user->only(['id', 'name', 'email', 'access']);
+
+        return view('admin.users.edit', compact('user'));
+    }
 }
