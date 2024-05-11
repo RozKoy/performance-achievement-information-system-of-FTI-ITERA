@@ -226,6 +226,7 @@ class UsersController extends Controller
         $data = auth()->user()
             ->unit
             ->users()
+            ->whereKeyNot(auth()->user()->id)
             ->where(function (Builder $query) use ($request) {
                 if ($request->search) {
                     $query->whereAny(
