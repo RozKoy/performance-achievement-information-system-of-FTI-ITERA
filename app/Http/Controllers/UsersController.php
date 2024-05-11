@@ -309,10 +309,8 @@ class UsersController extends Controller
 
         $newAccess = $request->safe()['access'];
 
-        if ($newAccess === 'admin-editor') {
-            $user->access = 'editor';
-        } else {
-            $user->access = 'viewer';
+        if ($user->access !== $newAccess) {
+            $user->access = $newAccess;
         }
 
         $user->save();
