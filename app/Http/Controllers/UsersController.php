@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Users\AddAdminRequest;
+use App\Http\Requests\Users\EditAdminRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\Users\EditRequest;
 use App\Http\Requests\Users\AddRequest;
@@ -285,5 +286,34 @@ class UsersController extends Controller
         $user = $user->only(['id', 'name', 'email', 'access']);
 
         return view('admin.users.edit', compact('user'));
+    }
+
+    public function editAdmin(EditAdminRequest $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $newEmail = $request->safe()['email'];
+
+        if ($user->email !== $newEmail) {
+            $user->email = $newEmail;
+        }
+
+        $newName = $request->safe()['name'];
+
+        if ($user->name !== $newName) {
+            $user->name = $newName;
+        }
+
+        $newAccess = $request->safe()['access'];
+
+        if ($newAccess === 'admin-editor') {
+            $user->access = 'editor';
+        } else {
+            $user->access = 'viewer';
+        }
+
+        $user->save();
+
+        return redirect()->route('admin-users');
     }
 }

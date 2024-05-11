@@ -221,5 +221,6 @@ Route::group([
         Route::get('/tambah', 'addViewAdmin')->name('admin-users-add');
         Route::post('/tambah', 'addAdmin');
         Route::get('/{id}/ubah', 'editViewAdmin')->name('admin-users-edit');
+        Route::put('/{id}/ubah', 'editAdmin');
     });
 });
