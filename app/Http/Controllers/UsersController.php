@@ -267,12 +267,14 @@ class UsersController extends Controller
 
     public function addAdmin(AddAdminRequest $request)
     {
-        $request['access'] = $request['access'] === 'admin-editor' ? 'editor' : 'viewer';
-        $request['password'] = str_replace(" ", "_", $request['name']);
-        $request['unit_id'] = auth()->user()->unit_id;
-        $request['role'] = 'admin';
-
-        User::create($request->only(['name', 'email', 'password', 'access', 'unit_id', 'role']));
+        User::create(
+            [
+                ...$request->safe()->all(),
+                'password' => str_replace(" ", "_", $request->safe()['name']),
+                'unit_id' => auth()->user()->unit_id,
+                'role' => 'admin'
+            ]
+        );
 
         return redirect()->route('admin-users');
     }

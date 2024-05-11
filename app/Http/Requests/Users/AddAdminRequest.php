@@ -23,7 +23,7 @@ class AddAdminRequest extends FormRequest
     {
         return [
             'email' => ['bail', 'required', 'max:255', 'email:rfc,dns', 'unique:users'],
-            'access' => ['bail', 'required', 'in:admin-editor,admin-viewer'],
+            'access' => ['bail', 'required', 'in:editor,viewer'],
             'name' => ['bail', 'required', 'max:255'],
         ];
     }
