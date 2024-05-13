@@ -7,13 +7,13 @@ use App\Http\Requests\SasaranStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\SasaranStrategis;
 use Illuminate\Http\Request;
-use App\Models\RSTime;
+use App\Models\RSYear;
 
 class SasaranStrategisController extends Controller
 {
     public function homeView(Request $request)
     {
-        $time = RSTime::currentTime();
+        $time = RSYear::currentTime();
 
         $data = $time->sasaranStrategis()->select(['id', 'name', 'number'])
             ->where(function (Builder $query) use ($request) {
@@ -32,7 +32,7 @@ class SasaranStrategisController extends Controller
 
     public function addView()
     {
-        $time = RSTime::currentTime();
+        $time = RSYear::currentTime();
 
         $count = $time->sasaranStrategis->count() + 1;
 
@@ -53,7 +53,7 @@ class SasaranStrategisController extends Controller
 
     public function add(AddRequest $request)
     {
-        $time = RSTime::currentTime();
+        $time = RSYear::currentTime();
 
         $number = (int) $request->safe()['number'];
         $dataCount = $time->sasaranStrategis->count();

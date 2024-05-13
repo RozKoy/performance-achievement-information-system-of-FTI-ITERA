@@ -15,7 +15,6 @@ class SasaranStrategis extends Model
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
-        'deadline_id',
         'time_id',
         'number',
         'name',
@@ -23,12 +22,7 @@ class SasaranStrategis extends Model
 
     public function time(): BelongsTo
     {
-        return $this->belongsTo(RSTime::class);
-    }
-
-    public function deadline(): BelongsTo
-    {
-        return $this->belongsTo(RSTime::class);
+        return $this->belongsTo(RSYear::class);
     }
 
     public function kegiatan(): HasMany

@@ -7,13 +7,13 @@ use App\Http\Requests\SasaranKegiatan\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\SasaranKegiatan;
 use Illuminate\Http\Request;
-use App\Models\IKUTime;
+use App\Models\IKUYear;
 
 class SasaranKegiatanController extends Controller
 {
     public function homeView(Request $request)
     {
-        $time = IKUTime::currentTime();
+        $time = IKUYear::currentTime();
 
         $data = $time->sasaranKegiatan()->select(['id', 'name', 'number'])
             ->where(function (Builder $query) use ($request) {
@@ -32,7 +32,7 @@ class SasaranKegiatanController extends Controller
 
     public function addView()
     {
-        $time = IKUTime::currentTime();
+        $time = IKUYear::currentTime();
 
         $count = $time->sasaranKegiatan->count() + 1;
 
@@ -53,7 +53,7 @@ class SasaranKegiatanController extends Controller
 
     public function add(AddRequest $request)
     {
-        $time = IKUTime::currentTime();
+        $time = IKUYear::currentTime();
 
         $number = (int) $request->safe()['number'];
         $dataCount = $time->sasaranKegiatan->count();

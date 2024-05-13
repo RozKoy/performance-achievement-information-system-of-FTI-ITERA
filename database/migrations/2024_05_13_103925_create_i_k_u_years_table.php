@@ -10,10 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('iku_time', function (Blueprint $table) {
+        Schema::create('iku_years', function (Blueprint $table) {
             $table->uuid('id');
 
-            $table->string('status', 11);
             $table->char('year', 4);
 
             $table->timestamps();
@@ -23,8 +22,7 @@ return new class extends Migration {
         });
 
         Schema::table('sasaran_kegiatan', function (Blueprint $table) {
-            $table->foreignUuid('deadline_id')->constrained('iku_time');
-            $table->foreignUuid('time_id')->constrained('iku_time');
+            $table->foreignUuid('time_id')->constrained('iku_years');
         });
     }
 
@@ -33,6 +31,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('iku_time');
+        Schema::dropIfExists('iku_years');
     }
 };

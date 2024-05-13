@@ -9,14 +9,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
-class RSTime extends Model
+class RSYear extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
-    protected $table = 'rs_time';
+    protected $table = 'rs_years';
 
     protected $fillable = [
-        'status',
         'year',
     ];
 
@@ -25,15 +24,10 @@ class RSTime extends Model
         return $this->hasMany(SasaranStrategis::class, 'time_id');
     }
 
-    public function deadline(): HasMany
-    {
-        return $this->hasMany(SasaranStrategis::class, 'deadline_id');
-    }
-
-    static function currentTime(): RSTime
+    static function currentTime(): RSYear
     {
         $year = Carbon::now()->format('Y');
 
-        return RSTime::firstOrCreate(['year' => $year], ['status' => 'aktif']);
+        return RSYear::firstOrCreate(['year' => $year]);
     }
 }

@@ -17,7 +17,6 @@ class SasaranKegiatan extends Model
     protected $table = 'sasaran_kegiatan';
 
     protected $fillable = [
-        'deadline_id',
         'time_id',
         'number',
         'name',
@@ -25,12 +24,7 @@ class SasaranKegiatan extends Model
 
     public function time(): BelongsTo
     {
-        return $this->belongsTo(IKUTime::class);
-    }
-
-    public function deadline(): BelongsTo
-    {
-        return $this->belongsTo(IKUTime::class);
+        return $this->belongsTo(IKUYear::class);
     }
 
     public function indikatorKinerjaKegiatan(): HasMany

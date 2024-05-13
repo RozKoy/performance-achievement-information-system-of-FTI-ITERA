@@ -9,14 +9,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
-class IKUTime extends Model
+class IKUYear extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
-    protected $table = 'iku_time';
+    protected $table = 'iku_years';
 
     protected $fillable = [
-        'status',
         'year',
     ];
 
@@ -25,15 +24,10 @@ class IKUTime extends Model
         return $this->hasMany(SasaranKegiatan::class, 'time_id');
     }
 
-    public function deadline(): HasMany
-    {
-        return $this->hasMany(SasaranKegiatan::class, 'deadline_id');
-    }
-
-    static function currentTime(): IKUTime
+    static function currentTime(): IKUYear
     {
         $year = Carbon::now()->format('Y');
 
-        return IKUTime::firstOrCreate(['year' => $year], ['status' => 'aktif']);
+        return IKUYear::firstOrCreate(['year' => $year]);
     }
 }

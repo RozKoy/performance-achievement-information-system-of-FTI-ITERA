@@ -10,10 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('rs_time', function (Blueprint $table) {
+        Schema::create('rs_years', function (Blueprint $table) {
             $table->uuid('id');
 
-            $table->string('status', 11);
             $table->char('year', 4);
 
             $table->timestamps();
@@ -23,8 +22,7 @@ return new class extends Migration {
         });
 
         Schema::table('sasaran_strategis', function (Blueprint $table) {
-            $table->foreignUuid('deadline_id')->constrained('rs_time');
-            $table->foreignUuid('time_id')->constrained('rs_time');
+            $table->foreignUuid('time_id')->constrained('rs_years');
         });
     }
 
@@ -33,6 +31,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('rs_time');
+        Schema::dropIfExists('rs_years');
     }
 };
