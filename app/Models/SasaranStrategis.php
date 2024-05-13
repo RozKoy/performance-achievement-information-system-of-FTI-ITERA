@@ -40,10 +40,9 @@ class SasaranStrategis extends Model
     {
         $ss = SasaranStrategis::findOrFail($id);
 
-        $period = (int) Carbon::now()->format('m') <= 6 ? '1' : '2';
         $year = Carbon::now()->format('Y');
 
-        if ($ss->time->year === $year && $ss->time->period === $period) {
+        if ($ss->time->year === $year) {
             return $ss;
         }
 

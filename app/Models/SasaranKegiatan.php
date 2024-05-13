@@ -42,18 +42,9 @@ class SasaranKegiatan extends Model
     {
         $ss = SasaranKegiatan::findOrFail($id);
 
-        $month = (int) Carbon::now()->format('m');
         $year = Carbon::now()->format('Y');
-        $period = '1';
-        if ($month > 9) {
-            $period = '4';
-        } else if ($month > 6) {
-            $period = '3';
-        } else if ($month > 3) {
-            $period = '2';
-        }
 
-        if ($ss->time->year === $year && $ss->time->period === $period) {
+        if ($ss->time->year === $year) {
             return $ss;
         }
 

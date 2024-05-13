@@ -17,7 +17,6 @@ class IKUTime extends Model
 
     protected $fillable = [
         'status',
-        'period',
         'year',
     ];
 
@@ -33,17 +32,8 @@ class IKUTime extends Model
 
     static function currentTime(): IKUTime
     {
-        $month = (int) Carbon::now()->format('m');
         $year = Carbon::now()->format('Y');
-        $period = '1';
-        if ($month > 9) {
-            $period = '4';
-        } else if ($month > 6) {
-            $period = '3';
-        } else if ($month > 3) {
-            $period = '2';
-        }
 
-        return IKUTime::firstOrCreate(['period' => $period, 'year' => $year], ['status' => 'aktif']);
+        return IKUTime::firstOrCreate(['year' => $year], ['status' => 'aktif']);
     }
 }

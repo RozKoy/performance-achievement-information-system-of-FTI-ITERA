@@ -17,7 +17,6 @@ class RSTime extends Model
 
     protected $fillable = [
         'status',
-        'period',
         'year',
     ];
 
@@ -33,9 +32,8 @@ class RSTime extends Model
 
     static function currentTime(): RSTime
     {
-        $period = (int) Carbon::now()->format('m') <= 6 ? '1' : '2';
         $year = Carbon::now()->format('Y');
 
-        return RSTime::firstOrCreate(['period' => $period, 'year' => $year], ['status' => 'aktif']);
+        return RSTime::firstOrCreate(['year' => $year], ['status' => 'aktif']);
     }
 }
