@@ -4,6 +4,7 @@ use App\Http\Controllers\IndikatorKinerjaKegiatanController;
 use App\Http\Controllers\IndikatorKinerjaProgramController;
 use App\Http\Controllers\IndikatorKinerjaController;
 use App\Http\Controllers\ProgramStrategisController;
+use App\Http\Controllers\RencanaStrategisController;
 use App\Http\Controllers\SasaranStrategisController;
 use App\Http\Controllers\SasaranKegiatanController;
 use App\Http\Controllers\KegiatanController;
@@ -61,7 +62,7 @@ Route::group([
             return redirect()->route('super-admin-achievement-rs');
         })->name('super-admin-achievement');
 
-        Route::view('/rencana-strategis', 'super-admin.achievement.rs.home')->name('super-admin-achievement-rs');
+        Route::get('/rencana-strategis', [RencanaStrategisController::class, 'homeView'])->name('super-admin-achievement-rs');
         Route::view('/rencana-strategis/{id}/detail', 'super-admin.achievement.rs.detail')->name('super-admin-achievement-rs-detail');
         Route::view('/indikator-kinerja-utama', 'super-admin.achievement.iku.home')->name('super-admin-achievement-iku');
         Route::view('/indikator-kinerja-utama/{id}/detail', 'super-admin.achievement.iku.detail')->name('super-admin-achievement-iku-detail');
