@@ -24,6 +24,11 @@ class RSYear extends Model
         return $this->hasMany(SasaranStrategis::class, 'time_id');
     }
 
+    public function periods(): HasMany
+    {
+        return $this->hasMany(RSPeriod::class, 'year_id');
+    }
+
     static function currentTime(): RSYear
     {
         $year = Carbon::now()->format('Y');
