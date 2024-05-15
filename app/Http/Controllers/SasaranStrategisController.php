@@ -71,7 +71,6 @@ class SasaranStrategisController extends Controller
 
         $ss = new SasaranStrategis($request->safe()->all());
 
-        $ss->deadline()->associate($time);
         $ss->time()->associate($time);
 
         $ss->save();
