@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->softDeletes();
 
             $table->primary('id');
+            $table->unique('year');
         });
 
         Schema::table('sasaran_kegiatan', function (Blueprint $table) {
