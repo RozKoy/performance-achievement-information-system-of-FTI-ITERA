@@ -16,7 +16,6 @@ class RSAchievement extends Model
 
     protected $fillable = [
         'indikator_kinerja_id',
-        'period_id',
         'unit_id',
 
         'realization',
