@@ -198,7 +198,7 @@ Route::group([
         return view('admin.home');
     })->name('admin-dashboard');
 
-    Route::view('/rencana-strategis', 'admin.rs.home')->name('admin-rs');
+    Route::get('/rencana-strategis', [RencanaStrategisController::class, 'homeViewAdmin'])->name('admin-rs');
 
     Route::view('/indikator-kinerja-utama', 'admin.iku.home')->name('admin-iku');
 
