@@ -138,7 +138,7 @@ class RencanaStrategisController extends Controller
                 ->firstOrFail();
 
             $data = $yearInstance->sasaranStrategis()
-                ->orWhereHas('kegiatan.indikatorKinerja', function (Builder $query) use ($request) {
+                ->whereHas('kegiatan.indikatorKinerja', function (Builder $query) use ($request) {
                     $query->where('status', 'aktif');
                 })
                 ->with([
@@ -154,7 +154,8 @@ class RencanaStrategisController extends Controller
                     'kegiatan.indikatorKinerja' => function (HasMany $query) {
                         $query->where('status', 'aktif')
                             ->orderBy('number')
-                            ->select(['id', 'type', 'number', 'name AS ik', 'kegiatan_id']);
+                            ->select(['id', 'type', 'number', 'name AS ik', 'kegiatan_id'])
+                            ->withAggregate('realization AS realization', 'realization');
                     },
                 ])
                 ->orderBy('number')
