@@ -20,4 +20,9 @@ class Unit extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function rencanaStrategis(): HasMany
+    {
+        return $this->hasMany(RSAchievement::class);
+    }
 }
