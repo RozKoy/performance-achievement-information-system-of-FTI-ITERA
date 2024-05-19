@@ -22,8 +22,6 @@ return new class extends Migration {
 
             $table->foreignUuid('indikator_kinerja_id')->constrained('indikator_kinerja');
             $table->foreignUuid('unit_id')->constrained('units');
-
-            $table->unique('indikator_kinerja_id');
         });
     }
 
