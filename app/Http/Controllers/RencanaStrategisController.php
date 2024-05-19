@@ -154,11 +154,15 @@ class RencanaStrategisController extends Controller
                                 }
                             ]);
                     },
-                    'kegiatan.indikatorKinerja' => function (HasMany $query) {
+                    'kegiatan.indikatorKinerja' => function (HasMany $query) use ($periodInstance) {
                         $query->where('status', 'aktif')
                             ->orderBy('number')
                             ->select(['id', 'type', 'number', 'name AS ik', 'kegiatan_id'])
-                            ->withAggregate('realization AS realization', 'realization');
+                            ->withAggregate([
+                                'realization AS realization' => function (Builder $query) use ($periodInstance) {
+                                    $query->where('period_id', $periodInstance->id);
+                                }
+                            ], 'realization');
                     },
                 ])
                 ->orderBy('number')
