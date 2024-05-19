@@ -138,12 +138,15 @@ class RencanaStrategisController extends Controller
                 ->firstOrFail();
 
             $data = $yearInstance->sasaranStrategis()
-                ->whereHas('kegiatan.indikatorKinerja', function (Builder $query) use ($request) {
+                ->whereHas('kegiatan.indikatorKinerja', function (Builder $query) {
                     $query->where('status', 'aktif');
                 })
                 ->with([
                     'kegiatan' => function (HasMany $query) {
-                        $query->orderBy('number')
+                        $query->whereHas('indikatorKinerja', function (Builder $query) {
+                            $query->where('status', 'aktif');
+                        })
+                            ->orderBy('number')
                             ->select(['id', 'number', 'name AS k', 'sasaran_strategis_id'])
                             ->withCount([
                                 'indikatorKinerja AS rowspan' => function (Builder $query) {
