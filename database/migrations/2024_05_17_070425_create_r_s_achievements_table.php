@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->primary('id');
 
             $table->foreignUuid('indikator_kinerja_id')->constrained('indikator_kinerja');
+            $table->foreignUuid('period_id')->constrained('rs_periods');
             $table->foreignUuid('unit_id')->constrained('units');
         });
     }
