@@ -27,6 +27,11 @@ class RSAchievement extends Model
         return $this->belongsTo(IndikatorKinerja::class);
     }
 
+    public function period(): BelongsTo
+    {
+        return $this->belongsTo(RSPeriod::class);
+    }
+
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);

@@ -36,4 +36,9 @@ class RSPeriod extends Model
     {
         return $this->belongsTo(RSPeriod::class);
     }
+
+    public function achievements(): HasMany
+    {
+        return $this->hasMany(RSAchievement::class, 'period_id');
+    }
 }
