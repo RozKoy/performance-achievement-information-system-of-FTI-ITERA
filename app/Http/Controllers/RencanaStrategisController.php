@@ -284,18 +284,29 @@ class RencanaStrategisController extends Controller
             }
         }
 
-        $achievement = RSAchievement::where('unit_id', auth()->user()->unit->id)
-            ->where('period_id', $period->id)
-            ->where('indikator_kinerja_id', $ik->id)
-            ->firstOrNew();
+        if ($realization !== null) {
+            $achievement = RSAchievement::where('unit_id', auth()->user()->unit->id)
+                ->where('period_id', $period->id)
+                ->where('indikator_kinerja_id', $ik->id)
+                ->firstOrNew();
 
-        $achievement->realization = $realization;
+            $achievement->realization = $realization;
 
-        $achievement->unit()->associate(auth()->user()->unit);
-        $achievement->indikatorKinerja()->associate($ik);
-        $achievement->period()->associate($period);
+            $achievement->unit()->associate(auth()->user()->unit);
+            $achievement->indikatorKinerja()->associate($ik);
+            $achievement->period()->associate($period);
 
-        $achievement->save();
+            $achievement->save();
+        } else {
+            $achievement = RSAchievement::where('unit_id', auth()->user()->unit->id)
+                ->where('period_id', $period->id)
+                ->where('indikator_kinerja_id', $ik->id)
+                ->first();
+
+            if ($achievement !== null) {
+                $achievement->forceDelete();
+            }
+        }
 
         return back();
     }

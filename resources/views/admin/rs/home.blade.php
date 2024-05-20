@@ -105,12 +105,12 @@
             </table>
         </div>
 
-        @if (!count($data) && request()->query('search') === null)
+        @if (!count($data) && request()->query('status') === null)
             <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data capaian kinerja<br>Mohon hubungi admin FTI</p>
         @endif
 
-        @if (!count($data) && request()->query('search'))
-            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Pencarian : {{ request()->query('search') }}<br>Data capaian kinerja tidak dapat ditemukan<br>Mohon hubungi admin FTI</p>
+        @if (!count($data) && request()->query('status'))
+            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Status : {{ request()->query('status') === 'done' ? 'Sudah diisi' : 'Belum diisi' }}<br>Data capaian kinerja tidak dapat ditemukan<br>Mohon hubungi admin FTI</p>
         @endif
     @else
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Belum ada capaian kinerja yang ditugaskan<br>Mohon hubungi admin FTI</p>

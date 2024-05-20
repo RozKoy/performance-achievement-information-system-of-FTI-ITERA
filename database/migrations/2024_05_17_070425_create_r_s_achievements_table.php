@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('rs_achievements', function (Blueprint $table) {
             $table->uuid('id');
 
-            $table->string('realization')->nullable();
+            $table->string('realization');
 
             $table->timestamps();
             $table->softDeletes();
