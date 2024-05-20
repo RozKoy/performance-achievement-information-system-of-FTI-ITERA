@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RSAchievement;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Http\Requests\RencanaStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\IndikatorKinerja;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Models\RSPeriod;
@@ -181,6 +184,8 @@ class RencanaStrategisController extends Controller
                 $period === '1' ? 'Januari - Juni' : 'Juli - Desember',
                 $year
             ];
+
+            $periodId = $periodInstance->id;
         } else {
             $periods = [];
 
@@ -189,6 +194,8 @@ class RencanaStrategisController extends Controller
 
             $badge = [];
             $data = [];
+
+            $periodId = '';
         }
 
         $status = [
@@ -208,6 +215,7 @@ class RencanaStrategisController extends Controller
         ];
 
         return view('admin.rs.home', compact([
+            'periodId',
             'periods',
             'period',
             'status',
@@ -216,5 +224,50 @@ class RencanaStrategisController extends Controller
             'year',
             'data'
         ]));
+    }
+
+    public function addAdmin(AddRequest $request, $periodId, $ikId)
+    {
+        $realization = $request["realization-$ikId"];
+
+        $currentMonth = (int) Carbon::now()->format('m');
+        $currentPeriod = $currentMonth < 6 ? '1' : '2';
+        $currentYear = Carbon::now()->format('Y');
+
+        $period = RSPeriod::whereKey($periodId)
+            ->where('status', true)->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
+                $query->where('period', $currentPeriod)
+                    ->whereHas('year', function (Builder $query) use ($currentYear) {
+                        $query->where('year', $currentYear);
+                    });
+            })
+            ->firstOrFail();
+
+        $ik = IndikatorKinerja::whereKey($ikId)
+            ->where('status', 'aktif')
+            ->firstOrFail();
+
+        if ($realization !== null && ($ik->type === 'persen' || $ik->type === 'angka')) {
+            if (!is_numeric($realization)) {
+                return back()
+                    ->withInput()
+                    ->withErrors(["realization-$ikId" => 'Realisasi tidak sesuai dengan tipe data']);
+            }
+        }
+
+        $achievement = RSAchievement::where('unit_id', auth()->user()->unit->id)
+            ->where('period_id', $period->id)
+            ->where('indikator_kinerja_id', $ik->id)
+            ->firstOrNew();
+
+        $achievement->realization = $realization;
+
+        $achievement->unit()->associate(auth()->user()->unit);
+        $achievement->indikatorKinerja()->associate($ik);
+        $achievement->period()->associate($period);
+
+        $achievement->save();
+
+        return redirect()->route('admin-rs');
     }
 }

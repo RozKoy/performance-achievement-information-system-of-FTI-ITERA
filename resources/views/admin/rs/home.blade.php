@@ -61,12 +61,15 @@
                                                 <p>{{ $ik['realization'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}</p>
                                                 <x-partials.button.edit button onclick="toggleEditForm('{{ $id }}')" style="absolute hidden top-0.5 right-0.5 group-hover:block group-focus:block" />
                                             </div>
-                                            <form id="form-realization-{{ $id }}" action="" class="hidden flex-col gap-0.5">
-                                                @if ($ik['type'] === 'teks')
-                                                    <x-partials.input.text name="realization" title="realisasi" value="{{ $ik['realization'] }}" required />
-                                                @else
-                                                    <x-partials.input.number name="realization" title="realisasi" value="{{ $ik['realization'] }}" required />
-                                                @endif
+                                            <form id="form-realization-{{ $id }}" action="{{ route('admin-rs-add', ['period' => $periodId, 'ik' => $ik['id']]) }}" method="POST" class="hidden flex-col gap-0.5">
+                                                @csrf
+                                                <div class="flex-1">
+                                                    @if ($ik['type'] === 'teks')
+                                                        <x-partials.input.text name="realization-{{ $ik['id'] }}" title="realisasi" value="{{ $ik['realization'] }}" />
+                                                    @else
+                                                        <x-partials.input.number name="realization-{{ $ik['id'] }}" title="realisasi" value="{{ $ik['realization'] }}" />
+                                                    @endif
+                                                </div>
                                                 <div class="ml-auto flex items-center justify-end gap-0.5">
                                                     <x-partials.button.edit />
                                                     <x-partials.button.cancel onclick="toggleEditForm('{{ $id }}')" />
@@ -75,12 +78,15 @@
                                         </td>
                                     @else
                                         <td>
-                                            <form action="" class="flex items-center gap-1">
-                                                @if ($ik['type'] === 'teks')
-                                                    <x-partials.input.text name="realization" title="realisasi" required />
-                                                @else
-                                                    <x-partials.input.number name="realization" title="realisasi" required />
-                                                @endif
+                                            <form action="{{ route('admin-rs-add', ['period' => $periodId, 'ik' => $ik['id']]) }}" method="POST" class="flex items-center gap-1">
+                                                @csrf
+                                                <div class="flex-1">
+                                                    @if ($ik['type'] === 'teks')
+                                                        <x-partials.input.text name="realization-{{ $ik['id'] }}" title="realisasi" required />
+                                                    @else
+                                                        <x-partials.input.number name="realization-{{ $ik['id'] }}" title="realisasi" required />
+                                                    @endif
+                                                </div>
                                                 <x-partials.button.add text="" submit />
                                             </form>
                                         </td>
