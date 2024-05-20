@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Users\AddAdminRequest;
 use App\Http\Requests\Users\EditAdminRequest;
+use App\Http\Requests\Users\AddAdminRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\Users\EditRequest;
 use App\Http\Requests\Users\AddRequest;
