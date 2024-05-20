@@ -166,7 +166,7 @@ class RencanaStrategisController extends Controller
                 ->firstOrFail();
 
             $data = $yearInstance->sasaranStrategis()
-                ->whereHas('kegiatan.indikatorKinerja', function (Builder $query) use ($statusIndex) {
+                ->whereHas('indikatorKinerja', function (Builder $query) use ($statusIndex) {
                     $query->where('status', 'aktif');
                     if ($statusIndex === 1) {
                         $query->whereDoesntHave('realization');
@@ -174,56 +174,57 @@ class RencanaStrategisController extends Controller
                         $query->whereHas('realization');
                     }
                 })
-                ->with([
-                    'kegiatan' => function (HasMany $query) use ($statusIndex) {
-                        $query->whereHas('indikatorKinerja', function (Builder $query) use ($statusIndex) {
-                            $query->where('status', 'aktif');
-                            if ($statusIndex === 1) {
-                                $query->whereDoesntHave('realization');
-                            } else if ($statusIndex === 2) {
-                                $query->whereHas('realization');
-                            }
-                        })
-                            ->orderBy('number')
-                            ->select(['id', 'number', 'name AS k', 'sasaran_strategis_id'])
-                            ->withCount([
-                                'indikatorKinerja AS rowspan' => function (Builder $query) use ($statusIndex) {
-                                    $query->where('status', 'aktif');
-                                    if ($statusIndex === 1) {
-                                        $query->whereDoesntHave('realization');
-                                    } else if ($statusIndex === 2) {
-                                        $query->whereHas('realization');
-                                    }
-                                }
-                            ]);
-                    },
-                    'kegiatan.indikatorKinerja' => function (HasMany $query) use ($statusIndex, $periodInstance) {
+                ->with('kegiatan', function (HasMany $query) use ($statusIndex, $periodInstance) {
+                    $query->whereHas('indikatorKinerja', function (Builder $query) use ($statusIndex) {
+                        $query->where('status', 'aktif');
                         if ($statusIndex === 1) {
                             $query->whereDoesntHave('realization');
                         } else if ($statusIndex === 2) {
                             $query->whereHas('realization');
                         }
-                        $query->where('status', 'aktif')
-                            ->orderBy('number')
-                            ->select(['id', 'type', 'number', 'name AS ik', 'kegiatan_id'])
-                            ->withAggregate([
-                                'realization AS realization' => function (Builder $query) use ($periodInstance) {
-                                    $query->where('period_id', $periodInstance->id);
+                    })
+                        ->orderBy('number')
+                        ->select(['id', 'number', 'name AS k', 'sasaran_strategis_id'])
+                        ->with('indikatorKinerja', function (HasMany $query) use ($statusIndex, $periodInstance) {
+                            if ($statusIndex === 1) {
+                                $query->whereDoesntHave('realization');
+                            } else if ($statusIndex === 2) {
+                                $query->whereHas('realization');
+                            }
+                            $query->where('status', 'aktif')
+                                ->orderBy('number')
+                                ->select(['id', 'type', 'number', 'name AS ik', 'kegiatan_id'])
+                                ->withAggregate([
+                                    'realization AS realization' => function (Builder $query) use ($periodInstance) {
+                                        $query->where('period_id', $periodInstance->id);
+                                    }
+                                ], 'realization');
+                        })
+                        ->withCount([
+                            'indikatorKinerja AS rowspan' => function (Builder $query) use ($statusIndex) {
+                                $query->where('status', 'aktif');
+                                if ($statusIndex === 1) {
+                                    $query->whereDoesntHave('realization');
+                                } else if ($statusIndex === 2) {
+                                    $query->whereHas('realization');
                                 }
-                            ], 'realization');
-                    },
-                ])
+                            }
+                        ]);
+                })
                 ->orderBy('number')
                 ->select(['id', 'number', 'name AS ss'])
+                ->withCount([
+                    'indikatorKinerja AS rowspan' => function (Builder $query) use ($statusIndex) {
+                        $query->where('status', 'aktif');
+                        if ($statusIndex === 1) {
+                            $query->whereDoesntHave('realization');
+                        } else if ($statusIndex === 2) {
+                            $query->whereHas('realization');
+                        }
+                    }
+                ])
                 ->get()
                 ->toArray();
-
-            $data = array_map(function ($item) {
-                return [
-                    ...$item,
-                    'rowspan' => array_sum(array_column($item['kegiatan'], 'rowspan')),
-                ];
-            }, $data);
 
             $badge = [
                 $period === '1' ? 'Januari - Juni' : 'Juli - Desember',
