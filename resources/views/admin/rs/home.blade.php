@@ -13,9 +13,14 @@
         <x-partials.filter.period :$periods :$period />
         <x-partials.heading.h2 text="capaian kinerja - rencana strategis" />
         <div class="flex gap-1.5 max-lg:flex-wrap sm:gap-3">
-            <x-partials.search.default />
             <form action="" class="mr-auto">
-                <x-partials.input.select name="status" title="Filter status" :data="$status" />
+                @if (request()->query('year'))
+                    <input type="hidden" name="year" value="{{ request()->query('year') }}">
+                @endif
+                @if (request()->query('period'))
+                    <input type="hidden" name="period" value="{{ request()->query('period') }}">
+                @endif
+                <x-partials.input.select onchange="this.form.submit()" name="status" title="Filter status" :data="$status" />
             </form>
             <x-partials.badge.time :data="$badge" />
         </div>
