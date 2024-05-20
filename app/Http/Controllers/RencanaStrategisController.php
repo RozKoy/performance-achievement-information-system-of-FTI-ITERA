@@ -22,39 +22,184 @@ class RencanaStrategisController extends Controller
 
     public function homeView(Request $request)
     {
-        $currentMonth = (int) Carbon::now()->format('m');
-        $currentYear = Carbon::now()->format('Y');
-
-        $year = isset($request->year) ? $request->year : $currentYear;
-
-        if ($year === $currentYear) {
-            $year = RSYear::currentTime();
-        } else {
-            $year = RSYear::where('year', $year)->firstOrFail();
+        if (isset($request->year)) {
+            if (!is_numeric($request->year)) {
+                abort(404);
+            }
         }
-
-        $periodList = ['1'];
-        if ($year->year !== $currentYear || $currentMonth >= 6) {
-            $periodList[] = '2';
-        }
-
-        foreach ($periodList as $key => $value) {
-            $temp = RSPeriod::firstOrNew([
-                'year_id' => $year->id,
-                'period' => $value,
-            ], [
-                'status' => true,
-            ]);
-
-            if ($temp->id === null) {
-                $temp->save();
-
-                $temp->deadline_id = $temp->id;
-                $temp->save();
+        if (isset($request->period)) {
+            if ($request->period !== '1' && $request->period !== '2' && $request->period !== '3') {
+                abort(404);
             }
         }
 
-        return view('super-admin.achievement.rs.home');
+        $currentYearInstance = RSYear::currentTime();
+
+        $currentMonth = (int) Carbon::now()->format('m');
+        $currentPeriod = $currentMonth <= 6 ? '1' : '2';
+        $currentYear = Carbon::now()->format('Y');
+
+        $this->checkRoutine($currentYear);
+
+        $years = RSYear::orderBy('year')->pluck('year')->toArray();
+
+        if (count($years)) {
+            $year = isset($request->year) ? $request->year : end($years);
+            $yearInstance = RSYear::where('year', $year)->firstOrFail();
+
+            $this->periodFirstOrNew($yearInstance->id, '1');
+            if ($year !== $currentYear || $currentPeriod === '2') {
+                $this->periodFirstOrNew($yearInstance->id, '2');
+            }
+
+            $temp = $yearInstance->periods()
+                ->orderBy('period')
+                ->pluck('period')
+                ->flatten()
+                ->unique()
+                ->toArray();
+
+            $periods = array_map(function ($item) {
+                $title = 'Januari - Juni';
+                if ($item === '2') {
+                    $title = 'Juli - Desember';
+                }
+                return [
+                    'title' => $title,
+                    'value' => $item
+                ];
+            }, $temp);
+            if (count($periods) === 2) {
+                $periods[] = [
+                    'title' => 'Januari - Desember',
+                    'value' => '3',
+                ];
+            }
+            $period = isset($request->period) ? $request->period : end($periods)['value'];
+
+            if ((int) $period > count($periods)) {
+                abort(404);
+            }
+
+            $system = true;
+            $periodInstance = null;
+            if ($period !== '3') {
+                $periodInstance = RSPeriod::where('year_id', $yearInstance->id)
+                    ->where('period', $period)
+                    ->firstOrFail();
+
+                $system = $periodInstance->status;
+            }
+
+            $data = $yearInstance->sasaranStrategis()
+                ->whereHas('indikatorKinerja')
+                ->with('kegiatan', function (HasMany $query) use ($periodInstance) {
+                    $query->whereHas('indikatorKinerja')
+                        ->orderBy('number')
+                        ->select(['id', 'number', 'name AS k', 'sasaran_strategis_id'])
+                        ->with('indikatorKinerja', function (HasMany $query) use ($periodInstance) {
+                            $query->orderBy('number')
+                                ->select(['id', 'type', 'number', 'status', 'name AS ik', 'kegiatan_id'])
+                                ->withAggregate([
+                                    'realization AS realization' => function (Builder $query) use ($periodInstance) {
+                                        $query->whereNull('unit_id');
+                                        if ($periodInstance) {
+                                            $query->where('period_id', $periodInstance->id);
+                                        } else {
+                                            $query->whereNull('period_id');
+                                        }
+                                    }
+                                ], 'realization')
+                                ->withCount([
+                                    'realization AS evaluation',
+                                    'realization AS follow_up',
+                                    'realization AS target',
+                                    'realization AS count',
+                                    'realization AS done',
+                                ]);
+                        })
+                        ->withCount('indikatorKinerja AS rowspan');
+                })
+                ->orderBy('number')
+                ->select(['id', 'number', 'name AS ss'])
+                ->withCount('indikatorKinerja AS rowspan')
+                ->get()
+                ->toArray();
+
+            $badge = [
+                $period === '3' ? 'Januari - Desember' : ($period === '2' ? 'Juli - Desember' : 'Januari - Juni'),
+                $year
+            ];
+        } else {
+            $system = false;
+
+            $periods = [];
+
+            $period = '';
+            $year = '';
+
+            $badge = [];
+        }
+        $data = [];
+
+        return view('super-admin.achievement.rs.home', compact([
+            'periods',
+            'period',
+            'system',
+            'badge',
+            'years',
+            'year',
+            'data',
+        ]));
+    }
+
+    public function periodFirstOrNew($yearId, $value)
+    {
+        $temp = RSPeriod::firstOrNew([
+            'year_id' => $yearId,
+            'period' => $value,
+        ], [
+            'status' => true,
+        ]);
+
+        if ($temp->id === null) {
+            $temp->save();
+
+            $temp->deadline_id = $temp->id;
+            $temp->save();
+        }
+    }
+
+    public function checkRoutine($currentYear)
+    {
+        $years = RSYear::whereNot('year', $currentYear)
+            ->where(function (Builder $query) {
+                $query->doesntHave('periods')
+                    ->orDoesntHave('sasaranStrategis')
+                    ->orWhereHas('sasaranStrategis', function (Builder $query) {
+                        $query->doesntHave('indikatorKinerja');
+                    });
+            })
+            ->get();
+
+        foreach ($years as $key => $year) {
+            $year->periods()->update(['deadline_id' => null]);
+            $sss = $year->sasaranStrategis;
+            foreach ($sss as $key => $ss) {
+                $ks = $ss->kegiatan;
+                foreach ($ks as $key => $k) {
+                    $iks = $k->indikatorKinerja;
+                    foreach ($iks as $key => $ik) {
+                        $ik->realization()->forceDelete();
+                    }
+                    $k->indikatorKinerja()->forceDelete();
+                }
+                $ss->kegiatan()->forceDelete();
+            }
+            $year->sasaranStrategis()->forceDelete();
+            $year->periods()->forceDelete();
+            $year->forceDelete();
+        }
     }
 
 
@@ -103,7 +248,7 @@ class RencanaStrategisController extends Controller
         ];
 
         $currentMonth = (int) Carbon::now()->format('m');
-        $currentPeriod = $currentMonth < 6 ? '1' : '2';
+        $currentPeriod = $currentMonth <= 6 ? '1' : '2';
         $currentYear = Carbon::now()->format('Y');
 
         $years = RSPeriod::where('status', true)
@@ -122,7 +267,7 @@ class RencanaStrategisController extends Controller
             ->toArray();
 
         if (count($years)) {
-            $year = isset($request->year) ? $request->year : $years[count($years) - 1];
+            $year = isset($request->year) ? $request->year : end($years);
             $yearInstance = RSYear::where('year', $year)->firstOrFail();
 
             $temp = $yearInstance->periods()
@@ -153,7 +298,7 @@ class RencanaStrategisController extends Controller
                     'value' => $item
                 ];
             }, $temp);
-            $period = isset($request->period) ? $request->period : $periods[count($periods) - 1]['value'];
+            $period = isset($request->period) ? $request->period : end($periods)['value'];
             $periodInstance = RSPeriod::where('status', true)
                 ->where('year_id', $yearInstance->id)
                 ->where('period', $period)
@@ -281,7 +426,7 @@ class RencanaStrategisController extends Controller
         $realization = $request["realization-$ikId"];
 
         $currentMonth = (int) Carbon::now()->format('m');
-        $currentPeriod = $currentMonth < 6 ? '1' : '2';
+        $currentPeriod = $currentMonth <= 6 ? '1' : '2';
         $currentYear = Carbon::now()->format('Y');
 
         $period = RSPeriod::whereKey($periodId)
