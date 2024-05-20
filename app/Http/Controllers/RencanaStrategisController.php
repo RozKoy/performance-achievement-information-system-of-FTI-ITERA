@@ -268,6 +268,6 @@ class RencanaStrategisController extends Controller
 
         $achievement->save();
 
-        return redirect()->route('admin-rs');
+        return back();
     }
 }
