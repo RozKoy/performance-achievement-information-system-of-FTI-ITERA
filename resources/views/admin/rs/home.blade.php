@@ -57,7 +57,7 @@
                                             $id = $loop->parent->parent->iteration . $loop->parent->iteration . $loop->iteration;
                                         @endphp
                                         <td>
-                                            <div id="realization-{{ $id }}" title="{{ $ik['realization'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}" class="group relative z-10">
+                                            <div id="realization-{{ $id }}" title="{{ $ik['realization'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}" class="group relative z-10 py-1.5">
                                                 <p>{{ $ik['realization'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}</p>
                                                 <x-partials.button.edit button onclick="toggleEditForm('{{ $id }}')" style="absolute hidden top-0.5 right-0.5 group-hover:block group-focus:block" />
                                             </div>
