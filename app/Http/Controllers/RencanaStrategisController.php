@@ -226,6 +226,21 @@ class RencanaStrategisController extends Controller
                 ->get()
                 ->toArray();
 
+            $allData = $yearInstance->sasaranStrategis()
+                ->withCount([
+                    'indikatorKinerja AS all' => function (Builder $query) {
+                        $query->where('status', 'aktif');
+                    },
+                    'indikatorKinerja AS done' => function (Builder $query) {
+                        $query->where('status', 'aktif')
+                            ->whereHas('realization');
+                    },
+                ])
+                ->get();
+
+            $doneCount = $allData->sum('done');
+            $allCount = $allData->sum('all');
+
             $badge = [
                 $period === '1' ? 'Januari - Juni' : 'Juli - Desember',
                 $year
@@ -242,9 +257,14 @@ class RencanaStrategisController extends Controller
             $data = [];
 
             $periodId = '';
+
+            $doneCount = 0;
+            $allCount = 0;
         }
 
         return view('admin.rs.home', compact([
+            'doneCount',
+            'allCount',
             'periodId',
             'periods',
             'period',

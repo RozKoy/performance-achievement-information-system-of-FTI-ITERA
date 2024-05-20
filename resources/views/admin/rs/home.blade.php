@@ -24,7 +24,7 @@
             </form>
             <x-partials.badge.time :data="$badge" />
         </div>
-        <p class="text-primary max-xl:text-sm max-sm:text-xs">Status Pengisian : <span>32/56 (69%)</span></p>
+        <p class="text-primary max-xl:text-sm max-sm:text-xs">Status Pengisian : <span>{{ $doneCount }}/{{ $allCount }} ({{ number_format(($doneCount * 100) / $allCount, 2) }}%)</span></p>
         <div class="w-full overflow-x-auto rounded-lg">
             <table class="min-w-full max-lg:text-sm max-md:text-xs">
                 <thead>
