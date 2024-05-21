@@ -473,13 +473,55 @@ class RencanaStrategisController extends Controller
             }
         }
 
-        if ($realization !== null) {
-            $achievement = RSAchievement::where('unit_id', auth()->user()->unit->id)
-                ->where('period_id', $period->id)
-                ->where('indikator_kinerja_id', $ik->id)
-                ->firstOrNew();
+        $allAchievement = RSAchievement::whereBelongsTo($ik)
+            ->doesntHave('period')
+            ->doesntHave('unit')
+            ->firstOrNew();
 
-            $achievement->realization = $realization;
+        $achievement = RSAchievement::whereBelongsTo(auth()->user()->unit)
+            ->whereBelongsTo($period, 'period')
+            ->whereBelongsTo($ik);
+
+        if ($realization !== null) {
+            $achievement = $achievement->firstOrNew();
+
+            if ($ik->type !== 'teks') {
+                $realization = (float) $realization;
+
+                if ($realization < 0) {
+                    $realization *= -1;
+                }
+
+                $value = isset($allAchievement->realization) ? (float) $allAchievement->realization : 0;
+
+                if ($ik->type === 'angka') {
+                    if ($value && $achievement->id !== null) {
+                        $value -= (float) $achievement->realization;
+                    }
+                    $value += $realization;
+                } else if ($ik->type === 'persen') {
+                    if ($value && $achievement->id !== null) {
+                        $value *= 2;
+                        $value += $realization - (float) $achievement->realization;
+                        $value /= 2;
+                    } else if ($value && $achievement->id === null) {
+                        $value += $realization;
+                        $value /= 2;
+                    } else {
+                        $value + $realization;
+                    }
+                }
+                if (!ctype_digit("$value")) {
+                    $value = number_format($value, 2);
+                }
+
+                $allAchievement->realization = "$value";
+
+                $allAchievement->indikatorKinerja()->associate($ik);
+                $allAchievement->save();
+            }
+
+            $achievement->realization = "$realization";
 
             $achievement->unit()->associate(auth()->user()->unit);
             $achievement->indikatorKinerja()->associate($ik);
@@ -487,12 +529,27 @@ class RencanaStrategisController extends Controller
 
             $achievement->save();
         } else {
-            $achievement = RSAchievement::where('unit_id', auth()->user()->unit->id)
-                ->where('period_id', $period->id)
-                ->where('indikator_kinerja_id', $ik->id)
-                ->first();
+            $achievement = $achievement->first();
 
             if ($achievement !== null) {
+                if ($allAchievement->id !== null && $ik->type !== 'teks') {
+                    $value = (float) $allAchievement->realization;
+
+                    if ($ik->type === 'angka') {
+                        $value -= (float) $achievement->realization;
+                    } else if ($ik->type === 'persen') {
+                        $value *= 2;
+                        $value -= (float) $achievement->realization;
+                    }
+
+                    if (!ctype_digit("$value")) {
+                        $value = number_format($value, 2);
+                    }
+
+                    $allAchievement->realization = "$value";
+                    $allAchievement->save();
+                }
+
                 $achievement->forceDelete();
             }
         }
