@@ -139,8 +139,8 @@ class RencanaStrategisController extends Controller
             $year = '';
 
             $badge = [];
+            $data = [];
         }
-        $data = [];
 
         return view('super-admin.achievement.rs.home', compact([
             'periods',
@@ -314,34 +314,47 @@ class RencanaStrategisController extends Controller
                 ->whereHas('indikatorKinerja', function (Builder $query) use ($statusIndex) {
                     $query->where('status', 'aktif');
                     if ($statusIndex === 1) {
-                        $query->whereDoesntHave('realization');
+                        $query->whereDoesntHave('realization', function (Builder $query) {
+                            $query->whereBelongsTo(auth()->user()->unit);
+                        });
                     } else if ($statusIndex === 2) {
-                        $query->whereHas('realization');
+                        $query->whereHas('realization', function (Builder $query) {
+                            $query->whereBelongsTo(auth()->user()->unit);
+                        });
                     }
                 })
                 ->with('kegiatan', function (HasMany $query) use ($statusIndex, $periodInstance) {
                     $query->whereHas('indikatorKinerja', function (Builder $query) use ($statusIndex) {
                         $query->where('status', 'aktif');
                         if ($statusIndex === 1) {
-                            $query->whereDoesntHave('realization');
+                            $query->whereDoesntHave('realization', function (Builder $query) {
+                                $query->whereBelongsTo(auth()->user()->unit);
+                            });
                         } else if ($statusIndex === 2) {
-                            $query->whereHas('realization');
+                            $query->whereHas('realization', function (Builder $query) {
+                                $query->whereBelongsTo(auth()->user()->unit);
+                            });
                         }
                     })
                         ->orderBy('number')
                         ->select(['id', 'number', 'name AS k', 'sasaran_strategis_id'])
                         ->with('indikatorKinerja', function (HasMany $query) use ($statusIndex, $periodInstance) {
                             if ($statusIndex === 1) {
-                                $query->whereDoesntHave('realization');
+                                $query->whereDoesntHave('realization', function (Builder $query) {
+                                    $query->whereBelongsTo(auth()->user()->unit);
+                                });
                             } else if ($statusIndex === 2) {
-                                $query->whereHas('realization');
+                                $query->whereHas('realization', function (Builder $query) {
+                                    $query->whereBelongsTo(auth()->user()->unit);
+                                });
                             }
                             $query->where('status', 'aktif')
                                 ->orderBy('number')
                                 ->select(['id', 'type', 'number', 'name AS ik', 'kegiatan_id'])
                                 ->withAggregate([
                                     'realization AS realization' => function (Builder $query) use ($periodInstance) {
-                                        $query->where('period_id', $periodInstance->id);
+                                        $query->whereBelongsTo(auth()->user()->unit)
+                                            ->whereBelongsTo($periodInstance, 'period');
                                     }
                                 ], 'realization');
                         })
@@ -349,9 +362,13 @@ class RencanaStrategisController extends Controller
                             'indikatorKinerja AS rowspan' => function (Builder $query) use ($statusIndex) {
                                 $query->where('status', 'aktif');
                                 if ($statusIndex === 1) {
-                                    $query->whereDoesntHave('realization');
+                                    $query->whereDoesntHave('realization', function (Builder $query) {
+                                        $query->whereBelongsTo(auth()->user()->unit);
+                                    });
                                 } else if ($statusIndex === 2) {
-                                    $query->whereHas('realization');
+                                    $query->whereHas('realization', function (Builder $query) {
+                                        $query->whereBelongsTo(auth()->user()->unit);
+                                    });
                                 }
                             }
                         ]);
@@ -362,9 +379,13 @@ class RencanaStrategisController extends Controller
                     'indikatorKinerja AS rowspan' => function (Builder $query) use ($statusIndex) {
                         $query->where('status', 'aktif');
                         if ($statusIndex === 1) {
-                            $query->whereDoesntHave('realization');
+                            $query->whereDoesntHave('realization', function (Builder $query) {
+                                $query->whereBelongsTo(auth()->user()->unit);
+                            });
                         } else if ($statusIndex === 2) {
-                            $query->whereHas('realization');
+                            $query->whereHas('realization', function (Builder $query) {
+                                $query->whereBelongsTo(auth()->user()->unit);
+                            });
                         }
                     }
                 ])
@@ -378,7 +399,9 @@ class RencanaStrategisController extends Controller
                     },
                     'indikatorKinerja AS done' => function (Builder $query) {
                         $query->where('status', 'aktif')
-                            ->whereHas('realization');
+                            ->whereHas('realization', function (Builder $query) {
+                                $query->whereBelongsTo(auth()->user()->unit);
+                            });
                     },
                 ])
                 ->get();
