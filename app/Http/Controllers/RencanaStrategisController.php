@@ -473,10 +473,17 @@ class RencanaStrategisController extends Controller
             }
         }
 
-        $allAchievement = RSAchievement::whereBelongsTo($ik)
-            ->doesntHave('period')
-            ->doesntHave('unit')
-            ->firstOrNew();
+        $allAchievement = RSAchievement::firstOrNew([
+            'indikator_kinerja_id' => $ik->id,
+            'period_id' => null,
+            'unit_id' => null,
+        ]);
+
+        $periodAchievement = RSAchievement::firstOrNew([
+            'indikator_kinerja_id' => $ik->id,
+            'period_id' => $period->id,
+            'unit_id' => null,
+        ]);
 
         $achievement = RSAchievement::whereBelongsTo(auth()->user()->unit)
             ->whereBelongsTo($period, 'period')
@@ -492,33 +499,45 @@ class RencanaStrategisController extends Controller
                     $realization *= -1;
                 }
 
-                $value = isset($allAchievement->realization) ? (float) $allAchievement->realization : 0;
+                foreach ([$allAchievement, $periodAchievement] as $key => $instance) {
+                    $value = isset($instance->realization) ? (float) $instance->realization : 0;
 
-                if ($ik->type === 'angka') {
-                    if ($value && $achievement->id !== null) {
-                        $value -= (float) $achievement->realization;
-                    }
-                    $value += $realization;
-                } else if ($ik->type === 'persen') {
-                    if ($value && $achievement->id !== null) {
-                        $value *= 2;
-                        $value += $realization - (float) $achievement->realization;
-                        $value /= 2;
-                    } else if ($value && $achievement->id === null) {
+                    if ($ik->type === 'angka') {
+                        if ($value && $achievement->id !== null) {
+                            $value -= (float) $achievement->realization;
+                        }
                         $value += $realization;
-                        $value /= 2;
-                    } else {
-                        $value + $realization;
+                    } else if ($ik->type === 'persen') {
+                        if ($instance->period) {
+                            $count = RSAchievement::whereBelongsTo($ik)
+                                ->whereBelongsTo($period, 'period')
+                                ->whereNull('unit_id')
+                                ->count();
+                        } else {
+                            $count = RSAchievement::whereBelongsTo($ik)
+                                ->whereNull('period_id')
+                                ->whereNull('unit_id')
+                                ->count();
+                        }
+
+                        if ($value && $achievement->id !== null) {
+                            $value *= $count;
+                            $value += $realization - (float) $achievement->realization;
+                            $value /= $count;
+                        } else if ($value && $achievement->id === null) {
+                            $value += $realization;
+                            $value /= ($count + 1);
+                        } else {
+                            $value += $realization;
+                        }
                     }
-                }
-                if (!ctype_digit("$value")) {
-                    $value = number_format($value, 2);
-                }
+                    if (!ctype_digit("$value")) {
+                        $value = number_format($value, 2);
+                    }
 
-                $allAchievement->realization = "$value";
-
-                $allAchievement->indikatorKinerja()->associate($ik);
-                $allAchievement->save();
+                    $instance->realization = "$value";
+                    $instance->save();
+                }
             }
 
             $achievement->realization = "$realization";
@@ -532,22 +551,39 @@ class RencanaStrategisController extends Controller
             $achievement = $achievement->first();
 
             if ($achievement !== null) {
-                if ($allAchievement->id !== null && $ik->type !== 'teks') {
-                    $value = (float) $allAchievement->realization;
+                foreach ([$allAchievement, $periodAchievement] as $key => $instance) {
+                    if ($instance->id !== null && $ik->type !== 'teks') {
+                        $value = (float) $instance->realization;
 
-                    if ($ik->type === 'angka') {
-                        $value -= (float) $achievement->realization;
-                    } else if ($ik->type === 'persen') {
-                        $value *= 2;
-                        $value -= (float) $achievement->realization;
+                        if ($ik->type === 'angka') {
+                            $value -= (float) $achievement->realization;
+                        } else if ($ik->type === 'persen') {
+                            if ($instance->period) {
+                                $count = RSAchievement::whereBelongsTo($ik)
+                                    ->whereBelongsTo($period, 'period')
+                                    ->whereNull('unit_id')
+                                    ->count();
+                            } else {
+                                $count = RSAchievement::whereBelongsTo($ik)
+                                    ->whereNull('period_id')
+                                    ->whereNull('unit_id')
+                                    ->count();
+                            }
+
+                            $value *= $count;
+                            $value -= (float) $achievement->realization;
+                            if ($count - 1 > 1) {
+                                $value /= $count - 1;
+                            }
+                        }
+
+                        if (!ctype_digit("$value")) {
+                            $value = number_format($value, 2);
+                        }
+
+                        $instance->realization = "$value";
+                        $instance->save();
                     }
-
-                    if (!ctype_digit("$value")) {
-                        $value = number_format($value, 2);
-                    }
-
-                    $allAchievement->realization = "$value";
-                    $allAchievement->save();
                 }
 
                 $achievement->forceDelete();
