@@ -71,6 +71,10 @@
                 @endforeach
             </tbody>
         </table>
+
+        @if (count($data))
+            <p class="text-xs font-bold text-red-400">*Merubah status akan menghapus realisasi capaian yang telah diinputkan setiap unit</p>
+        @endif
     </div>
 
     @if (!count($data))
