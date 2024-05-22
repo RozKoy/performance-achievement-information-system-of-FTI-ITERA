@@ -38,8 +38,11 @@
             </svg>
         </button>
     </div>
+    @php
+        $realizationPercent = $allCount !== 0 ? ($realizationCount * 100) / ($allCount * $unitCount) : 0;
+    @endphp
     <p class="text-primary max-xl:text-sm max-sm:text-xs">
-        Status Pengisian : <span>85%</span>
+        Status Pengisian : <span>{{ $realizationPercent }}%</span>
         @if ($period === '3')
             , Tercapai : <span>23</span>, Tidak tercapai : <span>3</span>
         @endif
@@ -116,20 +119,21 @@
                                 <td title="{{ $ik['status'] }}" class="{{ $ik['status'] === 'aktif' ? 'text-green-500' : 'text-red-500' }} whitespace-nowrap capitalize">{{ $ik['status'] }}</td>
 
                                 @php
-                                    $progress = number_format((floatval($ik['count']) * 100) / 21, 2);
+                                    $progress = number_format((floatval($ik['count']) * 100) / $unitCount, 2);
                                 @endphp
                                 <td title="Status pengisian : {{ $progress }}%">
                                     <div class="flex flex-col gap-1">
-                                        <p>{{ $ik['count'] }}/21</p>
+                                        <p>{{ $ik['count'] }}/{{ $unitCount }}</p>
 
-                                        <div class="w-full rounded-full bg-gray-200">
+                                        <div class="relative h-4 w-full overflow-hidden rounded-full bg-gray-200">
                                             @if ($progress <= 50)
-                                                <div class="rounded-full bg-red-500 p-0.5 text-center text-xs font-medium leading-none text-red-100" @if ($progress > 0) style="width: {{ $progress }}%" @endif>{{ $progress }}%</div>
+                                                <div class="h-full bg-red-500" @if ($progress > 0) style="width: {{ $progress }}%" @endif></div>
+                                                <p class="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center text-xs font-medium leading-none">{{ $progress }}%</p>
                                             @else
                                                 @if ($progress <= 70)
                                                     <div class="rounded-full bg-yellow-500 p-0.5 text-center text-xs font-medium leading-none text-yellow-100" style="width: {{ $progress }}%">{{ $progress }}%</div>
                                                 @else
-                                                    <div class="rounded-full bg-green-500 p-0.5 text-center text-xs font-medium leading-none text-green-100" style="width: {{ $progress }}%">{{ $progress }}%</div>
+                                                    <div class="rounded-full bg-green-500 p-0.5 text-center text-xs font-medium leading-none text-green-100" style="width: {{ $progress > 100 ? 100 : $progress }}%">{{ $progress > 100 ? 100 : $progress }}%</div>
                                                 @endif
                                             @endif
                                         </div>

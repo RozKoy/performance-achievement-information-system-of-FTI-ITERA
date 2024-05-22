@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kegiatan;
+use App\Models\SasaranStrategis;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Http\Requests\RencanaStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,6 +13,7 @@ use App\Models\RSAchievement;
 use Illuminate\Http\Request;
 use App\Models\RSPeriod;
 use App\Models\RSYear;
+use App\Models\Unit;
 
 class RencanaStrategisController extends Controller
 {
@@ -114,7 +117,14 @@ class RencanaStrategisController extends Controller
                                     'realization AS evaluation',
                                     'realization AS follow_up',
                                     'realization AS target',
-                                    'realization AS count',
+                                    'realization AS count' => function (Builder $query) use ($periodInstance) {
+                                        $query->whereNotNull('unit_id');
+                                        if ($periodInstance) {
+                                            $query->whereBelongsTo($periodInstance, 'period');
+                                        } else {
+                                            $query->whereNotNull('period_id');
+                                        }
+                                    },
                                     'realization AS done',
                                 ]);
                         })
@@ -123,15 +133,33 @@ class RencanaStrategisController extends Controller
                 ->orderBy('number')
                 ->select(['id', 'number', 'name AS ss'])
                 ->withCount('indikatorKinerja AS rowspan')
-                ->get()
-                ->toArray();
+                ->get();
+
+            $allCount = $data->sum('rowspan');
+            $realizationCount = $data->sum(function (SasaranStrategis $ss) {
+                $sum = $ss->kegiatan->sum(function (Kegiatan $k) {
+                    $sum = $k->indikatorKinerja->sum('count');
+                    return $sum;
+                });
+                return $sum;
+            });
+
+            $unitCount = Unit::count();
+            if ($periodInstance === null) {
+                $unitCount *= 2;
+            }
 
             $badge = [
                 $period === '3' ? 'Januari - Desember' : ($period === '2' ? 'Juli - Desember' : 'Januari - Juni'),
                 $year
             ];
+            $data = $data->toArray();
         } else {
             $system = false;
+
+            $realizationCount = 0;
+            $unitCount = 0;
+            $allCount = 0;
 
             $periods = [];
 
@@ -143,6 +171,9 @@ class RencanaStrategisController extends Controller
         }
 
         return view('super-admin.achievement.rs.home', compact([
+            'realizationCount',
+            'unitCount',
+            'allCount',
             'periods',
             'period',
             'system',
