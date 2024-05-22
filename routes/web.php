@@ -204,13 +204,14 @@ Route::group([
     Route::view('/indikator-kinerja-utama', 'admin.iku.home')->name('admin-iku');
 
     Route::group([
-        'prefix' => '/riwayat'
+        'prefix' => '/riwayat',
+        'controller' => RencanaStrategisController::class
     ], function () {
         Route::get('/', function () {
             return redirect()->route('admin-history-rs');
         })->name('admin-history');
 
-        Route::view('/rencana-strategis', 'admin.history.rs.home')->name('admin-history-rs');
+        Route::get('/rencana-strategis', 'historyAdmin')->name('admin-history-rs');
         Route::view('/indikator-kinerja-utama', 'admin.history.iku.home')->name('admin-history-iku');
         Route::view('/indikator-kinerja-utama/{id}/detail', 'admin.history.iku.detail')->name('admin-history-iku-detail');
     });
