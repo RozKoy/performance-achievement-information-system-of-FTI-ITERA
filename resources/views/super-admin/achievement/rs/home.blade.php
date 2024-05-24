@@ -20,10 +20,10 @@
     </div>
     <div class="flex flex-wrap items-center justify-between">
         <div class="flex items-center justify-center">
-            @if ($period !== '3')
-                <label title="Tombol power [status: {{ $system === true ? 'Aktif' : 'Tidak aktif' }}]" class="relative inline-flex items-center">
-                    <input type="checkbox" value="{{ $system }}" class="peer sr-only" @checked($system)>
-                    <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 peer-disabled:cursor-not-allowed peer-disabled:bg-slate-300 peer-disabled:after:border-slate-300 rtl:peer-checked:after:-translate-x-full"></div>
+            @if ($period !== '3' && isset($periodId))
+                <label title="Tombol power [status: {{ $system === true ? 'Aktif' : 'Tidak aktif' }}]" onclick="statusToggle('{{ url(route('super-admin-achievement-rs-status', ['id' => $periodId])) }}')" class="relative inline-flex items-center">
+                    <input type="checkbox" value="{{ $system }}" class="peer sr-only" @checked($system) disabled>
+                    <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
                 </label>
             @endif
         </div>
@@ -118,27 +118,31 @@
 
                                 <td title="{{ $ik['status'] }}" class="{{ $ik['status'] === 'aktif' ? 'text-green-500' : 'text-red-500' }} whitespace-nowrap capitalize">{{ $ik['status'] }}</td>
 
-                                @php
-                                    $progress = number_format((floatval($ik['count']) * 100) / $unitCount, 2);
-                                @endphp
-                                <td title="Status pengisian : {{ $progress }}%">
-                                    <div class="flex flex-col gap-1">
-                                        <p>{{ $ik['count'] }}/{{ $unitCount }}</p>
+                                @if ($ik['status'] === 'aktif')
+                                    @php
+                                        $progress = number_format((floatval($ik['count']) * 100) / $unitCount, 2);
+                                    @endphp
+                                    <td title="Status pengisian : {{ $progress }}%">
+                                        <div class="flex flex-col gap-1">
+                                            <p>{{ $ik['count'] }}/{{ $unitCount }}</p>
 
-                                        <div class="relative h-4 w-full overflow-hidden rounded-full bg-gray-200">
-                                            @if ($progress <= 50)
-                                                <div class="h-full bg-red-500" @if ($progress > 0) style="width: {{ $progress }}%" @endif></div>
-                                                <p class="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center text-xs font-medium leading-none">{{ $progress }}%</p>
-                                            @else
-                                                @if ($progress <= 70)
-                                                    <div class="rounded-full bg-yellow-500 p-0.5 text-center text-xs font-medium leading-none text-yellow-100" style="width: {{ $progress }}%">{{ $progress }}%</div>
+                                            <div class="relative h-4 w-full overflow-hidden rounded-full bg-gray-200">
+                                                @if ($progress <= 50)
+                                                    <div class="h-full bg-red-500" @if ($progress > 0) style="width: {{ $progress }}%" @endif></div>
+                                                    <p class="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center text-xs font-medium leading-none">{{ $progress }}%</p>
                                                 @else
-                                                    <div class="rounded-full bg-green-500 p-0.5 text-center text-xs font-medium leading-none text-green-100" style="width: {{ $progress > 100 ? 100 : $progress }}%">{{ $progress > 100 ? 100 : $progress }}%</div>
+                                                    @if ($progress <= 70)
+                                                        <div class="rounded-full bg-yellow-500 p-0.5 text-center text-xs font-medium leading-none text-yellow-100" style="width: {{ $progress }}%">{{ $progress }}%</div>
+                                                    @else
+                                                        <div class="rounded-full bg-green-500 p-0.5 text-center text-xs font-medium leading-none text-green-100" style="width: {{ $progress > 100 ? 100 : $progress }}%">{{ $progress > 100 ? 100 : $progress }}%</div>
+                                                    @endif
                                                 @endif
-                                            @endif
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
+                                    </td>
+                                @else
+                                    <td></td>
+                                @endif
 
                                 <td class="flex items-start justify-center gap-1">
                                     <x-partials.button.detail link="{{ route('super-admin-achievement-rs-detail', ['id' => $ik['id'], 'period' => $period]) }}" />
@@ -155,5 +159,13 @@
     @if (!count($data))
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data capaian kinerja</p>
     @endif
+
+    @push('script')
+        <script>
+            function statusToggle(url) {
+                window.location.href = url;
+            }
+        </script>
+    @endpush
 
 </x-super-admin-template>

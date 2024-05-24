@@ -153,7 +153,10 @@ class RencanaStrategisController extends Controller
                 $period === '3' ? 'Januari - Desember' : ($period === '2' ? 'Juli - Desember' : 'Januari - Juni'),
                 $year
             ];
+
             $data = $data->toArray();
+
+            $periodId = isset($periodInstance) ? $periodInstance->id : null;
         } else {
             $system = false;
 
@@ -168,12 +171,15 @@ class RencanaStrategisController extends Controller
 
             $badge = [];
             $data = [];
+
+            $periodId = null;
         }
 
         return view('super-admin.achievement.rs.home', compact([
             'realizationCount',
             'unitCount',
             'allCount',
+            'periodId',
             'periods',
             'period',
             'system',
@@ -231,6 +237,30 @@ class RencanaStrategisController extends Controller
             $year->periods()->forceDelete();
             $year->forceDelete();
         }
+    }
+
+    public function statusToggle($periodId)
+    {
+        $period = RSPeriod::whereKey($periodId)->firstOrFail();
+
+        if ($period->status) {
+            $period->status = false;
+            $period->deadline()->dissociate();
+        } else {
+            $currentMonth = (int) Carbon::now()->format('m');
+            $currentPeriod = $currentMonth <= 6 ? '1' : '2';
+
+            $currentYearInstance = RSYear::currentTime();
+            $currentPeriodInstance = RSPeriod::whereBelongsTo($currentYearInstance, 'year')
+                ->where('period', $currentPeriod)
+                ->firstOrFail();
+
+            $period->status = true;
+            $period->deadline()->associate($currentPeriodInstance);
+        }
+        $period->save();
+
+        return back();
     }
 
 
