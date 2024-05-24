@@ -42,7 +42,7 @@ class RencanaStrategisController extends Controller
         $currentPeriod = $currentMonth <= 6 ? '1' : '2';
         $currentYear = Carbon::now()->format('Y');
 
-        $this->checkRoutine($currentYear);
+        $this->checkRoutine($currentYear, $currentPeriod);
 
         $years = RSYear::orderBy('year')->pluck('year')->toArray();
 
@@ -204,7 +204,7 @@ class RencanaStrategisController extends Controller
         }
     }
 
-    public function checkRoutine($currentYear)
+    public function checkRoutine($currentYear, $currentPeriod)
     {
         $years = RSYear::whereNot('year', $currentYear)
             ->where(function (Builder $query) {
@@ -233,6 +233,20 @@ class RencanaStrategisController extends Controller
             $year->sasaranStrategis()->forceDelete();
             $year->periods()->forceDelete();
             $year->forceDelete();
+        }
+
+        $currentPeriod = RSPeriod::where('period', $currentPeriod)
+            ->whereHas('year', function (Builder $query) use ($currentYear) {
+                $query->where('year', $currentYear);
+            })
+            ->first();
+
+        if ($currentPeriod) {
+            RSPeriod::whereNot('deadline_id', $currentPeriod->id)
+                ->update([
+                    'deadline_id' => null,
+                    'status' => false,
+                ]);
         }
     }
 
