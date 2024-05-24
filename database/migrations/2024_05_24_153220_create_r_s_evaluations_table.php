@@ -21,9 +21,10 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            $table->primary('id');
-
             $table->foreignUuid('indikator_kinerja_id')->constrained('indikator_kinerja');
+
+            $table->primary('id');
+            $table->unique('indikator_kinerja_id');
         });
     }
 
