@@ -196,13 +196,10 @@ class RencanaStrategisController extends Controller
             'year_id' => $yearId,
             'period' => $value,
         ], [
-            'status' => true,
+            'status' => false,
         ]);
 
         if ($temp->id === null) {
-            $temp->save();
-
-            $temp->deadline_id = $temp->id;
             $temp->save();
         }
     }
