@@ -225,6 +225,7 @@ class RencanaStrategisController extends Controller
                     $iks = $k->indikatorKinerja;
                     foreach ($iks as $key => $ik) {
                         $ik->realization()->forceDelete();
+                        $ik->evaluation()->forceDelete();
                     }
                     $k->indikatorKinerja()->forceDelete();
                 }

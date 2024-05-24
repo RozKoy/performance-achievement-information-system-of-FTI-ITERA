@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\IndikatorKinerja\EditRequest;
 use App\Http\Requests\IndikatorKinerja\AddRequest;
-use App\Models\RSAchievement;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerja;
 use App\Models\SasaranStrategis;
+use App\Models\RSAchievement;
 use Illuminate\Http\Request;
+use App\Models\RSEvaluation;
 
 class IndikatorKinerjaController extends Controller
 {
@@ -190,6 +191,8 @@ class IndikatorKinerjaController extends Controller
 
         if ($k->id === $kId && $ss->id === $ssId) {
             RSAchievement::whereBelongsTo($ik)
+                ->forceDelete();
+            RSEvaluation::whereBelongsTo($ik)
                 ->forceDelete();
 
             $newStatus = $ik->status === 'aktif' ? 'tidak aktif' : 'aktif';
