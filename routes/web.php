@@ -62,9 +62,14 @@ Route::group([
             return redirect()->route('super-admin-achievement-rs');
         })->name('super-admin-achievement');
 
-        Route::get('/rencana-strategis', [RencanaStrategisController::class, 'homeView'])->name('super-admin-achievement-rs');
-        Route::view('/rencana-strategis/{id}/detail', 'super-admin.achievement.rs.detail')->name('super-admin-achievement-rs-detail');
-        Route::get('/{id}/status', [RencanaStrategisController::class, 'statusToggle'])->name('super-admin-achievement-rs-status');
+        Route::group([
+            'prefix' => '/rencana-strategis',
+            'controller' => RencanaStrategisController::class
+        ], function () {
+            Route::get('/', 'homeView')->name('super-admin-achievement-rs');
+            Route::view('/{id}/detail', 'super-admin.achievement.rs.detail')->name('super-admin-achievement-rs-detail');
+            Route::get('/{id}/status', 'statusToggle')->name('super-admin-achievement-rs-status');
+        });
 
         Route::view('/indikator-kinerja-utama', 'super-admin.achievement.iku.home')->name('super-admin-achievement-iku');
         Route::view('/indikator-kinerja-utama/{id}/detail', 'super-admin.achievement.iku.detail')->name('super-admin-achievement-iku-detail');
