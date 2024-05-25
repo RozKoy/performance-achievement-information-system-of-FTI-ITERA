@@ -67,7 +67,7 @@ Route::group([
             'controller' => RencanaStrategisController::class
         ], function () {
             Route::get('/', 'homeView')->name('super-admin-achievement-rs');
-            Route::view('/{id}/detail', 'super-admin.achievement.rs.detail')->name('super-admin-achievement-rs-detail');
+            Route::get('/{id}/detail', 'detailView')->name('super-admin-achievement-rs-detail');
             Route::get('/{id}/status', 'statusToggle')->name('super-admin-achievement-rs-status');
         });
 

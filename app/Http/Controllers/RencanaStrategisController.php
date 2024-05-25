@@ -190,6 +190,141 @@ class RencanaStrategisController extends Controller
         ]));
     }
 
+    public function detailView(Request $request, $ikId)
+    {
+        $status = [
+            [
+                'text' => 'Tercapai',
+                'value' => true,
+            ],
+            [
+                'text' => 'Tidak tercapai',
+                'value' => false,
+            ],
+        ];
+
+        if (isset($request->period)) {
+            if ($request->period !== '1' && $request->period !== '2' && $request->period !== '3') {
+                abort(404);
+            }
+        }
+
+        $ik = IndikatorKinerja::findOrFail($ikId);
+
+        $k = $ik->kegiatan;
+        $ss = $k->sasaranStrategis;
+
+        $yearInstance = $ss->time;
+
+        $periods = array_map(function ($item) {
+            $title = 'Januari - Juni';
+            if ($item === '2') {
+                $title = 'Juli - Desember';
+            }
+            return [
+                'title' => $title,
+                'value' => $item
+            ];
+        }, $yearInstance->periods()
+                ->orderBy('period')
+                ->pluck('period')
+                ->flatten()
+                ->unique()
+                ->toArray());
+
+        if (count($periods) === 2) {
+            $periods[] = [
+                'title' => 'Januari - Desember',
+                'value' => '3',
+            ];
+        }
+
+        $year = $yearInstance->year;
+        $period = isset($request->period) ? $request->period : end($periods)['value'];
+
+        if ((int) $period > count($periods)) {
+            abort(404);
+        }
+
+        $periodInstance = $yearInstance->periods()
+            ->where('period', $period)
+            ->first();
+
+        $data = $ik->realization()
+            ->where(function (Builder $query) use ($periodInstance) {
+                $query->whereNotNull('unit_id');
+                if ($periodInstance) {
+                    $query->whereBelongsTo($periodInstance, 'period');
+                } else {
+                    $query->whereNull('period_id');
+                }
+            })
+            ->select('realization')
+            ->withAggregate('unit AS unit', 'name')
+            ->latest()
+            ->get()
+            ->toArray();
+
+        $realization = $ik->realization()
+            ->where(function (Builder $query) use ($periodInstance) {
+                $query->whereNull('unit_id');
+                if ($periodInstance) {
+                    $query->whereBelongsTo($periodInstance, 'period');
+                } else {
+                    $query->whereNull('period_id');
+                }
+            })
+            ->first();
+        if ($realization) {
+            $realization = $realization->realization;
+        }
+
+        $evaluation = $ik->evaluation;
+        if ($evaluation) {
+            $evaluation = $evaluation->only(['evaluation', 'follow_up', 'status', 'target']);
+        }
+
+        $unitCount = Unit::count();
+        if ($periodInstance === null) {
+            $unitCount *= 2;
+        }
+
+        $realizationCount = $ik->realization()
+            ->where(function (Builder $query) use ($periodInstance) {
+                $query->whereNotNull('unit_id');
+                if ($periodInstance) {
+                    $query->whereBelongsTo($periodInstance, 'period');
+                } else {
+                    $query->whereNotNull('period_id');
+                }
+            })
+            ->count();
+
+        $badge = [
+            $period === '3' ? 'Januari - Desember' : ($period === '2' ? 'Juli - Desember' : 'Januari - Juni'),
+            $year
+        ];
+
+        $ss = $ss->only(['name', 'number']);
+        $k = $k->only(['name', 'number']);
+        $ik = $ik->only(['id', 'name', 'type', 'number', 'status']);
+
+        return view('super-admin.achievement.rs.detail', compact([
+            'realizationCount',
+            'realization',
+            'unitCount',
+            'periods',
+            'period',
+            'status',
+            'badge',
+            'data',
+            'year',
+            'ss',
+            'ik',
+            'k',
+        ]));
+    }
+
     public function periodFirstOrNew($yearId, $value)
     {
         $temp = RSPeriod::firstOrNew([
