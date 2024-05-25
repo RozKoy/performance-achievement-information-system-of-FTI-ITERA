@@ -536,6 +536,11 @@ class RencanaStrategisController extends Controller
 
         $ik = IndikatorKinerja::whereKey($ikId)
             ->where('status', 'aktif')
+            ->whereHas('kegiatan', function (Builder $query) use ($period) {
+                $query->whereHas('sasaranStrategis', function (Builder $query) use ($period) {
+                    $query->whereBelongsTo($period->year, 'time');
+                });
+            })
             ->firstOrFail();
 
         if ($realization !== null && ($ik->type === 'persen' || $ik->type === 'angka')) {
@@ -558,6 +563,12 @@ class RencanaStrategisController extends Controller
             'unit_id' => null,
         ]);
 
+        $unitAchievement = RSAchievement::firstOrNew([
+            'unit_id' => auth()->user()->unit->id,
+            'indikator_kinerja_id' => $ik->id,
+            'period_id' => null,
+        ]);
+
         $achievement = RSAchievement::whereBelongsTo(auth()->user()->unit)
             ->whereBelongsTo($period, 'period')
             ->whereBelongsTo($ik);
@@ -572,7 +583,7 @@ class RencanaStrategisController extends Controller
                     $realization *= -1;
                 }
 
-                foreach ([$allAchievement, $periodAchievement] as $key => $instance) {
+                foreach ([$allAchievement, $periodAchievement, $unitAchievement] as $key => $instance) {
                     $value = isset($instance->realization) ? (float) $instance->realization : 0;
 
                     if ($ik->type === 'angka') {
@@ -585,6 +596,11 @@ class RencanaStrategisController extends Controller
                             $count = RSAchievement::whereBelongsTo($ik)
                                 ->whereBelongsTo($period, 'period')
                                 ->whereNull('unit_id')
+                                ->count();
+                        } else if ($instance->unit) {
+                            $count = RSAchievement::whereBelongsTo($ik)
+                                ->whereBelongsTo(auth()->user()->unit)
+                                ->whereNull('period_id')
                                 ->count();
                         } else {
                             $count = RSAchievement::whereBelongsTo($ik)
@@ -624,7 +640,7 @@ class RencanaStrategisController extends Controller
             $achievement = $achievement->first();
 
             if ($achievement !== null) {
-                foreach ([$allAchievement, $periodAchievement] as $key => $instance) {
+                foreach ([$allAchievement, $periodAchievement, $unitAchievement] as $key => $instance) {
                     if ($instance->id !== null && $ik->type !== 'teks') {
                         $value = (float) $instance->realization;
 
@@ -635,6 +651,11 @@ class RencanaStrategisController extends Controller
                                 $count = RSAchievement::whereBelongsTo($ik)
                                     ->whereBelongsTo($period, 'period')
                                     ->whereNull('unit_id')
+                                    ->count();
+                            } else if ($instance->unit) {
+                                $count = RSAchievement::whereBelongsTo($ik)
+                                    ->whereBelongsTo(auth()->user()->unit)
+                                    ->whereNull('period_id')
                                     ->count();
                             } else {
                                 $count = RSAchievement::whereBelongsTo($ik)
