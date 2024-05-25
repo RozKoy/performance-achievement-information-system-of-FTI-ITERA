@@ -473,7 +473,8 @@ class RencanaStrategisController extends Controller
                     'indikatorKinerja AS done' => function (Builder $query) {
                         $query->where('status', 'aktif')
                             ->whereHas('realization', function (Builder $query) {
-                                $query->whereBelongsTo(auth()->user()->unit);
+                                $query->whereBelongsTo(auth()->user()->unit)
+                                    ->whereNotNull('period_id');
                             });
                     },
                 ])
