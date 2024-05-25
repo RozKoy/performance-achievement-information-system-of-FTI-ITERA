@@ -384,28 +384,32 @@ class RencanaStrategisController extends Controller
                 ->firstOrFail();
 
             $data = $yearInstance->sasaranStrategis()
-                ->whereHas('indikatorKinerja', function (Builder $query) use ($statusIndex) {
+                ->whereHas('indikatorKinerja', function (Builder $query) use ($statusIndex, $periodInstance) {
                     $query->where('status', 'aktif');
                     if ($statusIndex === 1) {
-                        $query->whereDoesntHave('realization', function (Builder $query) {
-                            $query->whereBelongsTo(auth()->user()->unit);
+                        $query->whereDoesntHave('realization', function (Builder $query) use ($periodInstance) {
+                            $query->whereBelongsTo(auth()->user()->unit)
+                                ->whereBelongsTo($periodInstance, 'period');
                         });
                     } else if ($statusIndex === 2) {
-                        $query->whereHas('realization', function (Builder $query) {
-                            $query->whereBelongsTo(auth()->user()->unit);
+                        $query->whereHas('realization', function (Builder $query) use ($periodInstance) {
+                            $query->whereBelongsTo(auth()->user()->unit)
+                                ->whereBelongsTo($periodInstance, 'period');
                         });
                     }
                 })
                 ->with('kegiatan', function (HasMany $query) use ($statusIndex, $periodInstance) {
-                    $query->whereHas('indikatorKinerja', function (Builder $query) use ($statusIndex) {
+                    $query->whereHas('indikatorKinerja', function (Builder $query) use ($statusIndex, $periodInstance) {
                         $query->where('status', 'aktif');
                         if ($statusIndex === 1) {
-                            $query->whereDoesntHave('realization', function (Builder $query) {
-                                $query->whereBelongsTo(auth()->user()->unit);
+                            $query->whereDoesntHave('realization', function (Builder $query) use ($periodInstance) {
+                                $query->whereBelongsTo(auth()->user()->unit)
+                                    ->whereBelongsTo($periodInstance, 'period');
                             });
                         } else if ($statusIndex === 2) {
-                            $query->whereHas('realization', function (Builder $query) {
-                                $query->whereBelongsTo(auth()->user()->unit);
+                            $query->whereHas('realization', function (Builder $query) use ($periodInstance) {
+                                $query->whereBelongsTo(auth()->user()->unit)
+                                    ->whereBelongsTo($periodInstance, 'period');
                             });
                         }
                     })
@@ -413,12 +417,14 @@ class RencanaStrategisController extends Controller
                         ->select(['id', 'number', 'name AS k', 'sasaran_strategis_id'])
                         ->with('indikatorKinerja', function (HasMany $query) use ($statusIndex, $periodInstance) {
                             if ($statusIndex === 1) {
-                                $query->whereDoesntHave('realization', function (Builder $query) {
-                                    $query->whereBelongsTo(auth()->user()->unit);
+                                $query->whereDoesntHave('realization', function (Builder $query) use ($periodInstance) {
+                                    $query->whereBelongsTo(auth()->user()->unit)
+                                        ->whereBelongsTo($periodInstance, 'period');
                                 });
                             } else if ($statusIndex === 2) {
-                                $query->whereHas('realization', function (Builder $query) {
-                                    $query->whereBelongsTo(auth()->user()->unit);
+                                $query->whereHas('realization', function (Builder $query) use ($periodInstance) {
+                                    $query->whereBelongsTo(auth()->user()->unit)
+                                        ->whereBelongsTo($periodInstance, 'period');
                                 });
                             }
                             $query->where('status', 'aktif')
@@ -432,15 +438,17 @@ class RencanaStrategisController extends Controller
                                 ], 'realization');
                         })
                         ->withCount([
-                            'indikatorKinerja AS rowspan' => function (Builder $query) use ($statusIndex) {
+                            'indikatorKinerja AS rowspan' => function (Builder $query) use ($statusIndex, $periodInstance) {
                                 $query->where('status', 'aktif');
                                 if ($statusIndex === 1) {
-                                    $query->whereDoesntHave('realization', function (Builder $query) {
-                                        $query->whereBelongsTo(auth()->user()->unit);
+                                    $query->whereDoesntHave('realization', function (Builder $query) use ($periodInstance) {
+                                        $query->whereBelongsTo(auth()->user()->unit)
+                                            ->whereBelongsTo($periodInstance, 'period');
                                     });
                                 } else if ($statusIndex === 2) {
-                                    $query->whereHas('realization', function (Builder $query) {
-                                        $query->whereBelongsTo(auth()->user()->unit);
+                                    $query->whereHas('realization', function (Builder $query) use ($periodInstance) {
+                                        $query->whereBelongsTo(auth()->user()->unit)
+                                            ->whereBelongsTo($periodInstance, 'period');
                                     });
                                 }
                             }
@@ -449,15 +457,17 @@ class RencanaStrategisController extends Controller
                 ->orderBy('number')
                 ->select(['id', 'number', 'name AS ss'])
                 ->withCount([
-                    'indikatorKinerja AS rowspan' => function (Builder $query) use ($statusIndex) {
+                    'indikatorKinerja AS rowspan' => function (Builder $query) use ($statusIndex, $periodInstance) {
                         $query->where('status', 'aktif');
                         if ($statusIndex === 1) {
-                            $query->whereDoesntHave('realization', function (Builder $query) {
-                                $query->whereBelongsTo(auth()->user()->unit);
+                            $query->whereDoesntHave('realization', function (Builder $query) use ($periodInstance) {
+                                $query->whereBelongsTo(auth()->user()->unit)
+                                    ->whereBelongsTo($periodInstance, 'period');
                             });
                         } else if ($statusIndex === 2) {
-                            $query->whereHas('realization', function (Builder $query) {
-                                $query->whereBelongsTo(auth()->user()->unit);
+                            $query->whereHas('realization', function (Builder $query) use ($periodInstance) {
+                                $query->whereBelongsTo(auth()->user()->unit)
+                                    ->whereBelongsTo($periodInstance, 'period');
                             });
                         }
                     }
@@ -470,11 +480,11 @@ class RencanaStrategisController extends Controller
                     'indikatorKinerja AS all' => function (Builder $query) {
                         $query->where('status', 'aktif');
                     },
-                    'indikatorKinerja AS done' => function (Builder $query) {
+                    'indikatorKinerja AS done' => function (Builder $query) use ($periodInstance) {
                         $query->where('status', 'aktif')
-                            ->whereHas('realization', function (Builder $query) {
+                            ->whereHas('realization', function (Builder $query) use ($periodInstance) {
                                 $query->whereBelongsTo(auth()->user()->unit)
-                                    ->whereNotNull('period_id');
+                                    ->whereBelongsTo($periodInstance, 'period');
                             });
                     },
                 ])
