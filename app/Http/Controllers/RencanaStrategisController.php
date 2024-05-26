@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RSEvaluation;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Http\Requests\RencanaStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
@@ -741,17 +742,17 @@ class RencanaStrategisController extends Controller
                         if ($instance->period) {
                             $count = RSAchievement::whereBelongsTo($ik)
                                 ->whereBelongsTo($period, 'period')
-                                ->whereNull('unit_id')
+                                ->whereNotNull('unit_id')
                                 ->count();
                         } else if ($instance->unit) {
                             $count = RSAchievement::whereBelongsTo($ik)
                                 ->whereBelongsTo(auth()->user()->unit)
-                                ->whereNull('period_id')
+                                ->whereNotNull('period_id')
                                 ->count();
                         } else {
                             $count = RSAchievement::whereBelongsTo($ik)
-                                ->whereNull('period_id')
-                                ->whereNull('unit_id')
+                                ->whereNotNull('period_id')
+                                ->whereNotNull('unit_id')
                                 ->count();
                         }
 
@@ -796,17 +797,17 @@ class RencanaStrategisController extends Controller
                             if ($instance->period) {
                                 $count = RSAchievement::whereBelongsTo($ik)
                                     ->whereBelongsTo($period, 'period')
-                                    ->whereNull('unit_id')
+                                    ->whereNotNull('unit_id')
                                     ->count();
                             } else if ($instance->unit) {
                                 $count = RSAchievement::whereBelongsTo($ik)
                                     ->whereBelongsTo(auth()->user()->unit)
-                                    ->whereNull('period_id')
+                                    ->whereNotNull('period_id')
                                     ->count();
                             } else {
                                 $count = RSAchievement::whereBelongsTo($ik)
-                                    ->whereNull('period_id')
-                                    ->whereNull('unit_id')
+                                    ->whereNotNull('period_id')
+                                    ->whereNotNull('unit_id')
                                     ->count();
                             }
 
