@@ -831,6 +831,17 @@ class RencanaStrategisController extends Controller
             }
         }
 
+        if ($ik->type !== 'teks') {
+            $evaluation = RSEvaluation::firstOrNew([
+                'indikator_kinerja_id' => $ik->id,
+            ], [
+                'target' => '0',
+            ]);
+
+            $evaluation->status = (float) $allAchievement->realization >= (float) $evaluation->target;
+            $evaluation->save();
+        }
+
         return back();
     }
 
