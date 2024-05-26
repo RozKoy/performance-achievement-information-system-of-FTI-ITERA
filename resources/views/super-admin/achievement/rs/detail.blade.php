@@ -73,10 +73,14 @@
         <x-partials.badge.time :data="$badge" />
         <x-partials.button.filter />
     </div>
-    <p class="text-primary max-xl:text-sm max-sm:text-xs">
-        Status :
-        <span class="font-bold capitalize">{{ isset($evaluation) ? ($evaluation['status'] ? 'tercapai' : 'tidak tercapai') : 'tidak tercapai' }}</span>
-    </p>
+
+    @if ($period === '3')
+        <p class="text-primary max-xl:text-sm max-sm:text-xs">
+            Status :
+            <span class="font-bold capitalize">{{ isset($evaluation) ? ($evaluation['status'] ? 'tercapai' : 'tidak tercapai') : 'tidak tercapai' }}</span>
+        </p>
+    @endif
+
     <p class="text-primary max-xl:text-sm max-sm:text-xs">
         Tipe Data : <span class="font-bold capitalize">{{ $ik['type'] }}</span>
         , Status Penugasan : <span class="font-bold capitalize">{{ $ik['status'] }}</span>
