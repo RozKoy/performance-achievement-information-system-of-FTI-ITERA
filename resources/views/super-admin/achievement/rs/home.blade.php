@@ -42,9 +42,9 @@
         $realizationPercent = $allCount !== 0 ? ($realizationCount * 100) / ($allCount * $unitCount) : 0;
     @endphp
     <p class="text-primary max-xl:text-sm max-sm:text-xs">
-        Status Pengisian : <span>{{ $realizationPercent }}%</span>
+        Status Pengisian : <span class="font-bold capitalize">{{ $realizationPercent }}%</span>
         @if ($period === '3')
-            , Tercapai : <span>23</span>, Tidak tercapai : <span>3</span>
+            (Tercapai : <span class="font-bold capitalize">{{ $success }}</span> , Tidak tercapai : <span class="font-bold capitalize">{{ $failed }}</span>)
         @endif
     </p>
     <div class="w-full overflow-x-auto rounded-lg">

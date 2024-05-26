@@ -114,10 +114,11 @@ class RencanaStrategisController extends Controller
                                         }
                                     }
                                 ], 'realization')
+                                ->withAggregate('evaluation AS evaluation', 'evaluation')
+                                ->withAggregate('evaluation AS follow_up', 'follow_up')
+                                ->withAggregate('evaluation AS target', 'target')
+                                ->withAggregate('evaluation AS done', 'status')
                                 ->withCount([
-                                    'realization AS evaluation',
-                                    'realization AS follow_up',
-                                    'realization AS target',
                                     'realization AS count' => function (Builder $query) use ($periodInstance) {
                                         $query->whereNotNull('unit_id');
                                         if ($periodInstance) {
@@ -125,18 +126,31 @@ class RencanaStrategisController extends Controller
                                         } else {
                                             $query->whereNotNull('period_id');
                                         }
-                                    },
-                                    'realization AS done',
+                                    }
                                 ]);
                         })
                         ->withCount('indikatorKinerja AS rowspan');
                 })
                 ->orderBy('number')
                 ->select(['id', 'number', 'name AS ss'])
-                ->withCount('indikatorKinerja AS rowspan')
+                ->withCount([
+                    'indikatorKinerja AS rowspan',
+                    'indikatorKinerja AS success' => function (Builder $query) {
+                        $query->whereHas('evaluation', function (Builder $query) {
+                            $query->where('status', true);
+                        });
+                    },
+                    'indikatorKinerja AS failed' => function (Builder $query) {
+                        $query->whereDoesntHave('evaluation')
+                            ->orWhereHas('evaluation', function (Builder $query) {
+                                $query->where('status', false);
+                            });
+                    },
+                ])
                 ->get();
 
             $allCount = $data->sum('rowspan');
+
             $realizationCount = $data->sum(function (SasaranStrategis $ss) {
                 $sum = $ss->kegiatan->sum(function (Kegiatan $k) {
                     $sum = $k->indikatorKinerja->sum('count');
@@ -149,6 +163,9 @@ class RencanaStrategisController extends Controller
             if ($periodInstance === null) {
                 $unitCount *= 2;
             }
+
+            $success = $data->sum('success');
+            $failed = $data->sum('failed');
 
             $badge = [
                 $period === '3' ? 'Januari - Desember' : ($period === '2' ? 'Juli - Desember' : 'Januari - Juni'),
@@ -164,6 +181,9 @@ class RencanaStrategisController extends Controller
             $realizationCount = 0;
             $unitCount = 0;
             $allCount = 0;
+
+            $success = 0;
+            $failed = 0;
 
             $periods = [];
 
@@ -181,8 +201,10 @@ class RencanaStrategisController extends Controller
             'unitCount',
             'allCount',
             'periodId',
+            'success',
             'periods',
             'period',
+            'failed',
             'system',
             'badge',
             'years',
