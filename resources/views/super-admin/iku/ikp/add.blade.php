@@ -87,6 +87,13 @@
                 <x-partials.input.textarea name="columns[]" title="Kolom" style="flex-1 h-full" required />
             </div>
         </div>
+        <div class="flex flex-1 flex-col gap-2">
+            <x-partials.label.default for="image" title="Kolom gambar" text="Kolom Gambar" />
+            <div>
+                <x-partials.input.text name="image" title="Kolom gambar" value="{{ old('image') }}" />
+                <p class="text-xs font-bold text-red-400">*Kosongkan kolom gambar jika tidak digunakan</p>
+            </div>
+        </div>
         <x-partials.button.add submit />
     </form>
 
