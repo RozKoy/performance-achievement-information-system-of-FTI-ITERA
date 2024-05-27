@@ -98,19 +98,19 @@
                                 </td>
 
                                 @if ($period === '3')
-                                    <td title="{{ $ik['target'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}">{{ $ik['target'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}</td>
+                                    <td title="{{ $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}">{{ $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}</td>
                                 @endif
 
                                 @if ($ik['type'] !== 'teks')
-                                    <td title="{{ $ik['realization'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}" class="{{ floatval($ik['target']) <= floatval($ik['realization']) ? 'text-green-500' : 'text-red-500' }}">
-                                        {{ $ik['realization'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}
+                                    <td title="{{ $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}" class="{{ floatval($ik['target']) <= floatval($ik['realization']) ? 'text-green-500' : 'text-red-500' }}">
+                                        {{ $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}
                                     </td>
                                 @else
                                     <td title="{{ $ik['realization'] }}">{{ $ik['realization'] }}</td>
                                 @endif
 
                                 @if ($period === '3')
-                                    <td title="{{ $ik['done'] === true ? 'Tercapai' : 'Tidak tercapai' }}">{{ $ik['done'] === true ? 'Iya' : 'Tidak' }}</td>
+                                    <td title="{{ $ik['done'] === 1 ? 'Tercapai' : 'Tidak tercapai' }}">{{ $ik['done'] === 1 ? 'Iya' : 'Tidak' }}</td>
 
                                     <td title="{{ $ik['evaluation'] }}">{{ $ik['evaluation'] }}</td>
                                     <td title="{{ $ik['follow_up'] }}">{{ $ik['follow_up'] }}</td>
