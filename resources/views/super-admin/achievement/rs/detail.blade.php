@@ -25,12 +25,13 @@
     <x-partials.heading.h3 title="Kegiatan" dataNumber="{{ $k['number'] }}" dataText="{{ $k['name'] }}" />
     <x-partials.heading.h3 title="Indikator Kinerja" dataNumber="{{ $ik['number'] }}" dataText="{{ $ik['name'] }}" />
 
-    <form action="" method="POST" class="flex flex-col gap-2">
+    <form action="{{ route('super-admin-achievement-rs-evaluation', ['id' => $ik['id']]) }}" method="POST" class="flex flex-col gap-2">
         @csrf
+        <input type="hidden" name="period" value="{{ $period }}">
         <div class="flex flex-wrap gap-2">
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="realization" title="Realisasi" text="Realisasi" required />
-                @if ($ik['type'] === 'teks')
+                @if ($ik['type'] === 'teks' || ($ik['status'] !== 'aktif' && $period !== '3'))
                     <x-partials.input.text name="realization" title="Realisasi" value="{{ $realization }}" autofocus />
                 @else
                     <x-partials.input.text name="realization" title="Realisasi" value="{{ $realization }}" disabled />
@@ -60,7 +61,7 @@
 
         </div>
 
-        @if ($period === '3' || $ik['type'] === 'teks')
+        @if ($period === '3' || $ik['type'] === 'teks' || $ik['status'] !== 'aktif')
             <x-partials.button.add submit text="Simpan" />
         @endif
 
@@ -77,7 +78,7 @@
     @if ($period === '3')
         <p class="text-primary max-xl:text-sm max-sm:text-xs">
             Status :
-            <span class="font-bold capitalize">{{ isset($evaluation) ? ($evaluation['status'] ? 'tercapai' : 'tidak tercapai') : 'tidak tercapai' }}</span>
+            <span class="{{ isset($evaluation) ? ($evaluation['status'] ? 'text-green-500' : 'text-red-500') : 'text-red-500' }} font-bold capitalize">{{ isset($evaluation) ? ($evaluation['status'] ? 'tercapai' : 'tidak tercapai') : 'tidak tercapai' }}</span>
         </p>
     @endif
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RencanaStrategis\AddEvaluationRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Http\Requests\RencanaStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
@@ -430,6 +431,145 @@ class RencanaStrategisController extends Controller
             $period->deadline()->associate($currentPeriodInstance);
         }
         $period->save();
+
+        return back();
+    }
+
+    public function addEvaluation(AddEvaluationRequest $request, $ikId)
+    {
+        $ik = IndikatorKinerja::findOrFail($ikId);
+
+        if ($request['period'] === '3') {
+            if (!isset($request['target'])) {
+                return back()->withErrors(['target' => 'Target wajib diisi']);
+            } else if ($ik->type !== 'teks' && !is_numeric($request['target'])) {
+                return back()->withErrors(['target' => 'Target harus berupa angka']);
+            }
+
+            if ($ik->type === 'teks' && !isset($request['status'])) {
+                return back()->withErrors(['status' => 'Status wajib diisi']);
+            }
+        } else if ($ik->status === 'tidak aktif' && $ik->type !== 'teks' && isset($request['realization'])) {
+            if (!is_numeric($request['realization']) && $request['realization'] !== null) {
+                return back()->withErrors(['realization' => 'Realisasi harus berupa angka']);
+            } else if ((float) $request['realization'] < 0) {
+                $request['realization'] *= -1;
+                $request['realization'] = "{$request['realization']}";
+            }
+        }
+
+        $currentMonth = (int) Carbon::now()->format('m');
+        $currentPeriod = $currentMonth <= 6 ? '1' : '2';
+        $currentYear = Carbon::now()->format('Y');
+
+        $k = $ik->kegiatan;
+        $ss = $k->sasaranStrategis;
+
+        $yearInstance = $ss->time;
+
+        $periodInstance = $yearInstance->periods()
+            ->where('period', $request['period'])
+            ->first();
+
+        if ($ik->type === 'teks' || ($ik->type !== 'teks' && $ik->status === 'tidak aktif' && $periodInstance !== null)) {
+            $realization = $ik->realization()
+                ->firstOrNew([
+                    'period_id' => isset($periodInstance) ? $periodInstance->id : null,
+                    'unit_id' => null,
+                ]);
+
+            if ($request['realization'] !== null) {
+                if ($ik->type !== 'teks') {
+                    $temp = $ik->realization()->firstOrNew([
+                        'period_id' => null,
+                        'unit_id' => null,
+                    ]);
+
+                    if ($temp->realization !== null) {
+                        $finalRealization = (float) $temp->realization;
+                        $currentRealization = $realization->realization !== null ? (float) $realization->realization : 0;
+
+                        if ($ik->type === 'persen') {
+                            $count = $ik->realization()
+                                ->whereNotNull('period_id')
+                                ->whereNull('unit_id')
+                                ->count();
+
+                            $finalRealization *= $count;
+                            $finalRealization += (float) $request['realization'] - $currentRealization;
+
+                            $count = $count !== 0 ? $count : 1;
+                            if ($realization->realization === null) {
+                                $count++;
+                            }
+
+                            $finalRealization /= $count;
+                        } else {
+                            $finalRealization += (float) $request['realization'] - $currentRealization;
+                        }
+
+                        $temp->realization = "$finalRealization";
+                    } else {
+                        $temp->realization = $request['realization'];
+                    }
+                    $temp->save();
+                }
+
+                $realization->realization = $request['realization'];
+                $realization->save();
+            } else if ($realization->id !== null) {
+                if ($ik->type !== 'teks') {
+                    $temp = $ik->realization()->firstOrNew([
+                        'period_id' => null,
+                        'unit_id' => null,
+                    ]);
+
+                    if ($temp->realization) {
+                        $finalRealization = (float) $temp->realization;
+                        $currentRealization = $realization->realization !== null ? (float) $realization->realization : 0;
+
+                        if ($ik->type === 'persen') {
+                            $count = $ik->realization()
+                                ->whereNotNull('period_id')
+                                ->whereNull('unit_id')
+                                ->count();
+
+                            $finalRealization *= $count;
+                        }
+                        $finalRealization -= $currentRealization;
+
+                        $temp->realization = "$finalRealization";
+                        $temp->save();
+                    }
+                }
+
+                $realization->forceDelete();
+            }
+        }
+
+        if ($request['period'] === '3') {
+            $evaluation = $ik->evaluation()->firstOrNew();
+
+            $evaluation->evaluation = $request['evaluation'];
+            $evaluation->follow_up = $request['follow_up'];
+            $evaluation->target = $request['target'];
+
+            if ($ik->type !== 'teks') {
+                $realization = $ik->realization()
+                    ->whereNull(['period_id', 'unit_id'])
+                    ->first();
+
+                if ($realization) {
+                    $evaluation->status = (float) $realization->realization >= (float) $request['target'];
+                } else {
+                    $evaluation->status = false;
+                }
+            } else {
+                $evaluation->status = $request['status'] === '1';
+            }
+
+            $evaluation->save();
+        }
 
         return back();
     }

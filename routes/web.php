@@ -69,6 +69,7 @@ Route::group([
             Route::get('/', 'homeView')->name('super-admin-achievement-rs');
             Route::get('/{id}/detail', 'detailView')->name('super-admin-achievement-rs-detail');
             Route::get('/{id}/status', 'statusToggle')->name('super-admin-achievement-rs-status');
+            Route::post('/{id}/evaluation', 'addEvaluation')->name('super-admin-achievement-rs-evaluation');
         });
 
         Route::view('/indikator-kinerja-utama', 'super-admin.achievement.iku.home')->name('super-admin-achievement-iku');
