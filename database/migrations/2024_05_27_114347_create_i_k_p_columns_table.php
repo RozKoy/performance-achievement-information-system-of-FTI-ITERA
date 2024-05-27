@@ -10,21 +10,18 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('indikator_kinerja_program', function (Blueprint $table) {
+        Schema::create('ikp_columns', function (Blueprint $table) {
             $table->uuid('id');
 
-            $table->unsignedInteger('number');
-            $table->string('status', 11);
-            $table->text('definition');
-            $table->char('type', 3);
-            $table->text('name');
+            $table->string('name', 500);
+            $table->boolean('image');
 
             $table->timestamps();
             $table->softDeletes();
 
             $table->primary('id');
 
-            $table->foreignUuid('program_strategis_id')->constrained('program_strategis');
+            $table->foreignUuid('indikator_kinerja_program_id')->constrained('indikator_kinerja_program');
         });
     }
 
@@ -33,6 +30,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('indikator_kinerja_program');
+        Schema::dropIfExists('ikp_columns');
     }
 };
