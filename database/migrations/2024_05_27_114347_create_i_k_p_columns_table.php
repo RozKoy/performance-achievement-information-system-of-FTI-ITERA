@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('ikp_columns', function (Blueprint $table) {
             $table->uuid('id');
 
+            $table->boolean('image')->default(false);
             $table->string('name', 500);
-            $table->boolean('image');
 
             $table->timestamps();
             $table->softDeletes();
