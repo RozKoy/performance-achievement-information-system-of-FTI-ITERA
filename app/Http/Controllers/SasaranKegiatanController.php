@@ -71,7 +71,6 @@ class SasaranKegiatanController extends Controller
 
         $sk = new SasaranKegiatan($request->safe()->all());
 
-        $sk->deadline()->associate($time);
         $sk->time()->associate($time);
 
         $sk->save();
