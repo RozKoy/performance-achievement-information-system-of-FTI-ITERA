@@ -218,12 +218,12 @@ class RencanaStrategisController extends Controller
     {
         $status = [
             [
-                'text' => 'Tercapai',
-                'value' => true,
+                'text' => 'Tidak tercapai',
+                'value' => 0,
             ],
             [
-                'text' => 'Tidak tercapai',
-                'value' => false,
+                'text' => 'Tercapai',
+                'value' => 1,
             ],
         ];
 
@@ -305,6 +305,11 @@ class RencanaStrategisController extends Controller
 
         $evaluation = $ik->evaluation;
         if ($evaluation) {
+            $status[$evaluation->status] = [
+                ...$status[$evaluation->status],
+                'selected' => true,
+            ];
+
             $evaluation = $evaluation->only(['evaluation', 'follow_up', 'status', 'target']);
         }
 
