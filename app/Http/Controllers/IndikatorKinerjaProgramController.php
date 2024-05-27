@@ -102,14 +102,30 @@ class IndikatorKinerjaProgramController extends Controller
                 ->increment('number');
         }
 
-        $ikp = new IndikatorKinerjaProgram($request->safe()->except('columns'));
+        $ikp = new IndikatorKinerjaProgram($request->safe()->except('columns', 'image'));
 
         $ikp->programStrategis()->associate($ps);
-
-        $ikp->column = json_encode($request->safe()['columns']);
         $ikp->status = 'aktif';
 
         $ikp->save();
+
+        $index = 1;
+        foreach ($request['columns'] as $value) {
+            $ikp->columns()->create([
+                'number' => $index,
+                'name' => $value
+            ]);
+
+            $index++;
+        }
+
+        if ($request['image'] !== null) {
+            $ikp->columns()->create([
+                'name' => $request['image'],
+                'number' => $index,
+                'image' => true
+            ]);
+        }
 
         return redirect()->route('super-admin-iku-ikp', ['sk' => $skId, 'ikk' => $ikkId, 'ps' => $psId]);
     }
