@@ -15,6 +15,7 @@ class IKPColumn extends Model
     protected $table = 'ikp_columns';
 
     protected $fillable = [
+        'number',
         'image',
         'name',
 

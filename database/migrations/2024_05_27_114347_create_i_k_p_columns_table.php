@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->uuid('id');
 
             $table->boolean('image')->default(false);
+            $table->unsignedInteger('number');
             $table->string('name', 500);
 
             $table->timestamps();
