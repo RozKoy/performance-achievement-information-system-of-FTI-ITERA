@@ -118,6 +118,7 @@ Route::group([
             Route::get('/{id}/ubah', 'editView')->name('super-admin-rs-ik-edit');
             Route::put('/{id}/ubah', 'edit');
             Route::get('/{id}/status', 'statusToggle')->name('super-admin-rs-ik-status');
+            Route::get('/{id}/hapus', 'delete');
         });
     });
 

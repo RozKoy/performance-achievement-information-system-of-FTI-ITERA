@@ -10,6 +10,7 @@ use App\Models\SasaranStrategis;
 use App\Models\RSAchievement;
 use Illuminate\Http\Request;
 use App\Models\RSEvaluation;
+use App\Models\Kegiatan;
 
 class IndikatorKinerjaController extends Controller
 {
@@ -35,7 +36,7 @@ class IndikatorKinerjaController extends Controller
 
         $data = $k->indikatorKinerja()->select(['id', 'name', 'type', 'status', 'number'])
             ->where(function (Builder $query) use ($request) {
-                if (isset ($request->search)) {
+                if (isset($request->search)) {
                     $query->where('name', 'LIKE', "%{$request->search}%")
                         ->orWhere('type', $request->search)
                         ->orWhere('status', $request->search)
@@ -204,5 +205,16 @@ class IndikatorKinerjaController extends Controller
         }
 
         abort(404);
+    }
+
+    public function delete($id)
+    {
+        $ik = IndikatorKinerja::findOrFail($id);
+        $k = Kegiatan::findOrFail($ik->kegiatan->id);
+        $ss = SasaranStrategis::currentOrFail($k->sasaranStrategis->id);
+
+        $ik->deleteOrTrashed();
+
+        return back();
     }
 }
