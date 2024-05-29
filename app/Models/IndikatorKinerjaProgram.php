@@ -18,8 +18,8 @@ class IndikatorKinerjaProgram extends Model
     protected $fillable = [
         'program_strategis_id',
         'definition',
-        'column',
         'number',
+        'status',
         'type',
         'name',
     ];
