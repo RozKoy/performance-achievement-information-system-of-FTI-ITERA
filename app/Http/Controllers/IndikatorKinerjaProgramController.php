@@ -28,7 +28,7 @@ class IndikatorKinerjaProgramController extends Controller
         $ikk = $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
         $ps = $ikk->programStrategis()->findOrFail($psId);
 
-        $data = $ps->indikatorKinerjaProgram()->select(['id', 'name', 'type', 'status', 'column', 'number', 'definition'])
+        $data = $ps->indikatorKinerjaProgram()->select(['id', 'name', 'type', 'status', 'number', 'definition'])
             ->where(function (Builder $query) use ($request) {
                 if (isset ($request->search)) {
                     $query->where('name', 'LIKE', "%{$request->search}%")
@@ -38,6 +38,7 @@ class IndikatorKinerjaProgramController extends Controller
                         ->orWhere('type', $request->search);
                 }
             })
+            ->withCount('columns AS column')
             ->orderBy('number')
             ->get()
             ->toArray();

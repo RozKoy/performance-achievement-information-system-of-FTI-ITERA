@@ -55,12 +55,11 @@
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
                 @foreach ($data as $item)
                     @php
-                        $column = count(json_decode($item['column']));
                         $deleteData = [
                             'nomor' => $item['number'],
                             'indikator kinerja program' => $item['name'],
                             'definisi operasional' => $item['definition'],
-                            'kolom' => $column,
+                            'kolom' => $item['column'],
                             'jenis' => $item['type'],
                             'status' => $item['status'],
                         ];
@@ -72,7 +71,7 @@
                             <span title="{{ $item['type'] === 'iku' ? 'Indikator kinerja utama' : 'Indikator kinerja tambahan' }}" class="absolute right-1 top-1 z-10 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $item['type'] }}</span>
                         </td>
                         <td title="{{ $item['definition'] }}" class="min-w-72 w-max text-left">{{ $item['definition'] }}</td>
-                        <td title="{{ $column }}">{{ $column }}</td>
+                        <td title="{{ $item['column'] }}">{{ $item['column'] }}</td>
                         <td title="{{ $item['status'] }}">
                             <div class="flex items-center justify-center">
                                 <label onclick="statusToggle('{{ url(route('super-admin-iku-ikp-status', ['id' => $item['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']])) }}')" class="relative inline-flex items-center">
