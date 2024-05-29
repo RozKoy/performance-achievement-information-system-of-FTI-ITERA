@@ -30,4 +30,13 @@ class Kegiatan extends Model
     {
         return $this->hasMany(IndikatorKinerja::class);
     }
+
+    public function deleteOrTrashed(): void
+    {
+        foreach ($this->indikatorKinerja as $key => $ik) {
+            $ik->deleteOrTrashed();
+        }
+
+        $this->forceDelete();
+    }
 }
