@@ -276,4 +276,13 @@ class UsersController extends Controller
 
         return redirect()->route('admin-users');
     }
+
+    public function delete($id)
+    {
+        $user = User::findOrFail($id);
+
+        $user->forceDelete();
+
+        return back();
+    }
 }
