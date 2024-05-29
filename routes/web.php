@@ -93,6 +93,7 @@ Route::group([
             Route::post('/tambah', 'add');
             Route::get('/{id}/ubah', 'editView')->name('super-admin-rs-ss-edit');
             Route::put('/{id}/ubah', 'edit');
+            Route::get('/{id}/hapus', 'delete');
         });
 
         Route::group([

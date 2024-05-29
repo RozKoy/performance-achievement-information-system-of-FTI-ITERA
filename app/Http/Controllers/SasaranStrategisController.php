@@ -17,7 +17,7 @@ class SasaranStrategisController extends Controller
 
         $data = $time->sasaranStrategis()->select(['id', 'name', 'number'])
             ->where(function (Builder $query) use ($request) {
-                if (isset ($request->search)) {
+                if (isset($request->search)) {
                     $query->where('name', 'LIKE', "%{$request->search}%")
                         ->orWhere('number', $request->search);
                 }
@@ -135,5 +135,14 @@ class SasaranStrategisController extends Controller
         $ss->save();
 
         return redirect()->route('super-admin-rs-ss');
+    }
+
+    public function delete($id)
+    {
+        $ss = SasaranStrategis::currentOrFail($id);
+
+        $ss->deleteOrTrashed();
+
+        return back();
     }
 }
