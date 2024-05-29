@@ -48,4 +48,13 @@ class SasaranStrategis extends Model
 
         return abort(404);
     }
+
+    public function deleteOrTrashed(): void
+    {
+        foreach ($this->kegiatan as $key => $k) {
+            $k->deleteOrTrashed();
+        }
+
+        $this->forceDelete();
+    }
 }
