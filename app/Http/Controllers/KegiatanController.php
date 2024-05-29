@@ -17,7 +17,7 @@ class KegiatanController extends Controller
 
         $data = $ss->kegiatan()->select(['id', 'name', 'number'])
             ->where(function (Builder $query) use ($request) {
-                if (isset ($request->search)) {
+                if (isset($request->search)) {
                     $query->where('name', 'LIKE', "%{$request->search}%")
                         ->orWhere('number', $request->search);
                 }
@@ -157,5 +157,15 @@ class KegiatanController extends Controller
         }
 
         abort(404);
+    }
+
+    public function delete($id)
+    {
+        $k = Kegiatan::findOrFail($id);
+        $ss = SasaranStrategis::currentOrFail($k->sasaranStrategis->id);
+
+        $k->deleteOrTrashed();
+
+        return back();
     }
 }
