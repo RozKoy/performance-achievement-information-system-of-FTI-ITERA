@@ -10,6 +10,7 @@ use App\Http\Controllers\SasaranKegiatanController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,9 +30,10 @@ use Illuminate\Support\Facades\Route;
 
 
 // Authentication
-Route::get('/masuk', function () {
-    return view('authentication.login');
-})->name('login');
+Route::controller(AuthController::class)->group(function () {
+    Route::get('/masuk', 'loginView')->name('login');
+    Route::post('/masuk', 'login');
+});
 
 Route::get('/lupa-kata-sandi', function () {
     return view('authentication.forget-password');
