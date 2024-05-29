@@ -22,7 +22,8 @@ class UsersController extends Controller
 
     public function homeView(Request $request)
     {
-        $data = User::doesntHave('unit')
+        $data = User::whereKeyNot(auth()->user()->id)
+            ->doesntHave('unit')
             ->where(function (Builder $query) use ($request) {
                 if ($request->search) {
                     $query->whereAny(
