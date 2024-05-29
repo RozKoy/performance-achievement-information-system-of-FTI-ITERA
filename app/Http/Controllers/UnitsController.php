@@ -114,4 +114,21 @@ class UnitsController extends Controller
 
         return redirect()->route('super-admin-unit');
     }
+
+    public function delete($id)
+    {
+        $unit = Unit::findOrFail($id);
+
+        $unit->users()->forceDelete();
+
+        if ($unit->rencanaStrategis()->count()) {
+            $unit->rencanaStrategis()->delete();
+            $unit->delete();
+        } else {
+            $unit->rencanaStrategis()->forceDelete();
+            $unit->forceDelete();
+        }
+
+        return back();
+    }
 }
