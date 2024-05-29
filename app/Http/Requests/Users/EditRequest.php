@@ -25,7 +25,7 @@ class EditRequest extends FormRequest
     {
         return [
             'access' => ['bail', 'nullable', 'in:super-admin-editor,super-admin-viewer,admin-viewer'],
-            'email' => ['bail', 'required', 'max:255', 'email:rfc,dns', new Unique(new User())],
+            'email' => ['bail', 'required', 'max:255', 'email', new Unique(new User())],
             'unit' => ['bail', 'nullable', 'exists:units,id'],
             'name' => ['bail', 'required', 'max:255'],
         ];

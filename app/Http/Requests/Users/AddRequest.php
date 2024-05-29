@@ -23,7 +23,7 @@ class AddRequest extends FormRequest
     {
         return [
             'access' => ['bail', 'nullable', 'in:super-admin-editor,super-admin-viewer,admin-viewer'],
-            'email' => ['bail', 'required', 'max:255', 'email:rfc,dns', 'unique:users'],
+            'email' => ['bail', 'required', 'max:255', 'email', 'unique:users'],
             'unit' => ['bail', 'nullable', 'exists:units,id'],
             'name' => ['bail', 'required', 'max:255'],
         ];

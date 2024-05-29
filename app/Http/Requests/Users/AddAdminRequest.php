@@ -22,7 +22,7 @@ class AddAdminRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['bail', 'required', 'max:255', 'email:rfc,dns', 'unique:users'],
+            'email' => ['bail', 'required', 'max:255', 'email', 'unique:users'],
             'access' => ['bail', 'required', 'in:editor,viewer'],
             'name' => ['bail', 'required', 'max:255'],
         ];
