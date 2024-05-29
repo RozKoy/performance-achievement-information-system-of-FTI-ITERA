@@ -37,4 +37,13 @@ class AuthController extends Controller
             ->withInput()
             ->withErrors(['email' => 'Email atau kata sandi tidak benar']);
     }
+
+    public function logout()
+    {
+        if (auth()->check()) {
+            auth()->logout();
+        }
+
+        return redirect()->route('login');
+    }
 }

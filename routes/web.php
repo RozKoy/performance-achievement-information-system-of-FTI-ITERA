@@ -33,6 +33,8 @@ use Illuminate\Support\Facades\Route;
 Route::controller(AuthController::class)->group(function () {
     Route::get('/masuk', 'loginView')->name('login');
     Route::post('/masuk', 'login');
+
+    Route::get('/keluar', 'logout')->name('logout');
 });
 
 Route::get('/lupa-kata-sandi', function () {
@@ -42,10 +44,6 @@ Route::get('/lupa-kata-sandi', function () {
 Route::get('/ubah-kata-sandi', function () {
     return view('authentication.change-password');
 })->name('change-password');
-
-Route::get('/keluar', function () {
-    return 'Anda Telah Keluar';
-})->name('logout');
 
 
 // Super Admin
