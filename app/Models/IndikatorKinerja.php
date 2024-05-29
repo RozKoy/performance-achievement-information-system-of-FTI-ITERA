@@ -38,4 +38,11 @@ class IndikatorKinerja extends Model
     {
         return $this->hasOne(RSEvaluation::class);
     }
+
+    public function deleteOrTrashed(): void
+    {
+        $this->realization()->forceDelete();
+        $this->evaluation()->forceDelete();
+        $this->forceDelete();
+    }
 }
