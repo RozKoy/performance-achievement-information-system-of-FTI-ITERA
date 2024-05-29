@@ -48,7 +48,8 @@ Route::get('/ubah-kata-sandi', function () {
 
 // Super Admin
 Route::group([
-    'prefix' => '/super-admin'
+    'prefix' => '/super-admin',
+    'middleware' => 'superadmin'
 ], function () {
     Route::get('/beranda', function () {
         return view('super-admin.home');
@@ -200,7 +201,8 @@ Route::group([
 
 // Admin
 Route::group([
-    'prefix' => '/'
+    'prefix' => '/',
+    'middleware' => 'admin'
 ], function () {
     Route::get('/', function () {
         return view('admin.home');
