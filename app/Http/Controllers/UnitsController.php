@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\Units\EditRequest;
 use App\Http\Requests\Units\AddRequest;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Unit;
 use App\Models\User;
@@ -119,13 +120,25 @@ class UnitsController extends Controller
     {
         $unit = Unit::findOrFail($id);
 
-        $unit->users()->forceDelete();
+        User::where('unit_id', $id)
+            ->update(['unit_id' => null]);
 
-        if ($unit->rencanaStrategis()->count()) {
-            $unit->rencanaStrategis()->delete();
+        $currentYear = Carbon::now()->format('Y');
+        $old = false;
+
+        foreach ($unit->rencanaStrategis as $key => $rs) {
+            $year = $rs->period->year;
+
+            if ($year->year !== $currentYear) {
+                $old = true;
+            } else {
+                $rs->forceDelete();
+            }
+        }
+
+        if ($old) {
             $unit->delete();
         } else {
-            $unit->rencanaStrategis()->forceDelete();
             $unit->forceDelete();
         }
 
