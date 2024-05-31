@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('units', function (Blueprint $table) {
             $table->uuid('id');
 
+            $table->string('short_name', 10);
             $table->string('name');
 
             $table->timestamps();

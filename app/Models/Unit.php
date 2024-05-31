@@ -13,6 +13,7 @@ class Unit extends Model
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
+        'short_name',
         'name',
     ];
 
