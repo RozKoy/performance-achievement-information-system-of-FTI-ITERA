@@ -120,21 +120,63 @@ class UnitsController extends Controller
     {
         $unit = Unit::findOrFail($id);
 
-        User::where('unit_id', $id)
-            ->update(['unit_id' => null]);
+        $unit->rencanaStrategis()->whereNull('period_id')->forceDelete();
 
+        $achievements = $unit->rencanaStrategis()->whereNotNull('period_id')->get();
         $currentYear = Carbon::now()->format('Y');
         $old = false;
 
-        foreach ($unit->rencanaStrategis as $key => $rs) {
-            $year = $rs->period->year;
+        foreach ($achievements as $key => $achievement) {
+            $year = $achievement->period->year;
 
             if ($year->year !== $currentYear) {
                 $old = true;
             } else {
-                $rs->forceDelete();
+                $ik = $achievement->indikatorKinerja;
+
+                if ($ik->type !== 'teks' && $ik->status === 'aktif') {
+                    $allAchievement = $ik->realization()->whereNull(['period_id', 'unit_id'])->first();
+                    $periodAchievement = $ik->realization()->whereBelongsTo($achievement->period, 'period')->whereNull('unit_id')->first();
+
+                    foreach ([$periodAchievement, $allAchievement] as $key => $achievementInstance) {
+                        if ($achievementInstance) {
+                            $realization = (float) $achievementInstance->realization || 0;
+                            $unitRealization = (float) $achievement->realization || 0;
+
+                            if ($ik->type === 'angka') {
+                                $realization -= $unitRealization;
+                            } else {
+                                if ($achievementInstance->period) {
+                                    $count = $ik->realization()
+                                        ->whereBelongsTo($achievementInstance->period, 'period')
+                                        ->whereNotNull('unit_id')
+                                        ->count();
+                                } else {
+                                    $count = $ik->realization()
+                                        ->whereNotNull(['period_id', 'unit_id'])
+                                        ->count();
+                                }
+
+                                $realization *= $count;
+                                $realization -= $unitRealization;
+
+                                if ($count > 2) {
+                                    $realization /= ($count - 1);
+                                }
+                            }
+
+                            $achievementInstance->realization = "$realization";
+                            $achievementInstance->save();
+                        }
+                    }
+                }
+
+                $achievement->forceDelete();
             }
         }
+
+        User::where('unit_id', $id)
+            ->update(['unit_id' => null]);
 
         if ($old) {
             $unit->delete();
