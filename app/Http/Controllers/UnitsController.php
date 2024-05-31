@@ -120,10 +120,6 @@ class UnitsController extends Controller
     {
         $unit = Unit::findOrFail($id);
 
-        $unit->rencanaStrategis()
-            ->whereNull('period_id')
-            ->forceDelete();
-
         $achievements = $unit->rencanaStrategis()
             ->whereNotNull('period_id')
             ->get();
@@ -137,6 +133,11 @@ class UnitsController extends Controller
                 $old = true;
             } else {
                 $ik = $achievement->indikatorKinerja;
+
+                $ik->realization()
+                    ->whereBelongsTo($unit)
+                    ->whereNull('period_id')
+                    ->forceDelete();
 
                 if ($ik->type !== 'teks' && $ik->status === 'aktif') {
                     $allAchievement = $ik->realization()
