@@ -39,7 +39,7 @@
         </button>
     </div>
     @php
-        $realizationPercent = $allCount !== 0 ? ($realizationCount * 100) / ($allCount * $unitCount) : 0;
+        $realizationPercent = $allCount && $unitCount ? ($realizationCount * 100) / ($allCount * $unitCount) : 0;
     @endphp
     <p class="text-primary max-xl:text-sm max-sm:text-xs">
         Status Pengisian : <span class="font-bold capitalize">{{ $realizationPercent }}%</span>
@@ -120,7 +120,7 @@
 
                                 @if ($ik['status'] === 'aktif')
                                     @php
-                                        $progress = number_format((floatval($ik['count']) * 100) / $unitCount, 2);
+                                        $progress = $unitCount ? number_format((floatval($ik['count']) * 100) / $unitCount, 2) : 0;
                                     @endphp
                                     <td title="Status pengisian : {{ $progress }}%">
                                         <div class="flex flex-col gap-1">

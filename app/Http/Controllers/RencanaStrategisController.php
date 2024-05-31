@@ -160,7 +160,24 @@ class RencanaStrategisController extends Controller
                 return $sum;
             });
 
-            $unitCount = Unit::count();
+            if ($year !== $currentYear) {
+                $unitCount = Unit::where(function (Builder $query) use ($year) {
+                    $query->whereNotNull('deleted_at')
+                        ->whereHas('rencanaStrategis', function (Builder $query) use ($year) {
+                            $query->whereHas('period', function (Builder $query) use ($year) {
+                                $query->whereHas('year', function (Builder $query) use ($year) {
+                                    $query->where('year', $year);
+                                });
+                            });
+                        });
+                })
+                    ->orWhereNull('deleted_at')
+                    ->withTrashed()
+                    ->count();
+            } else {
+                $unitCount = Unit::count();
+            }
+
             if ($periodInstance === null) {
                 $unitCount *= 2;
             }
