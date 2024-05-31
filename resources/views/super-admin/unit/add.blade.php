@@ -17,6 +17,8 @@
         @csrf
         <x-partials.label.default for="name" title="Nama unit" text="Nama Unit" required />
         <x-partials.input.text name="name" title="Nama unit" value="{{ old('name') }}" autofocus required />
+        <x-partials.label.default for="short_name" title="Nama pendek unit" text="Nama Pendek Unit" required />
+        <x-partials.input.text name="short_name" title="Nama pendek unit (contoh : if)" value="{{ old('short_name') }}" autofocus required />
         <p class="text-sm sm:text-base">Pilih Pengguna</p>
         <div class="*:border *:rounded-lg flex flex-wrap gap-1">
             @foreach ($users as $user)
