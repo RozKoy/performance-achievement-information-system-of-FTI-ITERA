@@ -120,9 +120,13 @@ class UnitsController extends Controller
     {
         $unit = Unit::findOrFail($id);
 
-        $unit->rencanaStrategis()->whereNull('period_id')->forceDelete();
+        $unit->rencanaStrategis()
+            ->whereNull('period_id')
+            ->forceDelete();
 
-        $achievements = $unit->rencanaStrategis()->whereNotNull('period_id')->get();
+        $achievements = $unit->rencanaStrategis()
+            ->whereNotNull('period_id')
+            ->get();
         $currentYear = Carbon::now()->format('Y');
         $old = false;
 
@@ -135,8 +139,13 @@ class UnitsController extends Controller
                 $ik = $achievement->indikatorKinerja;
 
                 if ($ik->type !== 'teks' && $ik->status === 'aktif') {
-                    $allAchievement = $ik->realization()->whereNull(['period_id', 'unit_id'])->first();
-                    $periodAchievement = $ik->realization()->whereBelongsTo($achievement->period, 'period')->whereNull('unit_id')->first();
+                    $allAchievement = $ik->realization()
+                        ->whereNull(['period_id', 'unit_id'])
+                        ->first();
+                    $periodAchievement = $ik->realization()
+                        ->whereBelongsTo($achievement->period, 'period')
+                        ->whereNull('unit_id')
+                        ->first();
 
                     foreach ([$periodAchievement, $allAchievement] as $key => $achievementInstance) {
                         if ($achievementInstance) {
