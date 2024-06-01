@@ -372,6 +372,92 @@ class RencanaStrategisController extends Controller
         ]));
     }
 
+    public function targetView($year)
+    {
+        $yearInstance = RSYear::where('year', $year)
+            ->firstOrFail();
+
+        $currentYear = Carbon::now()->format('Y');
+
+        $data = $yearInstance->sasaranStrategis()
+            ->whereHas('indikatorKinerja', function (Builder $query) {
+                $query->where('status', 'aktif')
+                    ->whereNot('type', 'teks');
+            })
+            ->with('kegiatan', function (HasMany $query) {
+                $query->whereHas('indikatorKinerja', function (Builder $query) {
+                    $query->where('status', 'aktif')
+                        ->whereNot('type', 'teks');
+                })
+                    ->orderBy('number')
+                    ->select(['id', 'number', 'name AS k', 'sasaran_strategis_id'])
+                    ->with('indikatorKinerja', function (HasMany $query) {
+                        $query->where('status', 'aktif')
+                            ->whereNot('type', 'teks')
+                            ->orderBy('number')
+                            ->select(['id', 'type', 'number', 'status', 'name AS ik', 'kegiatan_id'])
+                            ->withAggregate('evaluation AS all_target', 'target')
+                            ->with('target', function (HasMany $query) {
+                                $query->select(['indikator_kinerja_id', 'unit_id', 'target', 'id']);
+                            });
+                    })
+                    ->withCount([
+                        'indikatorKinerja AS rowspan' => function (Builder $query) {
+                            $query->where('status', 'aktif')
+                                ->whereNot('type', 'teks');
+                        }
+                    ]);
+            })
+            ->orderBy('number')
+            ->select(['id', 'number', 'name AS ss'])
+            ->withCount([
+                'indikatorKinerja AS rowspan' => function (Builder $query) {
+                    $query->where('status', 'aktif')
+                        ->whereNot('type', 'teks');
+                }
+            ])
+            ->get()
+            ->toArray();
+
+        if ($year !== $currentYear) {
+            $units = Unit::where(function (Builder $query) use ($year) {
+                $query->whereNotNull('deleted_at')
+                    ->whereHas('rencanaStrategis', function (Builder $query) use ($year) {
+                        $query->whereHas('period', function (Builder $query) use ($year) {
+                            $query->whereHas('year', function (Builder $query) use ($year) {
+                                $query->where('year', $year);
+                            });
+                        });
+                    });
+            })
+                ->orWhereNull('deleted_at')
+                ->select(['short_name', 'name', 'id'])
+                ->withTrashed()
+                ->latest()
+                ->get();
+        } else {
+            $units = Unit::latest()
+                ->select(['short_name', 'name', 'id'])
+                ->get();
+        }
+
+        $test = collect([
+            [
+                'id' => '1',
+                'name' => 'haii',
+            ],
+            [
+                'id' => '2',
+                'name' => 'hahah',
+            ],
+        ]);
+
+        return view('super-admin.achievement.rs.target', compact([
+            'units',
+            'data',
+        ]));
+    }
+
     public function periodFirstOrNew($yearId, $value)
     {
         $temp = RSPeriod::firstOrNew([

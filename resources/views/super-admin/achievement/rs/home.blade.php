@@ -17,7 +17,7 @@
     <div class="flex gap-1.5 max-lg:flex-wrap sm:gap-3">
         <x-partials.badge.time :data="$badge" />
         <x-partials.button.filter />
-        <a href="{{ url(route('super-admin-achievement-rs-target', ['year' => '2024'])) }}" title="Tombol target capaian" class="flex items-center gap-1 rounded-lg bg-blue-500 px-2 py-1.5 text-center text-xs text-white hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 max-sm:w-fit sm:text-sm">
+        <a href="{{ url(route('super-admin-achievement-rs-target', ['year' => $year])) }}" title="Tombol target capaian" class="flex items-center gap-1 rounded-lg bg-blue-500 px-2 py-1.5 text-center text-xs text-white hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 max-sm:w-fit sm:text-sm">
             Target
         </a>
     </div>

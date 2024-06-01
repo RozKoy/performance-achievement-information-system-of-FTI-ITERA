@@ -69,9 +69,7 @@ Route::group([
         ], function () {
             Route::get('/', 'homeView')->name('super-admin-achievement-rs');
             Route::get('/{id}/detail', 'detailView')->name('super-admin-achievement-rs-detail');
-            Route::get('/{year}/target', function () {
-                return view('super-admin.achievement.rs.target');
-            })->name('super-admin-achievement-rs-target');
+            Route::get('/{year}/target', 'targetView')->name('super-admin-achievement-rs-target');
             Route::get('/{id}/status', 'statusToggle')->name('super-admin-achievement-rs-status');
             Route::post('/{id}/evaluation', 'addEvaluation')->name('super-admin-achievement-rs-evaluation');
         });
