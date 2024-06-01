@@ -16,9 +16,16 @@ class UnitsController extends Controller
     {
         $data = Unit::where(function (Builder $query) use ($request) {
             if ($request->search) {
-                $query->where('name', 'LIKE', "%{$request->search}%");
+                $query->whereAny(
+                    [
+                        'short_name',
+                        'name'
+                    ],
+                    'LIKE',
+                    "%{$request->search}%"
+                );
             }
-        })->select(['id', 'name'])
+        })->select(['id', 'name', 'short_name'])
             ->withCount('users AS users')
             ->latest()
             ->get()

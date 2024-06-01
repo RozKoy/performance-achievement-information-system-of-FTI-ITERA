@@ -29,12 +29,18 @@
                         $deleteData = [
                             'nomor' => $loop->iteration,
                             'nama unit' => $item['name'],
+                            'kode unit' => $item['short_name'],
                             'jumlah pengguna' => $item['users'],
                         ];
                     @endphp
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:overflow-hidden *:truncate border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
-                        <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
+                        <td title="{{ $item['name'] }}" class="text-left">
+                            <div class="flex flex-row items-center gap-1">
+                                <p class="overflow-hidden truncate">{{ $item['name'] }}</p>
+                                <span title="{{ $item['short_name'] }}" class="cursor-default rounded-lg bg-primary/25 p-1 uppercase text-primary/75">{{ $item['short_name'] }}</span>
+                            </div>
+                        </td>
                         <td title="{{ $item['users'] }}">{{ $item['users'] }}</td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.edit link="{{ route('super-admin-unit-edit', ['id' => $item['id']]) }}" />
