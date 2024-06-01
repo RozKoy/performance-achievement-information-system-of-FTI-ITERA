@@ -75,7 +75,7 @@ class UnitsController extends Controller
     {
         $unit = Unit::whereKey($id)
             ->with('users')
-            ->firstOrFail(['id', 'name']);
+            ->firstOrFail(['id', 'name', 'short_name']);
 
         $usersExists = $unit->users()
             ->select(['id', 'name AS username', 'email', 'access'])
@@ -89,7 +89,7 @@ class UnitsController extends Controller
 
         $users = array_merge($usersExists, $usersList);
 
-        $data = $unit->only(['id', 'name']);
+        $data = $unit->toArray();
 
         return view('super-admin.unit.edit', compact(['data', 'users']));
     }
