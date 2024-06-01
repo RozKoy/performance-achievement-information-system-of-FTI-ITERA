@@ -27,12 +27,14 @@ class EditRequest extends FormRequest
             'name' => ['bail', 'required', 'max:255', new Unique(new Unit())],
             'users.old' => ['bail', 'nullable', 'array', 'exists:users,id'],
             'users.new' => ['bail', 'nullable', 'array', 'exists:users,id'],
+            'short_name' => ['bail', 'required', 'max:10'],
         ];
     }
 
     public function attributes(): array
     {
         return [
+            'short_name' => 'Nama pendek unit',
             'users.old' => 'Pengguna',
             'users.new' => 'Pengguna',
             'name' => 'Nama unit',

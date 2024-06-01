@@ -102,8 +102,10 @@ class UnitsController extends Controller
 
         if ($unit->name !== $newName) {
             $unit->name = $newName;
-            $unit->save();
         }
+
+        $unit->short_name = $request->safe()['short_name'];
+        $unit->save();
 
         $oldUsers = [];
         $newUsers = [];
