@@ -27,7 +27,8 @@ class Unique implements ValidationRule
             $instance = $this->model::findOrFail($id);
 
             if ($instance[$attribute] !== $value) {
-                $temp = $this->model::whereKeyNot($id)
+                $temp = $this->model::withTrashed()
+                    ->whereKeyNot($id)
                     ->where($attribute, $value)
                     ->first();
 
