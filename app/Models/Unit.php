@@ -26,4 +26,9 @@ class Unit extends Model
     {
         return $this->hasMany(RSAchievement::class);
     }
+
+    public function rencanaStrategisTarget(): HasMany
+    {
+        return $this->hasMany(RSTarget::class);
+    }
 }
