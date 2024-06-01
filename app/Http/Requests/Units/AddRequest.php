@@ -23,7 +23,8 @@ class AddRequest extends FormRequest
     {
         return [
             'users' => ['bail', 'nullable', 'array', 'exists:users,id'],
-            'name' => ['bail', 'required', 'max:255', 'unique:units'],
+            'short_name' => ['bail', 'required', 'max:10'],
+            'name' => ['bail', 'required', 'max:255'],
         ];
     }
 
@@ -41,7 +42,6 @@ class AddRequest extends FormRequest
             'max' => ':attribute tidak boleh melebihi :max karakter',
             'exists' => ':attribute tidak dapat ditemukan',
             'array' => ':attribute harus berupa array',
-            'unique' => ':attribute sudah digunakan',
             'required' => ':attribute wajib diisi'
         ];
     }

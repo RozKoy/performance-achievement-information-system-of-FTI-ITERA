@@ -39,7 +39,18 @@ class UnitsController extends Controller
 
     public function add(AddRequest $request)
     {
-        $unit = Unit::create($request->safe()->only('name'));
+        $unitExists = Unit::withTrashed()
+            ->firstWhere('name', $request['name']);
+
+        if ($unitExists) {
+            if ($unitExists->deleted_at) {
+                $unitExists->restore();
+            }
+
+            $unit = $unitExists;
+        } else {
+            $unit = Unit::create($request->safe()->only('short_name', 'name'));
+        }
 
         if (isset($request->safe()['users'])) {
             $users = User::findMany($request->safe()['users']);
