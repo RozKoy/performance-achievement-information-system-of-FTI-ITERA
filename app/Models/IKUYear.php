@@ -24,6 +24,11 @@ class IKUYear extends Model
         return $this->hasMany(SasaranKegiatan::class, 'time_id');
     }
 
+    public function periods(): HasMany
+    {
+        return $this->hasMany(IKUPeriod::class, 'year_id');
+    }
+
     static function currentTime(): IKUYear
     {
         $year = Carbon::now()->format('Y');
