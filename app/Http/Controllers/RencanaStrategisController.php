@@ -690,7 +690,7 @@ class RencanaStrategisController extends Controller
     public function addTarget(AddTargetRequest $request, $ikId, $unitId)
     {
         $ik = IndikatorKinerja::findOrFail($ikId);
-        $unit = Unit::findOrFail($unitId);
+        $unit = Unit::withTrashed()->findOrFail($unitId);
 
         $target = null;
         if (isset($request['target'])) {

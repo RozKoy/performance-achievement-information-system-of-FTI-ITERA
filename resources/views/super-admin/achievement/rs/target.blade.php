@@ -62,7 +62,7 @@
                                 </td>
 
                                 <td title="{{ $ik['all_target'] }}" class="min-w-72 w-max">
-                                    <div class="py-1.5">{{ $ik['all_target'] }}</div>
+                                    <div class="py-1.5">{{ $ik['all_target'] }}{{ $ik['type'] === 'persen' && $ik['all_target'] !== null ? '%' : '' }}</div>
                                 </td>
 
                                 @php
