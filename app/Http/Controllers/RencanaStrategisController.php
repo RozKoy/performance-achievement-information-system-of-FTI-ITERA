@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RencanaStrategis\AddEvaluationRequest;
 use App\Http\Requests\RencanaStrategis\AddTargetRequest;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Http\Requests\RencanaStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
@@ -294,6 +295,15 @@ class RencanaStrategisController extends Controller
             ->first();
 
         $data = $ik->realization()
+            ->with('unit', function (BelongsTo $query) use ($ik) {
+                $query->withTrashed()
+                    ->select('id', 'name')
+                    ->withAggregate([
+                        'rencanaStrategisTarget AS target' => function (Builder $query) use ($ik) {
+                            $query->whereBelongsTo($ik);
+                        }
+                    ], 'target');
+            })
             ->where(function (Builder $query) use ($periodInstance) {
                 $query->whereNotNull('unit_id');
                 if ($periodInstance) {
@@ -302,8 +312,7 @@ class RencanaStrategisController extends Controller
                     $query->whereNull('period_id');
                 }
             })
-            ->select('realization')
-            ->withAggregate('unit AS unit', 'name')
+            ->select('realization', 'unit_id')
             ->latest()
             ->get()
             ->toArray();
@@ -332,7 +341,23 @@ class RencanaStrategisController extends Controller
             $evaluation = $evaluation->only(['evaluation', 'follow_up', 'status', 'target']);
         }
 
-        $unitCount = Unit::count();
+        $unitCount = Unit::where(function (Builder $query) use ($year, $ik) {
+            $query->whereNotNull('deleted_at')
+                ->whereHas('rencanaStrategis', function (Builder $query) use ($year, $ik) {
+                    $query->whereHas('indikatorKinerja', function (Builder $query) use ($ik) {
+                        $query->where('id', $ik->id);
+                    })
+                        ->whereHas('period', function (Builder $query) use ($year) {
+                            $query->whereHas('year', function (Builder $query) use ($year) {
+                                $query->where('year', $year);
+                            });
+                        });
+                });
+        })
+            ->orWhereNull('deleted_at')
+            ->withTrashed()
+            ->count();
+
         if ($periodInstance === null) {
             $unitCount *= 2;
         }

@@ -41,7 +41,11 @@
             @if ($period === '3')
                 <div class="flex flex-1 flex-col gap-2">
                     <x-partials.label.default for="target" title="Target" text="Target" required />
-                    <x-partials.input.text name="target" title="Target" value="{{ isset($evaluation) ? $evaluation['target'] : '' }}" autofocus required />
+                    @if ($ik['type'] !== 'teks' && $ik['status'] === 'aktif')
+                        <x-partials.input.text name="target" title="Target" value="{{ isset($evaluation) ? $evaluation['target'] : '' }}" disabled />
+                    @else
+                        <x-partials.input.text name="target" title="Target" value="{{ isset($evaluation) ? $evaluation['target'] : '' }}" autofocus required />
+                    @endif
                 </div>
                 <div class="flex flex-1 flex-col gap-2">
                     <x-partials.label.default for="evaluation" title="Evaluasi" text="Evaluasi" />
@@ -105,6 +109,9 @@
                     <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
                         <th title="Nomor">No</th>
                         <th title="Unit">Unit</th>
+                        @if ($ik['type'] !== 'teks' && $period === '3')
+                            <th title="Target">Target</th>
+                        @endif
                         <th title="Realisasi">Realisasi</th>
                     </tr>
                 </thead>
@@ -113,7 +120,12 @@
                     @foreach ($data as $item)
                         <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
                             <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
-                            <td title="{{ $item['unit'] }}" class="min-w-72 w-max text-left">{{ $item['unit'] }}</td>
+                            <td title="{{ $item['unit']['name'] }}" class="min-w-72 w-max text-left">{{ $item['unit']['name'] }}</td>
+
+                            @if ($ik['type'] !== 'teks' && $period === '3')
+                                <td title="{{ $item['unit']['target'] }}">{{ $item['unit']['target'] }}</td>
+                            @endif
+
                             <td title="{{ $item['realization'] }}">{{ $item['realization'] }}</td>
                         </tr>
                     @endforeach
