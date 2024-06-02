@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RencanaStrategis\AddEvaluationRequest;
+use App\Http\Requests\RencanaStrategis\AddTargetRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Http\Requests\RencanaStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 use App\Models\RSEvaluation;
 use App\Models\Kegiatan;
 use App\Models\RSPeriod;
+use App\Models\RSTarget;
 use App\Models\RSYear;
 use App\Models\Unit;
 
@@ -678,6 +680,60 @@ class RencanaStrategisController extends Controller
 
             $evaluation->save();
         }
+
+        return back();
+    }
+
+    public function addTarget(AddTargetRequest $request, $ikId, $unitId)
+    {
+        $ik = IndikatorKinerja::findOrFail($ikId);
+        $unit = Unit::findOrFail($unitId);
+
+        $target = null;
+        if (isset($request['target'])) {
+            $target = $request['target'][$ikId . '-' . $unitId];
+        }
+
+        $targetInstance = RSTarget::firstOrNew([
+            'indikator_kinerja_id' => $ikId,
+            'unit_id' => $unitId
+        ]);
+
+        if ($target === null && $targetInstance->id !== null) {
+            $targetInstance->forceDelete();
+        } else if ($target !== null) {
+            $targetInstance->target = $target;
+            $targetInstance->save();
+        }
+
+        $allTarget = RSTarget::whereBelongsTo($ik)
+            ->get();
+
+        $sumAllTarget = $allTarget->sum('target');
+        $countAllTarget = $allTarget->count();
+
+        $evaluation = RSEvaluation::firstOrNew([
+            'indikator_kinerja_id' => $ikId
+        ]);
+
+        if ($ik->type === 'persen') {
+            $sumAllTarget = $countAllTarget !== 0 ? $sumAllTarget / $countAllTarget : 0;
+        }
+
+        $realization = RSAchievement::whereBelongsTo($ik)
+            ->whereNull(['period_id', 'unit_id'])
+            ->first();
+
+        $evaluation->target = $sumAllTarget;
+
+        $evaluation->status = false;
+        if ($realization === null) {
+            if ((float) $evaluation->realization >= $sumAllTarget) {
+                $evaluation->status = true;
+            }
+        }
+
+        $evaluation->save();
 
         return back();
     }

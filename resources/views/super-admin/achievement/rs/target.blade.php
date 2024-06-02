@@ -60,7 +60,9 @@
                                     <span title="{{ $ik['type'] }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ik['type'] }}</span>
                                 </td>
 
-                                <td title="{{ $ik['all_target'] }}" class="min-w-72 w-max text-left">{{ $ik['all_target'] }}</td>
+                                <td title="{{ $ik['all_target'] }}" class="min-w-72 w-max">
+                                    <div class="py-1.5">{{ $ik['all_target'] }}</div>
+                                </td>
 
                                 @php
                                     $target = collect($ik['target']);
@@ -69,6 +71,9 @@
                                 @foreach ($units as $unit)
                                     @php
                                         $exists = $target->where('unit_id', $unit['id'])->first();
+                                        $targetRoute = url(route('super-admin-achievement-rs-target-add', ['ik' => $ik['id'], 'unit' => $unit['id']]));
+                                        $inputName = 'target[' . $ik['id'] . '-' . $unit['id'] . ']';
+                                        $errorName = 'target.' . $ik['id'] . '-' . $unit['id'];
                                     @endphp
 
                                     @if ($exists !== null)
@@ -80,10 +85,13 @@
                                                 <p>{{ $exists['target'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}</p>
                                                 <x-partials.button.edit button onclick="toggleEditForm('{{ $id }}')" style="absolute hidden top-0.5 right-0.5 group-hover:block group-focus:block" />
                                             </div>
-                                            <form id="form-target-{{ $id }}" action="" method="POST" class="hidden flex-col gap-0.5">
+                                            <form id="form-target-{{ $id }}" action="{{ $targetRoute }}" method="POST" class="hidden flex-col gap-0.5">
                                                 @csrf
                                                 <div class="flex-1">
-                                                    <x-partials.input.number name="target-{{ $ik['id'] }}" title="target" value="{{ $exists['target'] }}" />
+                                                    <x-partials.input.number name="{{ $inputName }}" title="target" value="{{ $exists['target'] }}" />
+                                                    @error($errorName)
+                                                        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
+                                                    @enderror
                                                 </div>
                                                 <div class="ml-auto flex items-center justify-end gap-0.5">
                                                     <x-partials.button.edit />
@@ -93,10 +101,13 @@
                                         </td>
                                     @else
                                         <td>
-                                            <form action="" method="POST" class="flex items-center gap-1">
+                                            <form action="{{ $targetRoute }}" method="POST" class="flex items-center gap-1">
                                                 @csrf
                                                 <div class="flex-1">
-                                                    <x-partials.input.number name="target-{{ $ik['id'] }}" title="target" required />
+                                                    <x-partials.input.number name="{{ $inputName }}" title="target" required />
+                                                    @error($errorName)
+                                                        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
+                                                    @enderror
                                                 </div>
                                                 <x-partials.button.add text="" submit />
                                             </form>

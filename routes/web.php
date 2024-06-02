@@ -70,6 +70,7 @@ Route::group([
             Route::get('/', 'homeView')->name('super-admin-achievement-rs');
             Route::get('/{id}/detail', 'detailView')->name('super-admin-achievement-rs-detail');
             Route::get('/{year}/target', 'targetView')->name('super-admin-achievement-rs-target');
+            Route::post('/{ik}/{unit}/target', 'addTarget')->name('super-admin-achievement-rs-target-add');
             Route::get('/{id}/status', 'statusToggle')->name('super-admin-achievement-rs-status');
             Route::post('/{id}/evaluation', 'addEvaluation')->name('super-admin-achievement-rs-evaluation');
         });
