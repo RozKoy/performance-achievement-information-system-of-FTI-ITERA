@@ -163,23 +163,19 @@ class RencanaStrategisController extends Controller
                 return $sum;
             });
 
-            if ($year !== $currentYear) {
-                $unitCount = Unit::where(function (Builder $query) use ($year) {
-                    $query->whereNotNull('deleted_at')
-                        ->whereHas('rencanaStrategis', function (Builder $query) use ($year) {
-                            $query->whereHas('period', function (Builder $query) use ($year) {
-                                $query->whereHas('year', function (Builder $query) use ($year) {
-                                    $query->where('year', $year);
-                                });
+            $unitCount = Unit::where(function (Builder $query) use ($year) {
+                $query->whereNotNull('deleted_at')
+                    ->whereHas('rencanaStrategis', function (Builder $query) use ($year) {
+                        $query->whereHas('period', function (Builder $query) use ($year) {
+                            $query->whereHas('year', function (Builder $query) use ($year) {
+                                $query->where('year', $year);
                             });
                         });
-                })
-                    ->orWhereNull('deleted_at')
-                    ->withTrashed()
-                    ->count();
-            } else {
-                $unitCount = Unit::count();
-            }
+                    });
+            })
+                ->orWhereNull('deleted_at')
+                ->withTrashed()
+                ->count();
 
             if ($periodInstance === null) {
                 $unitCount *= 2;
@@ -344,14 +340,11 @@ class RencanaStrategisController extends Controller
         $unitCount = Unit::where(function (Builder $query) use ($year, $ik) {
             $query->whereNotNull('deleted_at')
                 ->whereHas('rencanaStrategis', function (Builder $query) use ($year, $ik) {
-                    $query->whereHas('indikatorKinerja', function (Builder $query) use ($ik) {
-                        $query->where('id', $ik->id);
-                    })
-                        ->whereHas('period', function (Builder $query) use ($year) {
-                            $query->whereHas('year', function (Builder $query) use ($year) {
-                                $query->where('year', $year);
-                            });
+                    $query->whereHas('period', function (Builder $query) use ($year) {
+                        $query->whereHas('year', function (Builder $query) use ($year) {
+                            $query->where('year', $year);
                         });
+                    });
                 });
         })
             ->orWhereNull('deleted_at')
@@ -446,27 +439,22 @@ class RencanaStrategisController extends Controller
             ->get()
             ->toArray();
 
-        if ($year !== $currentYear) {
-            $units = Unit::where(function (Builder $query) use ($year) {
-                $query->whereNotNull('deleted_at')
-                    ->whereHas('rencanaStrategis', function (Builder $query) use ($year) {
-                        $query->whereHas('period', function (Builder $query) use ($year) {
-                            $query->whereHas('year', function (Builder $query) use ($year) {
-                                $query->where('year', $year);
-                            });
+        $units = Unit::where(function (Builder $query) use ($year) {
+            $query->whereNotNull('deleted_at')
+                ->whereHas('rencanaStrategis', function (Builder $query) use ($year) {
+                    $query->whereHas('period', function (Builder $query) use ($year) {
+                        $query->whereHas('year', function (Builder $query) use ($year) {
+                            $query->where('year', $year);
                         });
                     });
-            })
-                ->orWhereNull('deleted_at')
-                ->select(['short_name', 'name', 'id'])
-                ->withTrashed()
-                ->latest()
-                ->get();
-        } else {
-            $units = Unit::latest()
-                ->select(['short_name', 'name', 'id'])
-                ->get();
-        }
+                });
+        })
+            ->orWhereNull('deleted_at')
+            ->select(['short_name', 'name', 'id'])
+            ->withTrashed()
+            ->latest()
+            ->get()
+            ->toArray();
 
         return view('super-admin.achievement.rs.target', compact([
             'units',
