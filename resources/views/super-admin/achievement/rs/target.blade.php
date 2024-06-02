@@ -4,22 +4,23 @@
             'link' => 'super-admin-achievement-rs',
             'name' => 'Capaian Kinerja - Rencana Strategis',
             'params' => [
-                'year' => '2024',
+                'year' => $year,
             ],
         ],
         [
-            'link' => 'super-admin-achievement-rs-detail',
-            'name' => 'Detail',
+            'link' => 'super-admin-achievement-rs-target',
+            'name' => 'Target ' . $year,
             'params' => [
-                'id' => 'id',
+                'year' => $year,
             ],
         ],
     ];
-    $previousRoute = route('super-admin-achievement-rs', ['year' => '2024']);
+    $previousRoute = route('super-admin-achievement-rs', ['year' => $year]);
+    $heading = "target $year - rencana strategis";
 @endphp
 <x-super-admin-template title="Renstra - Capaian Kinerja - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="target 2024 - rencana strategis" :$previousRoute />
+    <x-partials.heading.h2 :text="$heading" :$previousRoute />
 
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
@@ -29,7 +30,7 @@
                     <th title="Sasaran strategis">Sasaran Strategis</th>
                     <th title="Kegiatan">Kegiatan</th>
                     <th title="Indikator kinerja">Indikator Kinerja</th>
-                    <th title="Target 2024">Target 2024</th>
+                    <th title="Target {{ $year }}">Target {{ $year }}</th>
                     @foreach ($units as $unit)
                         <th title="{{ $unit['name'] }}">{{ $unit['short_name'] }}</th>
                     @endforeach

@@ -446,6 +446,7 @@ class RencanaStrategisController extends Controller
         return view('super-admin.achievement.rs.target', compact([
             'units',
             'data',
+            'year',
         ]));
     }
 
@@ -716,7 +717,7 @@ class RencanaStrategisController extends Controller
         $evaluation->target = $sumAllTarget;
 
         $evaluation->status = false;
-        if ($realization === null) {
+        if ($realization !== null) {
             if ((float) $evaluation->realization >= $sumAllTarget) {
                 $evaluation->status = true;
             }
