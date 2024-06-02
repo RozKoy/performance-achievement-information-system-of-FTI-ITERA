@@ -20,7 +20,7 @@ use App\Models\RSTarget;
 use App\Models\RSYear;
 use App\Models\Unit;
 
-class RencanaStrategisController extends Controller
+class RSController extends Controller
 {
     /*
     | -----------------------------------------------------------------

@@ -4,13 +4,13 @@ use App\Http\Controllers\IndikatorKinerjaKegiatanController;
 use App\Http\Controllers\IndikatorKinerjaProgramController;
 use App\Http\Controllers\IndikatorKinerjaController;
 use App\Http\Controllers\ProgramStrategisController;
-use App\Http\Controllers\RencanaStrategisController;
 use App\Http\Controllers\SasaranStrategisController;
 use App\Http\Controllers\SasaranKegiatanController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RSController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -65,7 +65,7 @@ Route::group([
 
         Route::group([
             'prefix' => '/rencana-strategis',
-            'controller' => RencanaStrategisController::class
+            'controller' => RSController::class
         ], function () {
             Route::get('/', 'homeView')->name('super-admin-achievement-rs');
             Route::get('/{id}/detail', 'detailView')->name('super-admin-achievement-rs-detail');
@@ -215,14 +215,14 @@ Route::group([
         return view('admin.home');
     })->name('admin-dashboard');
 
-    Route::get('/rencana-strategis', [RencanaStrategisController::class, 'homeViewAdmin'])->name('admin-rs');
-    Route::post('/rencana-strategis/{period}/{ik}', [RencanaStrategisController::class, 'addAdmin'])->name('admin-rs-add');
+    Route::get('/rencana-strategis', [RSController::class, 'homeViewAdmin'])->name('admin-rs');
+    Route::post('/rencana-strategis/{period}/{ik}', [RSController::class, 'addAdmin'])->name('admin-rs-add');
 
     Route::view('/indikator-kinerja-utama', 'admin.iku.home')->name('admin-iku');
 
     Route::group([
         'prefix' => '/riwayat',
-        'controller' => RencanaStrategisController::class
+        'controller' => RSController::class
     ], function () {
         Route::get('/', function () {
             return redirect()->route('admin-history-rs');
