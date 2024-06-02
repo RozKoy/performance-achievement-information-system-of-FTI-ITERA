@@ -19,6 +19,8 @@ class SuperAdmin
             if (auth()->user()->role === 'super admin') {
                 return $next($request);
             }
+
+            auth()->logout();
         }
 
         return redirect()->route('login');

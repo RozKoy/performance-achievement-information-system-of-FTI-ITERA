@@ -19,6 +19,8 @@ class Admin
             if (auth()->user()->role === 'admin' && auth()->user()->unit()->exists()) {
                 return $next($request);
             }
+
+            auth()->logout();
         }
 
         return redirect()->route('login');
