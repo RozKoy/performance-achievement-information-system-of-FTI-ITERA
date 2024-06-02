@@ -443,17 +443,6 @@ class RencanaStrategisController extends Controller
                 ->get();
         }
 
-        $test = collect([
-            [
-                'id' => '1',
-                'name' => 'haii',
-            ],
-            [
-                'id' => '2',
-                'name' => 'hahah',
-            ],
-        ]);
-
         return view('super-admin.achievement.rs.target', compact([
             'units',
             'data',
