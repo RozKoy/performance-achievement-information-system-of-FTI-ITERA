@@ -5,10 +5,6 @@
             'name' => 'Capaian Kinerja - Indikator Kinerja Utama',
         ],
     ];
-    $system = 'active';
-    $years = ['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'];
-    $year = request()->query('year') !== null ? request()->query('year') : \Carbon\Carbon::now()->format('Y');
-    $badge = [$year];
 @endphp
 <x-super-admin-template title="IKU - Capaian Kinerja - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
@@ -18,17 +14,13 @@
     </div>
     <x-partials.heading.h2 text="capaian kinerja - indikator kinerja utama" />
     <div class="flex gap-1.5 max-lg:flex-wrap sm:gap-3">
-        <x-partials.search.default />
         <x-partials.badge.time :data="$badge" />
         <x-partials.button.filter />
+        <a href="#" title="Tombol target capaian" class="flex items-center gap-1 rounded-lg bg-blue-500 px-2 py-1.5 text-center text-xs text-white hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 max-sm:w-fit sm:text-sm">
+            Target
+        </a>
     </div>
-    <div class="flex flex-wrap items-center justify-between">
-        <div class="flex items-center justify-center">
-            <label title="Tombol power [status: {{ $system === 'active' ? 'Aktif' : 'Tidak aktif' }}]" class="relative inline-flex items-center">
-                <input type="checkbox" value="{{ $system }}" class="peer sr-only" @if ($system === 'active') checked @endif>
-                <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 peer-disabled:cursor-not-allowed peer-disabled:bg-slate-300 peer-disabled:after:border-slate-300 rtl:peer-checked:after:-translate-x-full"></div>
-            </label>
-        </div>
+    <div class="flex flex-wrap items-center justify-end">
         <button title="Unduh Excel" type="button" class="flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
             <img src="{{ url(asset('storage/assets/icons/excel.png')) }}" alt="Excel" class="w-7 max-md:w-6">
             Unduh
@@ -39,6 +31,17 @@
                 </g>
             </svg>
         </button>
+    </div>
+    <div class="flex flex-wrap items-center justify-start gap-1.5">
+        @foreach ($periods as $period)
+            <div class="{{ $period['status'] === 1 ? 'bg-green-200 text-green-500' : 'bg-red-200 text-red-500' }} flex items-center gap-1 rounded-lg px-1.5 py-1 text-xs md:text-sm">
+                <p>{{ $period['title'] }}</p>
+                <label title="Tombol power [status: {{ $period['status'] === 1 ? 'Aktif' : 'Tidak aktif' }}]" class="relative inline-flex items-center">
+                    <input type="checkbox" value="{{ $period['status'] === 1 }}" class="peer sr-only" @checked($period['status'] === 1) disabled>
+                    <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
+                </label>
+            </div>
+        @endforeach
     </div>
     @php
         $data = [

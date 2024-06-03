@@ -10,6 +10,7 @@ use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\IKUController;
 use App\Http\Controllers\RSController;
 use Illuminate\Support\Facades\Route;
 
@@ -75,8 +76,14 @@ Route::group([
             Route::post('/{id}/evaluation', 'addEvaluation')->name('super-admin-achievement-rs-evaluation');
         });
 
-        Route::view('/indikator-kinerja-utama', 'super-admin.achievement.iku.home')->name('super-admin-achievement-iku');
-        Route::view('/indikator-kinerja-utama/{id}/detail', 'super-admin.achievement.iku.detail')->name('super-admin-achievement-iku-detail');
+        Route::group([
+            'prefix' => '/indikator-kinerja-utama',
+            'controller' => IKUController::class
+        ], function () {
+            Route::get('/', 'homeView')->name('super-admin-achievement-iku');
+            Route::view('/{id}/detail', 'super-admin.achievement.iku.detail')->name('super-admin-achievement-iku-detail');
+        });
+
     });
 
     Route::group([
