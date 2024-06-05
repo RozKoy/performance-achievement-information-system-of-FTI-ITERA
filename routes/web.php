@@ -225,7 +225,7 @@ Route::group([
     Route::get('/rencana-strategis', [RSController::class, 'homeViewAdmin'])->name('admin-rs');
     Route::post('/rencana-strategis/{period}/{ik}', [RSController::class, 'addAdmin'])->name('admin-rs-add');
 
-    Route::view('/indikator-kinerja-utama', 'admin.iku.home')->name('admin-iku');
+    Route::get('/indikator-kinerja-utama', [IKUController::class, 'homeViewAdmin'])->name('admin-iku');
 
     Route::group([
         'prefix' => '/riwayat',

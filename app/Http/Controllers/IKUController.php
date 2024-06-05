@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Models\IKUPeriod;
@@ -100,5 +102,166 @@ class IKUController extends Controller
         if ($temp->id === null) {
             $temp->save();
         }
+    }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | ADMIN
+    | -----------------------------------------------------------------
+    */
+
+    public function homeViewAdmin(Request $request)
+    {
+        if (!is_numeric($request->year) && isset($request->year)) {
+            abort(404);
+        }
+        if (!in_array($request->period, ['1', '2', '3', '4']) && isset($request->period)) {
+            abort(404);
+        }
+
+        $currentMonth = (int) Carbon::now()->format('m');
+        $currentYear = Carbon::now()->format('Y');
+        $currentPeriod = '1';
+
+        foreach ([3, 6, 9, 12] as $key => $value) {
+            if ($currentMonth <= $value) {
+                $temp = $key + 1;
+                $currentPeriod = "$temp";
+
+                break;
+            }
+        }
+
+        $years = IKUPeriod::where('status', true)
+            ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
+                $query->where('period', $currentPeriod)
+                    ->whereHas('year', function (Builder $query) use ($currentYear) {
+                        $query->where('year', $currentYear);
+                    });
+            })
+            ->withAggregate('year AS year', 'year')
+            ->orderBy('year')
+            ->pluck('year')
+            ->flatten()
+            ->unique()
+            ->toArray();
+
+        $periods = [];
+        $badge = [];
+        $period = '';
+        $year = '';
+
+        if (count($years)) {
+            $year = isset($request->year) ? $request->year : end($years);
+            $yearInstance = IKUYear::where('year', $year)->firstOrFail();
+
+            $periods = $yearInstance->periods()
+                ->where('status', true)
+                ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
+                    $query->where('period', $currentPeriod)
+                        ->whereHas('year', function (Builder $query) use ($currentYear) {
+                            $query->where('year', $currentYear);
+                        });
+                })
+                ->orderBy('period')
+                ->pluck('period');
+
+
+            $periods = $periods->map(function ($item) {
+                $title = 'TW 1 | Jan - Mar';
+                if ($item === '2') {
+                    $title = 'TW 2 | Apr - Jun';
+                } else if ($item === '3') {
+                    $title = 'TW 3 | Jul - Sep';
+                } else if ($item === '4') {
+                    $title = 'TW 4 | Okt - Des';
+                }
+
+                return [
+                    'title' => $title,
+                    'value' => $item,
+                ];
+            });
+
+            $period = isset($request->period) ? $request->period : $periods->last()['value'];
+            $periodInstance = IKUPeriod::where('status', true)
+                ->where('year_id', $yearInstance->id)
+                ->where('period', $period)
+                ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
+                    $query->where('period', $currentPeriod)
+                        ->whereHas('year', function (Builder $query) use ($currentYear) {
+                            $query->where('year', $currentYear);
+                        });
+                })
+                ->firstOrFail();
+
+            $data = $yearInstance->sasaranKegiatan()
+                ->whereHas('indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram', function (Builder $query) {
+                    $query->where('status', 'aktif');
+                })
+                ->with([
+                    'indikatorKinerjaKegiatan' => function (HasMany $query) {
+                        $query->whereHas('programStrategis.indikatorKinerjaProgram', function (Builder $query) {
+                            $query->where('status', 'aktif');
+                        })
+                            ->orderBy('number')
+                            ->select(['sasaran_kegiatan_id', 'name AS ikk', 'id']);
+                    },
+                    'indikatorKinerjaKegiatan.programStrategis' => function (HasMany $query) {
+                        $query->whereHas('indikatorKinerjaProgram', function (Builder $query) {
+                            $query->where('status', 'aktif');
+                        })
+                            ->orderBy('number')
+                            ->select(['indikator_kinerja_kegiatan_id', 'name AS ps', 'id'])
+                            ->withCount([
+                                'indikatorKinerjaProgram AS rowspan' => function (Builder $query) {
+                                    $query->where('status', 'aktif');
+                                }
+                            ]);
+                    },
+                    'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram' => function (HasMany $query) {
+                        $query->where('status', 'aktif')
+                            ->orderBy('number')
+                            ->select(['program_strategis_id', 'name AS ikp', 'definition', 'type', 'id']);
+                    },
+                ])
+                ->orderBy('number')
+                ->select(['id', 'number', 'name AS sk'])
+                ->get();
+
+            $data = $data->map(function ($item) {
+                $temp = $item->indikatorKinerjaKegiatan->map(function ($item) {
+                    return [
+                        ...$item->toArray(),
+
+                        'rowspan' => $item->programStrategis->sum('rowspan')
+                    ];
+                });
+
+                return [
+                    ...$item->only(['number', 'sk', 'id']),
+
+                    'indikator_kinerja_kegiatan' => $temp->toArray(),
+                    'rowspan' => $temp->sum('rowspan'),
+                ];
+            });
+
+            $data = $data->toArray();
+
+            $periodReq = $periods->firstWhere('value', $period);
+            $badge = [$periodReq['title'], $year];
+
+            $periods = $periods->toArray();
+        }
+
+        return view('admin.iku.home', compact([
+            'periods',
+            'period',
+            'badge',
+            'years',
+            'year',
+            'data',
+        ]));
     }
 }
