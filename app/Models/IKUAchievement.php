@@ -29,4 +29,9 @@ class IKUAchievement extends Model
     {
         return $this->belongsTo(IKUPeriod::class);
     }
+
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
+    }
 }
