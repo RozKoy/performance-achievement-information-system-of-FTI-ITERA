@@ -37,4 +37,9 @@ class IKUPeriod extends Model
     {
         return $this->belongsTo(IKUPeriod::class);
     }
+
+    public function achievements(): HasMany
+    {
+        return $this->hasMany(IKUAchievement::class, 'period_id');
+    }
 }

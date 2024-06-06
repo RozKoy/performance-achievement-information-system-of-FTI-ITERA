@@ -24,4 +24,9 @@ class IKUAchievement extends Model
     {
         return $this->belongsTo(IndikatorKinerjaProgram::class);
     }
+
+    public function period(): BelongsTo
+    {
+        return $this->belongsTo(IKUPeriod::class);
+    }
 }
