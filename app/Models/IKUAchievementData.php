@@ -25,4 +25,9 @@ class IKUAchievementData extends Model
     {
         return $this->belongsTo(IKUAchievement::class);
     }
+
+    public function column(): BelongsTo
+    {
+        return $this->belongsTo(IKPColumn::class);
+    }
 }
