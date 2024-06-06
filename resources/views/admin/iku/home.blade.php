@@ -59,7 +59,7 @@
                                         <td title="{{ $ikp['definition'] }}">{{ $ikp['definition'] }}</td>
 
                                         <td class="flex items-start justify-center gap-1">
-                                            <x-partials.button.detail link="/" />
+                                            <x-partials.button.detail link="{{ route('admin-iku-detail', ['id' => $ikp['id']]) }}" />
                                         </td>
 
                                     </tr>

@@ -226,6 +226,7 @@ Route::group([
     Route::post('/rencana-strategis/{period}/{ik}', [RSController::class, 'addAdmin'])->name('admin-rs-add');
 
     Route::get('/indikator-kinerja-utama', [IKUController::class, 'homeViewAdmin'])->name('admin-iku');
+    Route::get('/indikator-kinerja-utama/{id}/detail', [IKUController::class, 'detailViewAdmin'])->name('admin-iku-detail');
 
     Route::group([
         'prefix' => '/riwayat',

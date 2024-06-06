@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SasaranKegiatan;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\IndikatorKinerjaKegiatan;
+use App\Models\IndikatorKinerjaProgram;
+use App\Models\ProgramStrategis;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Models\IKUPeriod;
@@ -262,6 +266,105 @@ class IKUController extends Controller
             'years',
             'year',
             'data',
+        ]));
+    }
+
+    public function detailViewAdmin(Request $request, $ikpId)
+    {
+        if (isset($request->period) && !in_array($request->period, ['1', '2', '3', '4'])) {
+            abort(404);
+        }
+
+        $ikp = IndikatorKinerjaProgram::with('columns')
+            ->whereKey($ikpId)
+            ->where('status', 'aktif')
+            ->firstOrFail();
+
+        $ps = ProgramStrategis::findOrFail($ikp->programStrategis->id);
+        $ikk = IndikatorKinerjaKegiatan::findOrFail($ps->indikatorKinerjaKegiatan->id);
+        $sk = SasaranKegiatan::findOrFail($ikk->sasaranKegiatan->id);
+        $year = IKUYear::findOrFail($sk->time->id);
+
+        $currentMonth = (int) Carbon::now()->format('m');
+        $currentYear = Carbon::now()->format('Y');
+        $currentPeriod = '1';
+
+        foreach ([3, 6, 9, 12] as $key => $value) {
+            if ($currentMonth <= $value) {
+                $temp = $key + 1;
+                $currentPeriod = "$temp";
+
+                break;
+            }
+        }
+
+        $periods = $year->periods()
+            ->where('status', true)
+            ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
+                $query->where('period', $currentPeriod)
+                    ->whereHas('year', function (Builder $query) use ($currentYear) {
+                        $query->where('year', $currentYear);
+                    });
+            })
+            ->orderBy('period')
+            ->pluck('period');
+
+        if (!count($periods)) {
+            abort(404);
+        }
+
+        $periods = $periods->map(function ($item) {
+            $title = 'TW 1 | Jan - Mar';
+            if ($item === '2') {
+                $title = 'TW 2 | Apr - Jun';
+            } else if ($item === '3') {
+                $title = 'TW 3 | Jul - Sep';
+            } else if ($item === '4') {
+                $title = 'TW 4 | Okt - Des';
+            }
+
+            return [
+                'title' => $title,
+                'value' => $item,
+            ];
+        });
+
+        $period = isset($request->period) ? $request->period : $periods->last()['value'];
+        $periodInstance = IKUPeriod::where('status', true)
+            ->where('year_id', $year->id)
+            ->where('period', $period)
+            ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
+                $query->where('period', $currentPeriod)
+                    ->whereHas('year', function (Builder $query) use ($currentYear) {
+                        $query->where('year', $currentYear);
+                    });
+            })
+            ->firstOrFail();
+
+        $badge = [$periods->firstWhere('value', $period)['title'], $year->year];
+
+        $periods = $periods->toArray();
+
+        $columns = $ikp->columns()
+            ->select(['image', 'name', 'id'])
+            ->orderBy('number')
+            ->get()
+            ->toArray();
+
+        $sk = $sk->only(['number', 'name', 'id']);
+        $ikk = $ikk->only(['number', 'name', 'id']);
+        $ps = $ps->only(['number', 'name', 'id']);
+        $ikp = $ikp->only(['number', 'name', 'id']);
+
+        return view('admin.iku.detail', compact([
+            'columns',
+            'periods',
+            'period',
+            'badge',
+            'sk',
+            'ikk',
+            'ps',
+            'ikp',
         ]));
     }
 }
