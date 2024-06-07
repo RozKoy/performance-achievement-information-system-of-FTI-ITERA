@@ -101,17 +101,19 @@
                     </svg>
                     <span class="sr-only">Close modal</span>
                 </button>
-                <form action="" method="POST" class="flex flex-col gap-1 p-4 text-primary max-md:text-sm md:p-5">
+                <form action="{{ route('admin-iku-data', ['period' => $period, 'id' => $ikp['id']]) }}" method="POST" class="flex flex-col gap-1 p-4 text-primary max-md:text-sm md:p-5" enctype="multipart/form-data">
+                    @csrf
 
                     <p class="text-base font-semibold md:text-lg xl:text-xl">Tambah Data</p>
 
                     @foreach ($columns as $column)
                         <div>
-                            <x-partials.label.default for="{{ 'data-' . $column['id'] }}" title="{{ $column['name'] }}" text="{{ $column['name'] }}" />
-                            @if ($column['image'] === 0)
+                            @if ($column['file'] === 0)
+                                <x-partials.label.default for="{{ 'data-' . $column['id'] }}" title="{{ $column['name'] }}" text="{{ $column['name'] }}" />
                                 <x-partials.input.text name="{{ 'data-' . $column['id'] }}" title="{{ $column['name'] }}" />
                             @else
-                                <input type="file" id="{{ 'data-' . $column['id'] }}" name="{{ 'data-' . $column['id'] }}">
+                                <x-partials.label.default for="{{ 'file-' . $column['id'] }}" title="{{ $column['name'] }}" text="{{ $column['name'] }}" />
+                                <input type="file" id="{{ 'file-' . $column['id'] }}" name="{{ 'file-' . $column['id'] }}">
                             @endif
                         </div>
                     @endforeach

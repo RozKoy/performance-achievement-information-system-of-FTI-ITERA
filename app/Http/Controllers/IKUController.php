@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SasaranKegiatan;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerjaKegiatan;
 use App\Models\IndikatorKinerjaProgram;
 use App\Models\ProgramStrategis;
+use App\Models\SasaranKegiatan;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Models\IKUPeriod;
@@ -346,7 +346,7 @@ class IKUController extends Controller
         $periods = $periods->toArray();
 
         $columns = $ikp->columns()
-            ->select(['image', 'name', 'id'])
+            ->select(['file', 'name', 'id'])
             ->orderBy('number')
             ->get()
             ->toArray();
