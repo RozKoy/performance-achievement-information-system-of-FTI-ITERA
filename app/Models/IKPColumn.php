@@ -17,7 +17,7 @@ class IKPColumn extends Model
 
     protected $fillable = [
         'number',
-        'image',
+        'file',
         'name',
 
         'indikator_kinerja_program_id',

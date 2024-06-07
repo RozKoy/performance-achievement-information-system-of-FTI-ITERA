@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('ikp_columns', function (Blueprint $table) {
             $table->uuid('id');
 
-            $table->boolean('image')->default(false);
+            $table->boolean('file')->default(false);
             $table->unsignedInteger('number');
             $table->string('name', 500);
 
