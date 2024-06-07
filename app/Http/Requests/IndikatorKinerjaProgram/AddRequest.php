@@ -28,7 +28,7 @@ class AddRequest extends FormRequest
             'type' => ['bail', 'required', 'in:iku,ikt'],
             'name' => ['bail', 'required', 'max:65000'],
             'columns' => ['bail', 'required', 'array'],
-            'image' => ['bail', 'nullable', 'max:500'],
+            'file' => ['bail', 'nullable', 'max:500'],
         ];
     }
 
@@ -41,7 +41,7 @@ class AddRequest extends FormRequest
             'columns.*' => 'Kolom',
             'columns' => 'Kolom',
             'number' => 'Nomor',
-            'image' => 'Gambar',
+            'file' => 'File',
         ];
     }
 

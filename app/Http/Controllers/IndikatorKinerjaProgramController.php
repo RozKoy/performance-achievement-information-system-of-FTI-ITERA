@@ -30,7 +30,7 @@ class IndikatorKinerjaProgramController extends Controller
 
         $data = $ps->indikatorKinerjaProgram()->select(['id', 'name', 'type', 'status', 'number', 'definition'])
             ->where(function (Builder $query) use ($request) {
-                if (isset ($request->search)) {
+                if (isset($request->search)) {
                     $query->where('name', 'LIKE', "%{$request->search}%")
                         ->orWhere('definition', 'LIKE', "%{$request->search}%")
                         ->orWhere('number', $request->search)
@@ -103,7 +103,7 @@ class IndikatorKinerjaProgramController extends Controller
                 ->increment('number');
         }
 
-        $ikp = new IndikatorKinerjaProgram($request->safe()->except('columns', 'image'));
+        $ikp = new IndikatorKinerjaProgram($request->safe()->except('columns', 'file'));
 
         $ikp->programStrategis()->associate($ps);
         $ikp->status = 'aktif';
@@ -120,11 +120,11 @@ class IndikatorKinerjaProgramController extends Controller
             $index++;
         }
 
-        if ($request['image'] !== null) {
+        if ($request['file'] !== null) {
             $ikp->columns()->create([
-                'name' => $request['image'],
+                'name' => $request['file'],
                 'number' => $index,
-                'image' => true
+                'file' => true
             ]);
         }
 

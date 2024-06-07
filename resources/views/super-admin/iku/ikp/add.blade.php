@@ -91,10 +91,10 @@
             </div>
         </div>
         <div class="flex flex-1 flex-col gap-2">
-            <x-partials.label.default for="image" title="Kolom gambar" text="Kolom Gambar" />
+            <x-partials.label.default for="file" title="Kolom file" text="Kolom File" />
             <div>
-                <x-partials.input.text name="image" title="Kolom gambar" value="{{ old('image') }}" />
-                <p class="text-xs font-bold text-red-400">*Kosongkan kolom gambar jika tidak digunakan</p>
+                <x-partials.input.text name="file" title="Kolom file" value="{{ old('file') }}" />
+                <p class="text-xs font-bold text-red-400">*Kosongkan kolom file jika tidak digunakan</p>
             </div>
         </div>
         <x-partials.button.add submit />
