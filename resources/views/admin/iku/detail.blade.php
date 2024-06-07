@@ -31,6 +31,9 @@
             Tambah Data
         </button>
     </div>
+    @error('input')
+        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
+    @enderror
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>

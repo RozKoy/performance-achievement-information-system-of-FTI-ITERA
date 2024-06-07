@@ -227,6 +227,7 @@ Route::group([
 
     Route::get('/indikator-kinerja-utama', [IKUController::class, 'homeViewAdmin'])->name('admin-iku');
     Route::get('/indikator-kinerja-utama/{id}/detail', [IKUController::class, 'detailViewAdmin'])->name('admin-iku-detail');
+    Route::post('/indikator-kinerja-utama/{period}/{id}/data', [IKUController::class, 'addData'])->name('admin-iku-data');
 
     Route::group([
         'prefix' => '/riwayat',
