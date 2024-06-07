@@ -12,7 +12,7 @@ class IKUAchievementData extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
-    protected $table = '';
+    protected $table = 'iku_achievement_data';
 
     protected $fillable = [
         'data',
