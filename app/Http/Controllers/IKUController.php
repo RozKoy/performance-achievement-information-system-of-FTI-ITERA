@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use App\Models\IKPColumn;
 use App\Models\IKUPeriod;
 use App\Models\IKUYear;
+use App\Models\Unit;
 
 class IKUController extends Controller
 {
@@ -94,6 +95,79 @@ class IKUController extends Controller
             'periods',
             'badge',
             'years',
+            'year',
+        ]));
+    }
+
+    public function targetView($year)
+    {
+        $yearInstance = IKUYear::where('year', $year)
+            ->firstOrFail();
+
+        $currentYear = Carbon::now()->format('Y');
+
+        $data = $yearInstance->sasaranKegiatan()
+            ->with([
+                'indikatorKinerjaKegiatan' => function (HasMany $query) {
+                    $query->orderBy('number')
+                        ->select(['sasaran_kegiatan_id', 'name AS ikk', 'id']);
+                },
+                'indikatorKinerjaKegiatan.programStrategis' => function (HasMany $query) {
+                    $query->orderBy('number')
+                        ->select(['indikator_kinerja_kegiatan_id', 'name AS ps', 'id'])
+                        ->withCount('indikatorKinerjaProgram AS rowspan');
+                },
+                'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram' => function (HasMany $query) {
+                    $query->orderBy('number')
+                        ->select(['program_strategis_id', 'name AS ikp', 'definition', 'type', 'id'])
+                        ->with('target', function (HasMany $query) {
+                            $query->select(['indikator_kinerja_program_id', 'unit_id', 'target', 'id']);
+                        });
+                },
+            ])
+            ->orderBy('number')
+            ->select(['id', 'number', 'name AS sk'])
+            ->get();
+
+        $data = $data->map(function ($item) {
+            $temp = $item->indikatorKinerjaKegiatan->map(function ($item) {
+                return [
+                    ...$item->toArray(),
+
+                    'rowspan' => $item->programStrategis->sum('rowspan')
+                ];
+            });
+
+            return [
+                ...$item->only(['number', 'sk', 'id']),
+
+                'indikator_kinerja_kegiatan' => $temp->toArray(),
+                'rowspan' => $temp->sum('rowspan'),
+            ];
+        });
+
+        $data = $data->toArray();
+
+        $units = Unit::where(function (Builder $query) use ($year) {
+            $query->whereNotNull('deleted_at')
+                ->whereHas('indikatorKinerjaUtama', function (Builder $query) use ($year) {
+                    $query->whereHas('period', function (Builder $query) use ($year) {
+                        $query->whereHas('year', function (Builder $query) use ($year) {
+                            $query->where('year', $year);
+                        });
+                    });
+                });
+        })
+            ->orWhereNull('deleted_at')
+            ->select(['short_name', 'name', 'id'])
+            ->withTrashed()
+            ->latest()
+            ->get()
+            ->toArray();
+
+        return view('super-admin.achievement.iku.target', compact([
+            'units',
+            'data',
             'year',
         ]));
     }
