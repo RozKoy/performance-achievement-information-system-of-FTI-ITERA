@@ -38,4 +38,9 @@ class IndikatorKinerjaProgram extends Model
     {
         return $this->hasMany(IKUAchievement::class);
     }
+
+    public function target(): HasMany
+    {
+        return $this->hasMany(IKUTarget::class);
+    }
 }

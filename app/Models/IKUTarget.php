@@ -21,6 +21,11 @@ class IKUTarget extends Model
         'unit_id',
     ];
 
+    public function indikatorKinerjaProgram(): BelongsTo
+    {
+        return $this->belongsTo(IndikatorKinerjaProgram::class);
+    }
+
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
