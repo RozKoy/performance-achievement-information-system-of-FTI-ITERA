@@ -36,4 +36,9 @@ class Unit extends Model
     {
         return $this->hasMany(IKUAchievement::class);
     }
+
+    public function indikatorKinerjaUtamaTarget(): HasMany
+    {
+        return $this->hasMany(IKUTarget::class);
+    }
 }
