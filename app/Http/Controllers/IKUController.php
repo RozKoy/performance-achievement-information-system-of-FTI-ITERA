@@ -345,13 +345,19 @@ class IKUController extends Controller
             })
             ->firstOrFail();
 
-        $badge = [$periods->firstWhere('value', $period)['title'], $year->year];
-
-        $periods = $periods->toArray();
-
         $columns = $ikp->columns()
             ->select(['file', 'name', 'id'])
             ->orderBy('number')
+            ->get()
+            ->toArray();
+
+        $data = $periodInstance->achievements()
+            ->with('data', function (HasMany $query) {
+                $query->select(['achievement_id', 'column_id', 'data'])
+                    ->withAggregate('column AS file', 'file');
+            })
+            ->select('id')
+            ->latest()
             ->get()
             ->toArray();
 
@@ -360,15 +366,19 @@ class IKUController extends Controller
         $ps = $ps->only(['number', 'name', 'id']);
         $ikp = $ikp->only(['number', 'name', 'id']);
 
+        $badge = [$periods->firstWhere('value', $period)['title'], $year->year];
+        $periods = $periods->toArray();
+
         return view('admin.iku.detail', compact([
             'columns',
             'periods',
             'period',
             'badge',
-            'sk',
+            'data',
             'ikk',
-            'ps',
             'ikp',
+            'ps',
+            'sk',
         ]));
     }
 

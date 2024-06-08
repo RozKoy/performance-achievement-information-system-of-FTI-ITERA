@@ -12,7 +12,6 @@
             ],
         ],
     ];
-    $data = [];
 @endphp
 <x-admin-template title="IKU - Capaian Kinerja - Teknik Informatika">
     <x-partials.breadcrumbs.default :$breadCrumbs admin />
@@ -49,43 +48,44 @@
                 </tr>
             </thead>
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
-                @foreach ($data as $sk)
-                    @foreach ($sk['indikator_kinerja_kegiatan'] as $ikk)
-                        @foreach ($ikk['program_strategis'] as $ps)
-                            @foreach ($ps['indikator_kinerja_program'] as $ikp)
-                                <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
+                @foreach ($data as $item)
+                    @php
+                        $deleteData = [
+                            'nomor' => $loop->iteration,
+                        ];
+                    @endphp
+                    <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
 
-                                    @if ($loop->iteration === 1)
-                                        @if ($loop->parent->iteration === 1)
-                                            @if ($loop->parent->parent->iteration === 1)
-                                                <td title="{{ $loop->parent->parent->parent->iteration }}" rowspan="{{ $sk['rowspan'] }}">{{ $loop->parent->parent->parent->iteration }}</td>
+                        <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
 
-                                                <td title="{{ $sk['sk'] }}" rowspan="{{ $sk['rowspan'] }}" class="min-w-72 w-max text-left">{{ $sk['sk'] }}</td>
-                                            @endif
-
-                                            <td title="{{ $ikk['ikk'] }}" rowspan="{{ $ikk['rowspan'] }}" class="min-w-72 w-max text-left">{{ $ikk['ikk'] }}</td>
-                                        @endif
-
-                                        <td title="{{ $ps['ps'] }}" rowspan="{{ $ps['rowspan'] }}" class="min-w-72 w-max text-left">{{ $ps['ps'] }}</td>
-                                    @endif
-
-                                    <td title="{{ $ikp['ikp'] }}" class="min-w-72 group relative z-10 w-max text-left">
-                                        {{ $ikp['ikp'] }}
-                                        <span title="{{ $ikp['type'] === 'iku' ? 'Indikator kinerja utama' : 'Indikator kinerja tambahan' }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ikp['type'] }}</span>
+                        @php
+                            $dataCollection = collect($item['data']);
+                        @endphp
+                        @foreach ($columns as $column)
+                            @php
+                                $dataFind = $dataCollection->firstWhere('column_id', $column['id']);
+                            @endphp
+                            @if ($dataFind !== null)
+                                @php
+                                    $deleteData[$column['name']] = $dataFind['data'];
+                                @endphp
+                                @if ($dataFind['file'])
+                                    <td>
+                                        <a href="{{ url(asset('storage/' . $dataFind['data'])) }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-primary hover:text-primary/75" download>Unduh</a>
                                     </td>
-
-                                    <td title="{{ $ikp['definition'] }}" class="min-w-72 w-max text-left">{{ $ikp['definition'] }}</td>
-
-                                    <td title="{{ $ikp['definition'] }}">{{ $ikp['definition'] }}</td>
-
-                                    <td class="flex items-start justify-center gap-1">
-                                        <x-partials.button.detail link="/" />
-                                    </td>
-
-                                </tr>
-                            @endforeach
+                                @else
+                                    <td title="{{ $dataFind['data'] }}">{{ $dataFind['data'] }}</td>
+                                @endif
+                            @else
+                                <td></td>
+                            @endif
                         @endforeach
-                    @endforeach
+
+                        <td class="flex items-start justify-center gap-1">
+                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
+                        </td>
+
+                    </tr>
                 @endforeach
             </tbody>
         </table>
@@ -94,6 +94,8 @@
     @if (!count($data))
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Belum ada data</p>
     @endif
+
+    <x-partials.modal.delete id="delete-modal" />
 
     <div id="add-modal" tabindex="-1" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
         <div class="relative max-h-full w-full max-w-md p-4">
