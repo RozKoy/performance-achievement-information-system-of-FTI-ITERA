@@ -356,6 +356,8 @@ class IKUController extends Controller
                 $query->select(['achievement_id', 'column_id', 'data'])
                     ->withAggregate('column AS file', 'file');
             })
+            ->whereBelongsTo(auth()->user()->unit)
+            ->whereBelongsTo($ikp)
             ->select('id')
             ->latest()
             ->get()
