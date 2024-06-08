@@ -231,7 +231,12 @@ class IKUController extends Controller
                     'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram' => function (HasMany $query) {
                         $query->where('status', 'aktif')
                             ->orderBy('number')
-                            ->select(['program_strategis_id', 'name AS ikp', 'definition', 'type', 'id']);
+                            ->select(['program_strategis_id', 'name AS ikp', 'definition', 'type', 'id'])
+                            ->withCount([
+                                'achievements AS achievements' => function (Builder $query) {
+                                    $query->whereBelongsTo(auth()->user()->unit);
+                                }
+                            ]);
                     },
                 ])
                 ->orderBy('number')

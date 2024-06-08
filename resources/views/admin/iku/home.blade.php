@@ -56,10 +56,10 @@
 
                                         <td title="{{ $ikp['definition'] }}" class="min-w-72 w-max text-left">{{ $ikp['definition'] }}</td>
 
-                                        <td title="{{ $ikp['definition'] }}">{{ $ikp['definition'] }}</td>
+                                        <td title="{{ $ikp['achievements'] }}">{{ $ikp['achievements'] }}</td>
 
                                         <td class="flex items-start justify-center gap-1">
-                                            <x-partials.button.detail link="{{ route('admin-iku-detail', ['id' => $ikp['id']]) }}" />
+                                            <x-partials.button.detail link="{{ route('admin-iku-detail', ['id' => $ikp['id'], 'period' => $period]) }}" />
                                         </td>
 
                                     </tr>
