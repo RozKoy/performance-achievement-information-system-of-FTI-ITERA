@@ -15,11 +15,22 @@ class SasaranStrategisController extends Controller
     {
         $time = RSYear::currentTime();
 
-        $data = $time->sasaranStrategis()->select(['id', 'name', 'number'])
+        $data = $time->sasaranStrategis()
+            ->select([
+                'number',
+                'name',
+                'id',
+            ])
             ->where(function (Builder $query) use ($request) {
                 if (isset($request->search)) {
-                    $query->where('name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('number', $request->search);
+                    $query->whereAny(
+                        [
+                            'number',
+                            'name',
+                        ],
+                        'LIKE',
+                        "%{$request->search}%"
+                    );
                 }
             })
             ->withCount('kegiatan AS k')

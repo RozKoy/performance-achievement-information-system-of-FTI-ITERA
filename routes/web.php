@@ -98,23 +98,23 @@ Route::group([
 
     });
 
-    Route::group([
-        'prefix' => '/rencana-strategis'
-    ], function () {
+    Route::prefix('/rencana-strategis')->group(function () {
         Route::get('/', function () {
             return redirect()->route('super-admin-rs-ss');
         })->name('super-admin-rs');
 
-        Route::group([
-            'prefix' => '/sasaran-strategis',
-            'controller' => SasaranStrategisController::class
-        ], function () {
+        Route::prefix('/sasaran-strategis')->controller(SasaranStrategisController::class)->group(function () {
             Route::get('/', 'homeView')->name('super-admin-rs-ss');
-            Route::get('/tambah', 'addView')->name('super-admin-rs-ss-add');
-            Route::post('/tambah', 'add');
-            Route::get('/{id}/ubah', 'editView')->name('super-admin-rs-ss-edit');
-            Route::put('/{id}/ubah', 'edit');
-            Route::get('/{id}/hapus', 'delete');
+
+            Route::middleware('editor')->group(function () {
+                Route::get('/tambah', 'addView')->name('super-admin-rs-ss-add');
+                Route::post('/tambah', 'add');
+
+                Route::get('/{id}/ubah', 'editView')->name('super-admin-rs-ss-edit');
+                Route::put('/{id}/ubah', 'edit');
+
+                Route::get('/{id}/hapus', 'delete');
+            });
         });
 
         Route::group([
