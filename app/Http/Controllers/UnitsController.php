@@ -42,8 +42,14 @@ class UnitsController extends Controller
     public function addView()
     {
         $users = User::where('role', 'admin')
-            ->whereNull('unit_id')
-            ->get(['id', 'name AS username', 'email', 'access'])
+            ->doesntHave('unit')
+            ->select([
+                'name AS username',
+                'access',
+                'email',
+                'id',
+            ])
+            ->get()
             ->toArray();
 
         return view('super-admin.unit.add', compact('users'));
