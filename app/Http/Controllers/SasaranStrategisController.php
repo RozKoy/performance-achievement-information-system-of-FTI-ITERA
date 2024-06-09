@@ -88,11 +88,8 @@ class SasaranStrategisController extends Controller
         return redirect()->route('super-admin-rs-ss');
     }
 
-    public function editView($id)
+    public function editView(SasaranStrategis $ss)
     {
-        $ss = SasaranStrategis::whereKey($id)
-            ->firstOrFail(['id', 'name', 'number', 'time_id']);
-
         $count = $ss->time->sasaranStrategis->count();
 
         $data = [];
@@ -107,9 +104,15 @@ class SasaranStrategisController extends Controller
             'selected' => true,
         ];
 
-        $ss = $ss->only(['id', 'name']);
+        $ss = $ss->only([
+            'name',
+            'id',
+        ]);
 
-        return view('super-admin.rs.ss.edit', compact(['data', 'ss']));
+        return view('super-admin.rs.ss.edit', compact([
+            'data',
+            'ss',
+        ]));
     }
 
     public function edit(EditRequest $request, $id)
