@@ -25,12 +25,14 @@
         <x-partials.input.text name="short_name" title="Nama pendek unit (contoh : if)" value="{{ $data['short_name'] }}" autofocus required />
         <p class="text-sm sm:text-base">Pilih Pengguna</p>
         <div class="*:border *:rounded-lg flex flex-wrap gap-1">
+
             @foreach ($users as $user)
                 <div class="min-w-40 relative flex flex-1 items-center gap-1.5 px-2 py-1">
-                    <input type="checkbox" name="{{ isset($user['checked']) ? 'users[old][]' : 'users[new][]' }}" value="{{ $user['id'] }}" id="user-{{ $loop->iteration }}" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" @isset($user['checked']) checked @endisset>
+                    <input type="checkbox" name="{{ isset($user['checked']) ? 'users[old][]' : 'users[new][]' }}" value="{{ $user['id'] }}" id="user-{{ $loop->iteration }}" class="rounded-md border-0 bg-primary/25 checked:bg-primary/80 focus:ring-primary/90" @checked(isset($user['checked']))>
                     <label for="user-{{ $loop->iteration }}" class="*:truncate flex-1 overflow-hidden text-xs text-primary sm:text-sm">
                         <div class="flex items-center gap-1 font-semibold">
                             <p title="{{ $user['access'] === 'editor' ? 'Semua akses' : 'Hanya melihat' }}">
+
                                 @if ($user['access'] === 'viewer')
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-4">
                                         <g>
@@ -43,6 +45,7 @@
                                         <path d="m12,0C5.383,0,0,5.383,0,12s5.383,12,12,12,12-5.383,12-12S18.617,0,12,0Zm0,22c-5.514,0-10-4.486-10-10S6.486,2,12,2s10,4.486,10,10-4.486,10-10,10Zm1.379-15.621l-7.379,7.379v4.242h4.242l7.379-7.379c1.17-1.17,1.17-3.072,0-4.242s-3.072-1.17-4.242,0Zm-3.965,9.621h-1.414v-1.414l4.336-4.336,1.414,1.414-4.336,4.336Zm6.793-6.793l-1.043,1.043-1.414-1.414,1.043-1.043c.391-.391,1.023-.391,1.414,0s.39,1.024,0,1.414Z" />
                                     </svg>
                                 @endif
+
                             </p>
                             <p title="{{ $user['username'] }}" class="truncate">
                                 {{ $user['username'] }}
@@ -52,13 +55,17 @@
                     </label>
                 </div>
             @endforeach
+
         </div>
+
         @if (!count($users))
             <p class="text-center text-red-500 max-sm:text-sm">Tidak ada pengguna yang tersedia</p>
         @endif
+
         @error('users.*')
             <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
         @enderror
+
         <x-partials.button.edit />
     </form>
 </x-super-admin-template>

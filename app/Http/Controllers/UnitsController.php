@@ -89,24 +89,40 @@ class UnitsController extends Controller
     public function editView($id)
     {
         $unit = Unit::whereKey($id)
-            ->with('users')
-            ->firstOrFail(['id', 'name', 'short_name']);
+            ->firstOrFail([
+                'short_name',
+                'name',
+                'id',
+            ]);
 
-        $usersExists = $unit->users()
-            ->select(['id', 'name AS username', 'email', 'access'])
+        $usersList = User::doesntHave('unit')
+            ->where('role', 'admin')
+            ->select([
+                'name AS username',
+                'access',
+                'email',
+                'id',
+            ])
+            ->get();
+
+        $users = User::whereBelongsTo($unit)
+            ->select([
+                'name AS username',
+                'access',
+                'email',
+                'id',
+            ])
             ->selectRaw('true AS checked')
             ->get()
+            ->merge($usersList)
             ->toArray();
-        $usersList = User::where('role', 'admin')
-            ->whereNull('unit_id')
-            ->get(['id', 'name AS username', 'email', 'access'])
-            ->toArray();
-
-        $users = array_merge($usersExists, $usersList);
 
         $data = $unit->toArray();
 
-        return view('super-admin.unit.edit', compact(['data', 'users']));
+        return view('super-admin.unit.edit', compact([
+            'users',
+            'data',
+        ]));
     }
 
     public function edit(EditRequest $request, $id)
