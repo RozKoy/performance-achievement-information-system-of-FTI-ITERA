@@ -40,7 +40,7 @@
 
         function deleteItemById(component) {
             let id = component.getAttribute('data-id');
-            window.location.href = `${ window.location.origin }/${ window.location.pathname }/${ id }/hapus`;
+            window.location.href = `${ window.location.origin }${ window.location.pathname }/${ id }/hapus`;
         }
 
         function popDeleteId() {
