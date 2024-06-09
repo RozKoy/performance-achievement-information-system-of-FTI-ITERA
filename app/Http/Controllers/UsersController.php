@@ -126,37 +126,41 @@ class UsersController extends Controller
         return redirect()->route('super-admin-users');
     }
 
-    public function editView($id)
+    public function editView(User $user)
     {
-        $user = User::whereKey($id)
-            ->firstOrFail(['id', 'name', 'email', 'role', 'access', 'unit_id']);
-
-        $units = Unit::get(['id AS value', 'name AS text'])->toArray();
-
-        $unitId = $user->unit_id;
-        if ($unitId !== null) {
-            $units = array_map(function ($unit) use ($unitId) {
-                if ($unit['value'] === $unitId) {
-                    $unit = [
-                        ...$unit,
-                        'selected' => true
-                    ];
+        $units = Unit::select([
+            'name AS text',
+            'id AS value',
+        ])
+            ->get()
+            ->map(function ($unit) use ($user) {
+                $data = $unit->toArray();
+                if ($unit->value === $user->unit_id) {
+                    $data['selected'] = true;
                 }
-                return $unit;
-            }, $units);
-        }
+                return $data;
+            });
 
         $data = [
             [
                 'value' => '',
                 'text' => 'Pilih Unit'
             ],
-            ...$units
+            ...$units->toArray()
         ];
 
-        $user = $user->makeHidden('unit_id')->toArray();
+        $user = $user->only([
+            'access',
+            'email',
+            'name',
+            'role',
+            'id',
+        ]);
 
-        return view('super-admin.users.edit', compact(['user', 'data']));
+        return view('super-admin.users.edit', compact([
+            'data',
+            'user',
+        ]));
     }
 
     public function edit(EditRequest $request, $id)

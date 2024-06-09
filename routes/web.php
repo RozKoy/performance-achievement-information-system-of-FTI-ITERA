@@ -204,8 +204,10 @@ Route::group([
         Route::middleware('editor')->group(function () {
             Route::get('/tambah', 'addView')->name('super-admin-users-add');
             Route::post('/tambah', 'add');
-            Route::get('/{id}/ubah', 'editView')->name('super-admin-users-edit');
+
+            Route::get('/{user}/ubah', 'editView')->name('super-admin-users-edit');
             Route::put('/{id}/ubah', 'edit');
+
             Route::get('/{id}/hapus', 'delete');
         });
     });

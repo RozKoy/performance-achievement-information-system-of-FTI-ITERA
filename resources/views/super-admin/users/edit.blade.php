@@ -8,7 +8,7 @@
             'link' => 'super-admin-users-edit',
             'name' => 'Ubah',
             'params' => [
-                'id' => $user['id'],
+                'user' => $user['id'],
             ],
         ],
     ];
@@ -20,9 +20,9 @@
         @csrf
         @method('PUT')
         <x-partials.label.default for="name" title="Nama pengguna" text="Nama Pengguna" required />
-        <x-partials.input.text name="name" title="Nama pengguna" value="{{ old('name') ? old('name') : $user['name'] }}" autofocus required />
+        <x-partials.input.text name="name" title="Nama pengguna" value="{{ $user['name'] }}" autofocus required />
         <x-partials.label.default for="email" title="Email" text="Email" required />
-        <x-partials.input.text name="email" title="Email" value="{{ old('email') ? old('email') : $user['email'] }}" required />
+        <x-partials.input.text name="email" title="Email" value="{{ $user['email'] }}" required />
         <div class="*:p-2.5 max-sm:text-sm max-[320px]:text-xs">
             <div class="*:flex-1 *:rounded-lg *:p-1 *:bg-primary/80 flex gap-2.5 text-white">
                 <button id="super-admin-button" type="button" title="Tombol akses super admin" onclick="switchSelection('super-admin-button', 'admin-button')" class="hover:bg-primary/70">Super Admin</button>
@@ -31,31 +31,38 @@
             <div id="selection" class="*:rounded-lg *:border *:border-slate-100 *:shadow *:p-1.5 *:gap-1 flex flex-wrap items-center justify-center gap-2 text-primary">
             </div>
         </div>
+
         @error('access')
             <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
         @enderror
+
         @error('unit')
             <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
         @enderror
+
         <x-partials.button.edit />
     </form>
 
     <div class="hidden">
         <div id="super-admin-selection">
             <div class="flex items-center justify-center">
+
                 @if ($user['role'] === 'super admin' && $user['access'] === 'editor')
                     <x-partials.input.radio title="Super admin semua akses" name="access" id="editor" value="super-admin-editor" checked required />
                 @else
                     <x-partials.input.radio title="Super admin semua akses" name="access" id="editor" value="super-admin-editor" required />
                 @endif
+
                 <label for="editor" title="Super admin semua akses">Semua akses</label>
             </div>
             <div class="flex items-center justify-center">
+
                 @if ($user['role'] === 'super admin' && $user['access'] === 'viewer')
                     <x-partials.input.radio title="Super admin akses hanya melihat" name="access" id="viewer-super-admin" value="super-admin-viewer" checked required />
                 @else
                     <x-partials.input.radio title="Super admin akses hanya melihat" name="access" id="viewer-super-admin" value="super-admin-viewer" required />
                 @endif
+
                 <label for="viewer-super-admin" title="Super admin akses hanya melihat">Hanya melihat</label>
             </div>
         </div>
@@ -114,4 +121,5 @@
             }
         </script>
     @endPushOnce
+
 </x-super-admin-template>
