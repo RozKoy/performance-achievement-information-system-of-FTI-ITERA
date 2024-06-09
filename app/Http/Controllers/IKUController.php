@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndikatorKinerjaUtama\AddTargetRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,9 +13,11 @@ use App\Models\ProgramStrategis;
 use App\Models\SasaranKegiatan;
 use Illuminate\Support\Carbon;
 use App\Models\IKUAchievement;
+use App\Models\IKUEvaluation;
 use Illuminate\Http\Request;
 use App\Models\IKPColumn;
 use App\Models\IKUPeriod;
+use App\Models\IKUTarget;
 use App\Models\IKUYear;
 use App\Models\Unit;
 
@@ -184,6 +187,50 @@ class IKUController extends Controller
         if ($temp->id === null) {
             $temp->save();
         }
+    }
+
+    public function addTarget(AddTargetRequest $request, $ikpId, $unitId)
+    {
+        $ikp = IndikatorKinerjaProgram::findOrFail($ikpId);
+        $unit = Unit::withTrashed()->findOrFail($unitId);
+
+        $target = null;
+        if (isset($request['target'])) {
+            $target = $request['target'][$ikpId . '-' . $unitId];
+        }
+
+        $targetInstance = IKUTarget::firstOrNew([
+            'indikator_kinerja_program_id' => $ikpId,
+            'unit_id' => $unitId
+        ]);
+
+        if ($target === null && $targetInstance->id !== null) {
+            $targetInstance->forceDelete();
+        } else if ($target !== null) {
+            $targetInstance->target = (int) $target;
+            $targetInstance->save();
+        }
+
+        $sumAllTarget = IKUTarget::whereBelongsTo($ikp)
+            ->sum('target');
+
+        $evaluation = IKUEvaluation::firstOrNew([
+            'indikator_kinerja_program_id' => $ikpId
+        ]);
+
+        $evaluation->target = $sumAllTarget;
+
+        $realization = IKUAchievement::whereBelongsTo($ikp)
+            ->count();
+
+        $evaluation->status = false;
+        if ($realization >= $sumAllTarget) {
+            $evaluation->status = true;
+        }
+
+        $evaluation->save();
+
+        return back();
     }
 
 

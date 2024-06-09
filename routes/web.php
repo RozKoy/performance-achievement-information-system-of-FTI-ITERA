@@ -83,6 +83,7 @@ Route::group([
             Route::get('/', 'homeView')->name('super-admin-achievement-iku');
             Route::view('/{id}/detail', 'super-admin.achievement.iku.detail')->name('super-admin-achievement-iku-detail');
             Route::get('/{year}/target', 'targetView')->name('super-admin-achievement-iku-target');
+            Route::post('/{ikp}/{unit}/target', 'addTarget')->name('super-admin-achievement-iku-target-add');
         });
 
     });

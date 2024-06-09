@@ -72,7 +72,7 @@
                                     @foreach ($units as $unit)
                                         @php
                                             $exists = $target->where('unit_id', $unit['id'])->first();
-                                            $targetRoute = url(route('super-admin-achievement-rs-target-add', ['ik' => $ikp['id'], 'unit' => $unit['id']]));
+                                            $targetRoute = url(route('super-admin-achievement-iku-target-add', ['ikp' => $ikp['id'], 'unit' => $unit['id']]));
                                             $inputName = 'target[' . $ikp['id'] . '-' . $unit['id'] . ']';
                                             $errorName = 'target.' . $ikp['id'] . '-' . $unit['id'];
                                         @endphp
