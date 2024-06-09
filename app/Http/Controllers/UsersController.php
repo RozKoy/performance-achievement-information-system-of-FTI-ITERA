@@ -113,7 +113,15 @@ class UsersController extends Controller
         }
         $request['password'] = str_replace(" ", "_", $request['name']);
 
-        User::create($request->only(['name', 'email', 'password', 'access', 'unit_id', 'role']));
+        User::create($request->only([
+            'password',
+            'access',
+            'email',
+            'name',
+            'role',
+
+            'unit_id',
+        ]));
 
         return redirect()->route('super-admin-users');
     }
