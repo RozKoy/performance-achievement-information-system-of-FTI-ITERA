@@ -19,10 +19,8 @@ class Editor
             if (auth()->user()->access === 'editor') {
                 return $next($request);
             }
-
-            auth()->logout();
         }
 
-        return redirect()->route('login');
+        abort(404);
     }
 }
