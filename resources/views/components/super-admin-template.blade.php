@@ -71,7 +71,7 @@
                 </div>
                 <div class="flex items-center">
                     <div class="ms-3 flex items-center gap-2">
-                        <p title="Editor Access" class="inline-flex items-center justify-center truncate rounded-full bg-primary px-2 py-1 text-xs font-semibold uppercase text-white max-[400px]:hidden lg:text-sm 2xl:text-base">editor</p>
+                        <p title="Editor Access" class="inline-flex items-center justify-center truncate rounded-full bg-primary px-2 py-1 text-xs font-semibold uppercase text-white max-[400px]:hidden lg:text-sm 2xl:text-base">{{ auth()->user()->access }}</p>
                         <div>
                             <button type="button" title="Tombol profil" class="flex rounded-full fill-primary text-sm focus:ring-4 focus:ring-gray-300" aria-expanded="false" data-dropdown-toggle="user-menu">
                                 <span class="sr-only">Open user menu</span>
@@ -83,11 +83,11 @@
                         </div>
                         <div class="z-40 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white text-base shadow shadow-primary" id="user-menu">
                             <div class="*:overflow-hidden *:truncate *:max-w-40 sm:*:max-w-60 2xl:*:max-w-96 cursor-default px-4 py-3 text-sm text-primary" role="none">
-                                <p role="none" title="Neil Sims">
-                                    Neil Sims
+                                <p role="none" title="{{ auth()->user()->name }}">
+                                    {{ auth()->user()->name }}
                                 </p>
-                                <p class="font-semibold" role="none" title="neil.sims@flowbite.com">
-                                    neil.sims@flowbite.com
+                                <p class="font-semibold" role="none" title="{{ auth()->user()->email }}">
+                                    {{ auth()->user()->email }}
                                 </p>
                             </div>
                             <ul class="py-1" role="none">
