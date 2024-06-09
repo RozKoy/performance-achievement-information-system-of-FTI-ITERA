@@ -6,6 +6,7 @@ use App\Http\Requests\SasaranStrategis\EditRequest;
 use App\Http\Requests\SasaranStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\SasaranStrategis;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Models\RSYear;
 
@@ -115,12 +116,11 @@ class SasaranStrategisController extends Controller
         ]));
     }
 
-    public function edit(EditRequest $request, $id)
+    public function edit(EditRequest $request, SasaranStrategis $ss)
     {
-        $ss = SasaranStrategis::findOrFail($id);
         $time = $ss->time;
 
-        $number = (int) $request->safe()['number'];
+        $number = (int) $request['number'];
         if ($number > $time->sasaranStrategis->count()) {
             return back()
                 ->withInput()
@@ -144,10 +144,16 @@ class SasaranStrategisController extends Controller
             }
         }
 
-        $ss->name = $request->safe()['name'];
+        $ss->name = $request['name'];
         $ss->save();
 
-        return redirect()->route('super-admin-rs-ss');
+        if ($time->year === Carbon::now()->format('Y')) {
+            return redirect()->route('super-admin-rs-ss');
+        } else {
+            return redirect()->route('super-admin-achievement-rs', [
+                'year' => $time->year
+            ]);
+        }
     }
 
     public function delete($id)
