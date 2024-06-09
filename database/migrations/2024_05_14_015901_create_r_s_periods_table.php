@@ -21,8 +21,8 @@ return new class extends Migration {
 
             $table->primary('id');
 
-            $table->foreignUuid('year_id')->constrained('rs_years');
             $table->foreignUuid('deadline_id')->nullable()->constrained('rs_periods');
+            $table->foreignUuid('year_id')->constrained('rs_years');
         });
     }
 

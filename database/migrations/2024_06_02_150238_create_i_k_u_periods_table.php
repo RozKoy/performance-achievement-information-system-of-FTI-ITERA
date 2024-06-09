@@ -21,8 +21,8 @@ return new class extends Migration {
 
             $table->primary('id');
 
-            $table->foreignUuid('year_id')->constrained('iku_years');
             $table->foreignUuid('deadline_id')->nullable()->constrained('iku_periods');
+            $table->foreignUuid('year_id')->constrained('iku_years');
         });
     }
 
