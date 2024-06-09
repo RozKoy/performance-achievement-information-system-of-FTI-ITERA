@@ -8,11 +8,12 @@ use Closure;
 
 class Unique implements ValidationRule
 {
-    protected $model;
+    protected $model, $route;
 
-    public function __construct(Model $model)
+    public function __construct(Model $model, string $route)
     {
         $this->model = $model;
+        $this->route = $route;
     }
     /**
      * Run the validation rule.
@@ -21,23 +22,17 @@ class Unique implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $id = request()->route('id');
+        $instance = request()->route($this->route);
 
-        if ($id !== null && gettype($value) === 'string') {
-            $instance = $this->model::findOrFail($id);
+        if ($instance[$attribute] !== $value) {
+            $temp = $this->model::withTrashed()
+                ->whereKeyNot($instance->id)
+                ->where($attribute, $value)
+                ->first();
 
-            if ($instance[$attribute] !== $value) {
-                $temp = $this->model::withTrashed()
-                    ->whereKeyNot($id)
-                    ->where($attribute, $value)
-                    ->first();
-
-                if ($temp !== null) {
-                    $fail(':attribute sudah digunakan');
-                }
+            if ($temp !== null) {
+                $fail(':attribute sudah digunakan');
             }
-        } else {
-            abort(404);
         }
     }
 }
