@@ -198,16 +198,16 @@ Route::group([
     });
 
 
-    Route::group([
-        'prefix' => '/pengguna',
-        'controller' => UsersController::class
-    ], function () {
+    Route::prefix('/pengguna')->controller(UsersController::class)->group(function () {
         Route::get('/', 'homeView')->name('super-admin-users');
-        Route::get('/tambah', 'addView')->name('super-admin-users-add');
-        Route::post('/tambah', 'add');
-        Route::get('/{id}/ubah', 'editView')->name('super-admin-users-edit');
-        Route::put('/{id}/ubah', 'edit');
-        Route::get('/{id}/hapus', 'delete');
+
+        Route::middleware('editor')->group(function () {
+            Route::get('/tambah', 'addView')->name('super-admin-users-add');
+            Route::post('/tambah', 'add');
+            Route::get('/{id}/ubah', 'editView')->name('super-admin-users-edit');
+            Route::put('/{id}/ubah', 'edit');
+            Route::get('/{id}/hapus', 'delete');
+        });
     });
 
 

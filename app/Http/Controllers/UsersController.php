@@ -7,7 +7,6 @@ use App\Http\Requests\Users\AddAdminRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\Users\EditRequest;
 use App\Http\Requests\Users\AddRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Unit;
 use App\Models\User;
@@ -52,7 +51,13 @@ class UsersController extends Controller
                     );
                 }
             })
-            ->select(['id', 'name', 'email', 'role', 'access'])
+            ->select([
+                'access',
+                'email',
+                'name',
+                'role',
+                'id',
+            ])
             ->withAggregate('unit AS unit', 'name')
             ->latest()
             ->get()

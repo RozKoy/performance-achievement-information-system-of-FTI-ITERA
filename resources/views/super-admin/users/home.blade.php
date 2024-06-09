@@ -11,8 +11,17 @@
     <x-partials.heading.h2 text="manajemen pengguna" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
-        <x-partials.button.add href="super-admin-users-add" />
+
+        @if (auth()->user()->access === 'editor')
+            <x-partials.button.add href="super-admin-users-add" />
+        @endif
+
     </div>
+
+    @if (request()->query('search') !== null)
+        <p class="max-2xl:text-sm max-lg:text-xs"><span class="font-semibold text-primary">Pencarian : </span>{{ request()->query('search') }}</p>
+    @endif
+
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
@@ -21,10 +30,15 @@
                     <th title="Nama pengguna">Nama Pengguna</th>
                     <th title="Alamat email">Email</th>
                     <th title="Hak akses">Hak Akses</th>
-                    <th title="Aksi">Aksi</th>
+
+                    @if (auth()->user()->access === 'editor')
+                        <th title="Aksi">Aksi</th>
+                    @endif
+
                 </tr>
             </thead>
             <tbody class="border-b-2 border-primary/80 text-center">
+
                 @foreach ($data as $item)
                     @php
                         $deleteData = [
@@ -38,6 +52,7 @@
                             $deleteData['unit'] = isset($item['unit']) ? $item['unit'] : 'NULL';
                         }
                     @endphp
+
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:overflow-hidden *:truncate border-y">
                         <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                         <td title="{{ $item['name'] }}" class="text-left">{{ $item['name'] }}</td>
@@ -46,17 +61,24 @@
                             <div class="*:p-1 *:overflow-hidden *:truncate *:flex-1 *:whitespace-nowrap mx-auto flex max-w-[300px] items-center justify-center divide-x rounded-lg border border-gray-100 bg-gray-50 text-xs text-primary">
                                 <p title="{{ ucfirst($item['role']) }}">{{ ucfirst($item['role']) }}</p>
                                 <p title="{{ ucfirst($item['access']) }}">{{ ucfirst($item['access']) }}</p>
+
                                 @if ($item['role'] !== 'super admin')
                                     <p title="{{ isset($item['unit']) ? $item['unit'] : 'NULL' }}">{{ isset($item['unit']) ? $item['unit'] : 'NULL' }}</p>
                                 @endif
+
                             </div>
                         </td>
-                        <td class="flex items-center justify-center gap-1">
-                            <x-partials.button.edit link="{{ route('super-admin-users-edit', ['id' => $item['id']]) }}" />
-                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
-                        </td>
+
+                        @if (auth()->user()->access === 'editor')
+                            <td class="flex items-center justify-center gap-1">
+                                <x-partials.button.edit link="{{ route('super-admin-users-edit', ['id' => $item['id']]) }}" />
+                                <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
+                            </td>
+                        @endif
+
                     </tr>
                 @endforeach
+
             </tbody>
         </table>
     </div>
@@ -65,5 +87,8 @@
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data pengguna</p>
     @endif
 
-    <x-partials.modal.delete id="delete-modal" />
+    @if (auth()->user()->access === 'editor')
+        <x-partials.modal.delete id="delete-modal" />
+    @endif
+
 </x-super-admin-template>
