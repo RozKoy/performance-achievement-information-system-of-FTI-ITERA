@@ -219,9 +219,9 @@ Route::group([
             Route::post('/tambah', 'add');
 
             Route::get('/{unit}/ubah', 'editView')->name('super-admin-unit-edit');
-            Route::put('/{unit}/ubah', 'edit')->name('super-admin-unit-edit-action');
+            Route::put('/{unit}/ubah', 'edit');
 
-            Route::get('/{id}/hapus', 'delete');
+            Route::get('/{unit}/hapus', 'delete');
         });
     });
 });
