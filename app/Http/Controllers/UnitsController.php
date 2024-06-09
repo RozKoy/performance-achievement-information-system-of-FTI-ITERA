@@ -75,7 +75,7 @@ class UnitsController extends Controller
         }
 
         if (isset($request->safe()['users'])) {
-            $users = User::findMany($request->safe()['users']);
+            $users = User::findMany($request['users']);
 
             foreach ($users as $key => $user) {
                 $user->unit()->associate($unit);
@@ -124,24 +124,24 @@ class UnitsController extends Controller
 
     public function edit(EditRequest $request, Unit $unit)
     {
-        $newName = $request->safe()->name;
+        $newName = $request['name'];
 
         if ($unit->name !== $newName) {
             $unit->name = $newName;
         }
 
-        $unit->short_name = $request->safe()->short_name;
+        $unit->short_name = $request['short_name'];
         $unit->save();
 
         $oldUsers = [];
         $newUsers = [];
 
-        if (isset($request->safe()->users)) {
-            if (isset($request->safe()->users['old'])) {
-                $oldUsers = $request->safe()->users['old'];
+        if (isset($request['users'])) {
+            if (isset($request['users']['old'])) {
+                $oldUsers = $request['users']['old'];
             }
-            if (isset($request->safe()->users['new'])) {
-                $newUsers = $request->safe()->users['new'];
+            if (isset($request['users']['new'])) {
+                $newUsers = $request['users']['new'];
             }
         }
 
