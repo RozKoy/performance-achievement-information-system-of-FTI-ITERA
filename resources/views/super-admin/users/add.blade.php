@@ -29,12 +29,15 @@
             <div id="selection" class="*:rounded-lg *:border *:border-slate-100 *:shadow *:p-1.5 *:gap-1 flex flex-wrap items-center justify-center gap-2 text-primary">
             </div>
         </div>
+
         @error('access')
             <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
         @enderror
+
         @error('unit')
             <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
         @enderror
+
         <x-partials.button.add submit />
     </form>
 
@@ -112,4 +115,5 @@
             }
         </script>
     @endPushOnce
+
 </x-super-admin-template>

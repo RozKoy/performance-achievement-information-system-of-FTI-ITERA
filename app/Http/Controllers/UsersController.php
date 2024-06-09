@@ -68,7 +68,12 @@ class UsersController extends Controller
 
     public function addView()
     {
-        $units = Unit::get(['id AS value', 'name AS text'])->toArray();
+        $units = Unit::select([
+            'name AS text',
+            'id AS value',
+        ])
+            ->get()
+            ->toArray();
 
         $data = [
             [
