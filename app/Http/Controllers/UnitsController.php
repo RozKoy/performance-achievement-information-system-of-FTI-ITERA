@@ -26,7 +26,11 @@ class UnitsController extends Controller
                 );
             }
         })
-            ->select(['id', 'name', 'short_name'])
+            ->select([
+                'short_name',
+                'name',
+                'id',
+            ])
             ->withCount('users AS users')
             ->latest()
             ->get()
