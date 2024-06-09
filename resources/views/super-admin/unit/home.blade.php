@@ -76,6 +76,8 @@
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data unit</p>
     @endif
 
-    <x-partials.modal.delete id="delete-modal" />
+    @if (auth()->user()->access === 'editor')
+        <x-partials.modal.delete id="delete-modal" />
+    @endif
 
 </x-super-admin-template>
