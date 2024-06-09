@@ -206,7 +206,7 @@ Route::group([
             Route::post('/tambah', 'add');
 
             Route::get('/{user}/ubah', 'editView')->name('super-admin-users-edit');
-            Route::put('/{id}/ubah', 'edit');
+            Route::put('/{user}/ubah', 'edit');
 
             Route::get('/{id}/hapus', 'delete');
         });

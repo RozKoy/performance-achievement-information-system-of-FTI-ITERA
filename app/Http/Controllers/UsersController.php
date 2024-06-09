@@ -163,17 +163,15 @@ class UsersController extends Controller
         ]));
     }
 
-    public function edit(EditRequest $request, $id)
+    public function edit(EditRequest $request, User $user)
     {
-        $user = User::findOrFail($id);
-
-        $newEmail = $request->safe()['email'];
+        $newEmail = $request['email'];
 
         if ($user->email !== $newEmail) {
             $user->email = $newEmail;
         }
 
-        $newName = $request->safe()['name'];
+        $newName = $request['name'];
 
         if ($user->name !== $newName) {
             $user->name = $newName;
