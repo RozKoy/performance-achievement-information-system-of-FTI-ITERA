@@ -14,35 +14,70 @@ class IndikatorKinerja extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'indikator_kinerja';
 
     protected $fillable = [
-        'kegiatan_id',
-        'status',
         'number',
-        'type',
+        'status',
         'name',
+        'type',
+
+        'kegiatan_id',
     ];
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
 
     public function kegiatan(): BelongsTo
     {
         return $this->belongsTo(Kegiatan::class);
     }
 
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASMANY
+    | -----------------------------------------------------------------
+    */
+
     public function realization(): HasMany
     {
         return $this->hasMany(RSAchievement::class);
-    }
-
-    public function evaluation(): HasOne
-    {
-        return $this->hasOne(RSEvaluation::class);
     }
 
     public function target(): HasMany
     {
         return $this->hasMany(RSTarget::class);
     }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASONE
+    | -----------------------------------------------------------------
+    */
+
+    public function evaluation(): HasOne
+    {
+        return $this->hasOne(RSEvaluation::class);
+    }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | FUNCTION
+    | -----------------------------------------------------------------
+    */
 
     public function deleteOrTrashed(): void
     {

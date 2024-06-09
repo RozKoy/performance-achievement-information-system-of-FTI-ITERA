@@ -12,6 +12,12 @@ class IKUEvaluation extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'iku_evaluations';
 
     protected $fillable = [
@@ -22,6 +28,13 @@ class IKUEvaluation extends Model
 
         'indikator_kinerja_program_id',
     ];
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
 
     public function indikatorKinerjaProgram(): BelongsTo
     {

@@ -12,19 +12,27 @@ class Unit extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $fillable = [
         'short_name',
         'name',
     ];
 
-    public function users(): HasMany
-    {
-        return $this->hasMany(User::class);
-    }
 
-    public function rencanaStrategis(): HasMany
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASMANY
+    | -----------------------------------------------------------------
+    */
+
+    public function indikatorKinerjaUtamaTarget(): HasMany
     {
-        return $this->hasMany(RSAchievement::class);
+        return $this->hasMany(IKUTarget::class);
     }
 
     public function rencanaStrategisTarget(): HasMany
@@ -37,8 +45,13 @@ class Unit extends Model
         return $this->hasMany(IKUAchievement::class);
     }
 
-    public function indikatorKinerjaUtamaTarget(): HasMany
+    public function rencanaStrategis(): HasMany
     {
-        return $this->hasMany(IKUTarget::class);
+        return $this->hasMany(RSAchievement::class);
+    }
+
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
     }
 }

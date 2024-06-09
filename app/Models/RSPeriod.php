@@ -13,32 +13,53 @@ class RSPeriod extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'rs_periods';
 
     protected $fillable = [
-        'deadline_id',
-        'year_id',
         'period',
         'status',
+
+        'deadline_id',
+        'year_id',
     ];
 
-    public function year(): BelongsTo
-    {
-        return $this->belongsTo(RSYear::class);
-    }
 
-    public function periods(): HasMany
-    {
-        return $this->hasMany(RSPeriod::class, 'deadline_id');
-    }
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
 
     public function deadline(): BelongsTo
     {
         return $this->belongsTo(RSPeriod::class);
     }
 
+    public function year(): BelongsTo
+    {
+        return $this->belongsTo(RSYear::class);
+    }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASMANY
+    | -----------------------------------------------------------------
+    */
+
     public function achievements(): HasMany
     {
         return $this->hasMany(RSAchievement::class, 'period_id');
+    }
+
+    public function periods(): HasMany
+    {
+        return $this->hasMany(RSPeriod::class, 'deadline_id');
     }
 }

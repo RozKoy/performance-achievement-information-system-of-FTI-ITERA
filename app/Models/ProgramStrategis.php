@@ -13,16 +13,37 @@ class ProgramStrategis extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $fillable = [
-        'indikator_kinerja_kegiatan_id',
         'number',
         'name',
+
+        'indikator_kinerja_kegiatan_id',
     ];
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
 
     public function indikatorKinerjaKegiatan(): BelongsTo
     {
         return $this->belongsTo(IndikatorKinerjaKegiatan::class);
     }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASMANY
+    | -----------------------------------------------------------------
+    */
 
     public function indikatorKinerjaProgram(): HasMany
     {

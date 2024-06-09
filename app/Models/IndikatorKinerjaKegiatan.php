@@ -13,18 +13,39 @@ class IndikatorKinerjaKegiatan extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'indikator_kinerja_kegiatan';
 
     protected $fillable = [
-        'sasaran_kegiatan_id',
         'number',
         'name',
+
+        'sasaran_kegiatan_id',
     ];
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
 
     public function sasaranKegiatan(): BelongsTo
     {
         return $this->belongsTo(SasaranKegiatan::class);
     }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASMANY
+    | -----------------------------------------------------------------
+    */
 
     public function programStrategis(): HasMany
     {

@@ -13,23 +13,51 @@ class Kegiatan extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'kegiatan';
 
     protected $fillable = [
-        'sasaran_strategis_id',
         'number',
         'name',
+
+        'sasaran_strategis_id',
     ];
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
 
     public function sasaranStrategis(): BelongsTo
     {
         return $this->belongsTo(SasaranStrategis::class);
     }
 
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASMANY
+    | -----------------------------------------------------------------
+    */
+
     public function indikatorKinerja(): HasMany
     {
         return $this->hasMany(IndikatorKinerja::class);
     }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | FUNCTION
+    | -----------------------------------------------------------------
+    */
 
     public function deleteOrTrashed(): void
     {

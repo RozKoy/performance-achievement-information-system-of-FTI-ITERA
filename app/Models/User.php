@@ -15,6 +15,12 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,11 +28,12 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'password',
-        'unit_id',
         'access',
         'email',
-        'role',
         'name',
+        'role',
+
+        'unit_id',
     ];
 
     /**
@@ -46,6 +53,13 @@ class User extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
 
     public function unit(): BelongsTo
     {

@@ -13,11 +13,24 @@ class RSYear extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'rs_years';
 
     protected $fillable = [
         'year',
     ];
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASMANY
+    | -----------------------------------------------------------------
+    */
 
     public function sasaranStrategis(): HasMany
     {
@@ -28,6 +41,13 @@ class RSYear extends Model
     {
         return $this->hasMany(RSPeriod::class, 'year_id');
     }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | FUNCTION
+    | -----------------------------------------------------------------
+    */
 
     static function currentTime(): RSYear
     {

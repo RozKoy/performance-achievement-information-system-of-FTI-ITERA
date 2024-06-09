@@ -12,6 +12,12 @@ class IKUTarget extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'iku_targets';
 
     protected $fillable = [
@@ -20,6 +26,13 @@ class IKUTarget extends Model
         'indikator_kinerja_program_id',
         'unit_id',
     ];
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
 
     public function indikatorKinerjaProgram(): BelongsTo
     {

@@ -13,6 +13,12 @@ class IKUAchievement extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'iku_achievements';
 
     protected $fillable = [
@@ -20,6 +26,13 @@ class IKUAchievement extends Model
         'period_id',
         'unit_id',
     ];
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
 
     public function indikatorKinerjaProgram(): BelongsTo
     {
@@ -35,6 +48,13 @@ class IKUAchievement extends Model
     {
         return $this->belongsTo(Unit::class);
     }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASMANY
+    | -----------------------------------------------------------------
+    */
 
     public function data(): HasMany
     {

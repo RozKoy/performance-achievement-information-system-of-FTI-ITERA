@@ -12,15 +12,27 @@ class RSAchievement extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'rs_achievements';
 
     protected $fillable = [
+        'realization',
+
         'indikator_kinerja_id',
         'period_id',
         'unit_id',
-
-        'realization',
     ];
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
 
     public function indikatorKinerja(): BelongsTo
     {

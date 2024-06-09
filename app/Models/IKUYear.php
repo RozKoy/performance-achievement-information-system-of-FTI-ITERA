@@ -13,11 +13,24 @@ class IKUYear extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'iku_years';
 
     protected $fillable = [
         'year',
     ];
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASMANY
+    | -----------------------------------------------------------------
+    */
 
     public function sasaranKegiatan(): HasMany
     {
@@ -28,6 +41,13 @@ class IKUYear extends Model
     {
         return $this->hasMany(IKUPeriod::class, 'year_id');
     }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | FUNCTION
+    | -----------------------------------------------------------------
+    */
 
     static function currentTime(): IKUYear
     {

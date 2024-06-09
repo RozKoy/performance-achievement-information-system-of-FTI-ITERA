@@ -13,6 +13,12 @@ class IKPColumn extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'ikp_columns';
 
     protected $fillable = [
@@ -23,10 +29,24 @@ class IKPColumn extends Model
         'indikator_kinerja_program_id',
     ];
 
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
+
     public function indikatorKinerjaProgram(): BelongsTo
     {
         return $this->belongsTo(IndikatorKinerjaProgram::class);
     }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASMANY
+    | -----------------------------------------------------------------
+    */
 
     public function data(): HasMany
     {

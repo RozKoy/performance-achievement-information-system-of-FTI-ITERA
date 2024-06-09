@@ -14,20 +14,46 @@ class IndikatorKinerjaProgram extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'indikator_kinerja_program';
 
     protected $fillable = [
-        'program_strategis_id',
         'definition',
         'number',
         'status',
-        'type',
         'name',
+        'type',
+
+        'program_strategis_id',
     ];
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
 
     public function programStrategis(): BelongsTo
     {
         return $this->belongsTo(ProgramStrategis::class);
+    }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASMANY
+    | -----------------------------------------------------------------
+    */
+
+    public function achievements(): HasMany
+    {
+        return $this->hasMany(IKUAchievement::class);
     }
 
     public function columns(): HasMany
@@ -35,15 +61,17 @@ class IndikatorKinerjaProgram extends Model
         return $this->hasMany(IKPColumn::class);
     }
 
-    public function achievements(): HasMany
-    {
-        return $this->hasMany(IKUAchievement::class);
-    }
-
     public function target(): HasMany
     {
         return $this->hasMany(IKUTarget::class);
     }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASONE
+    | -----------------------------------------------------------------
+    */
 
     public function evaluation(): HasOne
     {

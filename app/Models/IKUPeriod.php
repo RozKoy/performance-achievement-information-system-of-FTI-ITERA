@@ -13,6 +13,12 @@ class IKUPeriod extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'iku_periods';
 
     protected $fillable = [
@@ -23,23 +29,37 @@ class IKUPeriod extends Model
         'year_id',
     ];
 
-    public function year(): BelongsTo
-    {
-        return $this->belongsTo(IKUYear::class);
-    }
 
-    public function periods(): HasMany
-    {
-        return $this->hasMany(IKUPeriod::class, 'deadline_id');
-    }
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
 
     public function deadline(): BelongsTo
     {
         return $this->belongsTo(IKUPeriod::class);
     }
 
+    public function year(): BelongsTo
+    {
+        return $this->belongsTo(IKUYear::class);
+    }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - HASMANY
+    | -----------------------------------------------------------------
+    */
+
     public function achievements(): HasMany
     {
         return $this->hasMany(IKUAchievement::class, 'period_id');
+    }
+
+    public function periods(): HasMany
+    {
+        return $this->hasMany(IKUPeriod::class, 'deadline_id');
     }
 }

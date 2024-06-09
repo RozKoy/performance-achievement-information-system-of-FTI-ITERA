@@ -12,6 +12,12 @@ class RSEvaluation extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    /*
+    | -----------------------------------------------------------------
+    | VARIABLES
+    | -----------------------------------------------------------------
+    */
+
     protected $table = 'rs_evaluations';
 
     protected $fillable = [
@@ -22,6 +28,13 @@ class RSEvaluation extends Model
 
         'indikator_kinerja_id',
     ];
+
+
+    /*
+    | -----------------------------------------------------------------
+    | RELATION - BELONGSTO
+    | -----------------------------------------------------------------
+    */
 
     public function indikatorKinerja(): BelongsTo
     {
