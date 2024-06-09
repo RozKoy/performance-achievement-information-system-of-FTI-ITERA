@@ -63,6 +63,10 @@ class UnitsController extends Controller
         if ($unitExists) {
             if ($unitExists->deleted_at) {
                 $unitExists->restore();
+            } else {
+                return back()
+                    ->withInput()
+                    ->withErrors(['name' => 'Nama unit sudah digunakan']);
             }
 
             $unit = $unitExists;
