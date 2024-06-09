@@ -218,7 +218,7 @@ Route::group([
             Route::get('/tambah', 'addView')->name('super-admin-unit-add');
             Route::post('/tambah', 'add');
 
-            Route::get('/{id}/ubah', 'editView')->name('super-admin-unit-edit');
+            Route::get('/{unit}/ubah', 'editView')->name('super-admin-unit-edit');
             Route::put('/{id}/ubah', 'edit');
 
             Route::get('/{id}/hapus', 'delete');

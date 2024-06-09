@@ -86,15 +86,8 @@ class UnitsController extends Controller
         return redirect()->route('super-admin-unit');
     }
 
-    public function editView($id)
+    public function editView(Unit $unit)
     {
-        $unit = Unit::whereKey($id)
-            ->firstOrFail([
-                'short_name',
-                'name',
-                'id',
-            ]);
-
         $usersList = User::doesntHave('unit')
             ->where('role', 'admin')
             ->select([
@@ -117,7 +110,11 @@ class UnitsController extends Controller
             ->merge($usersList)
             ->toArray();
 
-        $data = $unit->toArray();
+        $data = $unit->only([
+            'short_name',
+            'name',
+            'id',
+        ]);
 
         return view('super-admin.unit.edit', compact([
             'users',

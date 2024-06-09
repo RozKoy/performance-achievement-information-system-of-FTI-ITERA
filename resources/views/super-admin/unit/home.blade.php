@@ -60,7 +60,7 @@
 
                         @if (auth()->user()->access === 'editor')
                             <td class="flex items-center justify-center gap-1">
-                                <x-partials.button.edit link="{{ route('super-admin-unit-edit', ['id' => $item['id']]) }}" />
+                                <x-partials.button.edit link="{{ route('super-admin-unit-edit', ['unit' => $item['id']]) }}" />
                                 <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
                             </td>
                         @endif

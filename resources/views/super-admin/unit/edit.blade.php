@@ -8,7 +8,7 @@
             'link' => 'super-admin-unit-edit',
             'name' => 'Ubah',
             'params' => [
-                'id' => $data['id'],
+                'unit' => $data['id'],
             ],
         ],
     ];
