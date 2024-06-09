@@ -122,28 +122,26 @@ class UnitsController extends Controller
         ]));
     }
 
-    public function edit(EditRequest $request, $id)
+    public function edit(EditRequest $request, Unit $unit)
     {
-        $unit = Unit::findOrFail($id);
-
-        $newName = $request->safe()['name'];
+        $newName = $request->safe()->name;
 
         if ($unit->name !== $newName) {
             $unit->name = $newName;
         }
 
-        $unit->short_name = $request->safe()['short_name'];
+        $unit->short_name = $request->safe()->short_name;
         $unit->save();
 
         $oldUsers = [];
         $newUsers = [];
 
-        if (isset($request->safe()['users'])) {
-            if (isset($request->safe()['users']['old'])) {
-                $oldUsers = $request->safe()['users']['old'];
+        if (isset($request->safe()->users)) {
+            if (isset($request->safe()->users['old'])) {
+                $oldUsers = $request->safe()->users['old'];
             }
-            if (isset($request->safe()['users']['new'])) {
-                $newUsers = $request->safe()['users']['new'];
+            if (isset($request->safe()->users['new'])) {
+                $newUsers = $request->safe()->users['new'];
             }
         }
 

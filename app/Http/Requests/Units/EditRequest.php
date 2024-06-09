@@ -24,10 +24,10 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['bail', 'required', 'max:255', new Unique(new Unit())],
+            'name' => ['bail', 'required', 'string', 'max:255', new Unique(new Unit(), 'unit')],
             'users.old' => ['bail', 'nullable', 'array', 'exists:users,id'],
             'users.new' => ['bail', 'nullable', 'array', 'exists:users,id'],
-            'short_name' => ['bail', 'required', 'max:10'],
+            'short_name' => ['bail', 'required', 'string', 'max:10'],
         ];
     }
 
@@ -46,6 +46,7 @@ class EditRequest extends FormRequest
         return [
             'max' => ':attribute tidak boleh melebihi :max karakter',
             'exists' => ':attribute tidak dapat ditemukan',
+            'string' => ':attribute harus berupa teks',
             'array' => ':attribute harus berupa array',
             'required' => ':attribute wajib diisi'
         ];
