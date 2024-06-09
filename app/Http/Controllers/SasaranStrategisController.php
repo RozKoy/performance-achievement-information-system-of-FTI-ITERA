@@ -66,7 +66,7 @@ class SasaranStrategisController extends Controller
     {
         $time = RSYear::currentTime();
 
-        $number = (int) $request->safe()['number'];
+        $number = (int) $request['number'];
         $dataCount = $time->sasaranStrategis->count();
         if ($number > $dataCount + 1) {
             return back()
@@ -83,7 +83,6 @@ class SasaranStrategisController extends Controller
         $ss = new SasaranStrategis($request->safe()->all());
 
         $ss->time()->associate($time);
-
         $ss->save();
 
         return redirect()->route('super-admin-rs-ss');
