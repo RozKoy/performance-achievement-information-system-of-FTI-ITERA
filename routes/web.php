@@ -208,7 +208,7 @@ Route::group([
             Route::get('/{user}/ubah', 'editView')->name('super-admin-users-edit');
             Route::put('/{user}/ubah', 'edit');
 
-            Route::get('/{id}/hapus', 'delete');
+            Route::get('/{user}/hapus', 'delete');
         });
     });
 

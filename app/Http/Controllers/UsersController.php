@@ -204,6 +204,13 @@ class UsersController extends Controller
         return redirect()->route('super-admin-users');
     }
 
+    public function delete(User $user)
+    {
+        $user->forceDelete();
+
+        return back();
+    }
+
 
     /*
     | -----------------------------------------------------------------
@@ -297,7 +304,7 @@ class UsersController extends Controller
         return redirect()->route('admin-users');
     }
 
-    public function delete($id)
+    public function deleteAdmin($id)
     {
         $user = User::findOrFail($id);
 
