@@ -83,6 +83,8 @@ class IndikatorKinerja extends Model
     {
         $this->realization()->forceDelete();
         $this->evaluation()->forceDelete();
+        $this->target()->forceDelete();
+
         $this->forceDelete();
     }
 }
