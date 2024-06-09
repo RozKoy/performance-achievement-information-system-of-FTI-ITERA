@@ -30,7 +30,12 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-// Authentication
+/*
+| -----------------------------------------------------------------
+| AUTHENTICATION
+| -----------------------------------------------------------------
+*/
+
 Route::controller(AuthController::class)->group(function () {
     Route::get('/masuk', 'loginView')->name('login');
     Route::post('/masuk', 'login');
@@ -47,7 +52,12 @@ Route::get('/ubah-kata-sandi', function () {
 })->name('change-password');
 
 
-// Super Admin
+/*
+| -----------------------------------------------------------------
+| SUPER ADMIN
+| -----------------------------------------------------------------
+*/
+
 Route::group([
     'prefix' => '/super-admin',
     'middleware' => 'superadmin'
@@ -201,21 +211,28 @@ Route::group([
     });
 
 
-    Route::group([
-        'prefix' => '/unit',
-        'controller' => UnitsController::class
-    ], function () {
+    Route::prefix('/unit')->controller(UnitsController::class)->group(function () {
         Route::get('/', 'homeView')->name('super-admin-unit');
-        Route::get('/tambah', 'addView')->name('super-admin-unit-add');
-        Route::post('/tambah', 'add');
-        Route::get('/{id}/ubah', 'editView')->name('super-admin-unit-edit');
-        Route::put('/{id}/ubah', 'edit');
-        Route::get('/{id}/hapus', 'delete');
+
+        Route::middleware('editor')->group(function () {
+            Route::get('/tambah', 'addView')->name('super-admin-unit-add');
+            Route::post('/tambah', 'add');
+
+            Route::get('/{id}/ubah', 'editView')->name('super-admin-unit-edit');
+            Route::put('/{id}/ubah', 'edit');
+
+            Route::get('/{id}/hapus', 'delete');
+        });
     });
 });
 
 
-// Admin
+/*
+| -----------------------------------------------------------------
+| ADMIN
+| -----------------------------------------------------------------
+*/
+
 Route::group([
     'prefix' => '/',
     'middleware' => 'admin'

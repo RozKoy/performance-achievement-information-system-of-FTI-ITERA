@@ -25,7 +25,8 @@ class UnitsController extends Controller
                     "%{$request->search}%"
                 );
             }
-        })->select(['id', 'name', 'short_name'])
+        })
+            ->select(['id', 'name', 'short_name'])
             ->withCount('users AS users')
             ->latest()
             ->get()
