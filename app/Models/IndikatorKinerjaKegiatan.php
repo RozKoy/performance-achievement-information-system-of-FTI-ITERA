@@ -51,4 +51,20 @@ class IndikatorKinerjaKegiatan extends Model
     {
         return $this->hasMany(ProgramStrategis::class);
     }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | FUNCTION
+    | -----------------------------------------------------------------
+    */
+
+    public function deleteOrTrashed(): void
+    {
+        foreach ($this->programStrategis as $key => $ps) {
+            $ps->deleteOrTrashed();
+        }
+
+        $this->forceDelete();
+    }
 }
