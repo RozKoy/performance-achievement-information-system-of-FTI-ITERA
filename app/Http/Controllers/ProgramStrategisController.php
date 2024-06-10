@@ -62,29 +62,44 @@ class ProgramStrategisController extends Controller
         abort(404);
     }
 
-    public function addView($skId, $ikkId)
+    public function addView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk)
     {
-        $sk = SasaranKegiatan::currentOrFail($skId);
-        $ikk = $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
+        if ($sk->id === $ikk->sasaranKegiatan->id) {
+            $sk = SasaranKegiatan::currentOrFail($sk->id);
 
-        $count = $ikk->programStrategis->count() + 1;
+            $count = $ikk->programStrategis->count() + 1;
 
-        $data = [];
-        for ($i = 0; $i < $count; $i++) {
-            $data[$i] = [
-                "value" => strval($i + 1),
-                "text" => strval($i + 1),
+            $data = [];
+            for ($i = 0; $i < $count; $i++) {
+                $data[$i] = [
+                    "value" => strval($i + 1),
+                    "text" => strval($i + 1),
+                ];
+            }
+            $data[$count - 1] = [
+                ...$data[$count - 1],
+                'selected' => true,
             ];
+
+            $sk = $sk->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $ikk = $ikk->only([
+                'number',
+                'name',
+                'id',
+            ]);
+
+            return view('super-admin.iku.ps.add', compact([
+                'data',
+                'ikk',
+                'sk',
+            ]));
         }
-        $data[$count - 1] = [
-            ...$data[$count - 1],
-            'selected' => true,
-        ];
 
-        $sk = $sk->only(['id', 'name', 'number']);
-        $ikk = $ikk->only(['id', 'name', 'number']);
-
-        return view('super-admin.iku.ps.add', compact(['data', 'ikk', 'sk']));
+        abort(404);
     }
 
     public function add(AddRequest $request, $skId, $ikkId)

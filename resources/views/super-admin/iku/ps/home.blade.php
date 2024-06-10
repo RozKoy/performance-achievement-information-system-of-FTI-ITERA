@@ -50,6 +50,7 @@
                 </tr>
             </thead>
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
+
                 @foreach ($data as $item)
                     @php
                         $sum = $item['active'] + $item['inactive'];
@@ -59,6 +60,7 @@
                             'indikator kinerja program' => "Total : {$sum}, Aktif : {$item['active']}, Tidak Aktif : {$item['inactive']}",
                         ];
                     @endphp
+
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
                         <td title="{{ $item['number'] }}">{{ $item['number'] }}</td>
                         <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
@@ -80,6 +82,7 @@
                         </td>
                     </tr>
                 @endforeach
+
             </tbody>
         </table>
     </div>
