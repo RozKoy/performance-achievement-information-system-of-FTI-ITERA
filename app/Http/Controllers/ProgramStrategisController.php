@@ -102,32 +102,34 @@ class ProgramStrategisController extends Controller
         abort(404);
     }
 
-    public function add(AddRequest $request, $skId, $ikkId)
+    public function add(AddRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk)
     {
-        $sk = SasaranKegiatan::currentOrFail($skId);
-        $ikk = $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
+        if ($sk->id === $ikk->sasaranKegiatan->id) {
+            $sk = SasaranKegiatan::currentOrFail($sk->id);
 
-        $number = $request->safe()['number'];
-        $dataCount = $ikk->programStrategis->count();
-        if ($number > $dataCount + 1) {
-            return back()
-                ->withInput()
-                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+            $number = $request['number'];
+            $dataCount = $ikk->programStrategis->count();
+            if ($number > $dataCount + 1) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+            }
+
+            if ($number <= $dataCount) {
+                $ikk->programStrategis()
+                    ->where('number', '>=', $number)
+                    ->increment('number');
+            }
+
+            $ps = new ProgramStrategis($request->safe()->all());
+
+            $ps->indikatorKinerjaKegiatan()->associate($ikk);
+            $ps->save();
+
+            return redirect()->route('super-admin-iku-ps', ['sk' => $sk->id, 'ikk' => $ikk->id]);
         }
 
-        if ($number <= $dataCount) {
-            $ikk->programStrategis()
-                ->where('number', '>=', $number)
-                ->increment('number');
-        }
-
-        $ps = new ProgramStrategis($request->safe()->all());
-
-        $ps->indikatorKinerjaKegiatan()->associate($ikk);
-
-        $ps->save();
-
-        return redirect()->route('super-admin-iku-ps', ['sk' => $skId, 'ikk' => $ikkId]);
+        abort(404);
     }
 
     public function editView($skId, $ikkId, $id)
