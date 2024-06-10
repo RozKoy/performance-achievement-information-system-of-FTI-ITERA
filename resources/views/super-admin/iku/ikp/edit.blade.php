@@ -46,13 +46,19 @@
     <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
     <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="{{ $ikk['number'] }}" dataText="{{ $ikk['name'] }}" />
     <x-partials.heading.h3 title="Program strategis" dataNumber="{{ $ps['number'] }}" dataText="{{ $ps['name'] }}" />
-    <div class="flex items-center justify-start">
-        <label onclick="statusToggle('{{ url(route('super-admin-iku-ikp-status', ['ikp' => $ikp['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']])) }}')" class="relative inline-flex items-center">
-            <input type="checkbox" value="{{ $ikp['status'] }}" class="peer sr-only" @checked($ikp['status'] === 'aktif') disabled>
-            <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
-        </label>
-    </div>
-    <p class="text-xs font-bold text-red-400">*Merubah status akan menghapus realisasi capaian yang telah diinputkan setiap unit</p>
+
+    @if ($current)
+        <div class="flex items-center justify-start">
+            <label onclick="statusToggle('{{ url(route('super-admin-iku-ikp-status', ['ikp' => $ikp['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']])) }}')" class="relative inline-flex items-center">
+                <input type="checkbox" value="{{ $ikp['status'] }}" class="peer sr-only" @checked($ikp['status'] === 'aktif') disabled>
+                <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
+            </label>
+        </div>
+        <p class="text-xs font-bold text-red-400">*Merubah status akan menghapus realisasi capaian yang telah diinputkan setiap unit</p>
+    @else
+        <div title="Status penugasan : {{ $ikp['status'] }}" class="{{ $ikp['status'] === 'aktif' ? 'bg-green-500' : 'bg-red-500' }} ml-auto rounded-full p-3"></div>
+    @endif
+
     <form action="" method="POST" class="flex flex-col gap-2">
         @csrf
         @method('PUT')
@@ -111,11 +117,12 @@
         <x-partials.button.edit />
     </form>
 
-    @pushOnce('script')
-        <script>
-            function statusToggle(url) {
-                window.location.href = url;
-            }
-        </script>
-    @endPushOnce
+    @pushIf($current, 'script')
+    <script>
+        function statusToggle(url) {
+            window.location.href = url;
+        }
+    </script>
+    @endPushIf
+
 </x-super-admin-template>

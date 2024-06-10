@@ -186,6 +186,8 @@ class IndikatorKinerjaProgramController extends Controller
     public function editView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp)
     {
         if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id && $ps->id === $ikp->programStrategis->id) {
+            $current = $sk->time->year === Carbon::now()->format('Y');
+
             $count = $ps->indikatorKinerjaProgram->count();
             $data = [];
             for ($i = 0; $i < $count; $i++) {
@@ -239,6 +241,7 @@ class IndikatorKinerjaProgramController extends Controller
 
             return view('super-admin.iku.ikp.edit', compact([
                 'columns',
+                'current',
                 'types',
                 'data',
                 'ikk',
@@ -299,10 +302,12 @@ class IndikatorKinerjaProgramController extends Controller
     public function statusToggle(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp)
     {
         if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id && $ps->id === $ikp->programStrategis->id) {
-            $this->achievements()->forceDelete();
-            $this->evaluation()->forceDelete();
-            $this->columns()->forceDelete();
-            $this->target()->forceDelete();
+            $sk = SasaranKegiatan::currentOrFail($sk->id);
+
+            $ikp->achievements()->forceDelete();
+            $ikp->evaluation()->forceDelete();
+            $ikp->columns()->forceDelete();
+            $ikp->target()->forceDelete();
 
             $newStatus = $ikp->status === 'aktif' ? 'tidak aktif' : 'aktif';
             $ikp->status = $newStatus;
