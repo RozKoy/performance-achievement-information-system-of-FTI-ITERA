@@ -149,22 +149,21 @@ Route::group([
     });
 
 
-    Route::group([
-        'prefix' => '/indikator-kinerja-utama'
-    ], function () {
+    Route::prefix('/indikator-kinerja-utama')->group(function () {
         Route::get('/', function () {
             return redirect()->route('super-admin-iku-sk');
         })->name('super-admin-iku');
 
-        Route::group([
-            'prefix' => '/sasaran-kegiatan',
-            'controller' => SasaranKegiatanController::class
-        ], function () {
+        Route::prefix('/sasaran-kegiatan')->controller(SasaranKegiatanController::class)->group(function () {
             Route::get('/', 'homeView')->name('super-admin-iku-sk');
-            Route::get('/tambah', 'addView')->name('super-admin-iku-sk-add');
-            Route::post('/tambah', 'add');
-            Route::get('/{id}/ubah', 'editView')->name('super-admin-iku-sk-edit');
-            Route::put('/{id}/ubah', 'edit');
+
+            Route::middleware('editor')->group(function () {
+                Route::get('/tambah', 'addView')->name('super-admin-iku-sk-add');
+                Route::post('/tambah', 'add');
+
+                Route::get('/{id}/ubah', 'editView')->name('super-admin-iku-sk-edit');
+                Route::put('/{id}/ubah', 'edit');
+            });
         });
 
         Route::group([

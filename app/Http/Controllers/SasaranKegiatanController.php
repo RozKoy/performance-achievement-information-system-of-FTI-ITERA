@@ -15,9 +15,14 @@ class SasaranKegiatanController extends Controller
     {
         $time = IKUYear::currentTime();
 
-        $data = $time->sasaranKegiatan()->select(['id', 'name', 'number'])
+        $data = $time->sasaranKegiatan()
+            ->select([
+                'number',
+                'name',
+                'id',
+            ])
             ->where(function (Builder $query) use ($request) {
-                if (isset ($request->search)) {
+                if (isset($request->search)) {
                     $query->where('name', 'LIKE', "%{$request->search}%")
                         ->orWhere('number', $request->search);
                 }
