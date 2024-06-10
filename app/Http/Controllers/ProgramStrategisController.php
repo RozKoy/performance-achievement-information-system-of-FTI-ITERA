@@ -216,4 +216,17 @@ class ProgramStrategisController extends Controller
 
         abort(404);
     }
+
+    public function delete(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps)
+    {
+        if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id) {
+            $sk = SasaranKegiatan::currentOrFail($sk->id);
+
+            $ps->deleteOrTrashed();
+
+            return back();
+        }
+
+        abort(404);
+    }
 }
