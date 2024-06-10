@@ -171,7 +171,7 @@ class IndikatorKinerjaKegiatanController extends Controller
             if ($sk->time->year === Carbon::now()->format('Y')) {
                 return redirect()->route('super-admin-iku-ikk', ['sk' => $sk->id]);
             } else {
-                return redirect()->route('super-admin-achievement-rs', [
+                return redirect()->route('super-admin-achievement-iku', [
                     'year' => $sk->time->year
                 ]);
             }

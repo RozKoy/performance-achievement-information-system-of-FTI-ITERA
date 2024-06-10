@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerjaKegiatan;
 use App\Models\ProgramStrategis;
 use App\Models\SasaranKegiatan;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 
 class ProgramStrategisController extends Controller
@@ -175,14 +176,10 @@ class ProgramStrategisController extends Controller
         abort(404);
     }
 
-    public function edit(EditRequest $request, $skId, $ikkId, $id)
+    public function edit(EditRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps)
     {
-        $ps = ProgramStrategis::findOrFail($id);
-        $ikk = $ps->indikatorKinerjaKegiatan;
-        $sk = $ikk->sasaranKegiatan;
-
-        if ($sk->id === $skId && $ikk->id === $ikkId) {
-            $number = (int) $request->safe()['number'];
+        if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id) {
+            $number = (int) $request['number'];
             if ($number > $ikk->programStrategis->count()) {
                 return back()
                     ->withInput()
@@ -205,10 +202,16 @@ class ProgramStrategisController extends Controller
                 }
             }
 
-            $ps->name = $request->safe()['name'];
+            $ps->name = $request['name'];
             $ps->save();
 
-            return redirect()->route('super-admin-iku-ps', ['sk' => $skId, 'ikk' => $ikkId]);
+            if ($sk->time->year === Carbon::now()->format('Y')) {
+                return redirect()->route('super-admin-iku-ps', ['sk' => $sk->id, 'ikk' => $ikk->id]);
+            } else {
+                return redirect()->route('super-admin-achievement-iku', [
+                    'year' => $sk->time->year
+                ]);
+            }
         }
 
         abort(404);
