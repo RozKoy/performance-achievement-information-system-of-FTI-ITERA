@@ -127,7 +127,7 @@ Route::group([
                 Route::get('/{k}/ubah', 'editView')->name('super-admin-rs-k-edit');
                 Route::put('/{k}/ubah', 'edit');
 
-                Route::get('/{id}/hapus', 'delete');
+                Route::get('/{k}/hapus', 'delete');
             });
         });
 

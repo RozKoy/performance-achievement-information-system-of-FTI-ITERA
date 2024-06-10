@@ -193,13 +193,16 @@ class KegiatanController extends Controller
         abort(404);
     }
 
-    public function delete($id)
+    public function delete(SasaranStrategis $ss, Kegiatan $k)
     {
-        $k = Kegiatan::findOrFail($id);
-        $ss = SasaranStrategis::currentOrFail($k->sasaranStrategis->id);
+        if ($ss->id === $k->sasaranStrategis->id) {
+            $ss = SasaranStrategis::currentOrFail($ss->id);
 
-        $k->deleteOrTrashed();
+            $k->deleteOrTrashed();
 
-        return back();
+            return back();
+        }
+
+        abort(404);
     }
 }
