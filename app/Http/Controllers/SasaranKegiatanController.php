@@ -60,7 +60,7 @@ class SasaranKegiatanController extends Controller
     {
         $time = IKUYear::currentTime();
 
-        $number = (int) $request->safe()['number'];
+        $number = (int) $request['number'];
         $dataCount = $time->sasaranKegiatan->count();
         if ($number > $dataCount + 1) {
             return back()
@@ -77,7 +77,6 @@ class SasaranKegiatanController extends Controller
         $sk = new SasaranKegiatan($request->safe()->all());
 
         $sk->time()->associate($time);
-
         $sk->save();
 
         return redirect()->route('super-admin-iku-sk');
