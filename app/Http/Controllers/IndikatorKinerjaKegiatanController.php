@@ -44,9 +44,9 @@ class IndikatorKinerjaKegiatanController extends Controller
         ]));
     }
 
-    public function addView($skId)
+    public function addView(SasaranKegiatan $sk)
     {
-        $sk = SasaranKegiatan::currentOrFail($skId);
+        $sk = SasaranKegiatan::currentOrFail($sk->id);
 
         $count = $sk->indikatorKinerjaKegiatan->count() + 1;
 
@@ -62,9 +62,16 @@ class IndikatorKinerjaKegiatanController extends Controller
             'selected' => true,
         ];
 
-        $sk = $sk->only(['id', 'name', 'number']);
+        $sk = $sk->only([
+            'number',
+            'name',
+            'id',
+        ]);
 
-        return view('super-admin.iku.ikk.add', compact(['data', 'sk']));
+        return view('super-admin.iku.ikk.add', compact([
+            'data',
+            'sk',
+        ]));
     }
 
     public function add(AddRequest $request, $skId)
