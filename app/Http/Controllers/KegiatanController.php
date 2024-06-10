@@ -113,12 +113,9 @@ class KegiatanController extends Controller
         return redirect()->route('super-admin-rs-k', ['ss' => $ss->id]);
     }
 
-    public function editView($ssId, $id)
+    public function editView(SasaranStrategis $ss, Kegiatan $k)
     {
-        $k = Kegiatan::findOrFail($id);
-        $ss = $k->sasaranStrategis;
-
-        if ($ss->id === $ssId) {
+        if ($ss->id === $k->sasaranStrategis->id) {
             $count = $ss->kegiatan->count();
 
             $data = [];
@@ -133,10 +130,21 @@ class KegiatanController extends Controller
                 'selected' => true,
             ];
 
-            $ss = $ss->only(['id', 'name', 'number']);
-            $k = $k->only(['id', 'name']);
+            $ss = $ss->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $k = $k->only([
+                'name',
+                'id',
+            ]);
 
-            return view('super-admin.rs.k.edit', compact('k', 'ss', 'data'));
+            return view('super-admin.rs.k.edit', compact([
+                'data',
+                'ss',
+                'k',
+            ]));
         }
 
         abort(404);

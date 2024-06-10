@@ -16,7 +16,7 @@
             'name' => 'Ubah',
             'params' => [
                 'ss' => $ss['id'],
-                'id' => $k['id'],
+                'k' => $k['id'],
             ],
         ],
     ];
@@ -32,9 +32,11 @@
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
                 <x-partials.input.select name="number" title="Nomor" :$data required />
+
                 @error('number')
                     <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
                 @enderror
+
             </div>
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="name" title="Kegiatan" text="Kegiatan" required />
