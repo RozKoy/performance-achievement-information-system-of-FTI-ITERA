@@ -71,4 +71,13 @@ class SasaranKegiatan extends Model
 
         return abort(404);
     }
+
+    public function deleteOrTrashed(): void
+    {
+        foreach ($this->indikatorKinerjaKegiatan as $key => $ikk) {
+            $ikk->deleteOrTrashed();
+        }
+
+        $this->forceDelete();
+    }
 }
