@@ -179,4 +179,17 @@ class IndikatorKinerjaKegiatanController extends Controller
 
         abort(404);
     }
+
+    public function delete(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk)
+    {
+        if ($sk->id === $ikk->sasaranKegiatan->id) {
+            $sk = SasaranKegiatan::currentOrFail($sk->id);
+
+            $ikk->deleteOrTrashed();
+
+            return back();
+        }
+
+        abort(404);
+    }
 }

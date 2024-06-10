@@ -176,7 +176,9 @@ Route::group([
                 Route::post('/tambah', 'add');
 
                 Route::get('/{ikk}/ubah', 'editView')->name('super-admin-iku-ikk-edit');
-                Route::put('/{id}/ubah', 'edit');
+                Route::put('/{ikk}/ubah', 'edit');
+
+                Route::get('/{ikk}/hapus', 'delete');
             });
         });
 
