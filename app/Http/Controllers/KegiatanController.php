@@ -57,9 +57,9 @@ class KegiatanController extends Controller
         ]));
     }
 
-    public function addView($ssId)
+    public function addView(SasaranStrategis $ss)
     {
-        $ss = SasaranStrategis::currentOrFail($ssId);
+        $ss = SasaranStrategis::currentOrFail($ss->id);
 
         $count = $ss->kegiatan->count() + 1;
 
@@ -75,9 +75,16 @@ class KegiatanController extends Controller
             'selected' => true,
         ];
 
-        $ss = $ss->only(['id', 'name', 'number']);
+        $ss = $ss->only([
+            'number',
+            'name',
+            'id',
+        ]);
 
-        return view('super-admin.rs.k.add', compact(['data', 'ss']));
+        return view('super-admin.rs.k.add', compact([
+            'data',
+            'ss',
+        ]));
     }
 
     public function add(AddRequest $request, $ssId)
