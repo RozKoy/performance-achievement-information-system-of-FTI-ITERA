@@ -182,15 +182,9 @@ class IndikatorKinerjaProgramController extends Controller
         abort(404);
     }
 
-    public function editView($skId, $ikkId, $psId, $id)
+    public function editView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp)
     {
-        $ikp = IndikatorKinerjaProgram::findOrFail($id);
-
-        $ps = $ikp->programStrategis;
-        $ikk = $ps->indikatorKinerjaKegiatan;
-        $sk = $ikk->sasaranKegiatan;
-
-        if ($ps->id === $psId && $ikk->id === $ikkId && $sk->id === $skId) {
+        if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id && $ps->id === $ikp->programStrategis->id) {
             $count = $ps->indikatorKinerjaProgram->count();
             $data = [];
             for ($i = 0; $i < $count; $i++) {
@@ -211,12 +205,46 @@ class IndikatorKinerjaProgramController extends Controller
                 'selected' => true
             ];
 
-            $sk = $sk->only(['id', 'name', 'number']);
-            $ikk = $ikk->only(['id', 'name', 'number']);
-            $ps = $ps->only(['id', 'name', 'number']);
-            $ikp = $ikp->only(['id', 'name', 'status', 'column', 'definition']);
+            $columns = $ikp->columns()
+                ->select([
+                    'file',
+                    'name',
+                ])
+                ->orderBy('number')
+                ->get()
+                ->toArray();
 
-            return view('super-admin.iku.ikp.edit', compact(['types', 'data', 'sk', 'ikk', 'ps', 'ikp']));
+            $sk = $sk->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $ikk = $ikk->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $ps = $ps->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $ikp = $ikp->only([
+                'definition',
+                'status',
+                'name',
+                'id',
+            ]);
+
+            return view('super-admin.iku.ikp.edit', compact([
+                'columns',
+                'types',
+                'data',
+                'ikk',
+                'ikp',
+                'ps',
+                'sk',
+            ]));
         }
 
         abort(404);
