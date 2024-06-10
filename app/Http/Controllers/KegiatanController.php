@@ -6,6 +6,7 @@ use App\Http\Requests\Kegiatan\EditRequest;
 use App\Http\Requests\Kegiatan\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\SasaranStrategis;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Kegiatan;
 
@@ -150,13 +151,10 @@ class KegiatanController extends Controller
         abort(404);
     }
 
-    public function edit(EditRequest $request, $ssId, $id)
+    public function edit(EditRequest $request, SasaranStrategis $ss, Kegiatan $k)
     {
-        $k = Kegiatan::findOrFail($id);
-        $ss = $k->sasaranStrategis;
-
-        if ($ss->id === $ssId) {
-            $number = (int) $request->safe()['number'];
+        if ($ss->id === $k->sasaranStrategis->id) {
+            $number = (int) $request['number'];
             if ($number > $ss->kegiatan->count()) {
                 return back()
                     ->withInput()
@@ -180,10 +178,16 @@ class KegiatanController extends Controller
                 }
             }
 
-            $k->name = $request->safe()['name'];
+            $k->name = $request['name'];
             $k->save();
 
-            return redirect()->route('super-admin-rs-k', ['ss' => $ssId]);
+            if ($ss->time->year === Carbon::now()->format('Y')) {
+                return redirect()->route('super-admin-rs-k', ['ss' => $ss->id]);
+            } else {
+                return redirect()->route('super-admin-achievement-rs', [
+                    'year' => $ss->time->year
+                ]);
+            }
         }
 
         abort(404);

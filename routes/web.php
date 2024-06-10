@@ -125,7 +125,7 @@ Route::group([
                 Route::post('/tambah', 'add');
 
                 Route::get('/{k}/ubah', 'editView')->name('super-admin-rs-k-edit');
-                Route::put('/{id}/ubah', 'edit');
+                Route::put('/{k}/ubah', 'edit');
 
                 Route::get('/{id}/hapus', 'delete');
             });
