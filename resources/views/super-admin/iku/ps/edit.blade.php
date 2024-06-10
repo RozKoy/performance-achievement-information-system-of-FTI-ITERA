@@ -32,7 +32,7 @@
 @endphp
 <x-super-admin-template title="Ubah Program Strategis - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="ubah program strategis" back />
+    <x-partials.heading.h2 text="ubah program strategis" :$previousRoute />
     <x-partials.heading.h3 title="Sasaran kegiatan" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
     <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="{{ $ikk['number'] }}" dataText="{{ $ikk['name'] }}" />
     <form action="" method="POST" class="flex flex-col gap-2">

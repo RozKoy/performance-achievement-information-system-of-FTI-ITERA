@@ -23,7 +23,7 @@
 @endphp
 <x-super-admin-template title="Ubah Indikator Kinerja Kegiatan - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="ubah indikator kinerja kegiatan" back />
+    <x-partials.heading.h2 text="ubah indikator kinerja kegiatan" :$previousRoute />
     <x-partials.heading.h3 title="Sasaran kegiatan" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
     <form action="" method="POST" class="flex flex-col gap-2">
         @csrf

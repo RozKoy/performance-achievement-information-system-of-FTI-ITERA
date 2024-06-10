@@ -208,6 +208,18 @@ class IndikatorKinerjaProgramController extends Controller
                 'selected' => true
             ];
 
+            if ($current) {
+                $previousRoute = route('super-admin-iku-ikp', [
+                    'ikk' => $ikk['id'],
+                    'sk' => $sk['id'],
+                    'ps' => $ps['id'],
+                ]);
+            } else {
+                $previousRoute = route('super-admin-achievement-iku', [
+                    'year' => $sk->time->year
+                ]);
+            }
+
             $columns = $ikp->columns()
                 ->select([
                     'file',
@@ -240,6 +252,7 @@ class IndikatorKinerjaProgramController extends Controller
             ]);
 
             return view('super-admin.iku.ikp.edit', compact([
+                'previousRoute',
                 'columns',
                 'current',
                 'types',

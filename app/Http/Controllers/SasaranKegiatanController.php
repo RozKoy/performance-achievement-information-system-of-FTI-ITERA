@@ -99,12 +99,21 @@ class SasaranKegiatanController extends Controller
             'selected' => true,
         ];
 
+        if ($sk->time->year === Carbon::now()->format('Y')) {
+            $previousRoute = route('super-admin-iku-sk');
+        } else {
+            $previousRoute = route('super-admin-achievement-iku', [
+                'year' => $sk->time->year
+            ]);
+        }
+
         $sk = $sk->only([
             'name',
             'id',
         ]);
 
         return view('super-admin.iku.sk.edit', compact([
+            'previousRoute',
             'data',
             'sk',
         ]));

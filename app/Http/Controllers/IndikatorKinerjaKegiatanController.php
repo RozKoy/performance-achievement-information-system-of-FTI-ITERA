@@ -118,6 +118,16 @@ class IndikatorKinerjaKegiatanController extends Controller
                 'selected' => true,
             ];
 
+            if ($sk->time->year === Carbon::now()->format('Y')) {
+                $previousRoute = route('super-admin-iku-ikk', [
+                    'sk' => $sk->id
+                ]);
+            } else {
+                $previousRoute = route('super-admin-achievement-iku', [
+                    'year' => $sk->time->year
+                ]);
+            }
+
             $sk = $sk->only([
                 'number',
                 'name',
@@ -129,6 +139,7 @@ class IndikatorKinerjaKegiatanController extends Controller
             ]);
 
             return view('super-admin.iku.ikk.edit', compact([
+                'previousRoute',
                 'data',
                 'ikk',
                 'sk',

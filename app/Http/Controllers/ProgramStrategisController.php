@@ -150,6 +150,17 @@ class ProgramStrategisController extends Controller
                 'selected' => true,
             ];
 
+            if ($sk->time->year === Carbon::now()->format('Y')) {
+                $previousRoute = route('super-admin-iku-ps', [
+                    'ikk' => $ikk->id,
+                    'sk' => $sk->id,
+                ]);
+            } else {
+                $previousRoute = route('super-admin-achievement-iku', [
+                    'year' => $sk->time->year
+                ]);
+            }
+
             $ikk = $ikk->only([
                 'number',
                 'name',
@@ -166,6 +177,7 @@ class ProgramStrategisController extends Controller
             ]);
 
             return view('super-admin.iku.ps.edit', compact([
+                'previousRoute',
                 'data',
                 'ikk',
                 'ps',

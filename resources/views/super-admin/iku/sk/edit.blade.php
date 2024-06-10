@@ -15,7 +15,7 @@
 @endphp
 <x-super-admin-template title="Ubah Sasaran Kegiatan - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="ubah sasaran kegiatan" back />
+    <x-partials.heading.h2 text="ubah sasaran kegiatan" :$previousRoute />
     <form action="" method="POST" class="flex flex-col gap-2">
         @csrf
         @method('PUT')
