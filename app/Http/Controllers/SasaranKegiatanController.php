@@ -82,10 +82,8 @@ class SasaranKegiatanController extends Controller
         return redirect()->route('super-admin-iku-sk');
     }
 
-    public function editView($id)
+    public function editView(SasaranKegiatan $sk)
     {
-        $sk = SasaranKegiatan::findOrFail($id);
-
         $count = $sk->time->sasaranKegiatan->count();
 
         $data = [];
@@ -100,9 +98,15 @@ class SasaranKegiatanController extends Controller
             'selected' => true,
         ];
 
-        $sk = $sk->only(['id', 'name']);
+        $sk = $sk->only([
+            'name',
+            'id',
+        ]);
 
-        return view('super-admin.iku.sk.edit', compact(['data', 'sk']));
+        return view('super-admin.iku.sk.edit', compact([
+            'data',
+            'sk',
+        ]));
     }
 
     public function edit(EditRequest $request, $id)
