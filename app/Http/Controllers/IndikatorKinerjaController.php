@@ -152,6 +152,8 @@ class IndikatorKinerjaController extends Controller
     public function editView(SasaranStrategis $ss, Kegiatan $k, IndikatorKinerja $ik)
     {
         if ($ss->id === $k->sasaranStrategis->id && $k->id === $ik->kegiatan->id) {
+            $current = $ss->time->year === Carbon::now()->format('Y');
+
             $count = $k->indikatorKinerja->count();
 
             $data = [];
@@ -185,6 +187,7 @@ class IndikatorKinerjaController extends Controller
             ]);
 
             return view('super-admin.rs.ik.edit', compact([
+                'current',
                 'data',
                 'type',
                 'ik',
@@ -241,6 +244,8 @@ class IndikatorKinerjaController extends Controller
     public function statusToggle(SasaranStrategis $ss, Kegiatan $k, IndikatorKinerja $ik)
     {
         if ($ss->id === $k->sasaranStrategis->id && $k->id === $ik->kegiatan->id) {
+            $ss = SasaranStrategis::currentOrFail($k->sasaranStrategis->id);
+
             $ik->realization()->forceDelete();
             $ik->evaluation()->forceDelete();
             $ik->target()->forceDelete();
