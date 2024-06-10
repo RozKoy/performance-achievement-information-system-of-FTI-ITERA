@@ -143,7 +143,7 @@ Route::group([
 
                 Route::get('/{ik}/status', 'statusToggle')->name('super-admin-rs-ik-status');
 
-                Route::get('/{id}/hapus', 'delete');
+                Route::get('/{ik}/hapus', 'delete');
             });
         });
     });

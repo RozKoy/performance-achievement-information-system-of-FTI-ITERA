@@ -256,14 +256,16 @@ class IndikatorKinerjaController extends Controller
         abort(404);
     }
 
-    public function delete($id)
+    public function delete(SasaranStrategis $ss, Kegiatan $k, IndikatorKinerja $ik)
     {
-        $ik = IndikatorKinerja::findOrFail($id);
-        $k = Kegiatan::findOrFail($ik->kegiatan->id);
-        $ss = SasaranStrategis::currentOrFail($k->sasaranStrategis->id);
+        if ($ss->id === $k->sasaranStrategis->id && $k->id === $ik->kegiatan->id) {
+            $ss = SasaranStrategis::currentOrFail($k->sasaranStrategis->id);
 
-        $ik->deleteOrTrashed();
+            $ik->deleteOrTrashed();
 
-        return back();
+            return back();
+        }
+
+        abort(404);
     }
 }
