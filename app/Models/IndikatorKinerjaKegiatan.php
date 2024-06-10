@@ -65,6 +65,10 @@ class IndikatorKinerjaKegiatan extends Model
             $ps->deleteOrTrashed();
         }
 
+        $this->sasaranKegiatan->indikatorKinerjaKegiatan()
+            ->where('number', '>', $this->number)
+            ->decrement('number');
+
         $this->forceDelete();
     }
 }

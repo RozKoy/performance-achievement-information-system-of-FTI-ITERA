@@ -63,6 +63,10 @@ class ProgramStrategis extends Model
             $ikp->deleteOrTrashed();
         }
 
+        $this->indikatorKinerjaKegiatan->programStrategis()
+            ->where('number', '>', $this->number)
+            ->decrement('number');
+
         $this->forceDelete();
     }
 }

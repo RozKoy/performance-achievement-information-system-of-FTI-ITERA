@@ -92,6 +92,10 @@ class IndikatorKinerjaProgram extends Model
         $this->columns()->forceDelete();
         $this->target()->forceDelete();
 
+        $this->programStrategis->indikatorKinerjaProgram()
+            ->where('number', '>', $this->number)
+            ->decrement('number');
+
         $this->forceDelete();
     }
 }

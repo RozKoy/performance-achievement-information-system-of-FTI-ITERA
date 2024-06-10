@@ -78,6 +78,10 @@ class SasaranKegiatan extends Model
             $ikk->deleteOrTrashed();
         }
 
+        $this->time->sasaranKegiatan()
+            ->where('number', '>', $this->number)
+            ->decrement('number');
+
         $this->forceDelete();
     }
 }
