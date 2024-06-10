@@ -87,11 +87,11 @@ class KegiatanController extends Controller
         ]));
     }
 
-    public function add(AddRequest $request, $ssId)
+    public function add(AddRequest $request, SasaranStrategis $ss)
     {
-        $ss = SasaranStrategis::currentOrFail($ssId);
+        $ss = SasaranStrategis::currentOrFail($ss->id);
 
-        $number = $request->safe()['number'];
+        $number = $request['number'];
         $dataCount = $ss->kegiatan->count();
         if ($number > $dataCount + 1) {
             return back()
@@ -108,10 +108,9 @@ class KegiatanController extends Controller
         $k = new Kegiatan($request->safe()->all());
 
         $k->sasaranStrategis()->associate($ss);
-
         $k->save();
 
-        return redirect()->route('super-admin-rs-k', ['ss' => $ssId]);
+        return redirect()->route('super-admin-rs-k', ['ss' => $ss->id]);
     }
 
     public function editView($ssId, $id)
