@@ -306,13 +306,25 @@ class IndikatorKinerjaProgramController extends Controller
 
             $ikp->achievements()->forceDelete();
             $ikp->evaluation()->forceDelete();
-            $ikp->columns()->forceDelete();
             $ikp->target()->forceDelete();
 
             $newStatus = $ikp->status === 'aktif' ? 'tidak aktif' : 'aktif';
             $ikp->status = $newStatus;
 
             $ikp->save();
+
+            return back();
+        }
+
+        abort(404);
+    }
+
+    public function delete(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp)
+    {
+        if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id && $ps->id === $ikp->programStrategis->id) {
+            $sk = SasaranKegiatan::currentOrFail($sk->id);
+
+            $ikp->deleteOrTrashed();
 
             return back();
         }

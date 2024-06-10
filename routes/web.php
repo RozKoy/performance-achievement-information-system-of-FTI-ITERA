@@ -207,6 +207,8 @@ Route::group([
                 Route::put('/{ikp}/ubah', 'edit');
 
                 Route::get('/{ikp}/status', 'statusToggle')->name('super-admin-iku-ikp-status');
+
+                Route::get('/{ikp}/hapus', 'delete');
             });
         });
     });
