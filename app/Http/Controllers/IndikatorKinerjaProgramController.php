@@ -132,52 +132,54 @@ class IndikatorKinerjaProgramController extends Controller
         abort(404);
     }
 
-    public function add(AddRequest $request, $skId, $ikkId, $psId)
+    public function add(AddRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps)
     {
-        $sk = SasaranKegiatan::currentOrFail($skId);
-        $ikk = $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
-        $ps = $ikk->programStrategis()->findOrFail($psId);
+        if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id) {
+            $sk = SasaranKegiatan::currentOrFail($sk->id);
 
-        $number = $request->safe()['number'];
-        $dataCount = $ps->indikatorKinerjaProgram->count();
-        if ($number > $dataCount + 1) {
-            return back()
-                ->withInput()
-                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+            $number = $request['number'];
+            $dataCount = $ps->indikatorKinerjaProgram->count();
+            if ($number > $dataCount + 1) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+            }
+
+            if ($number <= $dataCount) {
+                $ps->indikatorKinerjaProgram()
+                    ->where('number', '>=', $number)
+                    ->increment('number');
+            }
+
+            $ikp = new IndikatorKinerjaProgram($request->safe()->except('columns', 'file'));
+
+            $ikp->programStrategis()->associate($ps);
+            $ikp->status = 'aktif';
+
+            $ikp->save();
+
+            $index = 1;
+            foreach ($request['columns'] as $value) {
+                $ikp->columns()->create([
+                    'number' => $index,
+                    'name' => $value
+                ]);
+
+                $index++;
+            }
+
+            if ($request['file'] !== null) {
+                $ikp->columns()->create([
+                    'name' => $request['file'],
+                    'number' => $index,
+                    'file' => true
+                ]);
+            }
+
+            return redirect()->route('super-admin-iku-ikp', ['sk' => $sk->id, 'ikk' => $ikk->id, 'ps' => $ps->id]);
         }
 
-        if ($number <= $dataCount) {
-            $ps->indikatorKinerjaProgram()
-                ->where('number', '>=', $number)
-                ->increment('number');
-        }
-
-        $ikp = new IndikatorKinerjaProgram($request->safe()->except('columns', 'file'));
-
-        $ikp->programStrategis()->associate($ps);
-        $ikp->status = 'aktif';
-
-        $ikp->save();
-
-        $index = 1;
-        foreach ($request['columns'] as $value) {
-            $ikp->columns()->create([
-                'number' => $index,
-                'name' => $value
-            ]);
-
-            $index++;
-        }
-
-        if ($request['file'] !== null) {
-            $ikp->columns()->create([
-                'name' => $request['file'],
-                'number' => $index,
-                'file' => true
-            ]);
-        }
-
-        return redirect()->route('super-admin-iku-ikp', ['sk' => $skId, 'ikk' => $ikkId, 'ps' => $psId]);
+        abort(404);
     }
 
     public function editView($skId, $ikkId, $psId, $id)
