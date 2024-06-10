@@ -7,6 +7,7 @@ use App\Http\Requests\IndikatorKinerjaKegiatan\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerjaKegiatan;
 use App\Models\SasaranKegiatan;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 
 class IndikatorKinerjaKegiatanController extends Controller
@@ -137,13 +138,10 @@ class IndikatorKinerjaKegiatanController extends Controller
         abort(404);
     }
 
-    public function edit(EditRequest $request, $skId, $id)
+    public function edit(EditRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk)
     {
-        $ikk = IndikatorKinerjaKegiatan::findOrFail($id);
-        $sk = $ikk->sasaranKegiatan;
-
-        if ($sk->id === $skId) {
-            $number = (int) $request->safe()['number'];
+        if ($sk->id === $ikk->sasaranKegiatan->id) {
+            $number = (int) $request['number'];
             if ($number > $sk->indikatorKinerjaKegiatan->count()) {
                 return back()
                     ->withInput()
@@ -167,10 +165,16 @@ class IndikatorKinerjaKegiatanController extends Controller
                 }
             }
 
-            $ikk->name = $request->safe()['name'];
+            $ikk->name = $request['name'];
             $ikk->save();
 
-            return redirect()->route('super-admin-iku-ikk', ['sk' => $skId]);
+            if ($sk->time->year === Carbon::now()->format('Y')) {
+                return redirect()->route('super-admin-iku-ikk', ['sk' => $sk->id]);
+            } else {
+                return redirect()->route('super-admin-achievement-rs', [
+                    'year' => $sk->time->year
+                ]);
+            }
         }
 
         abort(404);
