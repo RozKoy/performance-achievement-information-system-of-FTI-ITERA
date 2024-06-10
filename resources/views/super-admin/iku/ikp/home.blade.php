@@ -38,8 +38,17 @@
     <x-partials.heading.h3 title="Program strategis" dataNumber="{{ $ps['number'] }}" dataText="{{ $ps['name'] }}" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
-        <x-partials.button.add route="{{ route('super-admin-iku-ikp-add', ['sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']]) }}" />
+
+        @if (auth()->user()->access === 'editor')
+            <x-partials.button.add route="{{ route('super-admin-iku-ikp-add', ['sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']]) }}" />
+        @endif
+
     </div>
+
+    @if (request()->query('search') !== null)
+        <p class="max-2xl:text-sm max-lg:text-xs"><span class="font-semibold text-primary">Pencarian : </span>{{ request()->query('search') }}</p>
+    @endif
+
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
@@ -48,11 +57,16 @@
                     <th title="Indikator kinerja program">Indikator Kinerja Program</th>
                     <th title="Definisi operasional">Definisi Operasional</th>
                     <th title="Kolom">Kolom</th>
-                    <th title="Status">Status</th>
-                    <th title="Aksi">Aksi</th>
+
+                    @if (auth()->user()->access === 'editor')
+                        <th title="Status">Status</th>
+                        <th title="Aksi">Aksi</th>
+                    @endif
+
                 </tr>
             </thead>
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
+
                 @foreach ($data as $item)
                     @php
                         $deleteData = [
@@ -64,6 +78,7 @@
                             'status' => $item['status'],
                         ];
                     @endphp
+
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
                         <td title="{{ $item['number'] }}">{{ $item['number'] }}</td>
                         <td title="{{ $item['name'] }}" class="min-w-72 relative w-max text-left">
@@ -72,20 +87,25 @@
                         </td>
                         <td title="{{ $item['definition'] }}" class="min-w-72 w-max text-left">{{ $item['definition'] }}</td>
                         <td title="{{ $item['column'] }}">{{ $item['column'] }}</td>
-                        <td title="{{ $item['status'] }}">
-                            <div class="flex items-center justify-center">
-                                <label onclick="statusToggle('{{ url(route('super-admin-iku-ikp-status', ['id' => $item['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']])) }}')" class="relative inline-flex items-center">
-                                    <input type="checkbox" value="{{ $item['status'] }}" class="peer sr-only" @if ($item['status'] === 'aktif') checked @endif disabled>
-                                    <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
-                                </label>
-                            </div>
-                        </td>
-                        <td class="flex items-center justify-center gap-1">
-                            <x-partials.button.edit link="{{ route('super-admin-iku-ikp-edit', ['id' => $item['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']]) }}" />
-                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
-                        </td>
+
+                        @if (auth()->user()->access === 'editor')
+                            <td title="{{ $item['status'] }}">
+                                <div class="flex items-center justify-center">
+                                    <label onclick="statusToggle('{{ url(route('super-admin-iku-ikp-status', ['id' => $item['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']])) }}')" class="relative inline-flex items-center">
+                                        <input type="checkbox" value="{{ $item['status'] }}" class="peer sr-only" @if ($item['status'] === 'aktif') checked @endif disabled>
+                                        <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="flex items-center justify-center gap-1">
+                                <x-partials.button.edit link="{{ route('super-admin-iku-ikp-edit', ['id' => $item['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']]) }}" />
+                                <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
+                            </td>
+                        @endif
+
                     </tr>
                 @endforeach
+
             </tbody>
         </table>
     </div>
@@ -94,7 +114,9 @@
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data indikator kinerja program</p>
     @endif
 
-    <x-partials.modal.delete id="delete-modal" />
+    @if (auth()->user()->access === 'editor')
+        <x-partials.modal.delete id="delete-modal" />
+    @endif
 
     @push('script')
         <script>

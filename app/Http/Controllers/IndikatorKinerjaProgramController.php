@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IndikatorKinerjaProgram\EditRequest;
 use App\Http\Requests\IndikatorKinerjaProgram\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\IndikatorKinerjaKegiatan;
 use App\Models\IndikatorKinerjaProgram;
+use App\Models\ProgramStrategis;
 use App\Models\SasaranKegiatan;
 use Illuminate\Http\Request;
 
@@ -22,32 +24,59 @@ class IndikatorKinerjaProgramController extends Controller
         ],
     ];
 
-    public function homeView(Request $request, $skId, $ikkId, $psId)
+    public function homeView(Request $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps)
     {
-        $sk = SasaranKegiatan::currentOrFail($skId);
-        $ikk = $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
-        $ps = $ikk->programStrategis()->findOrFail($psId);
+        if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id) {
+            $sk = SasaranKegiatan::currentOrFail($sk->id);
 
-        $data = $ps->indikatorKinerjaProgram()->select(['id', 'name', 'type', 'status', 'number', 'definition'])
-            ->where(function (Builder $query) use ($request) {
-                if (isset($request->search)) {
-                    $query->where('name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('definition', 'LIKE', "%{$request->search}%")
-                        ->orWhere('number', $request->search)
-                        ->orWhere('status', $request->search)
-                        ->orWhere('type', $request->search);
-                }
-            })
-            ->withCount('columns AS column')
-            ->orderBy('number')
-            ->get()
-            ->toArray();
+            $data = $ps->indikatorKinerjaProgram()
+                ->select([
+                    'definition',
+                    'number',
+                    'status',
+                    'name',
+                    'type',
+                    'id',
+                ])
+                ->where(function (Builder $query) use ($request) {
+                    if (isset($request->search)) {
+                        $query->where('name', 'LIKE', "%{$request->search}%")
+                            ->orWhere('definition', 'LIKE', "%{$request->search}%")
+                            ->orWhere('number', $request->search)
+                            ->orWhere('status', $request->search)
+                            ->orWhere('type', $request->search);
+                    }
+                })
+                ->withCount('columns AS column')
+                ->orderBy('number')
+                ->get()
+                ->toArray();
 
-        $sk = $sk->only(['id', 'name', 'number']);
-        $ikk = $ikk->only(['id', 'name', 'number']);
-        $ps = $ps->only(['id', 'name', 'number']);
+            $sk = $sk->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $ikk = $ikk->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $ps = $ps->only([
+                'number',
+                'name',
+                'id',
+            ]);
 
-        return view('super-admin.iku.ikp.home', compact(['data', 'sk', 'ikk', 'ps']));
+            return view('super-admin.iku.ikp.home', compact([
+                'data',
+                'ikk',
+                'ps',
+                'sk',
+            ]));
+        }
+
+        abort(404);
     }
 
     public function addView($skId, $ikkId, $psId)

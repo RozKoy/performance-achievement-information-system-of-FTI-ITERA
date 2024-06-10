@@ -196,16 +196,18 @@ Route::group([
             });
         });
 
-        Route::group([
-            'prefix' => '/{sk}/{ikk}/{ps}/indikator-kinerja-program',
-            'controller' => IndikatorKinerjaProgramController::class
-        ], function ($route) {
+        Route::prefix('/{sk}/{ikk}/{ps}/indikator-kinerja-program')->controller(IndikatorKinerjaProgramController::class)->group(function ($route) {
             Route::get('/', 'homeView')->name('super-admin-iku-ikp');
-            Route::get('/tambah', 'addView')->name('super-admin-iku-ikp-add');
-            Route::post('/tambah', 'add');
-            Route::get('/{id}/ubah', 'editView')->name('super-admin-iku-ikp-edit');
-            Route::put('/{id}/ubah', 'edit');
-            Route::get('/{id}/status', 'statusToggle')->name('super-admin-iku-ikp-status');
+
+            Route::middleware('editor')->group(function () {
+                Route::get('/tambah', 'addView')->name('super-admin-iku-ikp-add');
+                Route::post('/tambah', 'add');
+
+                Route::get('/{id}/ubah', 'editView')->name('super-admin-iku-ikp-edit');
+                Route::put('/{id}/ubah', 'edit');
+
+                Route::get('/{id}/status', 'statusToggle')->name('super-admin-iku-ikp-status');
+            });
         });
     });
 
