@@ -6,6 +6,7 @@ use App\Http\Requests\SasaranKegiatan\EditRequest;
 use App\Http\Requests\SasaranKegiatan\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\SasaranKegiatan;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Models\IKUYear;
 
@@ -109,12 +110,11 @@ class SasaranKegiatanController extends Controller
         ]));
     }
 
-    public function edit(EditRequest $request, $id)
+    public function edit(EditRequest $request, SasaranKegiatan $sk)
     {
-        $sk = SasaranKegiatan::findOrFail($id);
         $time = $sk->time;
 
-        $number = (int) $request->safe()['number'];
+        $number = (int) $request['number'];
         if ($number > $time->sasaranKegiatan->count()) {
             return back()
                 ->withInput()
@@ -138,9 +138,15 @@ class SasaranKegiatanController extends Controller
             }
         }
 
-        $sk->name = $request->safe()['name'];
+        $sk->name = $request['name'];
         $sk->save();
 
-        return redirect()->route('super-admin-iku-sk');
+        if ($time->year === Carbon::now()->format('Y')) {
+            return redirect()->route('super-admin-iku-sk');
+        } else {
+            return redirect()->route('super-admin-achievement-iku', [
+                'year' => $time->year
+            ]);
+        }
     }
 }
