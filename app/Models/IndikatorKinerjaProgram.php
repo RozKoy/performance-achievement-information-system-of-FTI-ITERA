@@ -77,4 +77,21 @@ class IndikatorKinerjaProgram extends Model
     {
         return $this->hasOne(IKUEvaluation::class);
     }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | FUNCTION
+    | -----------------------------------------------------------------
+    */
+
+    public function deleteOrTrashed(): void
+    {
+        $this->achievements()->forceDelete();
+        $this->evaluation()->forceDelete();
+        $this->columns()->forceDelete();
+        $this->target()->forceDelete();
+
+        $this->forceDelete();
+    }
 }
