@@ -75,30 +75,47 @@ class IndikatorKinerjaController extends Controller
         abort(404);
     }
 
-    public function addView($ssId, $kId)
+    public function addView(SasaranStrategis $ss, Kegiatan $k)
     {
-        $ss = SasaranStrategis::currentOrFail($ssId);
-        $k = $ss->kegiatan()->findOrFail($kId);
+        if ($ss->id === $k->sasaranStrategis->id) {
+            $ss = SasaranStrategis::currentOrFail($ss->id);
 
-        $count = $k->indikatorKinerja->count() + 1;
+            $count = $k->indikatorKinerja->count() + 1;
 
-        $data = [];
-        for ($i = 0; $i < $count; $i++) {
-            $data[$i] = [
-                "value" => strval($i + 1),
-                "text" => strval($i + 1),
+            $data = [];
+            for ($i = 0; $i < $count; $i++) {
+                $data[$i] = [
+                    "value" => strval($i + 1),
+                    "text" => strval($i + 1),
+                ];
+            }
+            $data[$count - 1] = [
+                ...$data[$count - 1],
+                'selected' => true,
             ];
+
+            $ss = $ss->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $k = $k->only([
+                'number',
+                'name',
+                'id',
+            ]);
+
+            $type = $this->type;
+
+            return view('super-admin.rs.ik.add', compact([
+                'data',
+                'type',
+                'ss',
+                'k'
+            ]));
         }
-        $data[$count - 1] = [
-            ...$data[$count - 1],
-            'selected' => true,
-        ];
 
-        $ss = $ss->only(['id', 'name', 'number']);
-        $k = $k->only(['id', 'name', 'number']);
-        $type = $this->type;
-
-        return view('super-admin.rs.ik.add', compact(['type', 'data', 'ss', 'k']));
+        abort(404);
     }
 
     public function add(AddRequest $request, $ssId, $kId)
