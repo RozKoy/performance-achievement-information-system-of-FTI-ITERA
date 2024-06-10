@@ -65,6 +65,10 @@ class Kegiatan extends Model
             $ik->deleteOrTrashed();
         }
 
+        $this->sasaranStrategis->kegiatan()
+            ->where('number', '>', $this->number)
+            ->decrement('number');
+
         $this->forceDelete();
     }
 }

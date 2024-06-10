@@ -85,6 +85,10 @@ class IndikatorKinerja extends Model
         $this->evaluation()->forceDelete();
         $this->target()->forceDelete();
 
+        $this->kegiatan->indikatorKinerja()
+            ->where('number', '>', $this->number)
+            ->decrement('number');
+
         $this->forceDelete();
     }
 }

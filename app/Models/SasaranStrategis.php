@@ -89,6 +89,10 @@ class SasaranStrategis extends Model
             $k->deleteOrTrashed();
         }
 
+        $this->time->sasaranStrategis()
+            ->where('number', '>', $this->number)
+            ->decrement('number');
+
         $this->forceDelete();
     }
 }
