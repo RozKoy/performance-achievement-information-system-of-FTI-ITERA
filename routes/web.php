@@ -206,7 +206,7 @@ Route::group([
                 Route::get('/{ikp}/ubah', 'editView')->name('super-admin-iku-ikp-edit');
                 Route::put('/{ikp}/ubah', 'edit');
 
-                Route::get('/{id}/status', 'statusToggle')->name('super-admin-iku-ikp-status');
+                Route::get('/{ikp}/status', 'statusToggle')->name('super-admin-iku-ikp-status');
             });
         });
     });

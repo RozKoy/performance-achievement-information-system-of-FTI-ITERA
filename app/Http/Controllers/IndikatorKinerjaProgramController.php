@@ -296,15 +296,14 @@ class IndikatorKinerjaProgramController extends Controller
         abort(404);
     }
 
-    public function statusToggle($skId, $ikkId, $psId, $id)
+    public function statusToggle(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp)
     {
-        $ikp = IndikatorKinerjaProgram::findOrFail($id);
+        if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id && $ps->id === $ikp->programStrategis->id) {
+            $this->achievements()->forceDelete();
+            $this->evaluation()->forceDelete();
+            $this->columns()->forceDelete();
+            $this->target()->forceDelete();
 
-        $ps = $ikp->programStrategis;
-        $ikk = $ps->indikatorKinerjaKegiatan;
-        $sk = $ikk->sasaranKegiatan;
-
-        if ($ps->id === $psId && $ikk->id === $ikkId && $sk->id === $skId) {
             $newStatus = $ikp->status === 'aktif' ? 'tidak aktif' : 'aktif';
             $ikp->status = $newStatus;
 
