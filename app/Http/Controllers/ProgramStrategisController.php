@@ -5,42 +5,61 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProgramStrategis\EditRequest;
 use App\Http\Requests\ProgramStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\IndikatorKinerjaKegiatan;
 use App\Models\ProgramStrategis;
 use App\Models\SasaranKegiatan;
 use Illuminate\Http\Request;
 
 class ProgramStrategisController extends Controller
 {
-    public function homeView(Request $request, $skId, $ikkId)
+    public function homeView(Request $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk)
     {
-        $sk = SasaranKegiatan::currentOrFail($skId);
-        $ikk = $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
+        if ($sk->id === $ikk->sasaranKegiatan->id) {
+            $sk = SasaranKegiatan::currentOrFail($sk->id);
 
-        $data = $ikk->programStrategis()->select(['id', 'name', 'number'])
-            ->where(function (Builder $query) use ($request) {
-                if (isset ($request->search)) {
-                    $query->where('name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('number', $request->search);
-                }
-            })
-            ->withCount([
-                'indikatorKinerjaProgram AS active' =>
-                    function (Builder $query) {
+            $data = $ikk->programStrategis()
+                ->select([
+                    'number',
+                    'name',
+                    'id',
+                ])
+                ->where(function (Builder $query) use ($request) {
+                    if (isset($request->search)) {
+                        $query->where('name', 'LIKE', "%{$request->search}%")
+                            ->orWhere('number', $request->search);
+                    }
+                })
+                ->withCount([
+                    'indikatorKinerjaProgram AS active' => function (Builder $query) {
                         $query->where('status', 'aktif');
                     },
-                'indikatorKinerjaProgram AS inactive' =>
-                    function (Builder $query) {
+                    'indikatorKinerjaProgram AS inactive' => function (Builder $query) {
                         $query->where('status', 'tidak aktif');
                     }
-            ])
-            ->orderBy('number')
-            ->get()
-            ->toArray();
+                ])
+                ->orderBy('number')
+                ->get()
+                ->toArray();
 
-        $ikk = $ikk->only(['id', 'name', 'number']);
-        $sk = $sk->only(['id', 'name', 'number']);
+            $ikk = $ikk->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $sk = $sk->only([
+                'number',
+                'name',
+                'id',
+            ]);
 
-        return view('super-admin.iku.ps.home', compact('data', 'ikk', 'sk'));
+            return view('super-admin.iku.ps.home', compact([
+                'data',
+                'ikk',
+                'sk',
+            ]));
+        }
+
+        abort(404);
     }
 
     public function addView($skId, $ikkId)

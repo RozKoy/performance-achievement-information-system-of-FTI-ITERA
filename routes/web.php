@@ -182,15 +182,16 @@ Route::group([
             });
         });
 
-        Route::group([
-            'prefix' => '/{sk}/{ikk}/program-strategis',
-            'controller' => ProgramStrategisController::class
-        ], function ($route) {
+        Route::prefix('/{sk}/{ikk}/program-strategis')->controller(ProgramStrategisController::class)->group(function ($route) {
             Route::get('/', 'homeView')->name('super-admin-iku-ps');
-            Route::get('/tambah', 'addView')->name('super-admin-iku-ps-add');
-            Route::post('/tambah', 'add');
-            Route::get('/{id}/ubah', 'editView')->name('super-admin-iku-ps-edit');
-            Route::put('/{id}/ubah', 'edit');
+
+            Route::middleware('editor')->group(function () {
+                Route::get('/tambah', 'addView')->name('super-admin-iku-ps-add');
+                Route::post('/tambah', 'add');
+
+                Route::get('/{id}/ubah', 'editView')->name('super-admin-iku-ps-edit');
+                Route::put('/{id}/ubah', 'edit');
+            });
         });
 
         Route::group([

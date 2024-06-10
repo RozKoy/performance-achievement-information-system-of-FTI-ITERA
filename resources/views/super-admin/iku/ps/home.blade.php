@@ -28,8 +28,17 @@
     <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="{{ $ikk['number'] }}" dataText="{{ $ikk['name'] }}" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
-        <x-partials.button.add route="{{ route('super-admin-iku-ps-add', ['sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" />
+
+        @if (auth()->user()->access === 'editor')
+            <x-partials.button.add route="{{ route('super-admin-iku-ps-add', ['sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" />
+        @endif
+
     </div>
+
+    @if (request()->query('search') !== null)
+        <p class="max-2xl:text-sm max-lg:text-xs"><span class="font-semibold text-primary">Pencarian : </span>{{ request()->query('search') }}</p>
+    @endif
+
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
@@ -62,8 +71,12 @@
                         </td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.manage link="{{ route('super-admin-iku-ikp', ['sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $item['id']]) }}" />
-                            <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['id' => $item['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" />
-                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
+
+                            @if (auth()->user()->access === 'editor')
+                                <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['id' => $item['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" />
+                                <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
+                            @endif
+
                         </td>
                     </tr>
                 @endforeach
@@ -75,5 +88,8 @@
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data program strategis</p>
     @endif
 
-    <x-partials.modal.delete id="delete-modal" />
+    @if (auth()->user()->access === 'editor')
+        <x-partials.modal.delete id="delete-modal" />
+    @endif
+
 </x-super-admin-template>
