@@ -11,34 +11,50 @@ use App\Models\Kegiatan;
 
 class KegiatanController extends Controller
 {
-    public function homeView(Request $request, $ssId)
+    public function homeView(Request $request, SasaranStrategis $ss)
     {
-        $ss = SasaranStrategis::currentOrFail($ssId);
+        $ss = SasaranStrategis::currentOrFail($ss->id);
 
-        $data = $ss->kegiatan()->select(['id', 'name', 'number'])
+        $data = $ss->kegiatan()
+            ->select([
+                'number',
+                'name',
+                'id',
+            ])
             ->where(function (Builder $query) use ($request) {
                 if (isset($request->search)) {
-                    $query->where('name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('number', $request->search);
+                    $query->whereAny(
+                        [
+                            'number',
+                            'name',
+                        ],
+                        'LIKE',
+                        "%{$request->search}%"
+                    );
                 }
             })
             ->withCount([
-                'indikatorKinerja AS active' =>
-                    function (Builder $query) {
-                        $query->where('status', 'aktif');
-                    },
-                'indikatorKinerja AS inactive' =>
-                    function (Builder $query) {
-                        $query->where('status', 'tidak aktif');
-                    }
+                'indikatorKinerja AS active' => function (Builder $query) {
+                    $query->where('status', 'aktif');
+                },
+                'indikatorKinerja AS inactive' => function (Builder $query) {
+                    $query->where('status', 'tidak aktif');
+                }
             ])
             ->orderBy('number')
             ->get()
             ->toArray();
 
-        $ss = $ss->only(['id', 'name', 'number']);
+        $ss = $ss->only([
+            'number',
+            'name',
+            'id',
+        ]);
 
-        return view('super-admin.rs.k.home', compact('ss', 'data'));
+        return view('super-admin.rs.k.home', compact([
+            'data',
+            'ss',
+        ]));
     }
 
     public function addView($ssId)

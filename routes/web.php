@@ -117,16 +117,18 @@ Route::group([
             });
         });
 
-        Route::group([
-            'prefix' => '/{ss}/kegiatan',
-            'controller' => KegiatanController::class
-        ], function ($route) {
+        Route::prefix('/{ss}/kegiatan')->controller(KegiatanController::class)->group(function ($route) {
             Route::get('/', 'homeView')->name('super-admin-rs-k');
-            Route::get('/tambah', 'addView')->name('super-admin-rs-k-add');
-            Route::post('/tambah', 'add');
-            Route::get('/{id}/ubah', 'editView')->name('super-admin-rs-k-edit');
-            Route::put('/{id}/ubah', 'edit');
-            Route::get('/{id}/hapus', 'delete');
+
+            Route::middleware('editor')->group(function () {
+                Route::get('/tambah', 'addView')->name('super-admin-rs-k-add');
+                Route::post('/tambah', 'add');
+
+                Route::get('/{id}/ubah', 'editView')->name('super-admin-rs-k-edit');
+                Route::put('/{id}/ubah', 'edit');
+
+                Route::get('/{id}/hapus', 'delete');
+            });
         });
 
         Route::group([

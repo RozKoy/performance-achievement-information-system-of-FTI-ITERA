@@ -19,8 +19,17 @@
     <x-partials.heading.h3 title="Sasaran strategis" dataNumber="{{ $ss['number'] }}" dataText="{{ $ss['name'] }}" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
-        <x-partials.button.add route="{{ route('super-admin-rs-k-add', ['ss' => $ss['id']]) }}" />
+
+        @if (auth()->user()->access === 'editor')
+            <x-partials.button.add route="{{ route('super-admin-rs-k-add', ['ss' => $ss['id']]) }}" />
+        @endif
+
     </div>
+
+    @if (request()->query('search') !== null)
+        <p class="max-2xl:text-sm max-lg:text-xs"><span class="font-semibold text-primary">Pencarian : </span>{{ request()->query('search') }}</p>
+    @endif
+
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
@@ -53,8 +62,12 @@
                         </td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.manage link="{{ route('super-admin-rs-ik', ['ss' => $ss['id'], 'k' => $item['id']]) }}" />
-                            <x-partials.button.edit link="{{ route('super-admin-rs-k-edit', ['id' => $item['id'], 'ss' => $ss['id']]) }}" />
-                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
+
+                            @if (auth()->user()->access === 'editor')
+                                <x-partials.button.edit link="{{ route('super-admin-rs-k-edit', ['id' => $item['id'], 'ss' => $ss['id']]) }}" />
+                                <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
+                            @endif
+
                         </td>
                     </tr>
                 @endforeach
@@ -66,5 +79,8 @@
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data kegiatan</p>
     @endif
 
-    <x-partials.modal.delete id="delete-modal" />
+    @if (auth()->user()->access === 'editor')
+        <x-partials.modal.delete id="delete-modal" />
+    @endif
+
 </x-super-admin-template>
