@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerja;
 use App\Models\SasaranStrategis;
 use Illuminate\Support\Carbon;
-use App\Models\RSAchievement;
 use Illuminate\Http\Request;
-use App\Models\RSEvaluation;
 use App\Models\Kegiatan;
 
 class IndikatorKinerjaController extends Controller
@@ -240,22 +238,16 @@ class IndikatorKinerjaController extends Controller
         abort(404);
     }
 
-    public function statusToggle($ssId, $kId, $id)
+    public function statusToggle(SasaranStrategis $ss, Kegiatan $k, IndikatorKinerja $ik)
     {
-        $ik = IndikatorKinerja::findOrFail($id);
-
-        $k = $ik->kegiatan;
-        $ss = $k->sasaranStrategis;
-
-        if ($k->id === $kId && $ss->id === $ssId) {
-            RSAchievement::whereBelongsTo($ik)
-                ->forceDelete();
-            RSEvaluation::whereBelongsTo($ik)
-                ->forceDelete();
+        if ($ss->id === $k->sasaranStrategis->id && $k->id === $ik->kegiatan->id) {
+            $ik->realization()->forceDelete();
+            $ik->evaluation()->forceDelete();
+            $ik->target()->forceDelete();
 
             $newStatus = $ik->status === 'aktif' ? 'tidak aktif' : 'aktif';
-            $ik->status = $newStatus;
 
+            $ik->status = $newStatus;
             $ik->save();
 
             return back();
