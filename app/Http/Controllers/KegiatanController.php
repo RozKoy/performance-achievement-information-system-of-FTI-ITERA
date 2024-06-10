@@ -24,14 +24,8 @@ class KegiatanController extends Controller
             ])
             ->where(function (Builder $query) use ($request) {
                 if (isset($request->search)) {
-                    $query->whereAny(
-                        [
-                            'number',
-                            'name',
-                        ],
-                        'LIKE',
-                        "%{$request->search}%"
-                    );
+                    $query->where('name', 'LIKE', "%{$request->search}%")
+                        ->orWhere('number', $request->search);
                 }
             })
             ->withCount([
