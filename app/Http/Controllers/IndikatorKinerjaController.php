@@ -29,28 +29,50 @@ class IndikatorKinerjaController extends Controller
         ],
     ];
 
-    public function homeView(Request $request, $ssId, $kId)
+    public function homeView(Request $request, SasaranStrategis $ss, Kegiatan $k)
     {
-        $ss = SasaranStrategis::currentOrFail($ssId);
-        $k = $ss->kegiatan()->findOrFail($kId);
+        if ($ss->id === $k->sasaranStrategis->id) {
+            $ss = SasaranStrategis::currentOrFail($ss->id);
 
-        $data = $k->indikatorKinerja()->select(['id', 'name', 'type', 'status', 'number'])
-            ->where(function (Builder $query) use ($request) {
-                if (isset($request->search)) {
-                    $query->where('name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('type', $request->search)
-                        ->orWhere('status', $request->search)
-                        ->orWhere('number', $request->search);
-                }
-            })
-            ->orderBy('number')
-            ->get()
-            ->toArray();
+            $data = $k->indikatorKinerja()
+                ->select([
+                    'number',
+                    'status',
+                    'name',
+                    'type',
+                    'id',
+                ])
+                ->where(function (Builder $query) use ($request) {
+                    if (isset($request->search)) {
+                        $query->where('name', 'LIKE', "%{$request->search}%")
+                            ->orWhere('type', $request->search)
+                            ->orWhere('status', $request->search)
+                            ->orWhere('number', $request->search);
+                    }
+                })
+                ->orderBy('number')
+                ->get()
+                ->toArray();
 
-        $ss = $ss->only(['id', 'name', 'number']);
-        $k = $k->only(['id', 'name', 'number']);
+            $ss = $ss->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $k = $k->only([
+                'number',
+                'name',
+                'id',
+            ]);
 
-        return view('super-admin.rs.ik.home', compact(['data', 'ss', 'k']));
+            return view('super-admin.rs.ik.home', compact([
+                'data',
+                'ss',
+                'k',
+            ]));
+        }
+
+        abort(404);
     }
 
     public function addView($ssId, $kId)

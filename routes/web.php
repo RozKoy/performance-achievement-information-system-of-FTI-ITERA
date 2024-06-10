@@ -131,17 +131,20 @@ Route::group([
             });
         });
 
-        Route::group([
-            'prefix' => '/{ss}/{k}/indikator-kinerja',
-            'controller' => IndikatorKinerjaController::class
-        ], function ($route) {
+        Route::prefix('/{ss}/{k}/indikator-kinerja')->controller(IndikatorKinerjaController::class)->group(function ($route) {
             Route::get('/', 'homeView')->name('super-admin-rs-ik');
-            Route::get('/tambah', 'addView')->name('super-admin-rs-ik-add');
-            Route::post('/tambah', 'add');
-            Route::get('/{id}/ubah', 'editView')->name('super-admin-rs-ik-edit');
-            Route::put('/{id}/ubah', 'edit');
-            Route::get('/{id}/status', 'statusToggle')->name('super-admin-rs-ik-status');
-            Route::get('/{id}/hapus', 'delete');
+
+            Route::middleware('editor')->group(function () {
+                Route::get('/tambah', 'addView')->name('super-admin-rs-ik-add');
+                Route::post('/tambah', 'add');
+
+                Route::get('/{id}/ubah', 'editView')->name('super-admin-rs-ik-edit');
+                Route::put('/{id}/ubah', 'edit');
+
+                Route::get('/{id}/status', 'statusToggle')->name('super-admin-rs-ik-status');
+
+                Route::get('/{id}/hapus', 'delete');
+            });
         });
     });
 
