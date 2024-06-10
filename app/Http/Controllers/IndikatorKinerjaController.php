@@ -118,33 +118,36 @@ class IndikatorKinerjaController extends Controller
         abort(404);
     }
 
-    public function add(AddRequest $request, $ssId, $kId)
+    public function add(AddRequest $request, SasaranStrategis $ss, Kegiatan $k)
     {
-        $ss = SasaranStrategis::currentOrFail($ssId);
-        $k = $ss->kegiatan()->findOrFail($kId);
+        if ($ss->id === $k->sasaranStrategis->id) {
+            $ss = SasaranStrategis::currentOrFail($ss->id);
 
-        $number = $request->safe()['number'];
-        $dataCount = $k->indikatorKinerja->count();
-        if ($number > $dataCount + 1) {
-            return back()
-                ->withInput()
-                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+            $number = $request['number'];
+            $dataCount = $k->indikatorKinerja->count();
+            if ($number > $dataCount + 1) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+            }
+
+            if ($number <= $dataCount) {
+                $k->indikatorKinerja()
+                    ->where('number', '>=', $number)
+                    ->increment('number');
+            }
+
+            $ik = new IndikatorKinerja($request->safe()->all());
+
+            $ik->kegiatan()->associate($k);
+            $ik->status = 'aktif';
+
+            $ik->save();
+
+            return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
         }
 
-        if ($number <= $dataCount) {
-            $k->indikatorKinerja()
-                ->where('number', '>=', $number)
-                ->increment('number');
-        }
-
-        $ik = new IndikatorKinerja($request->safe()->all());
-
-        $ik->kegiatan()->associate($k);
-        $ik->status = 'aktif';
-
-        $ik->save();
-
-        return redirect()->route('super-admin-rs-ik', ['ss' => $ssId, 'k' => $kId]);
+        abort(404);
     }
 
     public function editView($ssId, $kId, $id)
