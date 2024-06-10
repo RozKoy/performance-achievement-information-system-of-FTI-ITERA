@@ -79,37 +79,57 @@ class IndikatorKinerjaProgramController extends Controller
         abort(404);
     }
 
-    public function addView($skId, $ikkId, $psId)
+    public function addView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps)
     {
-        $sk = SasaranKegiatan::currentOrFail($skId);
-        $ikk = $sk->indikatorKinerjaKegiatan()->findOrFail($ikkId);
-        $ps = $ikk->programStrategis()->findOrFail($psId);
+        if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id) {
+            $sk = SasaranKegiatan::currentOrFail($sk->id);
 
-        $count = $ps->indikatorKinerjaProgram->count() + 1;
+            $count = $ps->indikatorKinerjaProgram->count() + 1;
 
-        $data = [];
-        for ($i = 0; $i < $count; $i++) {
-            $data[$i] = [
-                "value" => strval($i + 1),
-                "text" => strval($i + 1),
+            $data = [];
+            for ($i = 0; $i < $count; $i++) {
+                $data[$i] = [
+                    "value" => strval($i + 1),
+                    "text" => strval($i + 1),
+                ];
+            }
+            $data[$count - 1] = [
+                ...$data[$count - 1],
+                'selected' => true,
             ];
+
+            $types = $this->types;
+            $types[0] = [
+                ...$types[0],
+                'selected' => true
+            ];
+
+            $sk = $sk->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $ikk = $ikk->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $ps = $ps->only([
+                'number',
+                'name',
+                'id',
+            ]);
+
+            return view('super-admin.iku.ikp.add', compact([
+                'types',
+                'data',
+                'ikk',
+                'ps',
+                'sk',
+            ]));
         }
-        $data[$count - 1] = [
-            ...$data[$count - 1],
-            'selected' => true,
-        ];
 
-        $types = $this->types;
-        $types[0] = [
-            ...$types[0],
-            'selected' => true
-        ];
-
-        $sk = $sk->only(['id', 'name', 'number']);
-        $ikk = $ikk->only(['id', 'name', 'number']);
-        $ps = $ps->only(['id', 'name', 'number']);
-
-        return view('super-admin.iku.ikp.add', compact(['types', 'data', 'sk', 'ikk', 'ps']));
+        abort(404);
     }
 
     public function add(AddRequest $request, $skId, $ikkId, $psId)

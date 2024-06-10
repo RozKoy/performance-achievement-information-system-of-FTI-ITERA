@@ -23,12 +23,12 @@ class AddRequest extends FormRequest
     {
         return [
             'number' => ['bail', 'required', 'numeric', 'integer', 'min:1', 'max_digits:10'],
-            'definition' => ['bail', 'required', 'max:65000'],
+            'definition' => ['bail', 'required', 'string', 'max:65000'],
+            'name' => ['bail', 'required', 'string', 'max:65000'],
+            'file' => ['bail', 'nullable', 'string', 'max:500'],
             'columns.*' => ['bail', 'string', 'max:500'],
             'type' => ['bail', 'required', 'in:iku,ikt'],
-            'name' => ['bail', 'required', 'max:65000'],
             'columns' => ['bail', 'required', 'array'],
-            'file' => ['bail', 'nullable', 'max:500'],
         ];
     }
 

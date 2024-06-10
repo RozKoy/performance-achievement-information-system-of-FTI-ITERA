@@ -51,16 +51,20 @@
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
                 <x-partials.input.select name="number" title="Nomor" :$data required />
+
                 @error('number')
                     <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
                 @enderror
+
             </div>
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="type" title="Tipe pendukung" text="Tipe Pendukung" required />
                 <x-partials.input.select name="type" title="Tipe pendukung" :data="$types" required />
+
                 @error('type')
                     <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
                 @enderror
+
             </div>
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="name" title="Indikator kinerja program" text="Indikator Kinerja Program" required />
@@ -79,12 +83,15 @@
                 </svg>
             </button>
         </div>
+
         @error('columns')
             <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
         @enderror
+
         @error('columns.*')
             <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
         @enderror
+
         <div id="columnList" class="flex flex-wrap gap-2">
             <div class="relative flex flex-1">
                 <x-partials.input.textarea name="columns[]" title="Kolom" style="flex-1 h-full" required />
