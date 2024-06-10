@@ -9,6 +9,7 @@ use App\Models\IndikatorKinerjaKegiatan;
 use App\Models\IndikatorKinerjaProgram;
 use App\Models\ProgramStrategis;
 use App\Models\SasaranKegiatan;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 
 class IndikatorKinerjaProgramController extends Controller
@@ -250,16 +251,10 @@ class IndikatorKinerjaProgramController extends Controller
         abort(404);
     }
 
-    public function edit(EditRequest $request, $skId, $ikkId, $psId, $id)
+    public function edit(EditRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp)
     {
-        $ikp = IndikatorKinerjaProgram::findOrFail($id);
-
-        $ps = $ikp->programStrategis;
-        $ikk = $ps->indikatorKinerjaKegiatan;
-        $sk = $ikk->sasaranKegiatan;
-
-        if ($ps->id === $psId && $ikk->id === $ikkId && $sk->id === $skId) {
-            $number = (int) $request->safe()['number'];
+        if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id && $ps->id === $ikp->programStrategis->id) {
+            $number = (int) $request['number'];
             if ($number > $ps->indikatorKinerjaProgram->count()) {
                 return back()
                     ->withInput()
@@ -283,14 +278,19 @@ class IndikatorKinerjaProgramController extends Controller
                 }
             }
 
-            $ikp->name = $request->safe()['name'];
-            $ikp->type = $request->safe()['type'];
-            $ikp->definition = $request->safe()['definition'];
-            $ikp->column = json_encode($request->safe()['columns']);
+            $ikp->definition = $request['definition'];
+            $ikp->name = $request['name'];
+            $ikp->type = $request['type'];
 
             $ikp->save();
 
-            return redirect()->route('super-admin-iku-ikp', ['sk' => $skId, 'ikk' => $ikkId, 'ps' => $psId]);
+            if ($sk->time->year === Carbon::now()->format('Y')) {
+                return redirect()->route('super-admin-iku-ikp', ['sk' => $sk->id, 'ikk' => $ikk->id, 'ps' => $ps->id]);
+            } else {
+                return redirect()->route('super-admin-achievement-iku', [
+                    'year' => $sk->time->year
+                ]);
+            }
         }
 
         abort(404);

@@ -23,10 +23,9 @@ class EditRequest extends FormRequest
     {
         return [
             'number' => ['bail', 'required', 'numeric', 'integer', 'min:1', 'max_digits:10'],
-            'definition' => ['bail', 'required', 'max:65000'],
+            'definition' => ['bail', 'required', 'string', 'max:65000'],
+            'name' => ['bail', 'required', 'string', 'max:65000'],
             'type' => ['bail', 'required', 'in:iku,ikt'],
-            'name' => ['bail', 'required', 'max:65000'],
-            'columns' => ['bail', 'required', 'array'],
         ];
     }
 
@@ -36,7 +35,6 @@ class EditRequest extends FormRequest
             'definition' => 'Definisi operasional',
             'name' => 'Program strategis',
             'type' => 'Tipe pendukung',
-            'columns' => 'Kolom',
             'number' => 'Nomor',
         ];
     }
@@ -49,8 +47,8 @@ class EditRequest extends FormRequest
             'integer' => ':attribute harus berupa bilangan bulat',
             'min' => ':attribute tidak boleh kurang dari :min',
             'numeric' => ':attribute harus berupa bilangan',
+            'string' => ':attribute harus berupa teks',
             'required' => ':attribute wajib diisi',
-            'array' => ':attribute tidak sesuai',
             'in' => ':attribute tidak sesuai',
         ];
     }
