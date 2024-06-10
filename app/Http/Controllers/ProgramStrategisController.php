@@ -132,14 +132,11 @@ class ProgramStrategisController extends Controller
         abort(404);
     }
 
-    public function editView($skId, $ikkId, $id)
+    public function editView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps)
     {
-        $ps = ProgramStrategis::findOrFail($id);
-        $ikk = $ps->indikatorKinerjaKegiatan;
-        $sk = $ikk->sasaranKegiatan;
-
-        if ($sk->id === $skId && $ikk->id === $ikkId) {
+        if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id) {
             $count = $ikk->programStrategis->count();
+
             $data = [];
             for ($i = 0; $i < $count; $i++) {
                 $data[$i] = [
@@ -152,11 +149,27 @@ class ProgramStrategisController extends Controller
                 'selected' => true,
             ];
 
-            $ikk = $ikk->only(['id', 'name', 'number']);
-            $sk = $sk->only(['id', 'name', 'number']);
-            $ps = $ps->only(['id', 'name']);
+            $ikk = $ikk->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $sk = $sk->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $ps = $ps->only([
+                'name',
+                'id',
+            ]);
 
-            return view('super-admin.iku.ps.edit', compact(['data', 'sk', 'ikk', 'ps']));
+            return view('super-admin.iku.ps.edit', compact([
+                'data',
+                'ikk',
+                'ps',
+                'sk',
+            ]));
         }
 
         abort(404);

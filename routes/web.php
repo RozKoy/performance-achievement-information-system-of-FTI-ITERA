@@ -189,7 +189,7 @@ Route::group([
                 Route::get('/tambah', 'addView')->name('super-admin-iku-ps-add');
                 Route::post('/tambah', 'add');
 
-                Route::get('/{id}/ubah', 'editView')->name('super-admin-iku-ps-edit');
+                Route::get('/{ps}/ubah', 'editView')->name('super-admin-iku-ps-edit');
                 Route::put('/{id}/ubah', 'edit');
             });
         });

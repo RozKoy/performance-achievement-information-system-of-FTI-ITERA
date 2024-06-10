@@ -75,7 +75,7 @@
                             <x-partials.button.manage link="{{ route('super-admin-iku-ikp', ['sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $item['id']]) }}" />
 
                             @if (auth()->user()->access === 'editor')
-                                <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['id' => $item['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" />
+                                <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['ps' => $item['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" />
                                 <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
                             @endif
 
