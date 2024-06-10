@@ -100,12 +100,9 @@ class IndikatorKinerjaKegiatanController extends Controller
         return redirect()->route('super-admin-iku-ikk', ['sk' => $sk->id]);
     }
 
-    public function editView($skId, $id)
+    public function editView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk)
     {
-        $ikk = IndikatorKinerjaKegiatan::findOrFail($id);
-        $sk = $ikk->sasaranKegiatan;
-
-        if ($sk->id === $skId) {
+        if ($sk->id === $ikk->sasaranKegiatan->id) {
             $count = $sk->indikatorKinerjaKegiatan->count();
 
             $data = [];
@@ -120,10 +117,21 @@ class IndikatorKinerjaKegiatanController extends Controller
                 'selected' => true,
             ];
 
-            $sk = $sk->only(['id', 'name', 'number']);
-            $ikk = $ikk->only(['id', 'name']);
+            $sk = $sk->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $ikk = $ikk->only([
+                'name',
+                'id',
+            ]);
 
-            return view('super-admin.iku.ikk.edit', compact(['data', 'ikk', 'sk']));
+            return view('super-admin.iku.ikk.edit', compact([
+                'data',
+                'ikk',
+                'sk',
+            ]));
         }
 
         abort(404);
