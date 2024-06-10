@@ -11,13 +11,18 @@ use Illuminate\Http\Request;
 
 class IndikatorKinerjaKegiatanController extends Controller
 {
-    public function homeView(Request $request, $skId)
+    public function homeView(Request $request, SasaranKegiatan $sk)
     {
-        $sk = SasaranKegiatan::currentOrFail($skId);
+        $sk = SasaranKegiatan::currentOrFail($sk->id);
 
-        $data = $sk->indikatorKinerjaKegiatan()->select(['id', 'name', 'number'])
+        $data = $sk->indikatorKinerjaKegiatan()
+            ->select([
+                'number',
+                'name',
+                'id',
+            ])
             ->where(function (Builder $query) use ($request) {
-                if (isset ($request->search)) {
+                if (isset($request->search)) {
                     $query->where('name', 'LIKE', "%{$request->search}%")
                         ->orWhere('number', $request->search);
                 }
@@ -27,9 +32,16 @@ class IndikatorKinerjaKegiatanController extends Controller
             ->get()
             ->toArray();
 
-        $sk = $sk->only(['id', 'name', 'number']);
+        $sk = $sk->only([
+            'number',
+            'name',
+            'id',
+        ]);
 
-        return view('super-admin.iku.ikk.home', compact(['data', 'sk']));
+        return view('super-admin.iku.ikk.home', compact([
+            'data',
+            'sk',
+        ]));
     }
 
     public function addView($skId)

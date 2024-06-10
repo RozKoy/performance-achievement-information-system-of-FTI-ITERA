@@ -168,15 +168,16 @@ Route::group([
             });
         });
 
-        Route::group([
-            'prefix' => '/{sk}/indikator-kinerja-kegiatan',
-            'controller' => IndikatorKinerjaKegiatanController::class
-        ], function ($route) {
+        Route::prefix('/{sk}/indikator-kinerja-kegiatan')->controller(IndikatorKinerjaKegiatanController::class)->group(function ($route) {
             Route::get('/', 'homeView')->name('super-admin-iku-ikk');
-            Route::get('/tambah', 'addView')->name('super-admin-iku-ikk-add');
-            Route::post('/tambah', 'add');
-            Route::get('/{id}/ubah', 'editView')->name('super-admin-iku-ikk-edit');
-            Route::put('/{id}/ubah', 'edit');
+
+            Route::middleware('editor')->group(function () {
+                Route::get('/tambah', 'addView')->name('super-admin-iku-ikk-add');
+                Route::post('/tambah', 'add');
+
+                Route::get('/{id}/ubah', 'editView')->name('super-admin-iku-ikk-edit');
+                Route::put('/{id}/ubah', 'edit');
+            });
         });
 
         Route::group([

@@ -19,8 +19,17 @@
     <x-partials.heading.h3 title="Sasaran kegiatan" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
     <div class="flex gap-3 max-sm:flex-col">
         <x-partials.search.default />
-        <x-partials.button.add route="{{ route('super-admin-iku-ikk-add', ['sk' => $sk['id']]) }}" />
+
+        @if (auth()->user()->access === 'editor')
+            <x-partials.button.add route="{{ route('super-admin-iku-ikk-add', ['sk' => $sk['id']]) }}" />
+        @endif
+
     </div>
+
+    @if (request()->query('search') !== null)
+        <p class="max-2xl:text-sm max-lg:text-xs"><span class="font-semibold text-primary">Pencarian : </span>{{ request()->query('search') }}</p>
+    @endif
+
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
@@ -32,6 +41,7 @@
                 </tr>
             </thead>
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
+
                 @foreach ($data as $item)
                     @php
                         $deleteData = [
@@ -40,17 +50,23 @@
                             'jumlah program strategis' => $item['ps'],
                         ];
                     @endphp
+
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
                         <td title="{{ $item['number'] }}">{{ $item['number'] }}</td>
                         <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['ps'] }}">{{ $item['ps'] }}</td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.manage link="{{ route('super-admin-iku-ps', ['sk' => $sk['id'], 'ikk' => $item['id']]) }}" />
-                            <x-partials.button.edit link="{{ route('super-admin-iku-ikk-edit', ['id' => $item['id'], 'sk' => $sk['id']]) }}" />
-                            <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
+
+                            @if (auth()->user()->access === 'editor')
+                                <x-partials.button.edit link="{{ route('super-admin-iku-ikk-edit', ['id' => $item['id'], 'sk' => $sk['id']]) }}" />
+                                <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
+                            @endif
+
                         </td>
                     </tr>
                 @endforeach
+
             </tbody>
         </table>
     </div>
@@ -59,5 +75,8 @@
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data indikator kinerja kegiatan</p>
     @endif
 
-    <x-partials.modal.delete id="delete-modal" />
+    @if (auth()->user()->access === 'editor')
+        <x-partials.modal.delete id="delete-modal" />
+    @endif
+
 </x-super-admin-template>
