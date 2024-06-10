@@ -49,4 +49,20 @@ class ProgramStrategis extends Model
     {
         return $this->hasMany(IndikatorKinerjaProgram::class);
     }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | FUNCTION
+    | -----------------------------------------------------------------
+    */
+
+    public function deleteOrTrashed(): void
+    {
+        foreach ($this->indikatorKinerjaProgram as $key => $ikp) {
+            $ikp->deleteOrTrashed();
+        }
+
+        $this->forceDelete();
+    }
 }
