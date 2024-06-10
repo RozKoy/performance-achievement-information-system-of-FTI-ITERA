@@ -99,12 +99,21 @@ class SasaranStrategisController extends Controller
             'selected' => true,
         ];
 
+        if ($ss->time->year === Carbon::now()->format('Y')) {
+            $previousRoute = route('super-admin-rs-ss');
+        } else {
+            $previousRoute = route('super-admin-achievement-rs', [
+                'year' => $ss->time->year
+            ]);
+        }
+
         $ss = $ss->only([
             'name',
             'id',
         ]);
 
         return view('super-admin.rs.ss.edit', compact([
+            'previousRoute',
             'data',
             'ss',
         ]));

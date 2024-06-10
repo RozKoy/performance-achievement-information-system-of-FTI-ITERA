@@ -32,7 +32,7 @@
 @endphp
 <x-super-admin-template title="Ubah Indikator Kinerja - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="ubah indikator kinerja" back />
+    <x-partials.heading.h2 text="ubah indikator kinerja" :$previousRoute />
     <x-partials.heading.h3 title="Sasaran strategis" dataNumber="{{ $ss['number'] }}" dataText="{{ $ss['name'] }}" />
     <x-partials.heading.h3 title="Kegiatan" dataNumber="{{ $k['number'] }}" dataText="{{ $k['name'] }}" />
 

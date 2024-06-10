@@ -23,7 +23,7 @@
 @endphp
 <x-super-admin-template title="Ubah Kegiatan - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="ubah kegiatan" back />
+    <x-partials.heading.h2 text="ubah kegiatan" :$previousRoute />
     <x-partials.heading.h3 title="Sasaran strategis" dataNumber="{{ $ss['number'] }}" dataText="{{ $ss['name'] }}" />
     <form action="" method="POST" class="flex flex-col gap-2">
         @csrf

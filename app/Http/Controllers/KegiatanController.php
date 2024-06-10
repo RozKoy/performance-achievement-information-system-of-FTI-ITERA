@@ -125,6 +125,14 @@ class KegiatanController extends Controller
                 'selected' => true,
             ];
 
+            if ($ss->time->year === Carbon::now()->format('Y')) {
+                $previousRoute = route('super-admin-rs-k', ['ss' => $ss->id]);
+            } else {
+                $previousRoute = route('super-admin-achievement-rs', [
+                    'year' => $ss->time->year
+                ]);
+            }
+
             $ss = $ss->only([
                 'number',
                 'name',
@@ -136,6 +144,7 @@ class KegiatanController extends Controller
             ]);
 
             return view('super-admin.rs.k.edit', compact([
+                'previousRoute',
                 'data',
                 'ss',
                 'k',

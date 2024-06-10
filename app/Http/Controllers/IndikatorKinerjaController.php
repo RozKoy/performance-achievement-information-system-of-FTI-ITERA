@@ -168,6 +168,14 @@ class IndikatorKinerjaController extends Controller
                 'selected' => true,
             ];
 
+            if ($ss->time->year === Carbon::now()->format('Y')) {
+                $previousRoute = route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
+            } else {
+                $previousRoute = route('super-admin-achievement-rs', [
+                    'year' => $ss->time->year
+                ]);
+            }
+
             $type = [['value' => $ik->type, 'text' => ucfirst($ik->type)]];
 
             $ss = $ss->only([
@@ -187,6 +195,7 @@ class IndikatorKinerjaController extends Controller
             ]);
 
             return view('super-admin.rs.ik.edit', compact([
+                'previousRoute',
                 'current',
                 'data',
                 'type',
