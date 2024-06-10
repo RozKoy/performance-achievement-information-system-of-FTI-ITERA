@@ -138,7 +138,7 @@ Route::group([
                 Route::get('/tambah', 'addView')->name('super-admin-rs-ik-add');
                 Route::post('/tambah', 'add');
 
-                Route::get('/{id}/ubah', 'editView')->name('super-admin-rs-ik-edit');
+                Route::get('/{ik}/ubah', 'editView')->name('super-admin-rs-ik-edit');
                 Route::put('/{id}/ubah', 'edit');
 
                 Route::get('/{id}/status', 'statusToggle')->name('super-admin-rs-ik-status');

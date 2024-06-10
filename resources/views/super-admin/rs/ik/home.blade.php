@@ -79,7 +79,7 @@
                                 </div>
                             </td>
                             <td class="flex items-center justify-center gap-1">
-                                <x-partials.button.edit link="{{ route('super-admin-rs-ik-edit', ['id' => $item['id'], 'ss' => $ss['id'], 'k' => $k['id']]) }}" />
+                                <x-partials.button.edit link="{{ route('super-admin-rs-ik-edit', ['ik' => $item['id'], 'ss' => $ss['id'], 'k' => $k['id']]) }}" />
                                 <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
                             </td>
                         @endif

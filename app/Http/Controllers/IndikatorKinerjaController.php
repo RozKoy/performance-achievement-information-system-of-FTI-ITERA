@@ -150,14 +150,9 @@ class IndikatorKinerjaController extends Controller
         abort(404);
     }
 
-    public function editView($ssId, $kId, $id)
+    public function editView(SasaranStrategis $ss, Kegiatan $k, IndikatorKinerja $ik)
     {
-        $ik = IndikatorKinerja::findOrFail($id);
-
-        $k = $ik->kegiatan;
-        $ss = $k->sasaranStrategis;
-
-        if ($k->id === $kId && $ss->id === $ssId) {
+        if ($ss->id === $k->sasaranStrategis->id && $k->id === $ik->kegiatan->id) {
             $count = $k->indikatorKinerja->count();
 
             $data = [];
@@ -174,11 +169,29 @@ class IndikatorKinerjaController extends Controller
 
             $type = [['value' => $ik->type, 'text' => ucfirst($ik->type)]];
 
-            $ss = $ss->only(['id', 'name', 'number']);
-            $k = $k->only(['id', 'name', 'number']);
-            $ik = $ik->only(['id', 'name', 'status']);
+            $ss = $ss->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $k = $k->only([
+                'number',
+                'name',
+                'id',
+            ]);
+            $ik = $ik->only([
+                'status',
+                'name',
+                'id',
+            ]);
 
-            return view('super-admin.rs.ik.edit', compact('data', 'type', 'ss', 'k', 'ik'));
+            return view('super-admin.rs.ik.edit', compact([
+                'data',
+                'type',
+                'ik',
+                'ss',
+                'k',
+            ]));
         }
 
         abort(404);

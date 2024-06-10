@@ -23,7 +23,7 @@
             'link' => 'super-admin-rs-ik-edit',
             'name' => 'Ubah',
             'params' => [
-                'id' => $ik['id'],
+                'ik' => $ik['id'],
                 'ss' => $ss['id'],
                 'k' => $k['id'],
             ],
@@ -49,9 +49,11 @@
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
                 <x-partials.input.select name="number" title="Nomor" :$data required />
+
                 @error('number')
                     <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
                 @enderror
+
             </div>
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="name" title="Indikator kinerja" text="Indikator Kinerja" required />
@@ -60,9 +62,11 @@
             <div class="flex flex-col gap-2 max-xl:flex-1">
                 <x-partials.label.default for="type" title="Tipe data" text="Tipe Data" required />
                 <x-partials.input.select name="type" title="Tipe data" :data="$type" disabled required />
+
                 @error('type')
                     <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
                 @enderror
+
             </div>
         </div>
         <x-partials.button.edit />
