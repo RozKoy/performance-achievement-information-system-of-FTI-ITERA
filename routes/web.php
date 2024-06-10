@@ -163,6 +163,8 @@ Route::group([
 
                 Route::get('/{sk}/ubah', 'editView')->name('super-admin-iku-sk-edit');
                 Route::put('/{sk}/ubah', 'edit');
+
+                Route::get('/{sk}/hapus', 'delete');
             });
         });
 

@@ -149,4 +149,13 @@ class SasaranKegiatanController extends Controller
             ]);
         }
     }
+
+    public function delete(SasaranKegiatan $sk)
+    {
+        $sk = SasaranKegiatan::currentOrFail($sk->id);
+
+        $sk->deleteOrTrashed();
+
+        return back();
+    }
 }
