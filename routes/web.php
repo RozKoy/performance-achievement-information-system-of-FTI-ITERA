@@ -139,7 +139,7 @@ Route::group([
                 Route::post('/tambah', 'add');
 
                 Route::get('/{ik}/ubah', 'editView')->name('super-admin-rs-ik-edit');
-                Route::put('/{id}/ubah', 'edit');
+                Route::put('/{ik}/ubah', 'edit');
 
                 Route::get('/{id}/status', 'statusToggle')->name('super-admin-rs-ik-status');
 
