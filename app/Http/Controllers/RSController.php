@@ -708,55 +708,57 @@ class RSController extends Controller
     public function addTarget(AddTargetRequest $request, $ikId, $unitId)
     {
         $ik = IndikatorKinerja::findOrFail($ikId);
-        $unit = Unit::withTrashed()->findOrFail($unitId);
+        Unit::withTrashed()->findOrFail($unitId);
 
-        $target = null;
-        if (isset($request['target'])) {
-            $target = $request['target'][$ikId . '-' . $unitId];
-        }
-
-        $targetInstance = RSTarget::firstOrNew([
-            'indikator_kinerja_id' => $ikId,
-            'unit_id' => $unitId
-        ]);
-
-        if ($target === null && $targetInstance->id !== null) {
-            $targetInstance->forceDelete();
-        } else if ($target !== null) {
-            $targetInstance->target = $target;
-            $targetInstance->save();
-        }
-
-        $allTarget = RSTarget::whereBelongsTo($ik)
-            ->get();
-
-        $sumAllTarget = $allTarget->sum('target');
-        $countAllTarget = $allTarget->count();
-
-        $evaluation = RSEvaluation::firstOrNew([
-            'indikator_kinerja_id' => $ikId
-        ]);
-
-        if ($ik->type === 'persen') {
-            $sumAllTarget = $countAllTarget !== 0 ? $sumAllTarget / $countAllTarget : 0;
-        }
-
-        $realization = RSAchievement::whereBelongsTo($ik)
-            ->whereNull(['period_id', 'unit_id'])
-            ->first();
-
-        $evaluation->target = $sumAllTarget;
-
-        $evaluation->status = false;
-        if ($realization !== null) {
-            if ((float) $evaluation->realization >= $sumAllTarget) {
-                $evaluation->status = true;
+        if ($ik->type !== 'teks' && $ik->status === 'aktif') {
+            $target = null;
+            if ($request['target'] !== null) {
+                $target = $request['target'][$ikId . '-' . $unitId];
             }
+
+            $targetInstance = RSTarget::firstOrNew([
+                'indikator_kinerja_id' => $ikId,
+                'unit_id' => $unitId
+            ]);
+
+            if ($target === null && $targetInstance->id !== null) {
+                $targetInstance->forceDelete();
+            } else if ($target !== null) {
+                $targetInstance->target = $target;
+                $targetInstance->save();
+            }
+
+            $allTarget = RSTarget::whereBelongsTo($ik)
+                ->get();
+
+            $sumAllTarget = $allTarget->sum('target');
+            $countAllTarget = $allTarget->count();
+
+            $evaluation = RSEvaluation::firstOrNew([
+                'indikator_kinerja_id' => $ikId
+            ]);
+
+            if ($ik->type === 'persen') {
+                $sumAllTarget = $countAllTarget !== 0 ? $sumAllTarget / $countAllTarget : 0;
+            }
+
+            $realization = RSAchievement::whereBelongsTo($ik)
+                ->whereNull(['period_id', 'unit_id'])
+                ->first();
+
+            $evaluation->target = $sumAllTarget;
+
+            $evaluation->status = false;
+            if ($realization !== null) {
+                $evaluation->status = (float) $evaluation->realization >= $sumAllTarget;
+            }
+
+            $evaluation->save();
+
+            return back();
         }
 
-        $evaluation->save();
-
-        return back();
+        abort(404);
     }
 
 
