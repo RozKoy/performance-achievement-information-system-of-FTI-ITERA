@@ -128,13 +128,15 @@
                                 </td>
 
                                 @if ($period === '3')
-                                    <td title="{{ $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}">{{ $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}</td>
+                                    @if ($ik['type'] === 'persen' && $ik['realization'] !== null)
+                                        <td title="{{ $ik['target'] }}%">{{ $ik['target'] }}%</td>
+                                    @else
+                                        <td title="{{ $ik['target'] }}">{{ $ik['target'] }}</td>
+                                    @endif
                                 @endif
 
-                                @if ($ik['type'] !== 'teks')
-                                    <td title="{{ $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}" class="{{ floatval($ik['target']) <= floatval($ik['realization']) ? 'text-green-500' : 'text-red-500' }}">
-                                        {{ $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}
-                                    </td>
+                                @if ($ik['type'] === 'persen' && $ik['realization'] !== null)
+                                    <td title="{{ $ik['realization'] }}%">{{ $ik['realization'] }}%</td>
                                 @else
                                     <td title="{{ $ik['realization'] }}">{{ $ik['realization'] }}</td>
                                 @endif
@@ -163,7 +165,7 @@
 
                                             <div class="relative h-4 w-full overflow-hidden rounded-full bg-gray-200">
 
-                                                <div class="{{ $progress <= 50 ? 'bg-red-500' : ($progress <= 70 ? 'bg-yellow-500' : 'bg-green-500') }} h-full rounded-full bg-green-500 p-0.5 text-center text-xs font-medium leading-none text-green-100" @if ($progress > 0) style="width: {{ $progress }}%" @endif></div>
+                                                <div class="{{ $progress <= 50 ? 'bg-red-500' : ($progress <= 70 ? 'bg-yellow-500' : 'bg-green-500') }} h-full rounded-full p-0.5 text-center text-xs font-medium leading-none text-green-100" @if ($progress > 0) style="width: {{ $progress }}%" @endif></div>
 
                                                 <p class="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center text-xs font-medium leading-none">{{ $progress }}%</p>
 

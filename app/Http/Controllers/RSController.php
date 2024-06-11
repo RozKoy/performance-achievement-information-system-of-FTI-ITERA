@@ -571,22 +571,20 @@ class RSController extends Controller
         return back();
     }
 
-    public function addEvaluation(AddEvaluationRequest $request, $ikId)
+    public function addEvaluation(AddEvaluationRequest $request, IndikatorKinerja $ik)
     {
-        $ik = IndikatorKinerja::findOrFail($ikId);
-
         if ($request['period'] === '3') {
-            if (!isset($request['target'])) {
+            if ($request['target'] === null && ($ik->type === 'teks' || $ik->status !== 'aktif')) {
                 return back()->withErrors(['target' => 'Target wajib diisi']);
-            } else if ($ik->type !== 'teks' && !is_numeric($request['target'])) {
+            } else if ($ik->type !== 'teks' && $ik->status !== 'aktif' && !is_numeric($request['target'])) {
                 return back()->withErrors(['target' => 'Target harus berupa angka']);
             }
 
-            if ($ik->type === 'teks' && !isset($request['status'])) {
+            if ($ik->type === 'teks' && $request['status'] === null) {
                 return back()->withErrors(['status' => 'Status wajib diisi']);
             }
-        } else if ($ik->status === 'tidak aktif' && $ik->type !== 'teks' && isset($request['realization'])) {
-            if (!is_numeric($request['realization']) && $request['realization'] !== null) {
+        } else if ($ik->status === 'tidak aktif' && $ik->type !== 'teks' && $request['realization'] !== null) {
+            if (!is_numeric($request['realization'])) {
                 return back()->withErrors(['realization' => 'Realisasi harus berupa angka']);
             } else if ((float) $request['realization'] < 0) {
                 $request['realization'] *= -1;
@@ -594,15 +592,10 @@ class RSController extends Controller
             }
         }
 
-        $currentMonth = (int) Carbon::now()->format('m');
-        $currentPeriod = $currentMonth <= 6 ? '1' : '2';
-        $currentYear = Carbon::now()->format('Y');
-
         $k = $ik->kegiatan;
         $ss = $k->sasaranStrategis;
 
         $yearInstance = $ss->time;
-
         $periodInstance = $yearInstance->periods()
             ->where('period', $request['period'])
             ->first();
@@ -615,82 +608,60 @@ class RSController extends Controller
                 ]);
 
             if ($request['realization'] !== null) {
-                if ($ik->type !== 'teks') {
-                    $temp = $ik->realization()->firstOrNew([
-                        'period_id' => null,
-                        'unit_id' => null,
-                    ]);
-
-                    if ($temp->realization !== null) {
-                        $finalRealization = (float) $temp->realization;
-                        $currentRealization = $realization->realization !== null ? (float) $realization->realization : 0;
-
-                        if ($ik->type === 'persen') {
-                            $count = $ik->realization()
-                                ->whereNotNull('period_id')
-                                ->whereNull('unit_id')
-                                ->count();
-
-                            $finalRealization *= $count;
-                            $finalRealization += (float) $request['realization'] - $currentRealization;
-
-                            $count = $count !== 0 ? $count : 1;
-                            if ($realization->realization === null) {
-                                $count++;
-                            }
-
-                            $finalRealization /= $count;
-                        } else {
-                            $finalRealization += (float) $request['realization'] - $currentRealization;
-                        }
-
-                        $temp->realization = "$finalRealization";
-                    } else {
-                        $temp->realization = $request['realization'];
-                    }
-                    $temp->save();
-                }
-
                 $realization->realization = $request['realization'];
                 $realization->save();
             } else if ($realization->id !== null) {
-                if ($ik->type !== 'teks') {
-                    $temp = $ik->realization()->firstOrNew([
+                $realization->forceDelete();
+            }
+
+            if ($ik->type !== 'teks') {
+                $all = $ik->realization()
+                    ->whereNotNull('period_id')
+                    ->whereNull('unit_id')
+                    ->get();
+
+                $temp = $ik->realization()
+                    ->firstOrNew([
                         'period_id' => null,
                         'unit_id' => null,
                     ]);
 
-                    if ($temp->realization) {
-                        $finalRealization = (float) $temp->realization;
-                        $currentRealization = $realization->realization !== null ? (float) $realization->realization : 0;
-
-                        if ($ik->type === 'persen') {
-                            $count = $ik->realization()
-                                ->whereNotNull('period_id')
-                                ->whereNull('unit_id')
-                                ->count();
-
-                            $finalRealization *= $count;
-                        }
-                        $finalRealization -= $currentRealization;
-
-                        $temp->realization = "$finalRealization";
-                        $temp->save();
-                    }
+                $final = $all->sum('realization');
+                if ($ik->type === 'persen') {
+                    $count = $all->count();
+                    $final = $count ? $final / $count : 0;
                 }
 
-                $realization->forceDelete();
+                $temp->realization = $final;
+                $temp->save();
             }
         }
 
         if ($request['period'] === '3') {
             $evaluation = $ik->evaluation()->firstOrNew();
 
+            $target = 0;
+            if ($ik->type !== 'teks' && $ik->status === 'aktif') {
+                $target = $evaluation->target !== null ? $evaluation->target : 0;
+            } else {
+                $target = $request['target'];
+                if ($target === null) {
+                    $target = $evaluation->target !== null ? $evaluation->target : 0;
+                }
+            }
+
+            $evaluation->status = $request['status'] !== null ? $request['status'] : false;
             $evaluation->evaluation = $request['evaluation'];
             $evaluation->follow_up = $request['follow_up'];
-            $evaluation->target = $request['target'];
+            $evaluation->target = $target;
 
-            if ($ik->type !== 'teks') {
+            $evaluation->save();
+        }
+
+        if ($ik->type !== 'teks') {
+            $evaluation = $ik->evaluation;
+
+            if ($evaluation) {
                 $realization = $ik->realization()
                     ->whereNull(['period_id', 'unit_id'])
                     ->first();
@@ -700,11 +671,9 @@ class RSController extends Controller
                 } else {
                     $evaluation->status = false;
                 }
-            } else {
-                $evaluation->status = $request['status'] === '1';
-            }
 
-            $evaluation->save();
+                $evaluation->save();
+            }
         }
 
         return back();

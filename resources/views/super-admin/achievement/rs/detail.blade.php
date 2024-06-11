@@ -25,12 +25,12 @@
     <x-partials.heading.h3 title="Kegiatan" dataNumber="{{ $k['number'] }}" dataText="{{ $k['name'] }}" />
     <x-partials.heading.h3 title="Indikator Kinerja" dataNumber="{{ $ik['number'] }}" dataText="{{ $ik['name'] }}" />
 
-    <form action="{{ auth()->user()->access === 'editor' ? route('super-admin-achievement-rs-evaluation', ['id' => $ik['id']]) : '' }}" method="POST" class="flex flex-col gap-2">
+    <form action="{{ auth()->user()->access === 'editor' ? route('super-admin-achievement-rs-evaluation', ['ik' => $ik['id']]) : '' }}" method="POST" class="flex flex-col gap-2">
         @if (auth()->user()->access === 'editor')
             @csrf
+            <input type="hidden" name="period" value="{{ $period }}">
         @endif
 
-        <input type="hidden" name="period" value="{{ $period }}">
         <div class="flex flex-wrap gap-2">
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="realization" title="Realisasi" text="Realisasi" required />

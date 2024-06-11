@@ -22,12 +22,12 @@ class AddEvaluationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'realization' => ['bail', 'nullable', 'max:255'],
-            'evaluation' => ['bail', 'nullable', 'max:255'],
-            'follow_up' => ['bail', 'nullable', 'max:255'],
+            'realization' => ['bail', 'nullable', 'string', 'max:255'],
+            'evaluation' => ['bail', 'nullable', 'string', 'max:255'],
+            'follow_up' => ['bail', 'nullable', 'string', 'max:255'],
+            'target' => ['bail', 'nullable', 'string', 'max:255'],
             'period' => ['bail', 'required', 'in:1,2,3'],
             'status' => ['bail', 'nullable', 'boolean'],
-            'target' => ['bail', 'nullable', 'max:255'],
         ];
     }
 
@@ -48,6 +48,7 @@ class AddEvaluationRequest extends FormRequest
         return [
             'max' => ':attribute tidak boleh melebihi :max karakter',
             'boolean' => ':attribute harus bernilai boolean',
+            'string' => ':attribute harus berupa teks',
             'required' => ':attribute wajib diisi',
             'in' => ':attribute tidak sesuai',
         ];
