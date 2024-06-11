@@ -539,27 +539,6 @@ class RSController extends Controller
 
     public function checkRoutine($currentYear, $currentPeriod)
     {
-        $years = RSYear::whereNot('year', $currentYear)
-            ->where(function (Builder $query) {
-                $query->doesntHave('periods')
-                    ->orDoesntHave('sasaranStrategis')
-                    ->orWhereHas('sasaranStrategis', function (Builder $query) {
-                        $query->doesntHave('indikatorKinerja');
-                    });
-            })
-            ->get();
-
-        $years->each(function ($year) {
-            $year->periods()->update(['deadline_id' => null]);
-
-            $year->sasaranStrategis->each(function ($ss) {
-                $ss->deleteOrTrashed();
-            });
-
-            $year->periods()->forceDelete();
-            $year->forceDelete();
-        });
-
         $currentPeriod = RSPeriod::where('period', $currentPeriod)
             ->whereHas('year', function (Builder $query) use ($currentYear) {
                 $query->where('year', $currentYear);
