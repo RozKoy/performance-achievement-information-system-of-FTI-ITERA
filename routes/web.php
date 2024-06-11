@@ -81,7 +81,7 @@ Route::group([
 
             Route::middleware('editor')->group(function () {
                 Route::post('/{ik}/{unit}/target', 'addTarget')->name('super-admin-achievement-rs-target-add');
-                Route::get('/{id}/status', 'statusToggle')->name('super-admin-achievement-rs-status');
+                Route::get('/{period}/status', 'statusToggle')->name('super-admin-achievement-rs-status');
                 Route::post('/{ik}/evaluation', 'addEvaluation')->name('super-admin-achievement-rs-evaluation');
             });
         });

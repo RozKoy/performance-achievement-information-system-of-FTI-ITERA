@@ -547,10 +547,8 @@ class RSController extends Controller
         }
     }
 
-    public function statusToggle($periodId)
+    public function statusToggle(RSPeriod $period)
     {
-        $period = RSPeriod::whereKey($periodId)->firstOrFail();
-
         if ($period->status) {
             $period->status = false;
             $period->deadline()->dissociate();
@@ -563,8 +561,8 @@ class RSController extends Controller
                 ->where('period', $currentPeriod)
                 ->firstOrFail();
 
-            $period->status = true;
             $period->deadline()->associate($currentPeriodInstance);
+            $period->status = true;
         }
         $period->save();
 
