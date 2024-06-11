@@ -489,25 +489,16 @@ class RSController extends Controller
             })
             ->get();
 
-        foreach ($years as $key => $year) {
+        $years->each(function ($year) {
             $year->periods()->update(['deadline_id' => null]);
-            $sss = $year->sasaranStrategis;
-            foreach ($sss as $key => $ss) {
-                $ks = $ss->kegiatan;
-                foreach ($ks as $key => $k) {
-                    $iks = $k->indikatorKinerja;
-                    foreach ($iks as $key => $ik) {
-                        $ik->realization()->forceDelete();
-                        $ik->evaluation()->forceDelete();
-                    }
-                    $k->indikatorKinerja()->forceDelete();
-                }
-                $ss->kegiatan()->forceDelete();
-            }
-            $year->sasaranStrategis()->forceDelete();
+
+            $year->sasaranStrategis->each(function ($ss) {
+                $ss->deleteOrTrashed();
+            });
+
             $year->periods()->forceDelete();
             $year->forceDelete();
-        }
+        });
 
         $currentPeriod = RSPeriod::where('period', $currentPeriod)
             ->whereHas('year', function (Builder $query) use ($currentYear) {
