@@ -21,7 +21,18 @@
 <x-super-admin-template title="Renstra - Capaian Kinerja - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 :text="$heading" :$previousRoute />
-
+    <div class="flex items-center justify-end">
+        <button title="Unduh Excel" type="button" class="flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
+            <img src="{{ url(asset('storage/assets/icons/excel.png')) }}" alt="Excel" class="w-7 max-md:w-6">
+            Unduh
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-2.5 max-md:w-2">
+                <g>
+                    <path d="M12.032,19a2.991,2.991,0,0,0,2.122-.878L18.073,14.2,16.659,12.79l-3.633,3.634L13,0,11,0l.026,16.408-3.62-3.62L5.992,14.2l3.919,3.919A2.992,2.992,0,0,0,12.032,19Z" />
+                    <path d="M22,16v5a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V16H0v5a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3V16Z" />
+                </g>
+            </svg>
+        </button>
+    </div>
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
@@ -31,12 +42,15 @@
                     <th title="Kegiatan">Kegiatan</th>
                     <th title="Indikator kinerja">Indikator Kinerja</th>
                     <th title="Target {{ $year }}">Target {{ $year }}</th>
+
                     @foreach ($units as $unit)
                         <th title="{{ $unit['name'] }}">{{ $unit['short_name'] }}</th>
                     @endforeach
+
                 </tr>
             </thead>
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
+
                 @foreach ($data as $ss)
                     @foreach ($ss['kegiatan'] as $k)
                         @foreach ($k['indikator_kinerja'] as $ik)
@@ -62,7 +76,9 @@
                                 </td>
 
                                 <td title="{{ $ik['all_target'] }}" class="min-w-72 w-max">
-                                    <div class="py-1.5">{{ $ik['all_target'] }}{{ $ik['type'] === 'persen' && $ik['all_target'] !== null ? '%' : '' }}</div>
+                                    <div class="py-1.5">
+                                        {{ $ik['all_target'] }}{{ $ik['type'] === 'persen' && $ik['all_target'] !== null ? '%' : '' }}
+                                    </div>
                                 </td>
 
                                 @php
@@ -82,36 +98,49 @@
                                             $id = $loop->parent->parent->iteration . $loop->parent->iteration . $loop->iteration;
                                         @endphp
                                         <td>
-                                            <div id="target-{{ $id }}" title="{{ $exists['target'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}" class="group relative z-10 py-1.5">
-                                                <p>{{ $exists['target'] }}{{ $ik['type'] === 'persen' ? '%' : '' }}</p>
-                                                <x-partials.button.edit button onclick="toggleEditForm('{{ $id }}')" style="absolute hidden top-0.5 right-0.5 group-hover:block group-focus:block" />
+                                            <div id="target-{{ $id }}" title="{{ $exists['target'] }}{{ $ik['type'] === 'persen' && $exists['target'] !== null ? '%' : '' }}" class="group relative z-10 py-1.5">
+                                                <p>{{ $exists['target'] }}{{ $ik['type'] === 'persen' && $exists['target'] !== null ? '%' : '' }}</p>
+
+                                                @if (auth()->user()->access === 'editor')
+                                                    <x-partials.button.edit button onclick="toggleEditForm('{{ $id }}')" style="absolute hidden top-0.5 right-0.5 group-hover:block group-focus:block" />
+                                                @endif
+
                                             </div>
-                                            <form id="form-target-{{ $id }}" action="{{ $targetRoute }}" method="POST" class="hidden flex-col gap-0.5">
-                                                @csrf
-                                                <div class="flex-1">
-                                                    <x-partials.input.number name="{{ $inputName }}" title="target" value="{{ $exists['target'] }}" />
-                                                    @error($errorName)
-                                                        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                                <div class="ml-auto flex items-center justify-end gap-0.5">
-                                                    <x-partials.button.edit />
-                                                    <x-partials.button.cancel onclick="toggleEditForm('{{ $id }}')" />
-                                                </div>
-                                            </form>
+
+                                            @if (auth()->user()->access === 'editor')
+                                                <form id="form-target-{{ $id }}" action="{{ $targetRoute }}" method="POST" class="hidden flex-col gap-0.5">
+                                                    @csrf
+                                                    <div class="flex-1">
+                                                        <x-partials.input.number name="{{ $inputName }}" title="target" value="{{ $exists['target'] }}" />
+
+                                                        @error($errorName)
+                                                            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
+                                                        @enderror
+
+                                                    </div>
+                                                    <div class="ml-auto flex items-center justify-end gap-0.5">
+                                                        <x-partials.button.edit />
+                                                        <x-partials.button.cancel onclick="toggleEditForm('{{ $id }}')" />
+                                                    </div>
+                                                </form>
+                                            @endif
                                         </td>
                                     @else
                                         <td>
-                                            <form action="{{ $targetRoute }}" method="POST" class="flex items-center gap-1">
-                                                @csrf
-                                                <div class="flex-1">
-                                                    <x-partials.input.number name="{{ $inputName }}" title="target" required />
-                                                    @error($errorName)
-                                                        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                                <x-partials.button.add text="" submit />
-                                            </form>
+                                            @if (auth()->user()->access === 'editor')
+                                                <form action="{{ $targetRoute }}" method="POST" class="flex items-center gap-1">
+                                                    @csrf
+                                                    <div class="flex-1">
+                                                        <x-partials.input.number name="{{ $inputName }}" title="target" required />
+
+                                                        @error($errorName)
+                                                            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
+                                                        @enderror
+
+                                                    </div>
+                                                    <x-partials.button.add text="" submit />
+                                                </form>
+                                            @endif
                                         </td>
                                     @endif
                                 @endforeach
@@ -120,6 +149,7 @@
                         @endforeach
                     @endforeach
                 @endforeach
+
             </tbody>
         </table>
     </div>
@@ -128,14 +158,14 @@
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data capaian kinerja</p>
     @endif
 
-    @pushOnce('script')
-        <script>
-            function toggleEditForm(id) {
-                document.getElementById('target-' + id).classList.toggle('hidden');
-                document.getElementById('form-target-' + id).classList.toggle('flex');
-                document.getElementById('form-target-' + id).classList.toggle('hidden');
-            }
-        </script>
-    @endPushOnce
+    @pushIf(auth()->user()->access === 'editor', 'script')
+    <script>
+        function toggleEditForm(id) {
+            document.getElementById('target-' + id).classList.toggle('hidden');
+            document.getElementById('form-target-' + id).classList.toggle('flex');
+            document.getElementById('form-target-' + id).classList.toggle('hidden');
+        }
+    </script>
+    @endPushIf
 
 </x-super-admin-template>
