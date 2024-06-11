@@ -25,10 +25,14 @@
         <div class="flex items-center justify-center">
 
             @if ($period !== '3' && isset($periodId))
-                <label title="Tombol power [status: {{ $system === true ? 'Aktif' : 'Tidak aktif' }}]" onclick="statusToggle('{{ url(route('super-admin-achievement-rs-status', ['id' => $periodId])) }}')" class="relative inline-flex items-center">
-                    <input type="checkbox" value="{{ $system }}" class="peer sr-only" @checked($system) disabled>
-                    <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
-                </label>
+                @if (auth()->user()->access === 'editor')
+                    <label title="Tombol power [status: {{ $system === true ? 'Aktif' : 'Tidak aktif' }}]" onclick="statusToggle('{{ url(route('super-admin-achievement-rs-status', ['id' => $periodId])) }}')" class="relative inline-flex items-center">
+                        <input type="checkbox" value="{{ $system }}" class="peer sr-only" @checked($system) disabled>
+                        <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
+                    </label>
+                @else
+                    <div title="Power [status: {{ $system === true ? 'Aktif' : 'Tidak aktif' }}]" class="{{ $system ? 'bg-green-500' : 'bg-red-500' }} rounded-full p-3"></div>
+                @endif
             @endif
 
         </div>
@@ -95,19 +99,31 @@
 
                                         <td title="{{ $ss['ss'] }}" rowspan="{{ $ss['rowspan'] }}" class="min-w-72 group relative z-10 w-max text-left">
                                             {{ $ss['ss'] }}
-                                            <x-partials.button.edit link="{{ route('super-admin-rs-ss-edit', ['ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+
+                                            @if (auth()->user()->access === 'editor')
+                                                <x-partials.button.edit link="{{ route('super-admin-rs-ss-edit', ['ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                            @endif
+
                                         </td>
                                     @endif
 
                                     <td title="{{ $k['k'] }}" rowspan="{{ $k['rowspan'] }}" class="min-w-72 group relative z-10 w-max text-left">
                                         {{ $k['k'] }}
-                                        <x-partials.button.edit link="{{ route('super-admin-rs-k-edit', ['k' => $k['id'], 'ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+
+                                        @if (auth()->user()->access === 'editor')
+                                            <x-partials.button.edit link="{{ route('super-admin-rs-k-edit', ['k' => $k['id'], 'ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                        @endif
+
                                     </td>
                                 @endif
 
                                 <td title="{{ $ik['ik'] }}" class="min-w-72 group relative z-10 w-max text-left">
                                     {{ $ik['ik'] }}
-                                    <x-partials.button.edit link="{{ route('super-admin-rs-ik-edit', ['ik' => $ik['id'], 'k' => $k['id'], 'ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+
+                                    @if (auth()->user()->access === 'editor')
+                                        <x-partials.button.edit link="{{ route('super-admin-rs-ik-edit', ['ik' => $ik['id'], 'k' => $k['id'], 'ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                    @endif
+
                                     <span title="{{ $ik['type'] }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ik['type'] }}</span>
                                 </td>
 
@@ -130,11 +146,16 @@
                                     <td title="{{ $ik['follow_up'] }}">{{ $ik['follow_up'] }}</td>
                                 @endif
 
-                                <td title="{{ $ik['status'] }}" class="{{ $ik['status'] === 'aktif' ? 'text-green-500' : 'text-red-500' }} whitespace-nowrap capitalize">{{ $ik['status'] }}</td>
+                                <td title="{{ $ik['status'] }}">
+                                    <div class="flex items-center justify-center">
+                                        <div class="{{ $ik['status'] === 'aktif' ? 'bg-green-500' : 'bg-red-500' }} rounded-full p-3"></div>
+                                    </div>
+                                </td>
 
                                 @if ($ik['status'] === 'aktif')
                                     @php
                                         $progress = $unitCount ? number_format((floatval($ik['count']) * 100) / $unitCount, 2) : 0;
+                                        $progress = $progress > 100 ? 100 : $progress;
                                     @endphp
                                     <td title="Status pengisian : {{ $progress }}%">
                                         <div class="flex flex-col gap-1">
@@ -142,16 +163,9 @@
 
                                             <div class="relative h-4 w-full overflow-hidden rounded-full bg-gray-200">
 
-                                                @if ($progress <= 50)
-                                                    <div class="h-full bg-red-500" @if ($progress > 0) style="width: {{ $progress }}%" @endif></div>
-                                                    <p class="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center text-xs font-medium leading-none">{{ $progress }}%</p>
-                                                @else
-                                                    @if ($progress <= 70)
-                                                        <div class="rounded-full bg-yellow-500 p-0.5 text-center text-xs font-medium leading-none text-yellow-100" style="width: {{ $progress }}%">{{ $progress }}%</div>
-                                                    @else
-                                                        <div class="rounded-full bg-green-500 p-0.5 text-center text-xs font-medium leading-none text-green-100" style="width: {{ $progress > 100 ? 100 : $progress }}%">{{ $progress > 100 ? 100 : $progress }}%</div>
-                                                    @endif
-                                                @endif
+                                                <div class="{{ $progress <= 50 ? 'bg-red-500' : ($progress <= 70 ? 'bg-yellow-500' : 'bg-green-500') }} h-full rounded-full bg-green-500 p-0.5 text-center text-xs font-medium leading-none text-green-100" @if ($progress > 0) style="width: {{ $progress }}%" @endif></div>
+
+                                                <p class="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center text-xs font-medium leading-none">{{ $progress }}%</p>
 
                                             </div>
                                         </div>
