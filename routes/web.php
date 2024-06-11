@@ -76,7 +76,7 @@ Route::group([
 
         Route::prefix('/rencana-strategis')->controller(RSController::class)->group(function () {
             Route::get('/', 'homeView')->name('super-admin-achievement-rs');
-            Route::get('/{id}/detail', 'detailView')->name('super-admin-achievement-rs-detail');
+            Route::get('/{ik}/detail', 'detailView')->name('super-admin-achievement-rs-detail');
             Route::get('/{year}/target', 'targetView')->name('super-admin-achievement-rs-target');
 
             Route::middleware('editor')->group(function () {

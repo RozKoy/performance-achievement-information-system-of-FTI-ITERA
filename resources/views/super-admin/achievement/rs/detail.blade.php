@@ -12,7 +12,7 @@
             'link' => 'super-admin-achievement-rs-detail',
             'name' => 'Detail',
             'params' => [
-                'id' => $ik['id'],
+                'ik' => $ik['id'],
             ],
         ],
     ];
@@ -25,47 +25,68 @@
     <x-partials.heading.h3 title="Kegiatan" dataNumber="{{ $k['number'] }}" dataText="{{ $k['name'] }}" />
     <x-partials.heading.h3 title="Indikator Kinerja" dataNumber="{{ $ik['number'] }}" dataText="{{ $ik['name'] }}" />
 
-    <form action="{{ route('super-admin-achievement-rs-evaluation', ['id' => $ik['id']]) }}" method="POST" class="flex flex-col gap-2">
-        @csrf
+    <form action="{{ auth()->user()->access === 'editor' ? route('super-admin-achievement-rs-evaluation', ['id' => $ik['id']]) : '' }}" method="POST" class="flex flex-col gap-2">
+        @if (auth()->user()->access === 'editor')
+            @csrf
+        @endif
+
         <input type="hidden" name="period" value="{{ $period }}">
         <div class="flex flex-wrap gap-2">
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="realization" title="Realisasi" text="Realisasi" required />
-                @if ($ik['type'] === 'teks' || ($ik['status'] !== 'aktif' && $period !== '3'))
+
+                @if (auth()->user()->access === 'editor' && ($ik['type'] === 'teks' || ($ik['status'] !== 'aktif' && $period !== '3')))
                     <x-partials.input.text name="realization" title="Realisasi" value="{{ $realization }}" autofocus />
                 @else
                     <x-partials.input.text name="realization" title="Realisasi" value="{{ $realization }}" disabled />
                 @endif
+
             </div>
 
             @if ($period === '3')
                 <div class="flex flex-1 flex-col gap-2">
                     <x-partials.label.default for="target" title="Target" text="Target" required />
-                    @if ($ik['type'] !== 'teks' && $ik['status'] === 'aktif')
-                        <x-partials.input.text name="target" title="Target" value="{{ isset($evaluation) ? $evaluation['target'] : '' }}" disabled />
-                    @else
+
+                    @if (auth()->user()->access === 'editor' && ($ik['type'] === 'teks' || $ik['status'] !== 'aktif'))
                         <x-partials.input.text name="target" title="Target" value="{{ isset($evaluation) ? $evaluation['target'] : '' }}" autofocus required />
+                    @else
+                        <x-partials.input.text name="target" title="Target" value="{{ isset($evaluation) ? $evaluation['target'] : '' }}" disabled />
                     @endif
+
                 </div>
                 <div class="flex flex-1 flex-col gap-2">
                     <x-partials.label.default for="evaluation" title="Evaluasi" text="Evaluasi" />
-                    <x-partials.input.text name="evaluation" title="Evaluasi" value="{{ isset($evaluation) ? $evaluation['evaluation'] : '' }}" />
+
+                    @if (auth()->user()->access === 'editor')
+                        <x-partials.input.text name="evaluation" title="Evaluasi" value="{{ isset($evaluation) ? $evaluation['evaluation'] : '' }}" />
+                    @else
+                        <x-partials.input.text name="evaluation" title="Evaluasi" value="{{ isset($evaluation) ? $evaluation['evaluation'] : '' }}" disabled />
+                    @endif
+
                 </div>
                 <div class="flex flex-1 flex-col gap-2">
                     <x-partials.label.default for="follow_up" title="Tindak lanjut" text="Tindak Lanjut" />
-                    <x-partials.input.text name="follow_up" title="Tindak lanjut" value="{{ isset($evaluation) ? $evaluation['follow_up'] : '' }}" />
+
+                    @if (auth()->user()->access === 'editor')
+                        <x-partials.input.text name="follow_up" title="Tindak lanjut" value="{{ isset($evaluation) ? $evaluation['follow_up'] : '' }}" />
+                    @else
+                        <x-partials.input.text name="follow_up" title="Tindak lanjut" value="{{ isset($evaluation) ? $evaluation['follow_up'] : '' }}" disabled />
+                    @endif
+
                 </div>
-                @if ($ik['type'] === 'teks')
+
+                @if (auth()->user()->access === 'editor' && $ik['type'] === 'teks')
                     <div class="flex flex-1 flex-col gap-2">
                         <x-partials.label.default for="status" title="Status" text="Status" required />
                         <x-partials.input.select name="status" title="Filter status" :data="$status" required />
                     </div>
                 @endif
+
             @endif
 
         </div>
 
-        @if ($period === '3' || $ik['type'] === 'teks' || $ik['status'] !== 'aktif')
+        @if (auth()->user()->access === 'editor' && ($period === '3' || $ik['type'] === 'teks' || $ik['status'] !== 'aktif'))
             <x-partials.button.add submit text="Simpan" />
         @endif
 
@@ -109,9 +130,11 @@
                     <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
                         <th title="Nomor">No</th>
                         <th title="Unit">Unit</th>
+
                         @if ($ik['type'] !== 'teks' && $period === '3')
                             <th title="Target">Target</th>
                         @endif
+
                         <th title="Realisasi">Realisasi</th>
                     </tr>
                 </thead>

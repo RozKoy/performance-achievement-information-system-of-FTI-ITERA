@@ -243,7 +243,7 @@ class RSController extends Controller
         ]));
     }
 
-    public function detailView(Request $request, $ikId)
+    public function detailView(Request $request, IndikatorKinerja $ik)
     {
         $status = [
             [
@@ -256,48 +256,45 @@ class RSController extends Controller
             ],
         ];
 
-        if (isset($request->period)) {
-            if ($request->period !== '1' && $request->period !== '2' && $request->period !== '3') {
-                abort(404);
-            }
+        if (isset($request->period) && !in_array($request->period, ['1', '2', '3'])) {
+            abort(404);
         }
-
-        $ik = IndikatorKinerja::findOrFail($ikId);
 
         $k = $ik->kegiatan;
         $ss = $k->sasaranStrategis;
 
         $yearInstance = $ss->time;
+        $year = $yearInstance->year;
 
-        $periods = array_map(function ($item) {
-            $title = 'Januari - Juni';
-            if ($item === '2') {
-                $title = 'Juli - Desember';
-            }
-            return [
-                'title' => $title,
-                'value' => $item
-            ];
-        }, $yearInstance->periods()
-                ->orderBy('period')
-                ->pluck('period')
-                ->flatten()
-                ->unique()
-                ->toArray());
+        $periods = $yearInstance->periods()
+            ->orderBy('period')
+            ->pluck('period')
+            ->map(function ($item) {
+                $title = 'Januari - Juni';
 
-        if (count($periods) === 2) {
-            $periods[] = [
+                if ($item === '2') {
+                    $title = 'Juli - Desember';
+                }
+
+                return [
+                    'title' => $title,
+                    'value' => $item
+                ];
+            });
+
+        if ($periods->count() === 2) {
+            $periods->push([
                 'title' => 'Januari - Desember',
-                'value' => '3',
-            ];
+                'value' => '3'
+            ]);
         }
 
-        $year = $yearInstance->year;
-        $period = isset($request->period) ? $request->period : end($periods)['value'];
+        $period = isset($request->period) ? $request->period : $periods->last()['value'];
 
-        if ((int) $period > count($periods)) {
+        if ((int) $period > $periods->count()) {
             abort(404);
         }
+        $periods = $periods->toArray();
 
         $periodInstance = $yearInstance->periods()
             ->where('period', $period)
@@ -306,7 +303,10 @@ class RSController extends Controller
         $data = $ik->realization()
             ->with('unit', function (BelongsTo $query) use ($ik) {
                 $query->withTrashed()
-                    ->select('id', 'name')
+                    ->select([
+                        'name',
+                        'id',
+                    ])
                     ->withAggregate([
                         'rencanaStrategisTarget AS target' => function (Builder $query) use ($ik) {
                             $query->whereBelongsTo($ik);
@@ -321,7 +321,10 @@ class RSController extends Controller
                     $query->whereNull('period_id');
                 }
             })
-            ->select('realization', 'unit_id')
+            ->select([
+                'realization',
+                'unit_id'
+            ])
             ->latest()
             ->get()
             ->toArray();
@@ -336,6 +339,7 @@ class RSController extends Controller
                 }
             })
             ->first();
+
         if ($realization) {
             $realization = $realization->realization;
         }
@@ -347,12 +351,17 @@ class RSController extends Controller
                 'selected' => true,
             ];
 
-            $evaluation = $evaluation->only(['evaluation', 'follow_up', 'status', 'target']);
+            $evaluation = $evaluation->only([
+                'evaluation',
+                'follow_up',
+                'status',
+                'target',
+            ]);
         }
 
-        $unitCount = Unit::where(function (Builder $query) use ($year, $ik) {
+        $unitCount = Unit::where(function (Builder $query) use ($year) {
             $query->whereNotNull('deleted_at')
-                ->whereHas('rencanaStrategis', function (Builder $query) use ($year, $ik) {
+                ->whereHas('rencanaStrategis', function (Builder $query) use ($year) {
                     $query->whereHas('period', function (Builder $query) use ($year) {
                         $query->whereHas('year', function (Builder $query) use ($year) {
                             $query->where('year', $year);
@@ -364,9 +373,7 @@ class RSController extends Controller
             ->withTrashed()
             ->count();
 
-        if ($periodInstance === null) {
-            $unitCount *= 2;
-        }
+        $unitCount *= $periodInstance === null ? 2 : 1;
 
         $realizationCount = $ik->realization()
             ->where(function (Builder $query) use ($periodInstance) {
@@ -384,9 +391,21 @@ class RSController extends Controller
             $year
         ];
 
-        $ss = $ss->only(['name', 'number']);
-        $k = $k->only(['name', 'number']);
-        $ik = $ik->only(['id', 'name', 'type', 'number', 'status']);
+        $ss = $ss->only([
+            'number',
+            'name',
+        ]);
+        $k = $k->only([
+            'number',
+            'name',
+        ]);
+        $ik = $ik->only([
+            'number',
+            'status',
+            'name',
+            'type',
+            'id',
+        ]);
 
         return view('super-admin.achievement.rs.detail', compact([
             'realizationCount',
