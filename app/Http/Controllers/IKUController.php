@@ -193,6 +193,139 @@ class IKUController extends Controller
         ]));
     }
 
+    public function detailView(Request $request, IndikatorKinerjaProgram $ikp)
+    {
+        if (isset($request->period) && !in_array($request->period, ['1', '2', '3', '4', '5'])) {
+            abort(404);
+        }
+
+        $ps = $ikp->programStrategis;
+        $ikk = $ps->indikatorKinerjaKegiatan;
+        $sk = $ikk->sasaranKegiatan;
+
+        $yearInstance = $sk->time;
+        $year = $yearInstance->year;
+
+        $periods = $yearInstance->periods()
+            ->orderBy('period')
+            ->pluck('period')
+            ->map(function ($item) {
+                $title = 'TW 1 | Jan - Mar';
+                if ($item === '2') {
+                    $title = 'TW 2 | Apr - Jun';
+                } else if ($item === '3') {
+                    $title = 'TW 3 | Jul - Sep';
+                } else if ($item === '4') {
+                    $title = 'TW 4 | Okt - Des';
+                }
+
+                return [
+                    'title' => $title,
+                    'value' => $item
+                ];
+            });
+
+        if ($periods->count() === 4) {
+            $periods->push([
+                'title' => 'Januari - Desember',
+                'value' => '5'
+            ]);
+        }
+
+        $period = isset($request->period) ? $request->period : $periods->last()['value'];
+
+        if ((int) $period > $periods->count()) {
+            abort(404);
+        }
+
+        $periodInstance = $yearInstance->periods()
+            ->where('period', $period)
+            ->first();
+
+        $columns = $ikp->columns()
+            ->select([
+                'file',
+                'name',
+                'id',
+            ])
+            ->orderBy('number')
+            ->get()
+            ->toArray();
+
+        $data = IKUAchievement::withTrashed()
+            ->with([
+                'data' => function (HasMany $query) {
+                    $query->select([
+                        'achievement_id',
+                        'column_id',
+                        'data',
+                    ])
+                        ->withAggregate('column AS file', 'file');
+                }
+            ])
+            ->where(function (Builder $query) use ($periodInstance) {
+                if ($periodInstance) {
+                    $query->whereBelongsTo($periodInstance, 'period');
+                }
+            })
+            ->whereBelongsTo($ikp)
+            ->select('id')
+            ->withAggregate('unit AS unit', 'name')
+            ->latest()
+            ->get();
+
+        $achievementCount = $data->count();
+        $data = $data->groupBy('unit')->toArray();
+
+        $evaluation = $ikp->evaluation;
+
+        $sk = $sk->only([
+            'number',
+            'name',
+        ]);
+
+        $ikk = $ikk->only([
+            'number',
+            'name',
+        ]);
+
+        $ps = $ps->only([
+            'number',
+            'name',
+        ]);
+
+        $ikp = $ikp->only([
+            'definition',
+            'number',
+            'status',
+            'name',
+            'type',
+            'id',
+        ]);
+
+        $badge = [
+            $periods->firstWhere('value', $period)['title'],
+            $year
+        ];
+
+        $periods = $periods->toArray();
+
+        return view('super-admin.achievement.iku.detail', compact([
+            'achievementCount',
+            'evaluation',
+            'columns',
+            'periods',
+            'period',
+            'badge',
+            'data',
+            'year',
+            'ikk',
+            'ikp',
+            'ps',
+            'sk',
+        ]));
+    }
+
     public function targetView($year)
     {
         $yearInstance = IKUYear::where('year', $year)

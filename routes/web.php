@@ -86,7 +86,7 @@ Route::group([
 
         Route::prefix('/indikator-kinerja-utama')->controller(IKUController::class)->group(function () {
             Route::get('/', 'homeView')->name('super-admin-achievement-iku');
-            Route::view('/{id}/detail', 'super-admin.achievement.iku.detail')->name('super-admin-achievement-iku-detail');
+            Route::get('/{ikp}/detail', 'detailView')->name('super-admin-achievement-iku-detail');
             Route::get('/{year}/target', 'targetView')->name('super-admin-achievement-iku-target');
 
             Route::middleware('editor')->group(function () {

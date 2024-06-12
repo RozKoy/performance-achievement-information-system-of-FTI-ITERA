@@ -146,7 +146,7 @@
                                     </td>
 
                                     <td class="flex items-start justify-center gap-1">
-                                        <x-partials.button.detail link="{{ route('super-admin-achievement-iku-detail', ['id' => $ikp['id']]) }}" />
+                                        <x-partials.button.detail link="{{ route('super-admin-achievement-iku-detail', ['ikp' => $ikp['id']]) }}" />
                                     </td>
 
                                 </tr>
