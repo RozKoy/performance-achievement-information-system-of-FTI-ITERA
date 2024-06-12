@@ -32,12 +32,15 @@
                     <th title="Program strategis">Program Strategis</th>
                     <th title="Indikator kinerja program">Indikator Kinerja Program</th>
                     <th title="Target {{ $year }}">Target {{ $year }}</th>
+
                     @foreach ($units as $unit)
                         <th title="{{ $unit['name'] }}">{{ $unit['short_name'] }}</th>
                     @endforeach
+
                 </tr>
             </thead>
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
+
                 @foreach ($data as $sk)
                     @foreach ($sk['indikator_kinerja_kegiatan'] as $ikk)
                         @foreach ($ikk['program_strategis'] as $ps)
@@ -63,7 +66,7 @@
                                         <span title="{{ $ikp['type'] === 'iku' ? 'Indikator kinerja utama' : 'Indikator kinerja tambahan' }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ikp['type'] }}</span>
                                     </td>
 
-                                    <td></td>
+                                    <td title="{{ $ikp['allTarget'] }}">{{ $ikp['allTarget'] }}</td>
 
                                     @php
                                         $target = collect($ikp['target']);
@@ -77,43 +80,55 @@
                                             $errorName = 'target.' . $ikp['id'] . '-' . $unit['id'];
                                         @endphp
 
-                                        @if ($exists !== null)
-                                            @php
-                                                $id = $loop->parent->parent->iteration . $loop->parent->iteration . $loop->iteration;
-                                            @endphp
-                                            <td>
-                                                <div id="target-{{ $id }}" title="{{ $exists['target'] }}{{ $ikp['type'] === 'persen' ? '%' : '' }}" class="group relative z-10 py-1.5">
-                                                    <p>{{ $exists['target'] }}{{ $ikp['type'] === 'persen' ? '%' : '' }}</p>
-                                                    <x-partials.button.edit button onclick="toggleEditForm('{{ $id }}')" style="absolute hidden top-0.5 right-0.5 group-hover:block group-focus:block" />
+                                        <td>
+                                            @if ($exists !== null)
+                                                @php
+                                                    $id = $loop->parent->parent->iteration . $loop->parent->iteration . $loop->iteration;
+                                                @endphp
+
+                                                <div id="target-{{ $id }}" title="{{ $exists['target'] }}" class="group relative z-10 py-1.5">
+                                                    <p>{{ $exists['target'] }}</p>
+
+                                                    @if (auth()->user()->access === 'editor')
+                                                        <x-partials.button.edit button onclick="toggleEditForm('{{ $id }}')" style="absolute hidden top-0.5 right-0.5 group-hover:block group-focus:block" />
+                                                    @endif
+
                                                 </div>
-                                                <form id="form-target-{{ $id }}" action="{{ $targetRoute }}" method="POST" class="hidden flex-col gap-0.5">
-                                                    @csrf
-                                                    <div class="flex-1">
-                                                        <x-partials.input.number name="{{ $inputName }}" title="target" value="{{ $exists['target'] }}" />
-                                                        @error($errorName)
-                                                            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="ml-auto flex items-center justify-end gap-0.5">
-                                                        <x-partials.button.edit />
-                                                        <x-partials.button.cancel onclick="toggleEditForm('{{ $id }}')" />
-                                                    </div>
-                                                </form>
-                                            </td>
-                                        @else
-                                            <td>
-                                                <form action="{{ $targetRoute }}" method="POST" class="flex items-center gap-1">
-                                                    @csrf
-                                                    <div class="flex-1">
-                                                        <x-partials.input.number name="{{ $inputName }}" title="target" required />
-                                                        @error($errorName)
-                                                            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
-                                                        @enderror
-                                                    </div>
-                                                    <x-partials.button.add text="" submit />
-                                                </form>
-                                            </td>
-                                        @endif
+
+                                                @if (auth()->user()->access === 'editor')
+                                                    <form id="form-target-{{ $id }}" action="{{ $targetRoute }}" method="POST" class="hidden flex-col gap-0.5">
+                                                        @csrf
+                                                        <div class="flex-1">
+                                                            <x-partials.input.number name="{{ $inputName }}" title="target" value="{{ $exists['target'] }}" />
+
+                                                            @error($errorName)
+                                                                <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
+                                                            @enderror
+
+                                                        </div>
+                                                        <div class="ml-auto flex items-center justify-end gap-0.5">
+                                                            <x-partials.button.edit />
+                                                            <x-partials.button.cancel onclick="toggleEditForm('{{ $id }}')" />
+                                                        </div>
+                                                    </form>
+                                                @endif
+                                            @else
+                                                @if (auth()->user()->access === 'editor')
+                                                    <form action="{{ $targetRoute }}" method="POST" class="flex items-center gap-1">
+                                                        @csrf
+                                                        <div class="flex-1">
+                                                            <x-partials.input.number name="{{ $inputName }}" title="target" required />
+
+                                                            @error($errorName)
+                                                                <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
+                                                            @enderror
+
+                                                        </div>
+                                                        <x-partials.button.add text="" submit />
+                                                    </form>
+                                                @endif
+                                            @endif
+                                        </td>
                                     @endforeach
 
                                 </tr>
@@ -121,6 +136,7 @@
                         @endforeach
                     @endforeach
                 @endforeach
+
             </tbody>
         </table>
     </div>
@@ -129,14 +145,14 @@
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data capaian kinerja</p>
     @endif
 
-    @pushOnce('script')
-        <script>
-            function toggleEditForm(id) {
-                document.getElementById('target-' + id).classList.toggle('hidden');
-                document.getElementById('form-target-' + id).classList.toggle('flex');
-                document.getElementById('form-target-' + id).classList.toggle('hidden');
-            }
-        </script>
-    @endPushOnce
+    @pushIf(auth()->user()->access === 'editor', 'script')
+    <script>
+        function toggleEditForm(id) {
+            document.getElementById('target-' + id).classList.toggle('hidden');
+            document.getElementById('form-target-' + id).classList.toggle('flex');
+            document.getElementById('form-target-' + id).classList.toggle('hidden');
+        }
+    </script>
+    @endPushIf
 
 </x-super-admin-template>

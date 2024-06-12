@@ -198,49 +198,80 @@ class IKUController extends Controller
         $yearInstance = IKUYear::where('year', $year)
             ->firstOrFail();
 
-        $currentYear = Carbon::now()->format('Y');
-
         $data = $yearInstance->sasaranKegiatan()
+            ->whereHas('indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram')
             ->with([
                 'indikatorKinerjaKegiatan' => function (HasMany $query) {
-                    $query->orderBy('number')
-                        ->select(['sasaran_kegiatan_id', 'name AS ikk', 'id']);
+                    $query->whereHas('programStrategis.indikatorKinerjaProgram')
+                        ->select([
+                            'name AS ikk',
+                            'id',
+
+                            'sasaran_kegiatan_id',
+                        ])
+                        ->orderBy('number');
                 },
                 'indikatorKinerjaKegiatan.programStrategis' => function (HasMany $query) {
-                    $query->orderBy('number')
-                        ->select(['indikator_kinerja_kegiatan_id', 'name AS ps', 'id'])
+                    $query->whereHas('indikatorKinerjaProgram')
+                        ->select([
+                            'name AS ps',
+                            'id',
+
+                            'indikator_kinerja_kegiatan_id',
+                        ])
+                        ->orderBy('number')
                         ->withCount('indikatorKinerjaProgram AS rowspan');
                 },
                 'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram' => function (HasMany $query) {
-                    $query->orderBy('number')
-                        ->select(['program_strategis_id', 'name AS ikp', 'definition', 'type', 'id'])
+                    $query->select([
+                        'name AS ikp',
+                        'definition',
+                        'type',
+                        'id',
+
+                        'program_strategis_id',
+                    ])
+                        ->orderBy('number')
                         ->with('target', function (HasMany $query) {
-                            $query->select(['indikator_kinerja_program_id', 'unit_id', 'target', 'id']);
-                        });
+                            $query->select([
+                                'target',
+                                'id',
+
+                                'indikator_kinerja_program_id',
+                                'unit_id',
+                            ]);
+                        })
+                        ->withAggregate('evaluation AS allTarget', 'target');
                 },
             ])
             ->orderBy('number')
-            ->select(['id', 'number', 'name AS sk'])
-            ->get();
+            ->select([
+                'name AS sk',
+                'number',
+                'id',
+            ])
+            ->get()
+            ->map(function ($item) {
+                $temp = $item->indikatorKinerjaKegiatan->map(function ($item) {
+                    return [
+                        ...$item->toArray(),
 
-        $data = $data->map(function ($item) {
-            $temp = $item->indikatorKinerjaKegiatan->map(function ($item) {
+                        'rowspan' => $item->programStrategis->sum('rowspan')
+                    ];
+                });
+
                 return [
-                    ...$item->toArray(),
+                    ...$item->only([
+                        'number',
+                        'sk',
+                        'id',
+                    ]),
 
-                    'rowspan' => $item->programStrategis->sum('rowspan')
+                    'indikator_kinerja_kegiatan' => $temp->toArray(),
+                    'rowspan' => $temp->sum('rowspan'),
                 ];
-            });
-
-            return [
-                ...$item->only(['number', 'sk', 'id']),
-
-                'indikator_kinerja_kegiatan' => $temp->toArray(),
-                'rowspan' => $temp->sum('rowspan'),
-            ];
-        });
-
-        $data = $data->toArray();
+            })
+            ->toArray();
 
         $units = Unit::where(function (Builder $query) use ($year) {
             $query->whereNotNull('deleted_at')
@@ -253,7 +284,11 @@ class IKUController extends Controller
                 });
         })
             ->orWhereNull('deleted_at')
-            ->select(['short_name', 'name', 'id'])
+            ->select([
+                'short_name',
+                'name',
+                'id',
+            ])
             ->withTrashed()
             ->latest()
             ->get()
