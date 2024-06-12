@@ -238,7 +238,12 @@ class UsersController extends Controller
                     );
                 }
             })
-            ->select(['id', 'name', 'email', 'access'])
+            ->select([
+                'access',
+                'email',
+                'name',
+                'id',
+            ])
             ->latest()
             ->get()
             ->toArray();

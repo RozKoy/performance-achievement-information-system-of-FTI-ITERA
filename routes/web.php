@@ -273,14 +273,15 @@ Route::prefix('/')->middleware('admin')->group(function () {
         Route::view('/indikator-kinerja-utama/{id}/detail', 'admin.history.iku.detail')->name('admin-history-iku-detail');
     });
 
-    Route::group([
-        'prefix' => '/pengguna',
-        'controller' => UsersController::class
-    ], function () {
+    Route::prefix('/pengguna')->controller(UsersController::class)->group(function () {
         Route::get('/', 'homeViewAdmin')->name('admin-users');
-        Route::get('/tambah', 'addViewAdmin')->name('admin-users-add');
-        Route::post('/tambah', 'addAdmin');
-        Route::get('/{id}/ubah', 'editViewAdmin')->name('admin-users-edit');
-        Route::put('/{id}/ubah', 'editAdmin');
+
+        Route::middleware('editor')->group(function () {
+            Route::get('/tambah', 'addViewAdmin')->name('admin-users-add');
+            Route::post('/tambah', 'addAdmin');
+
+            Route::get('/{id}/ubah', 'editViewAdmin')->name('admin-users-edit');
+            Route::put('/{id}/ubah', 'editAdmin');
+        });
     });
 });
