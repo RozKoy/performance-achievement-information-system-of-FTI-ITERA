@@ -282,6 +282,8 @@ Route::prefix('/')->middleware('admin')->group(function () {
 
             Route::get('/{id}/ubah', 'editViewAdmin')->name('admin-users-edit');
             Route::put('/{id}/ubah', 'editAdmin');
+
+            Route::get('/{user}/hapus', 'deleteAdmin');
         });
     });
 });

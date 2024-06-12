@@ -317,9 +317,12 @@ class UsersController extends Controller
         return redirect()->route('admin-users');
     }
 
-    public function deleteAdmin($id)
+    public function deleteAdmin(User $user)
     {
-        $user = User::findOrFail($id);
+        $user = auth()->user()
+            ->unit
+            ->users()
+            ->findOrFail($user->id);
 
         $user->forceDelete();
 
