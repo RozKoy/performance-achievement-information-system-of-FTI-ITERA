@@ -253,8 +253,10 @@ Route::prefix('/')->middleware('admin')->group(function () {
         return view('admin.home');
     })->name('admin-dashboard');
 
-    Route::get('/rencana-strategis', [RSController::class, 'homeViewAdmin'])->name('admin-rs');
-    Route::post('/rencana-strategis/{period}/{ik}', [RSController::class, 'addAdmin'])->name('admin-rs-add');
+    Route::prefix('/rencana-strategis')->controller(RSController::class)->group(function () {
+        Route::get('/', 'homeViewAdmin')->name('admin-rs');
+        Route::post('/{period}/{ik}', 'addAdmin')->middleware('editor')->name('admin-rs-add');
+    });
 
     Route::get('/indikator-kinerja-utama', [IKUController::class, 'homeViewAdmin'])->name('admin-iku');
     Route::get('/indikator-kinerja-utama/{id}/detail', [IKUController::class, 'detailViewAdmin'])->name('admin-iku-detail');
