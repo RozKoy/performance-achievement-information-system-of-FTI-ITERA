@@ -377,45 +377,46 @@ class IKUController extends Controller
     public function addTarget(AddTargetRequest $request, $ikpId, $unitId)
     {
         $ikp = IndikatorKinerjaProgram::findOrFail($ikpId);
-        $unit = Unit::withTrashed()->findOrFail($unitId);
 
-        $target = null;
-        if (isset($request['target'])) {
-            $target = $request['target'][$ikpId . '-' . $unitId];
+        if ($ikp->status === 'aktif') {
+            Unit::withTrashed()->findOrFail($unitId);
+
+            $target = null;
+            if (isset($request['target'])) {
+                $target = $request['target'][$ikpId . '-' . $unitId];
+            }
+
+            $targetInstance = IKUTarget::firstOrNew([
+                'indikator_kinerja_program_id' => $ikpId,
+                'unit_id' => $unitId
+            ]);
+
+            if ($target === null && $targetInstance->id !== null) {
+                $targetInstance->forceDelete();
+            } else if ($target !== null) {
+                $targetInstance->target = (int) $target;
+                $targetInstance->save();
+            }
+
+            $sumAllTarget = IKUTarget::whereBelongsTo($ikp)
+                ->sum('target');
+
+            $realization = IKUAchievement::whereBelongsTo($ikp)
+                ->count();
+
+            $evaluation = IKUEvaluation::firstOrNew([
+                'indikator_kinerja_program_id' => $ikpId
+            ]);
+
+            $evaluation->status = $realization >= $sumAllTarget;
+            $evaluation->target = $sumAllTarget;
+
+            $evaluation->save();
+
+            return back();
         }
 
-        $targetInstance = IKUTarget::firstOrNew([
-            'indikator_kinerja_program_id' => $ikpId,
-            'unit_id' => $unitId
-        ]);
-
-        if ($target === null && $targetInstance->id !== null) {
-            $targetInstance->forceDelete();
-        } else if ($target !== null) {
-            $targetInstance->target = (int) $target;
-            $targetInstance->save();
-        }
-
-        $sumAllTarget = IKUTarget::whereBelongsTo($ikp)
-            ->sum('target');
-
-        $evaluation = IKUEvaluation::firstOrNew([
-            'indikator_kinerja_program_id' => $ikpId
-        ]);
-
-        $evaluation->target = $sumAllTarget;
-
-        $realization = IKUAchievement::whereBelongsTo($ikp)
-            ->count();
-
-        $evaluation->status = false;
-        if ($realization >= $sumAllTarget) {
-            $evaluation->status = true;
-        }
-
-        $evaluation->save();
-
-        return back();
+        abort(404);
     }
 
 
