@@ -297,6 +297,37 @@ class IKUController extends Controller
         }
     }
 
+    public function statusToggle(IKUPeriod $period)
+    {
+        if ($period->status) {
+            $period->status = false;
+            $period->deadline()->dissociate();
+        } else {
+            $currentMonth = (int) Carbon::now()->format('m');
+            $currentPeriod = '1';
+
+            foreach ([3, 6, 9, 12] as $key => $value) {
+                if ($currentMonth <= $value) {
+                    $temp = $key + 1;
+                    $currentPeriod = "$temp";
+
+                    break;
+                }
+            }
+
+            $currentYearInstance = IKUYear::currentTime();
+            $currentPeriodInstance = IKUPeriod::whereBelongsTo($currentYearInstance, 'year')
+                ->where('period', $currentPeriod)
+                ->firstOrFail();
+
+            $period->deadline()->associate($currentPeriodInstance);
+            $period->status = true;
+        }
+        $period->save();
+
+        return back();
+    }
+
     public function addTarget(AddTargetRequest $request, $ikpId, $unitId)
     {
         $ikp = IndikatorKinerjaProgram::findOrFail($ikpId);
