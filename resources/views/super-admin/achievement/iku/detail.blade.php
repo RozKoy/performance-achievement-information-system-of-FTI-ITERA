@@ -33,7 +33,7 @@
     </div>
 
     @if ($period === '5' && $ikp['status'] === 'aktif')
-        <form action="{{ auth()->user()->access === 'editor' ? '' : '' }}" method="POST" class="flex flex-col gap-2">
+        <form action="{{ auth()->user()->access === 'editor' ? route('super-admin-achievement-iku-evaluation', ['ikp' => $ikp['id']]) : '' }}" method="POST" class="flex flex-col gap-2">
             @if (auth()->user()->access === 'editor')
                 @csrf
             @endif

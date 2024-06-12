@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndikatorKinerjaUtama\AddEvaluationRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddTargetRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -505,6 +506,41 @@ class IKUController extends Controller
         $period->save();
 
         return back();
+    }
+
+    public function addEvaluation(AddEvaluationRequest $request, IndikatorKinerjaProgram $ikp)
+    {
+        $ps = $ikp->programStrategis;
+        $ikk = $ps->indikatorKinerjaKegiatan;
+        $sk = $ikk->sasaranKegiatan;
+
+        $yearInstance = $sk->time;
+
+        $periods = $yearInstance->periods()
+            ->orderBy('period')
+            ->pluck('period');
+
+        if ($periods->count() === 4) {
+            $evaluation = $ikp->evaluation()
+                ->firstOrNew([], [
+                    'status' => false,
+                    'target' => 0,
+                ]);
+
+            $evaluation->evaluation = $request['evaluation'];
+            $evaluation->follow_up = $request['follow_up'];
+
+            $achievementCount = $ikp->achievements->count();
+            if ($achievementCount) {
+                $evaluation->status = $achievementCount >= $evaluation->target;
+            }
+
+            $evaluation->save();
+
+            return back();
+        }
+
+        abort(404);
     }
 
     public function addTarget(AddTargetRequest $request, $ikpId, $unitId)
