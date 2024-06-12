@@ -22,9 +22,9 @@ class AddAdminRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['bail', 'required', 'max:255', 'email', 'unique:users'],
+            'email' => ['bail', 'required', 'string', 'max:255', 'email', 'unique:users'],
             'access' => ['bail', 'required', 'in:editor,viewer'],
-            'name' => ['bail', 'required', 'max:255'],
+            'name' => ['bail', 'required', 'string', 'max:255'],
         ];
     }
 
@@ -41,6 +41,7 @@ class AddAdminRequest extends FormRequest
     {
         return [
             'max' => ':attribute tidak boleh melebihi :max karakter',
+            'string' => ':attribute harus berupa teks',
             'unique' => ':attribute sudah digunakan',
             'required' => ':attribute wajib diisi',
             'email' => ':attribute tidak valid',

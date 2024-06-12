@@ -261,7 +261,7 @@ class UsersController extends Controller
         User::create(
             [
                 ...$request->safe()->all(),
-                'password' => str_replace(" ", "_", $request->safe()['name']),
+                'password' => str_replace(" ", "_", $request['name']),
                 'unit_id' => auth()->user()->unit_id,
                 'role' => 'admin'
             ]
