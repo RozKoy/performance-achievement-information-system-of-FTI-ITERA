@@ -277,7 +277,12 @@ class UsersController extends Controller
             ->users()
             ->findOrFail($id);
 
-        $user = $user->only(['id', 'name', 'email', 'access']);
+        $user = $user->only([
+            'access',
+            'email',
+            'name',
+            'id',
+        ]);
 
         return view('admin.users.edit', compact('user'));
     }
