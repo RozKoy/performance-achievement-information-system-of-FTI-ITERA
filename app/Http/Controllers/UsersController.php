@@ -287,23 +287,26 @@ class UsersController extends Controller
         return view('admin.users.edit', compact('user'));
     }
 
-    public function editAdmin(EditAdminRequest $request, $id)
+    public function editAdmin(EditAdminRequest $request, User $id)
     {
-        $user = User::findOrFail($id);
+        $user = auth()->user()
+            ->unit
+            ->users()
+            ->findOrFail($id->id);
 
-        $newEmail = $request->safe()['email'];
+        $newEmail = $request['email'];
 
         if ($user->email !== $newEmail) {
             $user->email = $newEmail;
         }
 
-        $newName = $request->safe()['name'];
+        $newName = $request['name'];
 
         if ($user->name !== $newName) {
             $user->name = $newName;
         }
 
-        $newAccess = $request->safe()['access'];
+        $newAccess = $request['access'];
 
         if ($user->access !== $newAccess) {
             $user->access = $newAccess;
