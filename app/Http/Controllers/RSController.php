@@ -1027,7 +1027,8 @@ class RSController extends Controller
         $currentYear = Carbon::now()->format('Y');
 
         $period = RSPeriod::whereKey($periodId)
-            ->where('status', true)->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
+            ->where('status', true)
+            ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
                 $query->where('period', $currentPeriod)
                     ->whereHas('year', function (Builder $query) use ($currentYear) {
                         $query->where('year', $currentYear);
@@ -1044,11 +1045,15 @@ class RSController extends Controller
             })
             ->firstOrFail();
 
-        if ($realization !== null && ($ik->type === 'persen' || $ik->type === 'angka')) {
-            if (!is_numeric($realization)) {
-                return back()
-                    ->withInput()
-                    ->withErrors(["realization-$ikId" => 'Realisasi tidak sesuai dengan tipe data']);
+        if ($realization !== null && !is_numeric($realization) && ($ik->type === 'persen' || $ik->type === 'angka')) {
+            return back()
+                ->withInput()
+                ->withErrors(["realization-$ikId" => 'Realisasi tidak sesuai dengan tipe data']);
+        }
+
+        if ($ik->type !== 'teks') {
+            if ((float) $realization < 0) {
+                $realization = (float) $realization * -1;
             }
         }
 
@@ -1077,59 +1082,6 @@ class RSController extends Controller
         if ($realization !== null) {
             $achievement = $achievement->firstOrNew();
 
-            if ($ik->type !== 'teks') {
-                $realization = (float) $realization;
-
-                if ($realization < 0) {
-                    $realization *= -1;
-                }
-
-                foreach ([$allAchievement, $periodAchievement, $unitAchievement] as $key => $instance) {
-                    $value = isset($instance->realization) ? (float) $instance->realization : 0;
-
-                    if ($ik->type === 'angka') {
-                        if ($value && $achievement->id !== null) {
-                            $value -= (float) $achievement->realization;
-                        }
-                        $value += $realization;
-                    } else if ($ik->type === 'persen') {
-                        if ($instance->period) {
-                            $count = RSAchievement::whereBelongsTo($ik)
-                                ->whereBelongsTo($period, 'period')
-                                ->whereNotNull('unit_id')
-                                ->count();
-                        } else if ($instance->unit) {
-                            $count = RSAchievement::whereBelongsTo($ik)
-                                ->whereBelongsTo(auth()->user()->unit)
-                                ->whereNotNull('period_id')
-                                ->count();
-                        } else {
-                            $count = RSAchievement::whereBelongsTo($ik)
-                                ->whereNotNull('period_id')
-                                ->whereNotNull('unit_id')
-                                ->count();
-                        }
-
-                        if ($value && $achievement->id !== null) {
-                            $value *= $count;
-                            $value += $realization - (float) $achievement->realization;
-                            $value /= $count;
-                        } else if ($value && $achievement->id === null) {
-                            $value += $realization;
-                            $value /= ($count + 1);
-                        } else {
-                            $value += $realization;
-                        }
-                    }
-                    if (!ctype_digit("$value")) {
-                        $value = number_format($value, 2);
-                    }
-
-                    $instance->realization = "$value";
-                    $instance->save();
-                }
-            }
-
             $achievement->realization = "$realization";
 
             $achievement->unit()->associate(auth()->user()->unit);
@@ -1141,51 +1093,44 @@ class RSController extends Controller
             $achievement = $achievement->first();
 
             if ($achievement !== null) {
-                foreach ([$allAchievement, $periodAchievement, $unitAchievement] as $key => $instance) {
-                    if ($instance->id !== null && $ik->type !== 'teks') {
-                        $value = (float) $instance->realization;
-
-                        if ($ik->type === 'angka') {
-                            $value -= (float) $achievement->realization;
-                        } else if ($ik->type === 'persen') {
-                            if ($instance->period) {
-                                $count = RSAchievement::whereBelongsTo($ik)
-                                    ->whereBelongsTo($period, 'period')
-                                    ->whereNotNull('unit_id')
-                                    ->count();
-                            } else if ($instance->unit) {
-                                $count = RSAchievement::whereBelongsTo($ik)
-                                    ->whereBelongsTo(auth()->user()->unit)
-                                    ->whereNotNull('period_id')
-                                    ->count();
-                            } else {
-                                $count = RSAchievement::whereBelongsTo($ik)
-                                    ->whereNotNull('period_id')
-                                    ->whereNotNull('unit_id')
-                                    ->count();
-                            }
-
-                            $value *= $count;
-                            $value -= (float) $achievement->realization;
-                            if ($count - 1 > 1) {
-                                $value /= $count - 1;
-                            }
-                        }
-
-                        if (!ctype_digit("$value")) {
-                            $value = number_format($value, 2);
-                        }
-
-                        $instance->realization = "$value";
-                        $instance->save();
-                    }
-                }
-
                 $achievement->forceDelete();
             }
         }
 
         if ($ik->type !== 'teks') {
+            foreach ([$allAchievement, $periodAchievement, $unitAchievement] as $key => $instance) {
+                $all = RSAchievement::whereBelongsTo($ik)
+                    ->where(function (Builder $query) use ($instance) {
+                        if ($instance->period) {
+                            $query->whereBelongsTo($instance->period, 'period')
+                                ->whereNotNull('unit_id');
+                        } else if ($instance->unit) {
+                            $query->whereBelongsTo(auth()->user()->unit)
+                                ->whereNotNull('period_id');
+                        } else {
+                            $query->whereNotNull('period_id')
+                                ->whereNotNull('unit_id');
+                        }
+                    })
+                    ->get();
+
+                $sum = $all->sum('realization');
+
+                if ($ik->type === 'persen') {
+                    $count = $all->count();
+                    if ($count) {
+                        $sum /= $count;
+                    }
+                }
+
+                if (!ctype_digit("$sum")) {
+                    $sum = number_format($sum, 2);
+                }
+
+                $instance->realization = "$sum";
+                $instance->save();
+            }
+
             $evaluation = RSEvaluation::firstOrNew([
                 'indikator_kinerja_id' => $ik->id,
             ], [
