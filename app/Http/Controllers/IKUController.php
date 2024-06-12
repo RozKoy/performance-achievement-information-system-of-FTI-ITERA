@@ -31,10 +31,8 @@ class IKUController extends Controller
 
     public function homeView(Request $request)
     {
-        if (isset($request->year)) {
-            if (!is_numeric($request->year)) {
-                abort(404);
-            }
+        if (isset($request->year) && !is_numeric($request->year)) {
+            abort(404);
         }
 
         $currentYearInstance = IKUYear::currentTime();
@@ -52,9 +50,11 @@ class IKUController extends Controller
             }
         }
 
-        // $this->checkRoutine($currentYear);
+        $this->checkRoutine($currentYear, $currentPeriod);
 
-        $years = IKUYear::orderBy('year')->pluck('year')->toArray();
+        $years = IKUYear::orderBy('year')
+            ->pluck('year')
+            ->toArray();
 
         $year = isset($request->year) ? $request->year : end($years);
         $yearInstance = IKUYear::where('year', $year)->firstOrFail();
@@ -71,26 +71,116 @@ class IKUController extends Controller
             }
         }
 
-        $periods = $yearInstance->periods
-            ->select(['id', 'period', 'status']);
+        $periods = $yearInstance->periods()
+            ->orderBy('period')
+            ->select([
+                'period',
+                'status',
+                'id',
+            ])
+            ->get()
+            ->map(function ($item) {
+                $title = 'TW 1 | Jan - Mar';
+                if ($item['period'] === '2') {
+                    $title = 'TW 2 | Apr - Jun';
+                } else if ($item['period'] === '3') {
+                    $title = 'TW 3 | Jul - Sep';
+                } else if ($item['period'] === '4') {
+                    $title = 'TW 4 | Okt - Des';
+                }
 
-        $periods = $periods->map(function ($item) {
-            $title = 'TW 1 | Jan - Mar';
-            if ($item['period'] === '2') {
-                $title = 'TW 2 | Apr - Jun';
-            } else if ($item['period'] === '3') {
-                $title = 'TW 3 | Jul - Sep';
-            } else if ($item['period'] === '4') {
-                $title = 'TW 4 | Okt - Des';
-            }
+                return [
+                    ...$item->toArray(),
+                    'title' => $title,
+                ];
+            });
 
-            return [
-                ...$item,
-                'title' => $title,
-            ];
-        });
+        $data = $yearInstance->sasaranKegiatan()
+            ->whereHas('indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram')
+            ->with([
+                'indikatorKinerjaKegiatan' => function (HasMany $query) {
+                    $query->whereHas('programStrategis.indikatorKinerjaProgram')
+                        ->select([
+                            'name AS ikk',
+                            'id',
 
-        $periods = $periods->sortBy('period')->toArray();
+                            'sasaran_kegiatan_id',
+                        ])
+                        ->orderBy('number');
+                },
+                'indikatorKinerjaKegiatan.programStrategis' => function (HasMany $query) {
+                    $query->whereHas('indikatorKinerjaProgram')
+                        ->select([
+                            'name AS ps',
+                            'id',
+
+                            'indikator_kinerja_kegiatan_id',
+                        ])
+                        ->orderBy('number')
+                        ->withCount('indikatorKinerjaProgram AS rowspan');
+                },
+                'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram' => function (HasMany $query) {
+                    $query->select([
+                        'name AS ikp',
+                        'definition',
+                        'status',
+                        'type',
+                        'id',
+
+                        'program_strategis_id',
+                    ])
+                        ->orderBy('number')
+                        ->withCount([
+                            'achievements AS tw1' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '1');
+                                });
+                            },
+                            'achievements AS tw2' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '2');
+                                });
+                            },
+                            'achievements AS tw3' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '3');
+                                });
+                            },
+                            'achievements AS tw4' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '4');
+                                });
+                            },
+                        ])
+                        ->withAggregate('evaluation AS evaluation', 'evaluation')
+                        ->withAggregate('evaluation AS follow_up', 'follow_up')
+                        ->withAggregate('evaluation AS target', 'target');
+                },
+            ])
+            ->select([
+                'name AS sk',
+                'number',
+                'id',
+            ])
+            ->orderBy('number')
+            ->get()
+            ->map(function ($item) {
+                $temp = $item->indikatorKinerjaKegiatan->map(function ($item) {
+                    return [
+                        ...$item->toArray(),
+
+                        'rowspan' => $item->programStrategis->sum('rowspan')
+                    ];
+                });
+
+                return [
+                    ...$item->only(['number', 'sk', 'id']),
+
+                    'indikator_kinerja_kegiatan' => $temp->toArray(),
+                    'rowspan' => $temp->sum('rowspan'),
+                ];
+            })
+            ->toArray();
 
         $badge = [$year];
 
@@ -99,6 +189,7 @@ class IKUController extends Controller
             'badge',
             'years',
             'year',
+            'data',
         ]));
     }
 
@@ -186,6 +277,23 @@ class IKUController extends Controller
 
         if ($temp->id === null) {
             $temp->save();
+        }
+    }
+
+    public function checkRoutine($currentYear, $currentPeriod)
+    {
+        $currentPeriod = IKUPeriod::where('period', $currentPeriod)
+            ->whereHas('year', function (Builder $query) use ($currentYear) {
+                $query->where('year', $currentYear);
+            })
+            ->first();
+
+        if ($currentPeriod) {
+            IKUPeriod::whereNot('deadline_id', $currentPeriod->id)
+                ->update([
+                    'deadline_id' => null,
+                    'status' => false,
+                ]);
         }
     }
 

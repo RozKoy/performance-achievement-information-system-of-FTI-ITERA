@@ -33,157 +33,22 @@
         </button>
     </div>
     <div class="flex flex-wrap items-center justify-start gap-1.5">
+
         @foreach ($periods as $period)
             <div class="{{ $period['status'] === 1 ? 'bg-green-200 text-green-500' : 'bg-red-200 text-red-500' }} flex items-center gap-1 rounded-lg px-1.5 py-1 text-xs md:text-sm">
                 <p>{{ $period['title'] }}</p>
-                <label title="Tombol power [status: {{ $period['status'] === 1 ? 'Aktif' : 'Tidak aktif' }}]" class="relative inline-flex items-center">
-                    <input type="checkbox" value="{{ $period['status'] === 1 }}" class="peer sr-only" @checked($period['status'] === 1) disabled>
-                    <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
-                </label>
+
+                @if (auth()->user()->access === 'editor')
+                    <label title="Tombol power [status: {{ $period['status'] === 1 ? 'Aktif' : 'Tidak aktif' }}]" class="relative inline-flex items-center">
+                        <input type="checkbox" value="{{ $period['status'] === 1 }}" class="peer sr-only" @checked($period['status'] === 1) disabled>
+                        <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
+                    </label>
+                @endif
+
             </div>
         @endforeach
+
     </div>
-    @php
-        $data = [
-            [
-                'id' => 'cjgjndchbru',
-                'rowspan' => '8',
-                'sk' => 'Meningkatkan Kualitas Lulusan Pendidikan Tinggi',
-                'ikk' => [
-                    [
-                        'id' => 'kjcdjcdcj',
-                        'rowspan' => '4',
-                        'ikk' => 'Persentase lulusan S1 dan D4/D3/D2 yang berhasil mendapat pekerjaan; melanjutkan studi; atau menjadi wiraswasta.',
-                        'ps' => [
-                            [
-                                'id' => 'mkmrngf',
-                                'rowspan' => '2',
-                                'ps' => 'Peningkatan Kualitas Lulusan yang Berdaya Saing',
-                                'ikp' => [
-                                    [
-                                        'id' => 'mckrkfmv',
-                                        'status' => 'aktif',
-                                        'type' => 'iku',
-                                        'ikp' => 'Julah Lulusan yang mendapat pekerjaan',
-                                        'definition' => 'Lulusan yang mendapat pekerjaan dalam rentang waktu 12 (dua belas) bulan terhitung mulai tanggal setelah terbit ijazah',
-                                        'constraint' => 'Data dan Dokumen bukti belum terkumpul baik',
-                                        'follow_up' => 'Memperkuat ikatan alumni',
-                                        'target' => [23, 4, 20, 15],
-                                        'realization' => [25, 0, 22, 0],
-                                    ],
-                                    [
-                                        'id' => 'jdkfdf',
-                                        'status' => 'aktif',
-                                        'type' => 'ikt',
-                                        'ikp' => 'Jumlah Lulusan yang melanjutkan studi',
-                                        'definition' => 'Lulusan yang melanjutkan studi pada jenjang S2/S2 terapan atau Profesi di dalam atau luar negeri dalam rentang waktu 12 (dua belas) bulan terhitung mulai tanggal setelah terbit ijazah',
-                                        'constraint' => '',
-                                        'follow_up' => '',
-                                        'target' => [45, 10, 20, 15],
-                                        'realization' => [35, 10, 22, 0],
-                                    ],
-                                ],
-                            ],
-                            [
-                                'id' => 'mkmrngf',
-                                'rowspan' => '2',
-                                'ps' => 'Peningkatan Kualitas Lulusan yang Berdaya Saing',
-                                'ikp' => [
-                                    [
-                                        'id' => 'mckrkfmv',
-                                        'status' => 'aktif',
-                                        'type' => 'iku',
-                                        'ikp' => 'Julah Lulusan yang mendapat pekerjaan',
-                                        'definition' => 'Lulusan yang mendapat pekerjaan dalam rentang waktu 12 (dua belas) bulan terhitung mulai tanggal setelah terbit ijazah',
-                                        'constraint' => '',
-                                        'follow_up' => '',
-                                        'target' => [45, 10, 20, 15],
-                                        'realization' => [35, 10, 22, 0],
-                                    ],
-                                    [
-                                        'id' => 'jdkfdf',
-                                        'status' => 'aktif',
-                                        'type' => 'ikt',
-                                        'ikp' => 'Jumlah Lulusan yang melanjutkan studi',
-                                        'definition' => 'Lulusan yang melanjutkan studi pada jenjang S2/S2 terapan atau Profesi di dalam atau luar negeri dalam rentang waktu 12 (dua belas) bulan terhitung mulai tanggal setelah terbit ijazah',
-                                        'constraint' => '',
-                                        'follow_up' => '',
-                                        'target' => [45, 10, 20, 15],
-                                        'realization' => [35, 10, 22, 0],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                    [
-                        'id' => 'kjcdjcdcj',
-                        'rowspan' => '4',
-                        'ikk' => 'Persentase lulusan S1 dan D4/D3/D2 yang berhasil mendapat pekerjaan; melanjutkan studi; atau menjadi wiraswasta.',
-                        'ps' => [
-                            [
-                                'id' => 'mkmrngf',
-                                'rowspan' => '2',
-                                'ps' => 'Peningkatan Kualitas Lulusan yang Berdaya Saing',
-                                'ikp' => [
-                                    [
-                                        'id' => 'mckrkfmv',
-                                        'status' => 'aktif',
-                                        'type' => 'iku',
-                                        'ikp' => 'Julah Lulusan yang mendapat pekerjaan',
-                                        'definition' => 'Lulusan yang mendapat pekerjaan dalam rentang waktu 12 (dua belas) bulan terhitung mulai tanggal setelah terbit ijazah',
-                                        'constraint' => '',
-                                        'follow_up' => '',
-                                        'target' => [23, 4, 20, 15],
-                                        'realization' => [25, 0, 22, 0],
-                                    ],
-                                    [
-                                        'id' => 'jdkfdf',
-                                        'status' => 'aktif',
-                                        'type' => 'ikt',
-                                        'ikp' => 'Jumlah Lulusan yang melanjutkan studi',
-                                        'definition' => 'Lulusan yang melanjutkan studi pada jenjang S2/S2 terapan atau Profesi di dalam atau luar negeri dalam rentang waktu 12 (dua belas) bulan terhitung mulai tanggal setelah terbit ijazah',
-                                        'constraint' => '',
-                                        'follow_up' => '',
-                                        'target' => [45, 10, 20, 15],
-                                        'realization' => [35, 10, 22, 0],
-                                    ],
-                                ],
-                            ],
-                            [
-                                'id' => 'mkmrngf',
-                                'rowspan' => '2',
-                                'ps' => 'Peningkatan Kualitas Lulusan yang Berdaya Saing',
-                                'ikp' => [
-                                    [
-                                        'id' => 'mckrkfmv',
-                                        'status' => 'aktif',
-                                        'type' => 'iku',
-                                        'ikp' => 'Julah Lulusan yang mendapat pekerjaan',
-                                        'definition' => 'Lulusan yang mendapat pekerjaan dalam rentang waktu 12 (dua belas) bulan terhitung mulai tanggal setelah terbit ijazah',
-                                        'constraint' => '',
-                                        'follow_up' => '',
-                                        'target' => [45, 10, 20, 15],
-                                        'realization' => [35, 10, 22, 0],
-                                    ],
-                                    [
-                                        'id' => 'jdkfdf',
-                                        'status' => 'aktif',
-                                        'type' => 'ikt',
-                                        'ikp' => 'Jumlah Lulusan yang melanjutkan studi',
-                                        'definition' => 'Lulusan yang melanjutkan studi pada jenjang S2/S2 terapan atau Profesi di dalam atau luar negeri dalam rentang waktu 12 (dua belas) bulan terhitung mulai tanggal setelah terbit ijazah',
-                                        'constraint' => '',
-                                        'follow_up' => '',
-                                        'target' => [45, 10, 20, 15],
-                                        'realization' => [35, 10, 22, 0],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-    @endphp
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
@@ -195,7 +60,6 @@
                     <th title="Indikator kinerja program" rowspan="2">Indikator Kinerja Program</th>
                     <th title="Definisi operasional" rowspan="2">Definisi Operasional</th>
                     <th title="Target {{ $year }}" rowspan="2">Target {{ $year }}</th>
-                    <th title="Target renaksi triwulanan" colspan="4">Target Renaksi Triwulanan</th>
                     <th title="Capaian triwulanan" colspan="4">Capaian Triwulanan</th>
                     <th title="Analisis progress capaian" colspan="2">Analisis Progress Capaian</th>
                     <th title="Status penugasan" rowspan="2">Status Penugasan</th>
@@ -206,19 +70,16 @@
                     <th title="TW 2 | April - Juni">TW 2</th>
                     <th title="TW 3 | Juli - September">TW 3</th>
                     <th title="TW 4 | Oktober - Desember">TW 4</th>
-                    <th title="TW 1 | Januari - Maret">TW 1</th>
-                    <th title="TW 2 | April - Juni">TW 2</th>
-                    <th title="TW 3 | Juli - September">TW 3</th>
-                    <th title="TW 4 | Oktober - Desember">TW 4</th>
                     <th title="Kendala">Kendala</th>
                     <th title="Tindak lanjut">Tindak Lanjut</th>
                 </tr>
             </thead>
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
+
                 @foreach ($data as $sk)
-                    @foreach ($sk['ikk'] as $ikk)
-                        @foreach ($ikk['ps'] as $ps)
-                            @foreach ($ps['ikp'] as $ikp)
+                    @foreach ($sk['indikator_kinerja_kegiatan'] as $ikk)
+                        @foreach ($ikk['program_strategis'] as $ps)
+                            @foreach ($ps['indikator_kinerja_program'] as $ikp)
                                 <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
 
                                     @if ($loop->iteration === 1)
@@ -228,44 +89,61 @@
 
                                                 <td title="{{ $sk['sk'] }}" rowspan="{{ $sk['rowspan'] }}" class="min-w-72 group relative z-10 w-max text-left">
                                                     {{ $sk['sk'] }}
-                                                    <x-partials.button.edit link="{{ route('super-admin-iku-sk-edit', ['id' => $sk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+
+                                                    @if (auth()->user()->access === 'editor')
+                                                        <x-partials.button.edit link="{{ route('super-admin-iku-sk-edit', ['sk' => $sk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                                    @endif
+
                                                 </td>
                                             @endif
 
                                             <td title="{{ $ikk['ikk'] }}" rowspan="{{ $ikk['rowspan'] }}" class="min-w-72 group relative z-10 w-max text-left">
                                                 {{ $ikk['ikk'] }}
-                                                <x-partials.button.edit link="{{ route('super-admin-iku-ikk-edit', ['id' => $ikk['id'], 'sk' => $sk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+
+                                                @if (auth()->user()->access === 'editor')
+                                                    <x-partials.button.edit link="{{ route('super-admin-iku-ikk-edit', ['ikk' => $ikk['id'], 'sk' => $sk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                                @endif
+
                                             </td>
                                         @endif
 
                                         <td title="{{ $ps['ps'] }}" rowspan="{{ $ps['rowspan'] }}" class="min-w-72 group relative z-10 w-max text-left">
                                             {{ $ps['ps'] }}
-                                            <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['id' => $ps['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+
+                                            @if (auth()->user()->access === 'editor')
+                                                <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['ps' => $ps['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                            @endif
+
                                         </td>
                                     @endif
 
                                     <td title="{{ $ikp['ikp'] }}" class="min-w-72 group relative z-10 w-max text-left">
                                         {{ $ikp['ikp'] }}
-                                        <x-partials.button.edit link="{{ route('super-admin-iku-ikp-edit', ['id' => $ikp['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+
+                                        @if (auth()->user()->access === 'editor')
+                                            <x-partials.button.edit link="{{ route('super-admin-iku-ikp-edit', ['ikp' => $ikp['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                        @endif
+
                                         <span title="{{ $ikp['type'] === 'iku' ? 'Indikator kinerja utama' : 'Indikator kinerja tambahan' }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ikp['type'] }}</span>
                                     </td>
 
                                     <td title="{{ $ikp['definition'] }}" class="min-w-72 w-max text-left">{{ $ikp['definition'] }}</td>
 
-                                    <td title="{{ array_sum($ikp['target']) }}">{{ array_sum($ikp['target']) }}</td>
+                                    <td title="{{ $ikp['target'] }}">{{ $ikp['target'] }}</td>
 
-                                    @foreach ($ikp['target'] as $target)
-                                        <td title="{{ $target }}">{{ $target }}</td>
-                                    @endforeach
+                                    <td title="{{ $ikp['tw1'] }}">{{ $ikp['tw1'] }}</td>
+                                    <td title="{{ $ikp['tw2'] }}">{{ $ikp['tw2'] }}</td>
+                                    <td title="{{ $ikp['tw3'] }}">{{ $ikp['tw3'] }}</td>
+                                    <td title="{{ $ikp['tw4'] }}">{{ $ikp['tw4'] }}</td>
 
-                                    @foreach ($ikp['realization'] as $index => $realization)
-                                        <td title="{{ $realization }}" class="{{ $realization >= $ikp['target'][$index] ? 'text-green-500' : 'text-red-500' }}">{{ $realization }}</td>
-                                    @endforeach
-
-                                    <td title="{{ $ikp['constraint'] }}">{{ $ikp['constraint'] }}</td>
+                                    <td title="{{ $ikp['evaluation'] }}">{{ $ikp['evaluation'] }}</td>
                                     <td title="{{ $ikp['follow_up'] }}">{{ $ikp['follow_up'] }}</td>
 
-                                    <td title="{{ $ikp['status'] }}" class="{{ $ikp['status'] === 'aktif' ? 'text-green-500' : 'text-red-500' }} capitalize">{{ $ikp['status'] }}</td>
+                                    <td title="{{ $ikp['status'] }}">
+                                        <div class="flex items-center justify-center">
+                                            <div class="{{ $ikp['status'] === 'aktif' ? 'bg-green-500' : 'bg-red-500' }} rounded-full p-3"></div>
+                                        </div>
+                                    </td>
 
                                     <td class="flex items-start justify-center gap-1">
                                         <x-partials.button.detail link="{{ route('super-admin-achievement-iku-detail', ['id' => $ikp['id']]) }}" />
@@ -276,6 +154,7 @@
                         @endforeach
                     @endforeach
                 @endforeach
+
             </tbody>
         </table>
     </div>

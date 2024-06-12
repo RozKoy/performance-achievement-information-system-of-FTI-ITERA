@@ -67,9 +67,7 @@ Route::group([
     })->name('super-admin-dashboard');
 
 
-    Route::group([
-        'prefix' => '/capaian-kinerja'
-    ], function () {
+    Route::prefix('/capaian-kinerja')->group(function () {
         Route::get('/', function () {
             return redirect()->route('super-admin-achievement-rs');
         })->name('super-admin-achievement');
@@ -86,16 +84,15 @@ Route::group([
             });
         });
 
-        Route::group([
-            'prefix' => '/indikator-kinerja-utama',
-            'controller' => IKUController::class
-        ], function () {
+        Route::prefix('/indikator-kinerja-utama')->controller(IKUController::class)->group(function () {
             Route::get('/', 'homeView')->name('super-admin-achievement-iku');
             Route::view('/{id}/detail', 'super-admin.achievement.iku.detail')->name('super-admin-achievement-iku-detail');
             Route::get('/{year}/target', 'targetView')->name('super-admin-achievement-iku-target');
-            Route::post('/{ikp}/{unit}/target', 'addTarget')->name('super-admin-achievement-iku-target-add');
-        });
 
+            Route::middleware('editor')->group(function () {
+                Route::post('/{ikp}/{unit}/target', 'addTarget')->name('super-admin-achievement-iku-target-add');
+            });
+        });
     });
 
     Route::prefix('/rencana-strategis')->group(function () {
