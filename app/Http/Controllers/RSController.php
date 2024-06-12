@@ -90,21 +90,21 @@ class RSController extends Controller
                     'title' => $title,
                     'value' => $item
                 ];
-            });
+            })
+            ->toArray();
 
-        if ($periods->count() === 2) {
-            $periods->push([
+        if (count($periods) === 2) {
+            $periods[] = [
                 'title' => 'Januari - Desember',
                 'value' => '3'
-            ]);
+            ];
         }
 
-        $period = isset($request->period) ? $request->period : $periods->last()['value'];
+        $period = isset($request->period) ? $request->period : end($periods)['value'];
 
-        if ((int) $period > $periods->count()) {
+        if ((int) $period > count($periods)) {
             abort(404);
         }
-        $periods = $periods->toArray();
 
         $periodInstance = null;
         if ($period !== '3') {
