@@ -60,6 +60,8 @@
                     <th title="Indikator kinerja program" rowspan="2">Indikator Kinerja Program</th>
                     <th title="Definisi operasional" rowspan="2">Definisi Operasional</th>
                     <th title="Target {{ $year }}" rowspan="2">Target {{ $year }}</th>
+                    <th title="Total capaian {{ $year }}" rowspan="2">Total capaian {{ $year }}</th>
+                    <th title="Status" rowspan="2">Status</th>
                     <th title="Capaian triwulanan" colspan="4">Capaian Triwulanan</th>
                     <th title="Analisis progress capaian" colspan="2">Analisis Progress Capaian</th>
                     <th title="Status penugasan" rowspan="2">Status Penugasan</th>
@@ -130,6 +132,8 @@
                                     <td title="{{ $ikp['definition'] }}" class="min-w-72 w-max text-left">{{ $ikp['definition'] }}</td>
 
                                     <td title="{{ $ikp['target'] }}">{{ $ikp['target'] }}</td>
+                                    <td title="{{ $ikp['all'] }}">{{ $ikp['all'] }}</td>
+                                    <td title="{{ $ikp['done'] ? 'Tercapai' : 'Tidak tercapai' }}" class="{{ $ikp['done'] ? 'text-green-400' : 'text-red-400' }}">{{ $ikp['done'] ? 'Tercapai' : 'Tidak tercapai' }}</td>
 
                                     <td title="{{ $ikp['tw1'] }}">{{ $ikp['tw1'] }}</td>
                                     <td title="{{ $ikp['tw2'] }}">{{ $ikp['tw2'] }}</td>

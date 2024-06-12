@@ -152,10 +152,12 @@ class IKUController extends Controller
                                     $query->where('period', '4');
                                 });
                             },
+                            'achievements AS all',
                         ])
                         ->withAggregate('evaluation AS evaluation', 'evaluation')
                         ->withAggregate('evaluation AS follow_up', 'follow_up')
-                        ->withAggregate('evaluation AS target', 'target');
+                        ->withAggregate('evaluation AS target', 'target')
+                        ->withAggregate('evaluation AS done', 'status');
                 },
             ])
             ->select([
