@@ -262,17 +262,19 @@ Route::prefix('/')->middleware('admin')->group(function () {
     Route::get('/indikator-kinerja-utama/{id}/detail', [IKUController::class, 'detailViewAdmin'])->name('admin-iku-detail');
     Route::post('/indikator-kinerja-utama/{period}/{id}/data', [IKUController::class, 'addData'])->name('admin-iku-data');
 
-    Route::group([
-        'prefix' => '/riwayat',
-        'controller' => RSController::class
-    ], function () {
+    Route::prefix('/riwayat')->group(function () {
         Route::get('/', function () {
             return redirect()->route('admin-history-rs');
         })->name('admin-history');
 
-        Route::get('/rencana-strategis', 'historyAdmin')->name('admin-history-rs');
-        Route::view('/indikator-kinerja-utama', 'admin.history.iku.home')->name('admin-history-iku');
-        Route::view('/indikator-kinerja-utama/{id}/detail', 'admin.history.iku.detail')->name('admin-history-iku-detail');
+        Route::controller(RSController::class)->group(function () {
+            Route::get('/rencana-strategis', 'historyAdmin')->name('admin-history-rs');
+        });
+
+        Route::controller(IKUController::class)->group(function () {
+            Route::view('/indikator-kinerja-utama', 'admin.history.iku.home')->name('admin-history-iku');
+            Route::view('/indikator-kinerja-utama/{id}/detail', 'admin.history.iku.detail')->name('admin-history-iku-detail');
+        });
     });
 
     Route::prefix('/pengguna')->controller(UsersController::class)->group(function () {

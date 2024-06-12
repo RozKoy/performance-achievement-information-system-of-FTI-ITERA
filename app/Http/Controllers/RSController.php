@@ -1161,16 +1161,21 @@ class RSController extends Controller
             ],
         ];
 
-        if (isset($request->year)) {
-            if (!is_numeric($request->year)) {
-                abort(404);
-            }
+        if (isset($request->year) && !is_numeric($request->year)) {
+            abort(404);
         }
-        if (isset($request->period)) {
-            if ($request->period !== '1' && $request->period !== '2') {
-                abort(404);
-            }
+        if (isset($request->period) && !in_array($request->period, ['1', '2'])) {
+            abort(404);
         }
+
+        $periods = [];
+
+        $period = '';
+        $year = '';
+
+        $badge = [];
+        $data = [];
+
         $statusIndex = 0;
         if ($request->status === 'undone') {
             $statusIndex = 1;
@@ -1199,29 +1204,30 @@ class RSController extends Controller
             $year = isset($request->year) ? $request->year : end($years);
             $yearInstance = RSYear::where('year', $year)->firstOrFail();
 
-            $temp = $yearInstance->periods()
+            $periods = $yearInstance->periods()
                 ->where('status', false)
                 ->orderBy('period')
                 ->pluck('period')
                 ->flatten()
                 ->unique()
+                ->map(function ($item) {
+                    $title = 'Januari - Juni';
+                    if ($item === '2') {
+                        $title = 'Juli - Desember';
+                    }
+                    return [
+                        'title' => $title,
+                        'value' => $item
+                    ];
+                })
                 ->toArray();
 
-            if (!count($temp)) {
+            if (!count($periods)) {
                 abort(404);
             }
 
-            $periods = array_map(function ($item) {
-                $title = 'Januari - Juni';
-                if ($item === '2') {
-                    $title = 'Juli - Desember';
-                }
-                return [
-                    'title' => $title,
-                    'value' => $item
-                ];
-            }, $temp);
             $period = isset($request->period) ? $request->period : end($periods)['value'];
+
             $periodInstance = RSPeriod::where('status', false)
                 ->where('year_id', $yearInstance->id)
                 ->where('period', $period)
@@ -1242,24 +1248,10 @@ class RSController extends Controller
                         });
                     }
                 })
-                ->with('kegiatan', function (HasMany $query) use ($statusIndex, $periodInstance) {
-                    $query->whereHas('indikatorKinerja', function (Builder $query) use ($statusIndex, $periodInstance) {
-                        $query->where('status', 'aktif');
-                        if ($statusIndex === 1) {
-                            $query->whereDoesntHave('realization', function (Builder $query) use ($periodInstance) {
-                                $query->whereBelongsTo(auth()->user()->unit)
-                                    ->whereBelongsTo($periodInstance, 'period');
-                            });
-                        } else if ($statusIndex === 2) {
-                            $query->whereHas('realization', function (Builder $query) use ($periodInstance) {
-                                $query->whereBelongsTo(auth()->user()->unit)
-                                    ->whereBelongsTo($periodInstance, 'period');
-                            });
-                        }
-                    })
-                        ->orderBy('number')
-                        ->select(['id', 'number', 'name AS k', 'sasaran_strategis_id'])
-                        ->with('indikatorKinerja', function (HasMany $query) use ($statusIndex, $periodInstance) {
+                ->with([
+                    'kegiatan' => function (HasMany $query) use ($statusIndex, $periodInstance) {
+                        $query->whereHas('indikatorKinerja', function (Builder $query) use ($statusIndex, $periodInstance) {
+                            $query->where('status', 'aktif');
                             if ($statusIndex === 1) {
                                 $query->whereDoesntHave('realization', function (Builder $query) use ($periodInstance) {
                                     $query->whereBelongsTo(auth()->user()->unit)
@@ -1271,35 +1263,78 @@ class RSController extends Controller
                                         ->whereBelongsTo($periodInstance, 'period');
                                 });
                             }
-                            $query->where('status', 'aktif')
-                                ->orderBy('number')
-                                ->select(['id', 'type', 'number', 'name AS ik', 'kegiatan_id'])
-                                ->withAggregate([
-                                    'realization AS realization' => function (Builder $query) use ($periodInstance) {
-                                        $query->whereBelongsTo(auth()->user()->unit)
-                                            ->whereBelongsTo($periodInstance, 'period');
-                                    }
-                                ], 'realization');
                         })
-                        ->withCount([
-                            'indikatorKinerja AS rowspan' => function (Builder $query) use ($statusIndex, $periodInstance) {
-                                $query->where('status', 'aktif');
-                                if ($statusIndex === 1) {
-                                    $query->whereDoesntHave('realization', function (Builder $query) use ($periodInstance) {
-                                        $query->whereBelongsTo(auth()->user()->unit)
-                                            ->whereBelongsTo($periodInstance, 'period');
-                                    });
-                                } else if ($statusIndex === 2) {
-                                    $query->whereHas('realization', function (Builder $query) use ($periodInstance) {
-                                        $query->whereBelongsTo(auth()->user()->unit)
-                                            ->whereBelongsTo($periodInstance, 'period');
-                                    });
+                            ->orderBy('number')
+                            ->select([
+                                'name AS k',
+                                'number',
+                                'id',
+
+                                'sasaran_strategis_id',
+                            ])
+                            ->withCount([
+                                'indikatorKinerja AS rowspan' => function (Builder $query) use ($statusIndex, $periodInstance) {
+                                    $query->where('status', 'aktif');
+                                    if ($statusIndex === 1) {
+                                        $query->whereDoesntHave('realization', function (Builder $query) use ($periodInstance) {
+                                            $query->whereBelongsTo(auth()->user()->unit)
+                                                ->whereBelongsTo($periodInstance, 'period');
+                                        });
+                                    } else if ($statusIndex === 2) {
+                                        $query->whereHas('realization', function (Builder $query) use ($periodInstance) {
+                                            $query->whereBelongsTo(auth()->user()->unit)
+                                                ->whereBelongsTo($periodInstance, 'period');
+                                        });
+                                    }
                                 }
-                            }
-                        ]);
-                })
+                            ]);
+                    },
+                    'kegiatan.indikatorKinerja' => function (HasMany $query) use ($statusIndex, $periodInstance) {
+                        if ($statusIndex === 1) {
+                            $query->whereDoesntHave('realization', function (Builder $query) use ($periodInstance) {
+                                $query->whereBelongsTo(auth()->user()->unit)
+                                    ->whereBelongsTo($periodInstance, 'period');
+                            });
+                        } else if ($statusIndex === 2) {
+                            $query->whereHas('realization', function (Builder $query) use ($periodInstance) {
+                                $query->whereBelongsTo(auth()->user()->unit)
+                                    ->whereBelongsTo($periodInstance, 'period');
+                            });
+                        }
+                        $query->where('status', 'aktif')
+                            ->orderBy('number')
+                            ->select([
+                                'name AS ik',
+                                'number',
+                                'type',
+                                'id',
+
+                                'kegiatan_id',
+                            ])
+                            ->withSum([
+                                'realization AS yearRealization' => function (Builder $query) {
+                                    $query->whereBelongsTo(auth()->user()->unit);
+                                }
+                            ], 'realization')
+                            ->withAggregate([
+                                'realization AS realization' => function (Builder $query) use ($periodInstance) {
+                                    $query->whereBelongsTo(auth()->user()->unit)
+                                        ->whereBelongsTo($periodInstance, 'period');
+                                }
+                            ], 'realization')
+                            ->withAggregate([
+                                'target AS target' => function (Builder $query) {
+                                    $query->whereBelongsTo(auth()->user()->unit);
+                                }
+                            ], 'target');
+                    }
+                ])
                 ->orderBy('number')
-                ->select(['id', 'number', 'name AS ss'])
+                ->select([
+                    'name AS ss',
+                    'number',
+                    'id',
+                ])
                 ->withCount([
                     'indikatorKinerja AS rowspan' => function (Builder $query) use ($statusIndex, $periodInstance) {
                         $query->where('status', 'aktif');
@@ -1323,14 +1358,6 @@ class RSController extends Controller
                 $period === '1' ? 'Januari - Juni' : 'Juli - Desember',
                 $year
             ];
-        } else {
-            $periods = [];
-
-            $period = '';
-            $year = '';
-
-            $badge = [];
-            $data = [];
         }
 
         return view('admin.history.rs.home', compact([
