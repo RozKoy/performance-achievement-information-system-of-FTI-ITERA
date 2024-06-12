@@ -37,19 +37,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::controller(AuthController::class)->group(function () {
-    Route::get('/masuk', 'loginView')->name('login');
-    Route::post('/masuk', 'login');
+    Route::middleware('guest')->group(function () {
+        Route::get('/masuk', 'loginView')->name('login');
+        Route::post('/masuk', 'login');
+        Route::get('/lupa-kata-sandi', function () {
+            return view('authentication.forget-password');
+        })->name('forget-password');
+        Route::get('/ubah-kata-sandi', function () {
+            return view('authentication.change-password');
+        })->name('change-password');
+    });
 
-    Route::get('/keluar', 'logout')->name('logout');
+    Route::get('/keluar', 'logout')->middleware('auth')->name('logout');
 });
 
-Route::get('/lupa-kata-sandi', function () {
-    return view('authentication.forget-password');
-})->name('forget-password');
-
-Route::get('/ubah-kata-sandi', function () {
-    return view('authentication.change-password');
-})->name('change-password');
 
 
 /*
