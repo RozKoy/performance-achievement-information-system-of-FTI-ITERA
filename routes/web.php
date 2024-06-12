@@ -59,10 +59,7 @@ Route::controller(AuthController::class)->group(function () {
 | -----------------------------------------------------------------
 */
 
-Route::group([
-    'prefix' => '/super-admin',
-    'middleware' => 'superadmin'
-], function () {
+Route::prefix('/super-admin')->middleware('superadmin')->group(function () {
     Route::get('/beranda', function () {
         return view('super-admin.home');
     })->name('super-admin-dashboard');
