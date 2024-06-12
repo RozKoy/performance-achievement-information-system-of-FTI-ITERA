@@ -199,10 +199,14 @@ class IKUController extends Controller
             ->firstOrFail();
 
         $data = $yearInstance->sasaranKegiatan()
-            ->whereHas('indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram')
+            ->whereHas('indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram', function (Builder $query) {
+                $query->where('status', 'aktif');
+            })
             ->with([
                 'indikatorKinerjaKegiatan' => function (HasMany $query) {
-                    $query->whereHas('programStrategis.indikatorKinerjaProgram')
+                    $query->whereHas('programStrategis.indikatorKinerjaProgram', function (Builder $query) {
+                        $query->where('status', 'aktif');
+                    })
                         ->select([
                             'name AS ikk',
                             'id',
@@ -212,7 +216,9 @@ class IKUController extends Controller
                         ->orderBy('number');
                 },
                 'indikatorKinerjaKegiatan.programStrategis' => function (HasMany $query) {
-                    $query->whereHas('indikatorKinerjaProgram')
+                    $query->whereHas('indikatorKinerjaProgram', function (Builder $query) {
+                        $query->where('status', 'aktif');
+                    })
                         ->select([
                             'name AS ps',
                             'id',
@@ -220,17 +226,22 @@ class IKUController extends Controller
                             'indikator_kinerja_kegiatan_id',
                         ])
                         ->orderBy('number')
-                        ->withCount('indikatorKinerjaProgram AS rowspan');
+                        ->withCount([
+                            'indikatorKinerjaProgram AS rowspan' => function (Builder $query) {
+                                $query->where('status', 'aktif');
+                            }
+                        ]);
                 },
                 'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram' => function (HasMany $query) {
-                    $query->select([
-                        'name AS ikp',
-                        'definition',
-                        'type',
-                        'id',
+                    $query->where('status', 'aktif')
+                        ->select([
+                            'name AS ikp',
+                            'definition',
+                            'type',
+                            'id',
 
-                        'program_strategis_id',
-                    ])
+                            'program_strategis_id',
+                        ])
                         ->orderBy('number')
                         ->with('target', function (HasMany $query) {
                             $query->select([
