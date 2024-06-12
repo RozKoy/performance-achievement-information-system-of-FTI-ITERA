@@ -31,9 +31,11 @@
                 <label for="viewer-admin" title="Admin akses hanya melihat">Hanya melihat</label>
             </div>
         </div>
+
         @error('access')
             <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
         @enderror
+
         <x-partials.button.add submit />
     </form>
 
