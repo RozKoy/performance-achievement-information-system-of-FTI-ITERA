@@ -248,10 +248,7 @@ Route::prefix('/super-admin')->middleware('superadmin')->group(function () {
 | -----------------------------------------------------------------
 */
 
-Route::group([
-    'prefix' => '/',
-    'middleware' => 'admin'
-], function () {
+Route::prefix('/')->middleware('admin')->group(function () {
     Route::get('/', function () {
         return view('admin.home');
     })->name('admin-dashboard');
