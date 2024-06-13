@@ -24,11 +24,14 @@
                         <th title="Program strategis">Program Strategis</th>
                         <th title="Indikator kinerja program">Indikator Kinerja Program</th>
                         <th title="Definisi operasional">Definisi Operasional</th>
-                        <th title="Jumlah data">Jumlah Data</th>
+                        <th title="Target {{ $year }}">Target {{ $year }}</th>
+                        <th title="Realisasi {{ $year }}">Realisasi {{ $year }}</th>
+                        <th title="Realisasi">Realisasi</th>
                         <th title="Aksi">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
+
                     @foreach ($data as $sk)
                         @foreach ($sk['indikator_kinerja_kegiatan'] as $ikk)
                             @foreach ($ikk['program_strategis'] as $ps)
@@ -56,6 +59,10 @@
 
                                         <td title="{{ $ikp['definition'] }}" class="min-w-72 w-max text-left">{{ $ikp['definition'] }}</td>
 
+                                        <td title="{{ $ikp['target'] }}">{{ $ikp['target'] }}</td>
+
+                                        <td title="{{ $ikp['all'] }}">{{ $ikp['all'] }}</td>
+
                                         <td title="{{ $ikp['achievements'] }}">{{ $ikp['achievements'] }}</td>
 
                                         <td class="flex items-start justify-center gap-1">
@@ -67,6 +74,7 @@
                             @endforeach
                         @endforeach
                     @endforeach
+
                 </tbody>
             </table>
         </div>

@@ -635,6 +635,8 @@ class IKUController extends Controller
 
         $periods = [];
         $badge = [];
+        $data = [];
+
         $period = '';
         $year = '';
 
@@ -651,24 +653,22 @@ class IKUController extends Controller
                         });
                 })
                 ->orderBy('period')
-                ->pluck('period');
+                ->pluck('period')
+                ->map(function ($item) {
+                    $title = 'TW 1 | Jan - Mar';
+                    if ($item === '2') {
+                        $title = 'TW 2 | Apr - Jun';
+                    } else if ($item === '3') {
+                        $title = 'TW 3 | Jul - Sep';
+                    } else if ($item === '4') {
+                        $title = 'TW 4 | Okt - Des';
+                    }
 
-
-            $periods = $periods->map(function ($item) {
-                $title = 'TW 1 | Jan - Mar';
-                if ($item === '2') {
-                    $title = 'TW 2 | Apr - Jun';
-                } else if ($item === '3') {
-                    $title = 'TW 3 | Jul - Sep';
-                } else if ($item === '4') {
-                    $title = 'TW 4 | Okt - Des';
-                }
-
-                return [
-                    'title' => $title,
-                    'value' => $item,
-                ];
-            });
+                    return [
+                        'title' => $title,
+                        'value' => $item,
+                    ];
+                });
 
             $period = isset($request->period) ? $request->period : $periods->last()['value'];
             $periodInstance = IKUPeriod::where('status', true)
@@ -692,53 +692,81 @@ class IKUController extends Controller
                             $query->where('status', 'aktif');
                         })
                             ->orderBy('number')
-                            ->select(['sasaran_kegiatan_id', 'name AS ikk', 'id']);
+                            ->select([
+                                'name AS ikk',
+                                'id',
+
+                                'sasaran_kegiatan_id',
+                            ]);
                     },
                     'indikatorKinerjaKegiatan.programStrategis' => function (HasMany $query) {
                         $query->whereHas('indikatorKinerjaProgram', function (Builder $query) {
                             $query->where('status', 'aktif');
                         })
                             ->orderBy('number')
-                            ->select(['indikator_kinerja_kegiatan_id', 'name AS ps', 'id'])
+                            ->select([
+                                'name AS ps',
+                                'id',
+
+                                'indikator_kinerja_kegiatan_id',
+                            ])
                             ->withCount([
                                 'indikatorKinerjaProgram AS rowspan' => function (Builder $query) {
                                     $query->where('status', 'aktif');
                                 }
                             ]);
                     },
-                    'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram' => function (HasMany $query) {
+                    'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram' => function (HasMany $query) use ($periodInstance) {
                         $query->where('status', 'aktif')
                             ->orderBy('number')
-                            ->select(['program_strategis_id', 'name AS ikp', 'definition', 'type', 'id'])
-                            ->withCount([
-                                'achievements AS achievements' => function (Builder $query) {
+                            ->select([
+                                'name AS ikp',
+                                'definition',
+                                'type',
+                                'id',
+
+                                'program_strategis_id',
+                            ])
+                            ->withAggregate([
+                                'target AS target' => function (Builder $query) {
                                     $query->whereBelongsTo(auth()->user()->unit);
+                                }
+                            ], 'target')
+                            ->withCount([
+                                'achievements AS all' => function (Builder $query) use ($periodInstance) {
+                                    $query->whereBelongsTo(auth()->user()->unit);
+                                },
+                                'achievements AS achievements' => function (Builder $query) use ($periodInstance) {
+                                    $query->whereBelongsTo(auth()->user()->unit)
+                                        ->whereBelongsTo($periodInstance, 'period');
                                 }
                             ]);
                     },
                 ])
                 ->orderBy('number')
-                ->select(['id', 'number', 'name AS sk'])
-                ->get();
+                ->select([
+                    'name AS sk',
+                    'number',
+                    'id',
+                ])
+                ->get()
+                ->map(function ($item) {
+                    $temp = $item->indikatorKinerjaKegiatan->map(function ($item) {
+                        return [
+                            ...$item->toArray(),
 
-            $data = $data->map(function ($item) {
-                $temp = $item->indikatorKinerjaKegiatan->map(function ($item) {
+                            'rowspan' => $item->programStrategis->sum('rowspan')
+                        ];
+                    });
+
                     return [
-                        ...$item->toArray(),
+                        ...$item->only(['number', 'sk', 'id']),
 
-                        'rowspan' => $item->programStrategis->sum('rowspan')
+                        'indikator_kinerja_kegiatan' => $temp->toArray(),
+                        'rowspan' => $temp->sum('rowspan'),
                     ];
-                });
-
-                return [
-                    ...$item->only(['number', 'sk', 'id']),
-
-                    'indikator_kinerja_kegiatan' => $temp->toArray(),
-                    'rowspan' => $temp->sum('rowspan'),
-                ];
-            });
-
-            $data = $data->toArray();
+                })
+                ->toArray();
 
             $periodReq = $periods->firstWhere('value', $period);
             $badge = [$periodReq['title'], $year];

@@ -258,9 +258,11 @@ Route::prefix('/')->middleware('admin')->group(function () {
         Route::post('/{period}/{ik}', 'addAdmin')->middleware('editor')->name('admin-rs-add');
     });
 
-    Route::get('/indikator-kinerja-utama', [IKUController::class, 'homeViewAdmin'])->name('admin-iku');
-    Route::get('/indikator-kinerja-utama/{id}/detail', [IKUController::class, 'detailViewAdmin'])->name('admin-iku-detail');
-    Route::post('/indikator-kinerja-utama/{period}/{id}/data', [IKUController::class, 'addData'])->name('admin-iku-data');
+    Route::prefix('/indikator-kinerja-utama')->controller(IKUController::class)->group(function () {
+        Route::get('/', 'homeViewAdmin')->name('admin-iku');
+        Route::get('/{id}/detail', 'detailViewAdmin')->name('admin-iku-detail');
+        Route::post('/{period}/{id}/data', 'addData')->name('admin-iku-data');
+    });
 
     Route::prefix('/riwayat')->group(function () {
         Route::get('/', function () {
