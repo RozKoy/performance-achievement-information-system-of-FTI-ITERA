@@ -50,6 +50,7 @@
 
     @php
         $realizationPercent = $allCount && $unitCount ? ($realizationCount * 100) / ($allCount * $unitCount) : 0;
+        $realizationPercent = number_format($realizationPercent, 2);
     @endphp
 
     <p class="text-primary max-xl:text-sm max-sm:text-xs">
