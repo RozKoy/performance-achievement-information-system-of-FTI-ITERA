@@ -937,7 +937,8 @@ class RSController extends Controller
                             ])
                             ->withSum([
                                 'realization AS yearRealization' => function (Builder $query) {
-                                    $query->whereBelongsTo(auth()->user()->unit);
+                                    $query->whereBelongsTo(auth()->user()->unit)
+                                        ->whereHas('period');
                                 }
                             ], 'realization')
                             ->withAggregate([
@@ -1313,7 +1314,8 @@ class RSController extends Controller
                             ])
                             ->withSum([
                                 'realization AS yearRealization' => function (Builder $query) {
-                                    $query->whereBelongsTo(auth()->user()->unit);
+                                    $query->whereBelongsTo(auth()->user()->unit)
+                                        ->whereHas('period');
                                 }
                             ], 'realization')
                             ->withAggregate([
