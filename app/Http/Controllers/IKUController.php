@@ -784,21 +784,20 @@ class IKUController extends Controller
         ]));
     }
 
-    public function detailViewAdmin(Request $request, $ikpId)
+    public function detailViewAdmin(Request $request, IndikatorKinerjaProgram $ikp)
     {
+        if ($ikp->status !== 'aktif') {
+            abort(404);
+        }
         if (isset($request->period) && !in_array($request->period, ['1', '2', '3', '4'])) {
             abort(404);
         }
 
-        $ikp = IndikatorKinerjaProgram::with('columns')
-            ->whereKey($ikpId)
-            ->where('status', 'aktif')
-            ->firstOrFail();
+        $ps = $ikp->programStrategis;
+        $ikk = $ps->indikatorKinerjaKegiatan;
+        $sk = $ikk->sasaranKegiatan;
 
-        $ps = ProgramStrategis::findOrFail($ikp->programStrategis->id);
-        $ikk = IndikatorKinerjaKegiatan::findOrFail($ps->indikatorKinerjaKegiatan->id);
-        $sk = SasaranKegiatan::findOrFail($ikk->sasaranKegiatan->id);
-        $year = IKUYear::findOrFail($sk->time->id);
+        $year = $sk->time;
 
         $currentMonth = (int) Carbon::now()->format('m');
         $currentYear = Carbon::now()->format('Y');
@@ -822,27 +821,26 @@ class IKUController extends Controller
                     });
             })
             ->orderBy('period')
-            ->pluck('period');
+            ->pluck('period')
+            ->map(function ($item) {
+                $title = 'TW 1 | Jan - Mar';
+                if ($item === '2') {
+                    $title = 'TW 2 | Apr - Jun';
+                } else if ($item === '3') {
+                    $title = 'TW 3 | Jul - Sep';
+                } else if ($item === '4') {
+                    $title = 'TW 4 | Okt - Des';
+                }
 
-        if (!count($periods)) {
+                return [
+                    'title' => $title,
+                    'value' => $item,
+                ];
+            });
+
+        if (!$periods->count()) {
             abort(404);
         }
-
-        $periods = $periods->map(function ($item) {
-            $title = 'TW 1 | Jan - Mar';
-            if ($item === '2') {
-                $title = 'TW 2 | Apr - Jun';
-            } else if ($item === '3') {
-                $title = 'TW 3 | Jul - Sep';
-            } else if ($item === '4') {
-                $title = 'TW 4 | Okt - Des';
-            }
-
-            return [
-                'title' => $title,
-                'value' => $item,
-            ];
-        });
 
         $period = isset($request->period) ? $request->period : $periods->last()['value'];
         $periodInstance = IKUPeriod::where('status', true)
@@ -857,14 +855,23 @@ class IKUController extends Controller
             ->firstOrFail();
 
         $columns = $ikp->columns()
-            ->select(['file', 'name', 'id'])
+            ->select([
+                'file',
+                'name',
+                'id'
+            ])
             ->orderBy('number')
             ->get()
             ->toArray();
 
         $data = $periodInstance->achievements()
             ->with('data', function (HasMany $query) {
-                $query->select(['achievement_id', 'column_id', 'data'])
+                $query->select([
+                    'data',
+
+                    'achievement_id',
+                    'column_id',
+                ])
                     ->withAggregate('column AS file', 'file');
             })
             ->whereBelongsTo(auth()->user()->unit)
@@ -874,10 +881,39 @@ class IKUController extends Controller
             ->get()
             ->toArray();
 
-        $sk = $sk->only(['number', 'name', 'id']);
-        $ikk = $ikk->only(['number', 'name', 'id']);
-        $ps = $ps->only(['number', 'name', 'id']);
-        $ikp = $ikp->only(['number', 'name', 'id']);
+        $target = $ikp->target()
+            ->whereBelongsTo(auth()->user()->unit)
+            ->first();
+        if ($target) {
+            $target = $target->target;
+        }
+
+        $all = $ikp->achievements()
+            ->whereBelongsTo(auth()->user()->unit)
+            ->count();
+
+        $sk = $sk->only([
+            'number',
+            'name',
+            'id',
+        ]);
+        $ikk = $ikk->only([
+            'number',
+            'name',
+            'id',
+        ]);
+        $ps = $ps->only([
+            'number',
+            'name',
+            'id',
+        ]);
+        $ikp = $ikp->only([
+            'definition',
+            'number',
+            'name',
+            'type',
+            'id',
+        ]);
 
         $badge = [$periods->firstWhere('value', $period)['title'], $year->year];
         $periods = $periods->toArray();
@@ -886,8 +922,10 @@ class IKUController extends Controller
             'columns',
             'periods',
             'period',
+            'target',
             'badge',
             'data',
+            'all',
             'ikk',
             'ikp',
             'ps',

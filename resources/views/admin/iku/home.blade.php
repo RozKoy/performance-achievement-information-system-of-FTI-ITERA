@@ -6,7 +6,7 @@
         ],
     ];
 @endphp
-<x-admin-template title="IKU - Capaian Kinerja - Teknik Informatika">
+<x-admin-template title="IKU - Capaian Kinerja - {{ auth()->user()->unit->name }}">
     <x-partials.breadcrumbs.default :$breadCrumbs admin />
 
     @if (count($years))
@@ -65,8 +65,9 @@
 
                                         <td title="{{ $ikp['achievements'] }}">{{ $ikp['achievements'] }}</td>
 
+
                                         <td class="flex items-start justify-center gap-1">
-                                            <x-partials.button.detail link="{{ route('admin-iku-detail', ['id' => $ikp['id'], 'period' => $period]) }}" />
+                                            <x-partials.button.detail link="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => $period]) }}" />
                                         </td>
 
                                     </tr>

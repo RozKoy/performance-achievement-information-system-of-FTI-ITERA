@@ -260,7 +260,7 @@ Route::prefix('/')->middleware('admin')->group(function () {
 
     Route::prefix('/indikator-kinerja-utama')->controller(IKUController::class)->group(function () {
         Route::get('/', 'homeViewAdmin')->name('admin-iku');
-        Route::get('/{id}/detail', 'detailViewAdmin')->name('admin-iku-detail');
+        Route::get('/{ikp}/detail', 'detailViewAdmin')->name('admin-iku-detail');
         Route::post('/{period}/{id}/data', 'addData')->name('admin-iku-data');
     });
 
