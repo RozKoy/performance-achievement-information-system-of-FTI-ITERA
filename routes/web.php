@@ -277,8 +277,8 @@ Route::prefix('/')->middleware('admin')->group(function () {
         });
 
         Route::controller(IKUController::class)->group(function () {
-            Route::view('/indikator-kinerja-utama', 'admin.history.iku.home')->name('admin-history-iku');
-            Route::view('/indikator-kinerja-utama/{id}/detail', 'admin.history.iku.detail')->name('admin-history-iku-detail');
+            Route::get('/indikator-kinerja-utama', 'historyAdmin')->name('admin-history-iku');
+            Route::view('/indikator-kinerja-utama/{ikp}/detail', 'admin.history.iku.detail')->name('admin-history-iku-detail');
         });
     });
 
