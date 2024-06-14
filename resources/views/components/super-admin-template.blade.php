@@ -114,7 +114,7 @@
         </div>
     </nav>
 
-    <x-partials.info.time :rs="['Januari - Juni', '2024']" :iku="['TW 1', 'Januari - Maret', '2024']" />
+    <x-partialsInfoTime />
 
     <div class="p-4 sm:ml-72">
         <div class="mt-14 rounded-lg border-2 border-dashed border-primary p-4">
