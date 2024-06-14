@@ -211,33 +211,29 @@ Route::prefix('/super-admin')->middleware('superadmin')->group(function () {
     });
 
 
-    Route::prefix('/pengguna')->controller(UsersController::class)->group(function () {
+    Route::prefix('/pengguna')->controller(UsersController::class)->middleware('editor')->group(function () {
         Route::get('/', 'homeView')->name('super-admin-users');
 
-        Route::middleware('editor')->group(function () {
-            Route::get('/tambah', 'addView')->name('super-admin-users-add');
-            Route::post('/tambah', 'add');
+        Route::get('/tambah', 'addView')->name('super-admin-users-add');
+        Route::post('/tambah', 'add');
 
-            Route::get('/{user}/ubah', 'editView')->name('super-admin-users-edit');
-            Route::put('/{user}/ubah', 'edit');
+        Route::get('/{user}/ubah', 'editView')->name('super-admin-users-edit');
+        Route::put('/{user}/ubah', 'edit');
 
-            Route::get('/{user}/hapus', 'delete');
-        });
+        Route::get('/{user}/hapus', 'delete');
     });
 
 
-    Route::prefix('/unit')->controller(UnitsController::class)->group(function () {
+    Route::prefix('/unit')->controller(UnitsController::class)->middleware('editor')->group(function () {
         Route::get('/', 'homeView')->name('super-admin-unit');
 
-        Route::middleware('editor')->group(function () {
-            Route::get('/tambah', 'addView')->name('super-admin-unit-add');
-            Route::post('/tambah', 'add');
+        Route::get('/tambah', 'addView')->name('super-admin-unit-add');
+        Route::post('/tambah', 'add');
 
-            Route::get('/{unit}/ubah', 'editView')->name('super-admin-unit-edit');
-            Route::put('/{unit}/ubah', 'edit');
+        Route::get('/{unit}/ubah', 'editView')->name('super-admin-unit-edit');
+        Route::put('/{unit}/ubah', 'edit');
 
-            Route::get('/{unit}/hapus', 'delete');
-        });
+        Route::get('/{unit}/hapus', 'delete');
     });
 });
 
