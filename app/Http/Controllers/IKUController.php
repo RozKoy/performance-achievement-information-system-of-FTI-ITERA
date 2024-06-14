@@ -1099,6 +1099,143 @@ class IKUController extends Controller
         ]));
     }
 
+    public function historyDetailAdmin(Request $request, IndikatorKinerjaProgram $ikp)
+    {
+        if ($ikp->status !== 'aktif') {
+            abort(404);
+        }
+        if (isset($request->period) && !in_array($request->period, ['1', '2', '3', '4'])) {
+            abort(404);
+        }
+
+        $ps = $ikp->programStrategis;
+        $ikk = $ps->indikatorKinerjaKegiatan;
+        $sk = $ikk->sasaranKegiatan;
+
+        $year = $sk->time;
+
+        $currentMonth = (int) Carbon::now()->format('m');
+        $currentYear = Carbon::now()->format('Y');
+        $currentPeriod = '1';
+
+        foreach ([3, 6, 9, 12] as $key => $value) {
+            if ($currentMonth <= $value) {
+                $temp = $key + 1;
+                $currentPeriod = "$temp";
+
+                break;
+            }
+        }
+
+        $periods = $year->periods()
+            ->where('status', false)
+            ->orderBy('period')
+            ->pluck('period')
+            ->map(function ($item) {
+                $title = 'TW 1 | Jan - Mar';
+                if ($item === '2') {
+                    $title = 'TW 2 | Apr - Jun';
+                } else if ($item === '3') {
+                    $title = 'TW 3 | Jul - Sep';
+                } else if ($item === '4') {
+                    $title = 'TW 4 | Okt - Des';
+                }
+
+                return [
+                    'title' => $title,
+                    'value' => $item,
+                ];
+            });
+
+        if (!$periods->count()) {
+            abort(404);
+        }
+
+        $period = isset($request->period) ? $request->period : $periods->last()['value'];
+        $periodInstance = $year->periods()
+            ->where('period', $period)
+            ->where('status', false)
+            ->firstOrFail();
+
+        $columns = $ikp->columns()
+            ->select([
+                'file',
+                'name',
+                'id'
+            ])
+            ->orderBy('number')
+            ->get()
+            ->toArray();
+
+        $data = $periodInstance->achievements()
+            ->with('data', function (HasMany $query) {
+                $query->select([
+                    'data',
+
+                    'achievement_id',
+                    'column_id',
+                ])
+                    ->withAggregate('column AS file', 'file');
+            })
+            ->whereBelongsTo(auth()->user()->unit)
+            ->whereBelongsTo($ikp)
+            ->select('id')
+            ->latest()
+            ->get()
+            ->toArray();
+
+        $target = $ikp->target()
+            ->whereBelongsTo(auth()->user()->unit)
+            ->first();
+        if ($target) {
+            $target = $target->target;
+        }
+
+        $all = $ikp->achievements()
+            ->whereBelongsTo(auth()->user()->unit)
+            ->count();
+
+        $sk = $sk->only([
+            'number',
+            'name',
+            'id',
+        ]);
+        $ikk = $ikk->only([
+            'number',
+            'name',
+            'id',
+        ]);
+        $ps = $ps->only([
+            'number',
+            'name',
+            'id',
+        ]);
+        $ikp = $ikp->only([
+            'definition',
+            'number',
+            'name',
+            'type',
+            'id',
+        ]);
+
+        $badge = [$periods->firstWhere('value', $period)['title'], $year->year];
+        $periods = $periods->toArray();
+
+        return view('admin.history.iku.detail', compact([
+            'columns',
+            'periods',
+            'period',
+            'target',
+            'badge',
+            'data',
+            'all',
+            'ikk',
+            'ikp',
+            'ps',
+            'sk',
+        ]));
+    }
+
     public function addData(AddRequest $request, $period, IndikatorKinerjaProgram $ikp)
     {
         if ($ikp->status === 'aktif') {
