@@ -106,14 +106,14 @@
                                 $dataFind = $dataCollection->firstWhere('column_id', $column['id']);
                             @endphp
                             @if ($dataFind !== null)
-                                @php
-                                    $deleteData[$column['name']] = $dataFind['data'];
-                                @endphp
                                 @if ($dataFind['file'])
                                     <td>
                                         <a href="{{ url(asset('storage/' . $dataFind['data'])) }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-primary hover:text-primary/75" download>Unduh</a>
                                     </td>
                                 @else
+                                    @php
+                                        $deleteData[$column['name']] = $dataFind['data'];
+                                    @endphp
                                     <td title="{{ $dataFind['data'] }}">{{ $dataFind['data'] }}</td>
                                 @endif
                             @else

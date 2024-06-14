@@ -264,6 +264,7 @@ Route::prefix('/')->middleware('admin')->group(function () {
         Route::get('/{ikp}/detail', 'detailViewAdmin')->name('admin-iku-detail');
 
         Route::post('/{period}/{ikp}/data', 'addData')->middleware('editor')->name('admin-iku-data');
+        Route::get('/{ikp}/detail/{achievement}/hapus', 'delete')->middleware('editor');
     });
 
     Route::prefix('/riwayat')->group(function () {

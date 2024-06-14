@@ -7,6 +7,7 @@ use App\Http\Requests\IndikatorKinerjaUtama\AddTargetRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 use App\Models\IndikatorKinerjaProgram;
 use App\Models\IKUAchievementData;
 use Illuminate\Support\Carbon;
@@ -1007,7 +1008,7 @@ class IKUController extends Controller
                 $name = 'file-' . $file->id;
                 if ($request->hasFile($name)) {
                     $fileURI = $request->file($name)
-                        ->store(auth()->user()->unit->name . $ikp->id);
+                        ->store(auth()->user()->unit->name . '/' . $ikp->id);
 
                     $data = new IKUAchievementData();
 
@@ -1031,6 +1032,39 @@ class IKUController extends Controller
             }
 
             return back();
+        }
+
+        abort(404);
+    }
+
+    public function delete(IndikatorKinerjaProgram $ikp, IKUAchievement $achievement)
+    {
+        if ($ikp->id === $achievement->indikatorKinerjaProgram->id && $ikp->status === 'aktif') {
+            if ($achievement->period->status === 1 && $achievement->period->deadline !== null) {
+                if ($achievement->unit->id === auth()->user()->unit->id) {
+                    $achievement->data->each(function ($data) {
+                        if ($data->column->file) {
+                            if (Storage::exists($data->data)) {
+                                Storage::delete($data->data);
+                            }
+                        }
+                        $data->forceDelete();
+                    });
+
+                    $achievement->forceDelete();
+
+                    $evaluation = $ikp->evaluation;
+                    if ($evaluation) {
+                        $all = $ikp->achievements()
+                            ->count();
+
+                        $evaluation->status = $all >= $evaluation->target;
+                        $evaluation->save();
+                    }
+
+                    return back();
+                }
+            }
         }
 
         abort(404);
