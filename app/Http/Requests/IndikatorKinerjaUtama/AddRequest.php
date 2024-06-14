@@ -22,7 +22,7 @@ class AddRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'data-*' => ['bail', 'nullable', 'max:65000'],
+            'data-*' => ['bail', 'nullable', 'string', 'max:65000'],
             'image-*' => ['bail', 'nullable', 'file'],
         ];
     }
@@ -39,6 +39,7 @@ class AddRequest extends FormRequest
     {
         return [
             'max' => ':attribute tidak boleh melebihi :max karakter',
+            'string' => ':attribute harus berupa teks',
             'file' => ':attribute harus berupa file',
         ];
     }

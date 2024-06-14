@@ -255,13 +255,15 @@ Route::prefix('/')->middleware('admin')->group(function () {
 
     Route::prefix('/rencana-strategis')->controller(RSController::class)->group(function () {
         Route::get('/', 'homeViewAdmin')->name('admin-rs');
+
         Route::post('/{period}/{ik}', 'addAdmin')->middleware('editor')->name('admin-rs-add');
     });
 
     Route::prefix('/indikator-kinerja-utama')->controller(IKUController::class)->group(function () {
         Route::get('/', 'homeViewAdmin')->name('admin-iku');
         Route::get('/{ikp}/detail', 'detailViewAdmin')->name('admin-iku-detail');
-        Route::post('/{period}/{id}/data', 'addData')->name('admin-iku-data');
+
+        Route::post('/{period}/{ikp}/data', 'addData')->middleware('editor')->name('admin-iku-data');
     });
 
     Route::prefix('/riwayat')->group(function () {

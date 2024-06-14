@@ -7,16 +7,12 @@ use App\Http\Requests\IndikatorKinerjaUtama\AddTargetRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\IndikatorKinerjaKegiatan;
 use App\Models\IndikatorKinerjaProgram;
 use App\Models\IKUAchievementData;
-use App\Models\ProgramStrategis;
-use App\Models\SasaranKegiatan;
 use Illuminate\Support\Carbon;
 use App\Models\IKUAchievement;
 use App\Models\IKUEvaluation;
 use Illuminate\Http\Request;
-use App\Models\IKPColumn;
 use App\Models\IKUPeriod;
 use App\Models\IKUTarget;
 use App\Models\IKUYear;
@@ -498,7 +494,7 @@ class IKUController extends Controller
             }
 
             $currentYearInstance = IKUYear::currentTime();
-            $currentPeriodInstance = IKUPeriod::whereBelongsTo($currentYearInstance, 'year')
+            $currentPeriodInstance = $currentYearInstance->periods()
                 ->where('period', $currentPeriod)
                 ->firstOrFail();
 
@@ -569,10 +565,10 @@ class IKUController extends Controller
                 $targetInstance->save();
             }
 
-            $sumAllTarget = IKUTarget::whereBelongsTo($ikp)
+            $sumAllTarget = $ikp->target()
                 ->sum('target');
 
-            $realization = IKUAchievement::whereBelongsTo($ikp)
+            $realization = $ikp->achievements()
                 ->count();
 
             $evaluation = IKUEvaluation::firstOrNew([
@@ -671,15 +667,15 @@ class IKUController extends Controller
                 });
 
             $period = isset($request->period) ? $request->period : $periods->last()['value'];
-            $periodInstance = IKUPeriod::where('status', true)
-                ->where('year_id', $yearInstance->id)
-                ->where('period', $period)
+            $periodInstance = $yearInstance->periods()
                 ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
                     $query->where('period', $currentPeriod)
                         ->whereHas('year', function (Builder $query) use ($currentYear) {
                             $query->where('year', $currentYear);
                         });
                 })
+                ->where('period', $period)
+                ->where('status', true)
                 ->firstOrFail();
 
             $data = $yearInstance->sasaranKegiatan()
@@ -843,15 +839,15 @@ class IKUController extends Controller
         }
 
         $period = isset($request->period) ? $request->period : $periods->last()['value'];
-        $periodInstance = IKUPeriod::where('status', true)
-            ->where('year_id', $year->id)
-            ->where('period', $period)
+        $periodInstance = $year->periods()
             ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
                 $query->where('period', $currentPeriod)
                     ->whereHas('year', function (Builder $query) use ($currentYear) {
                         $query->where('year', $currentYear);
                     });
             })
+            ->where('period', $period)
+            ->where('status', true)
             ->firstOrFail();
 
         $columns = $ikp->columns()
@@ -933,98 +929,110 @@ class IKUController extends Controller
         ]));
     }
 
-    public function addData(AddRequest $request, $period, $ikpId)
+    public function addData(AddRequest $request, $period, IndikatorKinerjaProgram $ikp)
     {
-        $ikp = IndikatorKinerjaProgram::whereKey($ikpId)
-            ->where('status', 'aktif')
-            ->firstOrFail();
+        if ($ikp->status === 'aktif') {
+            $columns = $ikp->columns()
+                ->orderBy('number')
+                ->get();
 
-        $columns = IKPColumn::whereBelongsTo($ikp)
-            ->orderBy('number')
-            ->get();
-
-        $inputExists = false;
-        foreach ($columns->where('file', false) as $key => $column) {
-            if ($request['data-' . $column->id] !== null) {
-                $inputExists = true;
-                break;
+            $inputExists = false;
+            foreach ($columns->where('file', false) as $key => $column) {
+                if ($request['data-' . $column->id] !== null) {
+                    $inputExists = true;
+                    break;
+                }
             }
+
+            if (!$inputExists) {
+                return back()
+                    ->withErrors(['input' => 'Data yang dimasukkan tidak boleh kosong semua']);
+            }
+
+            $ps = $ikp->programStrategis;
+            $ikk = $ps->indikatorKinerjaKegiatan;
+            $sk = $ikk->sasaranKegiatan;
+
+            $year = $sk->time;
+
+            $currentMonth = (int) Carbon::now()->format('m');
+            $currentYear = Carbon::now()->format('Y');
+            $currentPeriod = '1';
+
+            foreach ([3, 6, 9, 12] as $key => $value) {
+                if ($currentMonth <= $value) {
+                    $temp = $key + 1;
+                    $currentPeriod = "$temp";
+
+                    break;
+                }
+            }
+
+            $periodInstance = $year->periods()
+                ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
+                    $query->where('period', $currentPeriod)
+                        ->whereHas('year', function (Builder $query) use ($currentYear) {
+                            $query->where('year', $currentYear);
+                        });
+                })
+                ->where('period', $period)
+                ->where('status', true)
+                ->firstOrFail();
+
+            $achievement = new IKUAchievement();
+
+            $achievement->indikatorKinerjaProgram()->associate($ikp);
+            $achievement->unit()->associate(auth()->user()->unit);
+            $achievement->period()->associate($periodInstance);
+
+            $achievement->save();
+
+            $columns->where('file', false)->each(function ($column) use ($achievement, $request) {
+                $input = $request['data-' . $column->id];
+                if ($input !== null) {
+                    $data = new IKUAchievementData();
+
+                    $data->achievement()->associate($achievement);
+                    $data->column()->associate($column);
+
+                    $data->data = $input;
+
+                    $data->save();
+                }
+            });
+
+            $file = $columns->firstWhere('file', true);
+
+            if ($file !== null) {
+                $name = 'file-' . $file->id;
+                if ($request->hasFile($name)) {
+                    $fileURI = $request->file($name)
+                        ->store(auth()->user()->unit->name . $ikp->id);
+
+                    $data = new IKUAchievementData();
+
+                    $data->achievement()->associate($achievement);
+                    $data->column()->associate($file);
+
+                    $data->data = $fileURI;
+
+                    $data->save();
+                }
+            }
+
+            $evaluation = $ikp->evaluation;
+
+            if ($evaluation) {
+                $all = $ikp->achievements()
+                    ->count();
+
+                $evaluation->status = $all >= $evaluation->target;
+                $evaluation->save();
+            }
+
+            return back();
         }
 
-        if (!$inputExists) {
-            return back()
-                ->withErrors(['input' => 'Data yang dimasukkan tidak boleh kosong semua']);
-        }
-
-        $ps = ProgramStrategis::findOrFail($ikp->programStrategis->id);
-        $ikk = IndikatorKinerjaKegiatan::findOrFail($ps->indikatorKinerjaKegiatan->id);
-        $sk = SasaranKegiatan::findOrFail($ikk->sasaranKegiatan->id);
-        $year = IKUYear::findOrFail($sk->time->id);
-
-        $currentMonth = (int) Carbon::now()->format('m');
-        $currentYear = Carbon::now()->format('Y');
-        $currentPeriod = '1';
-
-        foreach ([3, 6, 9, 12] as $key => $value) {
-            if ($currentMonth <= $value) {
-                $temp = $key + 1;
-                $currentPeriod = "$temp";
-
-                break;
-            }
-        }
-
-        $periodInstance = IKUPeriod::whereBelongsTo($year, 'year')
-            ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
-                $query->where('period', $currentPeriod)
-                    ->whereHas('year', function (Builder $query) use ($currentYear) {
-                        $query->where('year', $currentYear);
-                    });
-            })
-            ->where('period', $period)
-            ->where('status', true)
-            ->firstOrFail();
-
-        $achievement = new IKUAchievement();
-
-        $achievement->indikatorKinerjaProgram()->associate($ikp);
-        $achievement->unit()->associate(auth()->user()->unit);
-        $achievement->period()->associate($periodInstance);
-
-        $achievement->save();
-
-        $columns->where('file', false)->each(function ($column) use ($achievement, $request) {
-            $input = $request['data-' . $column->id];
-            if ($input !== null) {
-                $data = new IKUAchievementData();
-
-                $data->achievement()->associate($achievement);
-                $data->column()->associate($column);
-
-                $data->data = $input;
-
-                $data->save();
-            }
-        });
-
-        $file = $columns->firstWhere('file', true);
-
-        if ($file !== null) {
-            $name = 'file-' . $file->id;
-            if ($request->hasFile($name)) {
-                $fileURI = $request->file($name)->store($ikp->id);
-
-                $data = new IKUAchievementData();
-
-                $data->achievement()->associate($achievement);
-                $data->column()->associate($file);
-
-                $data->data = $fileURI;
-
-                $data->save();
-            }
-        }
-
-        return back();
+        abort(404);
     }
 }

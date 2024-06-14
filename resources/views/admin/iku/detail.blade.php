@@ -37,7 +37,7 @@
     </div>
 
     @error('input')
-        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
+        <p class="text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
     @enderror
 
     <div class="text-primary max-xl:text-sm max-sm:text-xs">
@@ -150,7 +150,7 @@
                         </svg>
                         <span class="sr-only">Close modal</span>
                     </button>
-                    <form action="{{ route('admin-iku-data', ['period' => $period, 'id' => $ikp['id']]) }}" method="POST" class="flex flex-col gap-1 p-4 text-primary max-md:text-sm md:p-5" enctype="multipart/form-data">
+                    <form action="{{ route('admin-iku-data', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" class="flex flex-col gap-1 p-4 text-primary max-md:text-sm md:p-5" enctype="multipart/form-data">
                         @csrf
 
                         <p class="text-base font-semibold md:text-lg xl:text-xl">Tambah Data</p>
