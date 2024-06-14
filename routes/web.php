@@ -278,17 +278,15 @@ Route::prefix('/')->middleware('admin')->group(function () {
         });
     });
 
-    Route::prefix('/pengguna')->controller(UsersController::class)->group(function () {
+    Route::prefix('/pengguna')->controller(UsersController::class)->middleware('editor')->group(function () {
         Route::get('/', 'homeViewAdmin')->name('admin-users');
 
-        Route::middleware('editor')->group(function () {
-            Route::get('/tambah', 'addViewAdmin')->name('admin-users-add');
-            Route::post('/tambah', 'addAdmin');
+        Route::get('/tambah', 'addViewAdmin')->name('admin-users-add');
+        Route::post('/tambah', 'addAdmin');
 
-            Route::get('/{id}/ubah', 'editViewAdmin')->name('admin-users-edit');
-            Route::put('/{id}/ubah', 'editAdmin');
+        Route::get('/{id}/ubah', 'editViewAdmin')->name('admin-users-edit');
+        Route::put('/{id}/ubah', 'editAdmin');
 
-            Route::get('/{user}/hapus', 'deleteAdmin');
-        });
+        Route::get('/{user}/hapus', 'deleteAdmin');
     });
 });
