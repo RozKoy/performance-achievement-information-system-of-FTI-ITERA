@@ -38,6 +38,11 @@ class AuthController extends Controller
             ->withErrors(['email' => 'Email atau kata sandi tidak benar']);
     }
 
+    public function forgetPasswordView()
+    {
+        return view('authentication.forget-password');
+    }
+
     public function logout()
     {
         if (auth()->check()) {

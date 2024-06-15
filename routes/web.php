@@ -40,9 +40,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('/masuk', 'loginView')->name('login');
         Route::post('/masuk', 'login');
-        Route::get('/lupa-kata-sandi', function () {
-            return view('authentication.forget-password');
-        })->name('forget-password');
+        Route::get('/lupa-kata-sandi', 'forgetPasswordView')->name('forget-password');
         Route::get('/ubah-kata-sandi', function () {
             return view('authentication.change-password');
         })->name('change-password');
