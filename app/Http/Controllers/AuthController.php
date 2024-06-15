@@ -69,6 +69,14 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
+    public function changePasswordView($token)
+    {
+        $user = User::where('token', $token)->firstOrFail();
+        $user->only('email');
+
+        return view('authentication.change-password', compact('user'));
+    }
+
     public function logout()
     {
         if (auth()->check()) {

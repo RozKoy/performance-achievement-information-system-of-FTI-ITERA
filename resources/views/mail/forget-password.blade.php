@@ -16,5 +16,5 @@
 
     <p>Jika anda ingin melanjutkan perubahan kata sandi ini, silahkan akses link berikut ini : </p>
 
-    <p><a href="" target="_blank" rel="noopener noreferrer">Ubah Kata Sandi</a></p>
+    <p><a href="{{ url(route('change-password', ['token' => $data['token']])) }}" target="_blank" rel="noopener noreferrer">Ubah Kata Sandi</a></p>
 </div>
