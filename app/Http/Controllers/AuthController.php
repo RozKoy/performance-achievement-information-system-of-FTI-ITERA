@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Authentication\ForgetPasswordRequest;
 use App\Http\Requests\Authentication\LoginRequest;
+use App\Mail\ForgetPasswordEmailSender;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -41,6 +43,30 @@ class AuthController extends Controller
     public function forgetPasswordView()
     {
         return view('authentication.forget-password');
+    }
+
+    public function forgetPassword(ForgetPasswordRequest $request)
+    {
+        $user = User::where('email', $request['email'])
+            ->firstOrFail();
+
+        try {
+            $user->update(['token' => uuid_create()]);
+
+            Mail::to($user->email)->send(new ForgetPasswordEmailSender($user->only([
+                'email',
+                'token',
+                'name',
+            ])));
+        } catch (\Exception $e) {
+            $user->update(['token' => null]);
+
+            return back()
+                ->withInput()
+                ->withErrors(['email' => 'Alamat email tidak aktif']);
+        }
+
+        return redirect()->route('login');
     }
 
     public function logout()
