@@ -43,6 +43,7 @@ Route::controller(AuthController::class)->group(function () {
         Route::get('/lupa-kata-sandi', 'forgetPasswordView')->name('forget-password');
         Route::post('/lupa-kata-sandi', 'forgetPassword');
         Route::get('/{token}/ubah-kata-sandi', 'changePasswordView')->name('change-password');
+        Route::post('/{token}/ubah-kata-sandi', 'changePassword');
     });
 
     Route::get('/keluar', 'logout')->middleware('auth')->name('logout');

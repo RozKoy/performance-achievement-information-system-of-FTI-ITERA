@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Authentication\ChangePasswordRequest;
 use App\Http\Requests\Authentication\ForgetPasswordRequest;
 use App\Http\Requests\Authentication\LoginRequest;
 use App\Mail\ForgetPasswordEmailSender;
@@ -28,6 +29,10 @@ class AuthController extends Controller
         }
 
         if (Auth::attempt($request->safe()->toArray())) {
+            if ($user->token) {
+                $user->update(['token' => null]);
+            }
+
             if ($user->role === 'super admin') {
                 return redirect()->route('super-admin-dashboard');
             }
@@ -75,6 +80,18 @@ class AuthController extends Controller
         $user->only('email');
 
         return view('authentication.change-password', compact('user'));
+    }
+
+    public function changePassword(ChangePasswordRequest $request, $token)
+    {
+        $user = User::where('token', $token)->firstOrFail();
+
+        $user->update([
+            'password' => $request['password'],
+            'token' => null
+        ]);
+
+        return redirect()->route('login');
     }
 
     public function logout()
