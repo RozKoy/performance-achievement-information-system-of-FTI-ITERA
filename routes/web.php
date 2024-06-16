@@ -98,6 +98,8 @@ Route::prefix('/super-admin')->middleware('superadmin')->group(function () {
             return redirect()->route('super-admin-rs-ss');
         })->name('super-admin-rs');
 
+        Route::post('/import-excel', [RSController::class, 'RSImport'])->middleware('editor')->name('super-admin-rs-import');
+
         Route::prefix('/sasaran-strategis')->controller(SasaranStrategisController::class)->group(function () {
             Route::get('/', 'homeView')->name('super-admin-rs-ss');
 

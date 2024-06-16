@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RencanaStrategis\AddEvaluationRequest;
 use App\Http\Requests\RencanaStrategis\AddTargetRequest;
+use App\Http\Requests\RencanaStrategis\ImportRequest;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Http\Requests\RencanaStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
+use App\Imports\RencanaStrategisSheets;
 use App\Models\IndikatorKinerja;
 use App\Models\SasaranStrategis;
 use Illuminate\Support\Carbon;
@@ -19,6 +21,7 @@ use App\Models\RSPeriod;
 use App\Models\RSTarget;
 use App\Models\RSYear;
 use App\Models\Unit;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RSController extends Controller
 {
@@ -738,6 +741,16 @@ class RSController extends Controller
         }
 
         abort(404);
+    }
+
+    public function RSImport(ImportRequest $request)
+    {
+        Excel::import(
+            new RencanaStrategisSheets,
+            $request->file('file')
+        );
+
+        return back();
     }
 
 
