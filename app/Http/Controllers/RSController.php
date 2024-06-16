@@ -729,7 +729,7 @@ class RSController extends Controller
 
             $evaluation->status = false;
             if ($realization !== null) {
-                $evaluation->status = (float) $evaluation->realization >= $sumAllTarget;
+                $evaluation->status = (float) $realization->realization >= $sumAllTarget;
             }
 
             $evaluation->save();
