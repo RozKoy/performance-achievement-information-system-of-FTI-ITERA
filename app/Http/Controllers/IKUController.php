@@ -14,10 +14,12 @@ use Illuminate\Support\Carbon;
 use App\Models\IKUAchievement;
 use App\Models\IKUEvaluation;
 use Illuminate\Http\Request;
+use App\Exports\IKUExport;
 use App\Models\IKUPeriod;
 use App\Models\IKUTarget;
 use App\Models\IKUYear;
 use App\Models\Unit;
+use Maatwebsite\Excel\Facades\Excel;
 
 class IKUController extends Controller
 {
@@ -585,6 +587,177 @@ class IKUController extends Controller
         }
 
         abort(404);
+    }
+
+    public function exportIKU(Request $request)
+    {
+        if (isset($request->year) && !is_numeric($request->year)) {
+            abort(404);
+        }
+
+        $currentMonth = (int) Carbon::now()->format('m');
+        $currentYear = Carbon::now()->format('Y');
+        $currentPeriod = '1';
+
+        foreach ([3, 6, 9, 12] as $key => $value) {
+            if ($currentMonth <= $value) {
+                $temp = $key + 1;
+                $currentPeriod = "$temp";
+
+                break;
+            }
+        }
+
+        $years = IKUYear::orderBy('year')
+            ->pluck('year')
+            ->toArray();
+
+        $year = isset($request->year) ? $request->year : end($years);
+        $yearInstance = IKUYear::where('year', $year)->firstOrFail();
+
+        if (
+            ($year !== $currentYear && $yearInstance->periods->count() !== 4)
+            ||
+            ($year === $currentYear && $yearInstance->periods->count() < (int) $currentPeriod)
+        ) {
+            foreach (['1', '2', '3', '4'] as $key => $value) {
+                if ($year !== $currentYear || (int) $value <= (int) $currentPeriod) {
+                    $this->periodFirstOrNew($yearInstance->id, $value);
+                }
+            }
+        }
+
+        $data = $yearInstance->sasaranKegiatan()
+            ->whereHas('indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram')
+            ->with([
+                'indikatorKinerjaKegiatan' => function (HasMany $query) {
+                    $query->whereHas('programStrategis.indikatorKinerjaProgram')
+                        ->select([
+                            'name',
+                            'id',
+
+                            'sasaran_kegiatan_id',
+                        ])
+                        ->orderBy('number');
+                },
+                'indikatorKinerjaKegiatan.programStrategis' => function (HasMany $query) {
+                    $query->whereHas('indikatorKinerjaProgram')
+                        ->select([
+                            'name',
+                            'id',
+
+                            'indikator_kinerja_kegiatan_id',
+                        ])
+                        ->orderBy('number');
+                },
+                'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram' => function (HasMany $query) {
+                    $query->select([
+                        'definition',
+                        'name',
+                        'type',
+                        'id',
+
+                        'program_strategis_id',
+                    ])
+                        ->orderBy('number')
+                        ->withCount([
+                            'achievements AS tw1' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '1');
+                                });
+                            },
+                            'achievements AS tw2' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '2');
+                                });
+                            },
+                            'achievements AS tw3' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '3');
+                                });
+                            },
+                            'achievements AS tw4' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '4');
+                                });
+                            },
+                            'achievements AS all',
+                        ])
+                        ->withAggregate('evaluation AS evaluation', 'evaluation')
+                        ->withAggregate('evaluation AS follow_up', 'follow_up')
+                        ->withAggregate('evaluation AS target', 'target')
+                        ->withAggregate('evaluation AS done', 'status');
+                },
+            ])
+            ->select([
+                'number',
+                'name',
+                'id',
+            ])
+            ->orderBy('number')
+            ->get();
+
+        $collection = collect([
+            ['tahun', $year],
+            [
+                'no',
+                'sasaran kegiatan',
+                'indikator kinerja kegiatan',
+                'program strategis',
+                'indikator kinerja program',
+                'tipe',
+                'definisi operasional',
+                "target $year",
+                "realisasi $year",
+                'tw1',
+                'tw2',
+                'tw3',
+                'tw4',
+                'kendala',
+                'tindak lanjut',
+                'status',
+            ]
+        ]);
+
+        $data->each(function ($sk) use ($collection) {
+            $sk->indikatorKinerjaKegiatan->each(function ($ikk, $ikkIndex) use ($collection, $sk) {
+                $ikk->programStrategis->each(function ($ps, $psIndex) use ($collection, $ikkIndex, $ikk, $sk) {
+                    $ps->indikatorKinerjaProgram->each(function ($ikp, $ikpIndex) use ($collection, $ikkIndex, $psIndex, $ikk, $ps, $sk) {
+                        $temp = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+                        if (!$ikpIndex) {
+                            if (!$psIndex) {
+                                if (!$ikkIndex) {
+                                    $temp[0] = $sk->number;
+                                    $temp[1] = $sk->name;
+                                }
+                                $temp[2] = $ikk->name;
+                            }
+                            $temp[3] = $ps->name;
+                        }
+
+                        $temp[4] = $ikp->name;
+                        $temp[5] = $ikp->type;
+                        $temp[6] = $ikp->definition;
+                        $temp[7] = $ikp->target;
+                        $temp[8] = $ikp->all;
+
+                        $temp[9] = $ikp->tw1;
+                        $temp[10] = $ikp->tw2;
+                        $temp[11] = $ikp->tw3;
+                        $temp[12] = $ikp->tw4;
+
+                        $temp[13] = $ikp->evaluation;
+                        $temp[14] = $ikp->follow_up;
+                        $temp[15] = $ikp->done ? 'Tercapai' : 'Tidak tercapai';
+
+                        $collection->add($temp);
+                    });
+                });
+            });
+        });
+
+        return Excel::download(new IKUExport($collection->toArray()), 'indikator-kinerja-utama.xlsx');
     }
 
 
