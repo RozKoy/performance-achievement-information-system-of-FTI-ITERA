@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Http\Requests\RencanaStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Imports\RencanaStrategisSheets;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\IndikatorKinerja;
 use App\Models\SasaranStrategis;
 use Illuminate\Support\Carbon;
@@ -21,7 +22,6 @@ use App\Models\RSPeriod;
 use App\Models\RSTarget;
 use App\Models\RSYear;
 use App\Models\Unit;
-use Maatwebsite\Excel\Facades\Excel;
 
 class RSController extends Controller
 {
