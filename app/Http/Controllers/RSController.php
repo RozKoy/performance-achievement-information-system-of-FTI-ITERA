@@ -672,7 +672,7 @@ class RSController extends Controller
                     ->first();
 
                 if ($realization) {
-                    $evaluation->status = (float) $realization->realization >= (float) $request['target'];
+                    $evaluation->status = (float) $realization->realization >= (float) $evaluation->target;
                 } else {
                     $evaluation->status = false;
                 }
