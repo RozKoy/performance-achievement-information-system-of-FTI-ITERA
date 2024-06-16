@@ -760,6 +760,136 @@ class IKUController extends Controller
         return Excel::download(new IKUExport($collection->toArray()), 'indikator-kinerja-utama.xlsx');
     }
 
+    public function detailExportIKU(Request $request, IndikatorKinerjaProgram $ikp)
+    {
+        if (isset($request->period) && !in_array($request->period, ['1', '2', '3', '4', '5'])) {
+            abort(404);
+        }
+
+        $ps = $ikp->programStrategis;
+        $ikk = $ps->indikatorKinerjaKegiatan;
+        $sk = $ikk->sasaranKegiatan;
+
+        $yearInstance = $sk->time;
+        $year = $yearInstance->year;
+
+        $periods = $yearInstance->periods()
+            ->orderBy('period')
+            ->pluck('period')
+            ->map(function ($item) {
+                $title = 'TW 1 | Jan - Mar';
+                if ($item === '2') {
+                    $title = 'TW 2 | Apr - Jun';
+                } else if ($item === '3') {
+                    $title = 'TW 3 | Jul - Sep';
+                } else if ($item === '4') {
+                    $title = 'TW 4 | Okt - Des';
+                }
+
+                return [
+                    'title' => $title,
+                    'value' => $item
+                ];
+            });
+
+        if ($periods->count() === 4) {
+            $periods->push([
+                'title' => 'Januari - Desember',
+                'value' => '5'
+            ]);
+        }
+
+        $period = isset($request->period) ? $request->period : $periods->last()['value'];
+
+        if ((int) $period > $periods->count()) {
+            abort(404);
+        }
+
+        $periodInstance = $yearInstance->periods()
+            ->where('period', $period)
+            ->first();
+
+        $columns = $ikp->columns()
+            ->select([
+                'file',
+                'name',
+                'id',
+            ])
+            ->orderBy('number')
+            ->get();
+
+        $data = IKUAchievement::withTrashed()
+            ->with([
+                'data' => function (HasMany $query) {
+                    $query->select([
+                        'achievement_id',
+                        'column_id',
+                        'data',
+                    ])
+                        ->withAggregate('column AS file', 'file');
+                }
+            ])
+            ->where(function (Builder $query) use ($periodInstance) {
+                if ($periodInstance) {
+                    $query->whereBelongsTo($periodInstance, 'period');
+                }
+            })
+            ->whereBelongsTo($ikp)
+            ->select('id')
+            ->withAggregate('unit AS unit', 'name')
+            ->latest()
+            ->get();
+
+        $achievementCount = $data->count();
+        $data = $data->groupBy('unit');
+
+        $evaluation = $ikp->evaluation;
+
+        $collection = collect([
+            ['tahun', $year],
+            ['periode', $periods->firstWhere('value', $period)['title']],
+            ['no', $sk->number, 'sasaran kegiatan', $sk->name],
+            ['no', $ikk->number, 'indikator kinerja kegiatan', $ikk->name],
+            ['no', $ps->number, 'program strategis', $ps->name],
+            ['no', $ikp->number, 'indikator kinerja program', $ikp->name],
+            ['definisi operasional', $ikp->definition, 'tipe', $ikp->type],
+            ['realisasi', $achievementCount],
+            $evaluation && $period === '5' ? ['target', $evaluation->target, 'kendala', $evaluation->evaluation, 'tindak lanjut', $evaluation->follow_up] : [],
+            ['data'],
+            [
+                'no',
+                ...$columns->map(function ($column) {
+                    return $column->name;
+                })
+            ],
+        ]);
+
+        $data->each(function ($item, $key) use ($collection, $columns) {
+            $collection->add([$key]);
+            $item->each(function ($col, $index) use ($collection, $columns) {
+                $temp = collect([$index + 1]);
+
+                $columns->each(function ($column) use ($collection, $temp, $col) {
+                    $find = $col['data']->firstWhere('column_id', $column->id);
+
+                    if ($find) {
+                        if ($find->file) {
+                            $temp->add(url(asset('storage/' . $find->data)));
+                        } else {
+                            $temp->add($find->data);
+                        }
+                    } else {
+                        $temp->add('');
+                    }
+                });
+
+                $collection->add($temp->toArray());
+            });
+        });
+
+        return Excel::download(new IKUExport($collection->toArray()), $ikp->name . '.xlsx');
+    }
+
 
     /*
     | -----------------------------------------------------------------
