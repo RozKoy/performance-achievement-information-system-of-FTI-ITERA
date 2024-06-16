@@ -25,11 +25,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-
 /*
 | -----------------------------------------------------------------
 | AUTHENTICATION
@@ -72,6 +67,7 @@ Route::prefix('/super-admin')->middleware('superadmin')->group(function () {
             Route::get('/', 'homeView')->name('super-admin-achievement-rs');
             Route::get('/{ik}/detail', 'detailView')->name('super-admin-achievement-rs-detail');
             Route::get('/{year}/target', 'targetView')->name('super-admin-achievement-rs-target');
+            Route::get('/export', 'exportRS')->name('super-admin-achievement-rs-export');
 
             Route::middleware('editor')->group(function () {
                 Route::post('/{ik}/{unit}/target', 'addTarget')->name('super-admin-achievement-rs-target-add');
