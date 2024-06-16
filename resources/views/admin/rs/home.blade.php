@@ -68,8 +68,8 @@
                                         <span title="{{ $ik['type'] }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ik['type'] }}</span>
                                     </td>
 
-                                    <td title="{{ $ik['target'] }}">{{ $ik['target'] }}</td>
-                                    <td title="{{ $ik['yearRealization'] }}">{{ $ik['yearRealization'] }}</td>
+                                    <td title="{{ $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}">{{ $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}</td>
+                                    <td title="{{ $ik['yearRealization'] }}{{ $ik['type'] === 'persen' && $ik['yearRealization'] !== null ? '%' : '' }}">{{ $ik['yearRealization'] }}{{ $ik['type'] === 'persen' && $ik['yearRealization'] !== null ? '%' : '' }}</td>
 
                                     <td>
                                         @if (isset($ik['realization']))
