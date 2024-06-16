@@ -89,6 +89,7 @@
                     <form action="{{ route('super-admin-rs-import') }}" method="POST" class="flex flex-col gap-1 p-4 text-primary max-md:text-sm md:p-5" enctype="multipart/form-data">
                         @csrf
                         <input type="file" name="file" accept=".xlsx, .xls, .csv">
+                        <p class="text-sm max-md:text-xs">Belum memiliki template? <a href="{{ url(asset('storage/assets/excel/template.xlsx')) }}" class="underline hover:text-primary/75" download="">Unduh</a></p>
                         <x-partials.button.add submit />
 
                     </form>
