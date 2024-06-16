@@ -45,7 +45,7 @@
         </div>
         <p class="text-xs font-bold text-red-400">*Merubah status akan menghapus realisasi capaian yang telah diinputkan setiap unit</p>
     @else
-        <div title="Status penugasan : {{ $ikp['status'] }}" class="{{ $ikp['status'] === 'aktif' ? 'bg-green-500' : 'bg-red-500' }} ml-auto rounded-full p-3"></div>
+        <div title="Status penugasan : {{ $ik['status'] }}" class="{{ $ik['status'] === 'aktif' ? 'bg-green-500' : 'bg-red-500' }} ml-auto rounded-full p-3"></div>
     @endif
 
     <form action="" method="POST" class="flex flex-col gap-2">
