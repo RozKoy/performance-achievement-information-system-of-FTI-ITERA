@@ -1314,7 +1314,7 @@ class IKUController extends Controller
                 $name = 'file-' . $file->id;
                 if ($request->hasFile($name)) {
                     $fileURI = $request->file($name)
-                        ->store(auth()->user()->unit->name . '/' . $ikp->id);
+                        ->store('IKUFiles/' . auth()->user()->unit->name . '/' . $ikp->id);
 
                     $data = new IKUAchievementData();
 
