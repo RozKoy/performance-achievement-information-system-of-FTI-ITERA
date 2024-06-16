@@ -1132,14 +1132,12 @@ class RSController extends Controller
                 $instance->save();
             }
 
-            $evaluation = RSEvaluation::firstOrNew([
-                'indikator_kinerja_id' => $ik->id,
-            ], [
-                'target' => '0',
-            ]);
+            $evaluation = $ik->evaluation;
 
-            $evaluation->status = (float) $allAchievement->realization >= (float) $evaluation->target;
-            $evaluation->save();
+            if ($evaluation) {
+                $evaluation->status = (float) $allAchievement->realization >= (float) $evaluation->target;
+                $evaluation->save();
+            }
         }
 
         return back();
