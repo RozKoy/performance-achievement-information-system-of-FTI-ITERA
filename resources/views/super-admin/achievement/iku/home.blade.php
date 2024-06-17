@@ -35,12 +35,12 @@
     <div class="flex flex-wrap items-center justify-start gap-1.5">
 
         @foreach ($periods as $period)
-            <div class="{{ $period['status'] === 1 ? 'bg-green-200 text-green-500' : 'bg-red-200 text-red-500' }} flex items-center gap-1 rounded-lg px-1.5 py-1 text-xs md:text-sm">
+            <div class="{{ $period['status'] == 1 ? 'bg-green-200 text-green-500' : 'bg-red-200 text-red-500' }} flex items-center gap-1 rounded-lg px-1.5 py-1 text-xs md:text-sm">
                 <p>{{ $period['title'] }}</p>
 
-                @if (auth()->user()->access === 'editor')
-                    <label title="Tombol power [status: {{ $period['status'] === 1 ? 'Aktif' : 'Tidak aktif' }}]" onclick="statusToggle('{{ url(route('super-admin-achievement-iku-status', ['period' => $period['id']])) }}')" class="relative inline-flex items-center">
-                        <input type="checkbox" value="{{ $period['status'] === 1 }}" class="peer sr-only" @checked($period['status'] === 1) disabled>
+                @if (auth()->user()->access == 'editor')
+                    <label title="Tombol power [status: {{ $period['status'] == 1 ? 'Aktif' : 'Tidak aktif' }}]" onclick="statusToggle('{{ url(route('super-admin-achievement-iku-status', ['period' => $period['id']])) }}')" class="relative inline-flex items-center">
+                        <input type="checkbox" value="{{ $period['status'] == 1 }}" class="peer sr-only" @checked($period['status'] == 1) disabled>
                         <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
                     </label>
                 @endif
