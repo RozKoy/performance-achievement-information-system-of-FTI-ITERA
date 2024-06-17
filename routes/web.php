@@ -6,6 +6,7 @@ use App\Http\Controllers\IndikatorKinerjaController;
 use App\Http\Controllers\ProgramStrategisController;
 use App\Http\Controllers\SasaranStrategisController;
 use App\Http\Controllers\SasaranKegiatanController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\UsersController;
@@ -53,9 +54,7 @@ Route::controller(AuthController::class)->group(function () {
 */
 
 Route::prefix('/super-admin')->middleware('superadmin')->group(function () {
-    Route::get('/beranda', function () {
-        return view('super-admin.home');
-    })->name('super-admin-dashboard');
+    Route::get('/beranda', [DashboardController::class, 'superAdmin'])->name('super-admin-dashboard');
 
 
     Route::prefix('/capaian-kinerja')->group(function () {
