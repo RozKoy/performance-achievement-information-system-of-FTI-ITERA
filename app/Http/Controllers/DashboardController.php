@@ -45,8 +45,7 @@ class DashboardController extends Controller
                     'success' => $success,
                     'failed' => $failed,
                 ];
-            })
-            ->toArray();
+            });
 
         $iku = IKUYear::with([
             'sasaranKegiatan.indikatorKinerjaKegiatan.programStrategis' => function (HasMany $query) {
@@ -85,9 +84,11 @@ class DashboardController extends Controller
                     'success' => $success,
                     'failed' => $failed,
                 ];
-            })
-            ->toArray();
+            });
 
-        return view('super-admin.home');
+        return view('super-admin.home', compact([
+            'iku',
+            'rs',
+        ]));
     }
 }
