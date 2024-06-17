@@ -7,7 +7,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\View\Component;
 use Closure;
 
-class time extends Component
+class Time extends Component
 {
     /**
      * Create a new component instance.
