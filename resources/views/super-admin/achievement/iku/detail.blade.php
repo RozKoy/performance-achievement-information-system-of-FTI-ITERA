@@ -76,7 +76,7 @@
                     <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
                         <td>Status</td>
                         <td>:</td>
-                        <td>{{ $evaluation === null ? '' : ($evaluation['status'] ? 'Tercapai' : 'Tidak tercapai') }}</td>
+                        <td>{{ $evaluation === null ? '' : ($evaluation['status'] == 1 ? 'Tercapai' : 'Tidak tercapai') }}</td>
                     </tr>
                     <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
                         <td>Target</td>
@@ -158,7 +158,7 @@
                                     @endphp
 
                                     @if ($dataFind !== null)
-                                        @if ($dataFind['file'])
+                                        @if ($dataFind['file'] == 1)
                                             <td class="text-center">
                                                 <a href="{{ url(asset('storage/' . $dataFind['data'])) }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-primary hover:text-primary/75" download>Unduh</a>
                                             </td>

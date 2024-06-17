@@ -143,7 +143,7 @@
                                 @endif
 
                                 @if ($period === '3')
-                                    <td title="{{ $ik['done'] === 1 ? 'Tercapai' : 'Tidak tercapai' }}">{{ $ik['done'] === 1 ? 'Iya' : 'Tidak' }}</td>
+                                    <td title="{{ $ik['done'] == 1 ? 'Tercapai' : 'Tidak tercapai' }}">{{ $ik['done'] == 1 ? 'Iya' : 'Tidak' }}</td>
 
                                     <td title="{{ $ik['evaluation'] }}">{{ $ik['evaluation'] }}</td>
                                     <td title="{{ $ik['follow_up'] }}">{{ $ik['follow_up'] }}</td>

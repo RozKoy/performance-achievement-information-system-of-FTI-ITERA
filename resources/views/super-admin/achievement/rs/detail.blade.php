@@ -103,7 +103,7 @@
     @if ($period === '3')
         <p class="text-primary max-xl:text-sm max-sm:text-xs">
             Status :
-            <span class="{{ isset($evaluation) ? ($evaluation['status'] ? 'text-green-500' : 'text-red-500') : 'text-red-500' }} font-bold capitalize">{{ isset($evaluation) ? ($evaluation['status'] ? 'tercapai' : 'tidak tercapai') : 'tidak tercapai' }}</span>
+            <span class="{{ isset($evaluation) ? ($evaluation['status'] == '1' ? 'text-green-500' : 'text-red-500') : 'text-red-500' }} font-bold capitalize">{{ isset($evaluation) ? ($evaluation['status'] == '1' ? 'tercapai' : 'tidak tercapai') : 'tidak tercapai' }}</span>
         </p>
     @endif
 

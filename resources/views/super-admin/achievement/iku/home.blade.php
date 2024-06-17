@@ -133,7 +133,7 @@
 
                                     <td title="{{ $ikp['target'] }}">{{ $ikp['target'] }}</td>
                                     <td title="{{ $ikp['all'] }}">{{ $ikp['all'] }}</td>
-                                    <td title="{{ $ikp['done'] ? 'Tercapai' : 'Tidak tercapai' }}" class="{{ $ikp['done'] ? 'text-green-400' : 'text-red-400' }}">{{ $ikp['done'] ? 'Tercapai' : 'Tidak tercapai' }}</td>
+                                    <td title="{{ $ikp['done'] == 1 ? 'Tercapai' : 'Tidak tercapai' }}" class="{{ $ikp['done'] == 1 ? 'text-green-400' : 'text-red-400' }}">{{ $ikp['done'] == 1 ? 'Tercapai' : 'Tidak tercapai' }}</td>
 
                                     <td title="{{ $ikp['tw1'] }}">{{ $ikp['tw1'] }}</td>
                                     <td title="{{ $ikp['tw2'] }}">{{ $ikp['tw2'] }}</td>

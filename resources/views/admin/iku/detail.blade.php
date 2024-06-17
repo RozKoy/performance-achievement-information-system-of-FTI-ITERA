@@ -157,7 +157,7 @@
 
                         @foreach ($columns as $column)
                             <div>
-                                @if ($column['file'] === 0)
+                                @if ($column['file'] == 0)
                                     <x-partials.label.default for="{{ 'data-' . $column['id'] }}" title="{{ $column['name'] }}" text="{{ $column['name'] }}" />
                                     <x-partials.input.text name="{{ 'data-' . $column['id'] }}" title="{{ $column['name'] }}" />
                                 @else
