@@ -114,7 +114,7 @@
         </div>
     </nav>
 
-    <x-partialsInfoTime />
+    <x-partials.info.time />
 
     <div class="p-4 sm:ml-72">
         <div class="mt-14 rounded-lg border-2 border-dashed border-primary p-4">

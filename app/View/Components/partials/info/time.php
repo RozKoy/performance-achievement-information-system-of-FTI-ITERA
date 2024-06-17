@@ -1,13 +1,13 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\partials\info;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
 use Illuminate\View\Component;
 use Closure;
 
-class PartialsInfoTime extends Component
+class time extends Component
 {
     /**
      * Create a new component instance.
