@@ -3,7 +3,7 @@
 @section('content')
     <aside id="admin-sidebar" class="fixed left-0 top-0 z-40 h-screen w-72 -translate-x-full bg-white pt-16 text-base transition-transform sm:translate-x-0" aria-label="Sidebar">
         <div class="h-full divide-y-2 divide-primary overflow-y-auto bg-white px-3 pb-4 text-primary">
-            <ul class="space-y-2 py-1.5 font-medium">
+            {{-- <ul class="space-y-2 py-1.5 font-medium">
                 <li>
                     <x-partials.link.sidebar route="admin-dashboard" name="beranda">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5 transition duration-75" fill="currentColor">
@@ -11,7 +11,7 @@
                         </svg>
                     </x-partials.link.sidebar>
                 </li>
-            </ul>
+            </ul> --}}
             <ul class="space-y-2 py-1.5 font-medium">
                 <li>
                     <x-partials.link.sidebar route="admin-rs" name="rencana strategis">
