@@ -1649,7 +1649,7 @@ class IKUController extends Controller
     public function delete(IndikatorKinerjaProgram $ikp, IKUAchievement $achievement)
     {
         if ($ikp->id === $achievement->indikatorKinerjaProgram->id && $ikp->status === 'aktif') {
-            if ($achievement->period->status === 1 && $achievement->period->deadline !== null) {
+            if ($achievement->period->status == 1 && $achievement->period->deadline !== null) {
                 if ($achievement->unit->id === auth()->user()->unit->id) {
                     $achievement->data->each(function ($data) {
                         if ($data->column->file) {
