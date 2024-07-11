@@ -13,12 +13,14 @@
         ],
     ];
 @endphp
+
 <x-super-admin-template title="Ubah Sasaran Strategis - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="ubah sasaran strategis" :$previousRoute />
     <form action="" method="POST" class="flex flex-col gap-2">
         @csrf
         @method('PUT')
+
         <div class="flex flex-wrap gap-2">
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />

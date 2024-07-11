@@ -29,6 +29,7 @@
         ],
     ];
 @endphp
+
 <x-super-admin-template title="Tambah Indikator Kinerja - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="tambah indikator kinerja" previousRoute="{{ route('super-admin-rs-ik', ['ss' => $ss['id'], 'k' => $k['id']]) }}" />
@@ -36,6 +37,7 @@
     <x-partials.heading.h3 title="Kegiatan" dataNumber="{{ $k['number'] }}" dataText="{{ $k['name'] }}" />
     <form action="" method="POST" class="flex flex-col gap-2">
         @csrf
+
         <div class="flex flex-wrap gap-2">
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
@@ -60,6 +62,6 @@
 
             </div>
         </div>
-        <x-partials.button.add submit />
+        <x-partials.button.add style="ml-auto" submit />
     </form>
 </x-super-admin-template>

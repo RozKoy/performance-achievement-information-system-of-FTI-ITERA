@@ -1,4 +1,5 @@
 <div class="flex items-center gap-2 max-md:flex-wrap">
+
     @if (isset($back) || isset($previous) || isset($previousRoute))
         <a href="{{ isset($back) ? url()->previous() : url(isset($previous) ? route($previous) : $previousRoute) }}" title="Tombol kembali" class="rounded-lg p-1 text-primary hover:bg-gray-100 focus:ring-2 focus:ring-gray-200 sm:p-2">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-4 sm:w-5">
@@ -8,5 +9,6 @@
             </svg>
         </a>
     @endif
+
     <h2 title="Halaman {{ $text }}" class="text-xl font-semibold capitalize text-primary sm:text-2xl">{{ $text }}</h2>
 </div>

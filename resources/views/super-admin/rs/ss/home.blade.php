@@ -6,27 +6,20 @@
         ],
     ];
 @endphp
+
 <x-super-admin-template title="Renstra - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="manajemen rencana strategis - sasaran strategis" />
-    <div class="flex gap-3 max-sm:flex-col">
-        <x-partials.search.default />
-
-        @if (auth()->user()->access === 'editor')
-            <x-partials.button.add href="super-admin-rs-ss-add" />
-        @endif
-
-    </div>
+    <x-partials.search.default />
 
     @if (auth()->user()->access === 'editor')
-        <button title="Import Excel" type="button" data-modal-target="add-modal" data-modal-toggle="add-modal" class="ml-auto flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
-            <img src="{{ url(asset('storage/assets/icons/excel.png')) }}" alt="Excel" class="w-6 max-md:w-5">
-            Import
-        </button>
-    @endif
-
-    @if (request()->query('search') !== null)
-        <p class="max-2xl:text-sm max-lg:text-xs"><span class="font-semibold text-primary">Pencarian : </span>{{ request()->query('search') }}</p>
+        <div class="flex flex-wrap gap-3">
+            <x-partials.button.add href="super-admin-rs-ss-add" style="mr-auto" />
+            <button title="Import Excel" type="button" data-modal-target="add-modal" data-modal-toggle="add-modal" class="ml-auto flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
+                <img src="{{ url(asset('storage/assets/icons/excel.png')) }}" alt="Excel" class="w-6 max-md:w-5">
+                Import
+            </button>
+        </div>
     @endif
 
     <div class="w-full overflow-x-auto rounded-lg">
@@ -71,7 +64,14 @@
     </div>
 
     @if (!count($data))
-        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data sasaran strategis</p>
+        <div>
+
+            @if (request()->query('search') !== null)
+                <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Pencarian : "{{ request()->query('search') }}"</p>
+            @endif
+
+            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ request()->query('search') !== null ? 'Tidak dapat ditemukan' : 'Tidak ada data sasaran strategis' }}</p>
+        </div>
     @endif
 
     @if (auth()->user()->access === 'editor')

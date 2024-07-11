@@ -21,22 +21,16 @@
         ],
     ];
 @endphp
+
 <x-super-admin-template title="Renstra - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="manajemen rencana strategis - indikator kinerja" previousRoute="{{ route('super-admin-rs-k', ['ss' => $ss['id']]) }}" />
     <x-partials.heading.h3 title="Sasaran strategis" dataNumber="{{ $ss['number'] }}" dataText="{{ $ss['name'] }}" />
     <x-partials.heading.h3 title="Kegiatan" dataNumber="{{ $k['number'] }}" dataText="{{ $k['name'] }}" />
-    <div class="flex gap-3 max-sm:flex-col">
-        <x-partials.search.default />
+    <x-partials.search.default />
 
-        @if (auth()->user()->access === 'editor')
-            <x-partials.button.add route="{{ route('super-admin-rs-ik-add', ['ss' => $ss['id'], 'k' => $k['id']]) }}" />
-        @endif
-
-    </div>
-
-    @if (request()->query('search') !== null)
-        <p class="max-2xl:text-sm max-lg:text-xs"><span class="font-semibold text-primary">Pencarian : </span>{{ request()->query('search') }}</p>
+    @if (auth()->user()->access === 'editor')
+        <x-partials.button.add route="{{ route('super-admin-rs-ik-add', ['ss' => $ss['id'], 'k' => $k['id']]) }}" style="mr-auto" />
     @endif
 
     <div class="w-full overflow-x-auto rounded-lg">
@@ -55,6 +49,7 @@
                 </tr>
             </thead>
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
+
                 @foreach ($data as $item)
                     @php
                         $deleteData = [
@@ -64,6 +59,7 @@
                             'status' => $item['status'],
                         ];
                     @endphp
+
                     <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
                         <td title="{{ $item['number'] }}">{{ $item['number'] }}</td>
                         <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
@@ -86,6 +82,7 @@
 
                     </tr>
                 @endforeach
+
             </tbody>
         </table>
 
@@ -95,7 +92,14 @@
     </div>
 
     @if (!count($data))
-        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data indikator kinerja</p>
+        <div>
+
+            @if (request()->query('search') !== null)
+                <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Pencarian : "{{ request()->query('search') }}"</p>
+            @endif
+
+            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ request()->query('search') !== null ? 'Tidak dapat ditemukan' : 'Tidak ada data indikator kinerja' }}</p>
+        </div>
     @endif
 
     @if (auth()->user()->access === 'editor')

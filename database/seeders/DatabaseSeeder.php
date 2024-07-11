@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,14 +11,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        \App\Models\User::create([
-            'email' => 'superadmin@superadmin.com',
-            'password' => 'superadmin1',
-            'name' => 'Super Admin',
-            'role' => 'super admin',
-            'access' => 'editor',
-        ]);
+        $this->call(UserSeeder::class);
     }
 }

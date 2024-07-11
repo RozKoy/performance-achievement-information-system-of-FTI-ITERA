@@ -6,20 +6,14 @@
         ],
     ];
 @endphp
+
 <x-super-admin-template title="Pengguna - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="manajemen pengguna" />
-    <div class="flex gap-3 max-sm:flex-col">
-        <x-partials.search.default />
+    <x-partials.search.default />
 
-        @if (auth()->user()->access === 'editor')
-            <x-partials.button.add href="super-admin-users-add" />
-        @endif
-
-    </div>
-
-    @if (request()->query('search') !== null)
-        <p class="max-2xl:text-sm max-lg:text-xs"><span class="font-semibold text-primary">Pencarian : </span>{{ request()->query('search') }}</p>
+    @if (auth()->user()->access === 'editor')
+        <x-partials.button.add href="super-admin-users-add" style="mr-auto" />
     @endif
 
     <div class="w-full overflow-x-auto rounded-lg">
@@ -84,7 +78,14 @@
     </div>
 
     @if (!count($data))
-        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data pengguna</p>
+        <div>
+
+            @if (request()->query('search') !== null)
+                <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Pencarian : "{{ request()->query('search') }}"</p>
+            @endif
+
+            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ request()->query('search') !== null ? 'Tidak dapat ditemukan' : 'Tidak ada data pengguna' }}</p>
+        </div>
     @endif
 
     @if (auth()->user()->access === 'editor')

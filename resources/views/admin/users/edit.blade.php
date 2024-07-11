@@ -13,12 +13,14 @@
         ],
     ];
 @endphp
+
 <x-admin-template title="Ubah Pengguna - {{ auth()->user()->unit->name }}">
     <x-partials.breadcrumbs.default :$breadCrumbs admin />
     <x-partials.heading.h2 text="ubah pengguna" previous="admin-users" />
     <form action="" method="POST" class="flex flex-col gap-2">
         @csrf
         @method('PUT')
+
         <x-partials.label.default for="name" title="Nama pengguna" text="Nama Pengguna" required />
         <x-partials.input.text name="name" title="Nama pengguna" value="{{ $user['name'] }}" autofocus required />
         <x-partials.label.default for="email" title="Email" text="Email" required />

@@ -39,6 +39,7 @@
         ],
     ];
 @endphp
+
 <x-super-admin-template title="Tambah Indikator Kinerja Program - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="tambah indikator kinerja program" previousRoute="{{ route('super-admin-iku-ikp', ['sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']]) }}" />
@@ -47,6 +48,7 @@
     <x-partials.heading.h3 title="Program strategis" dataNumber="{{ $ps['number'] }}" dataText="{{ $ps['name'] }}" />
     <form action="" method="POST" class="flex flex-col gap-2">
         @csrf
+
         <div class="flex flex-wrap gap-2">
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
@@ -104,7 +106,7 @@
                 <p class="text-xs font-bold text-red-400">*Kosongkan kolom file jika tidak digunakan</p>
             </div>
         </div>
-        <x-partials.button.add submit />
+        <x-partials.button.add style="ml-auto" submit />
     </form>
 
     <div id="columnInput" class="hidden">
@@ -126,4 +128,5 @@
             }
         </script>
     @endPushOnce
+
 </x-super-admin-template>

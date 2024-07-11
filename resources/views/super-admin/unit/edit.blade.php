@@ -13,12 +13,14 @@
         ],
     ];
 @endphp
+
 <x-super-admin-template title="Ubah Unit - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="ubah unit" previous="super-admin-unit" />
     <form action="" method="POST" class="flex flex-col gap-2">
         @csrf
         @method('PUT')
+
         <x-partials.label.default for="name" title="Nama unit" text="Nama Unit" required />
         <x-partials.input.text name="name" title="Nama unit" value="{{ $data['name'] }}" autofocus required />
         <x-partials.label.default for="short_name" title="Nama pendek unit" text="Nama Pendek Unit" required />

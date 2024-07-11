@@ -21,22 +21,16 @@
         ],
     ];
 @endphp
+
 <x-super-admin-template title="IKU - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="manajemen indikator kinerja utama - program strategis" previousRoute="{{ route('super-admin-iku-ikk', ['sk' => $sk['id']]) }}" />
     <x-partials.heading.h3 title="Sasaran kegiatan" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
     <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="{{ $ikk['number'] }}" dataText="{{ $ikk['name'] }}" />
-    <div class="flex gap-3 max-sm:flex-col">
-        <x-partials.search.default />
+    <x-partials.search.default />
 
-        @if (auth()->user()->access === 'editor')
-            <x-partials.button.add route="{{ route('super-admin-iku-ps-add', ['sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" />
-        @endif
-
-    </div>
-
-    @if (request()->query('search') !== null)
-        <p class="max-2xl:text-sm max-lg:text-xs"><span class="font-semibold text-primary">Pencarian : </span>{{ request()->query('search') }}</p>
+    @if (auth()->user()->access === 'editor')
+        <x-partials.button.add route="{{ route('super-admin-iku-ps-add', ['sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" style="mr-auto" />
     @endif
 
     <div class="w-full overflow-x-auto rounded-lg">
@@ -88,7 +82,14 @@
     </div>
 
     @if (!count($data))
-        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data program strategis</p>
+        <div>
+
+            @if (request()->query('search') !== null)
+                <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Pencarian : "{{ request()->query('search') }}"</p>
+            @endif
+
+            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ request()->query('search') !== null ? 'Tidak dapat ditemukan' : 'Tidak ada data program strategis' }}</p>
+        </div>
     @endif
 
     @if (auth()->user()->access === 'editor')

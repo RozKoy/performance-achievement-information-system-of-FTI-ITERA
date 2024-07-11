@@ -10,11 +10,13 @@
         ],
     ];
 @endphp
+
 <x-super-admin-template title="Tambah Pengguna - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="tambah pengguna" previous="super-admin-users" />
     <form action="" method="POST" class="flex flex-col gap-2">
         @csrf
+
         <x-partials.label.default for="name" title="Nama pengguna" text="Nama Pengguna" required />
         <x-partials.input.text name="name" title="Nama pengguna" value="{{ old('name') }}" autofocus required />
         <x-partials.label.default for="email" title="Email" text="Email" required />
@@ -38,7 +40,7 @@
             <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
         @enderror
 
-        <x-partials.button.add submit />
+        <x-partials.button.add style="ml-auto" submit />
     </form>
 
     <div class="hidden">
