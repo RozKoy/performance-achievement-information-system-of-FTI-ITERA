@@ -58,7 +58,6 @@ Route::controller(AuthController::class)->group(function () {
 Route::prefix('/super-admin')->middleware('superadmin')->group(function () {
     Route::get('/beranda', [DashboardController::class, 'superAdmin'])->name('super-admin-dashboard');
 
-
     Route::prefix('/capaian-kinerja')->group(function () {
         Route::get('/', function () {
             return redirect()->route('super-admin-achievement-rs');

@@ -4,13 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use App\Models\IKUYear;
 use App\Models\RSYear;
 
 class DashboardController extends Controller
 {
-    public function superAdmin()
+    /**
+     * Super admin dashboard
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function superAdmin(): Factory|View
     {
         $rs = RSYear::with([
             'sasaranStrategis.kegiatan' => function (HasMany $query) {
