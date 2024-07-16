@@ -13,9 +13,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Contracts\View\View;
 use App\Models\User;
 
-use function App\Http\Controllers\Utils\BackWithInputWithErrors;
-use function App\Http\Controllers\Utils\RedirectWithRoute;
-
 class AuthController extends Controller
 {
     /**
@@ -62,7 +59,7 @@ class AuthController extends Controller
             ->firstOrFail();
 
         if ($user->role === 'admin' && $user->unit()->doesntExist()) {
-            return BackWithInputWithErrors(['email' => 'Email tidak dapat ditemukan']);
+            return _ControllerHelpers::BackWithInputWithErrors(['email' => 'Email tidak dapat ditemukan']);
         }
 
         if (Auth::attempt($request->safe()->toArray())) {
@@ -71,13 +68,13 @@ class AuthController extends Controller
             }
 
             if ($user->role === 'super admin') {
-                return RedirectWithRoute('super-admin-dashboard');
+                return _ControllerHelpers::RedirectWithRoute('super-admin-dashboard');
             }
 
-            return RedirectWithRoute('admin-dashboard');
+            return _ControllerHelpers::RedirectWithRoute('admin-dashboard');
         }
 
-        return BackWithInputWithErrors(['email' => 'Email atau kata sandi tidak benar']);
+        return _ControllerHelpers::BackWithInputWithErrors(['email' => 'Email atau kata sandi tidak benar']);
     }
 
     /**
@@ -101,10 +98,10 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             $user->update(['token' => null]);
 
-            return BackWithInputWithErrors(['email' => 'Alamat email tidak aktif']);
+            return _ControllerHelpers::BackWithInputWithErrors(['email' => 'Alamat email tidak aktif']);
         }
 
-        return RedirectWithRoute('login');
+        return _ControllerHelpers::RedirectWithRoute('login');
     }
 
     /**
@@ -123,7 +120,7 @@ class AuthController extends Controller
             'token' => null
         ]);
 
-        return RedirectWithRoute('login');
+        return _ControllerHelpers::RedirectWithRoute('login');
     }
 
     /**
@@ -136,6 +133,6 @@ class AuthController extends Controller
             auth()->logout();
         }
 
-        return RedirectWithRoute('login');
+        return _ControllerHelpers::RedirectWithRoute('login');
     }
 }
