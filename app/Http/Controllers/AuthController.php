@@ -29,11 +29,26 @@ class AuthController extends Controller
 
     /**
      * Forget password view
-     * @return Factory|View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function forgetPasswordView(): Factory|View
     {
         return view('authentication.forget-password');
+    }
+
+    /**
+     * Change password view
+     * @param string $token
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function changePasswordView(string $token): Factory|View
+    {
+        $user = User::where('token', $token)
+            ->firstOrFail();
+
+        $user->only('email');
+
+        return view('authentication.change-password', compact('user'));
     }
 
     /**
@@ -92,24 +107,23 @@ class AuthController extends Controller
         return RedirectWithRoute('login');
     }
 
-    public function changePasswordView($token)
+    /**
+     * Change password
+     * @param \App\Http\Requests\Authentication\ChangePasswordRequest $request
+     * @param string $token
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function changePassword(ChangePasswordRequest $request, string $token): RedirectResponse
     {
-        $user = User::where('token', $token)->firstOrFail();
-        $user->only('email');
-
-        return view('authentication.change-password', compact('user'));
-    }
-
-    public function changePassword(ChangePasswordRequest $request, $token)
-    {
-        $user = User::where('token', $token)->firstOrFail();
+        $user = User::where('token', $token)
+            ->firstOrFail();
 
         $user->update([
             'password' => $request['password'],
             'token' => null
         ]);
 
-        return redirect()->route('login');
+        return RedirectWithRoute('login');
     }
 
     public function logout()
