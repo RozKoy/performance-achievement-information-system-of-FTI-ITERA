@@ -126,12 +126,16 @@ class AuthController extends Controller
         return RedirectWithRoute('login');
     }
 
-    public function logout()
+    /**
+     * Logout
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function logout(): RedirectResponse
     {
         if (auth()->check()) {
             auth()->logout();
         }
 
-        return redirect()->route('login');
+        return RedirectWithRoute('login');
     }
 }
