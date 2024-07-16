@@ -36,8 +36,10 @@ Route::controller(AuthController::class)->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('/masuk', 'loginView')->name('login');
         Route::post('/masuk', 'login');
+
         Route::get('/lupa-kata-sandi', 'forgetPasswordView')->name('forget-password');
         Route::post('/lupa-kata-sandi', 'forgetPassword');
+
         Route::get('/{token}/ubah-kata-sandi', 'changePasswordView')->name('change-password');
         Route::post('/{token}/ubah-kata-sandi', 'changePassword');
     });

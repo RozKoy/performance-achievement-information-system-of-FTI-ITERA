@@ -6,26 +6,39 @@ use App\Http\Requests\Authentication\ChangePasswordRequest;
 use App\Http\Requests\Authentication\ForgetPasswordRequest;
 use App\Http\Requests\Authentication\LoginRequest;
 use App\Mail\ForgetPasswordEmailSender;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\View\View;
 use App\Models\User;
+
+use function App\Http\Controllers\Utils\BackWithInputWithErrors;
+use function App\Http\Controllers\Utils\RedirectWithRoute;
 
 class AuthController extends Controller
 {
-    public function loginView()
+    /**
+     * Login view
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function loginView(): Factory|View
     {
         return view('authentication.login');
     }
 
-    public function login(LoginRequest $request)
+    /**
+     * Login
+     * @param \App\Http\Requests\Authentication\LoginRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function login(LoginRequest $request): RedirectResponse
     {
         $user = User::where('email', $request['email'])
             ->firstOrFail();
 
         if ($user->role === 'admin' && $user->unit()->doesntExist()) {
-            return back()
-                ->withInput()
-                ->withErrors(['email' => 'Email tidak dapat ditemukan']);
+            return BackWithInputWithErrors(['email' => 'Email tidak dapat ditemukan']);
         }
 
         if (Auth::attempt($request->safe()->toArray())) {
@@ -34,15 +47,13 @@ class AuthController extends Controller
             }
 
             if ($user->role === 'super admin') {
-                return redirect()->route('super-admin-dashboard');
+                return RedirectWithRoute('super-admin-dashboard');
             }
 
-            return redirect()->route('admin-dashboard');
+            return RedirectWithRoute('admin-dashboard');
         }
 
-        return back()
-            ->withInput()
-            ->withErrors(['email' => 'Email atau kata sandi tidak benar']);
+        return BackWithInputWithErrors(['email' => 'Email atau kata sandi tidak benar']);
     }
 
     public function forgetPasswordView()
