@@ -28,6 +28,15 @@ class AuthController extends Controller
     }
 
     /**
+     * Forget password view
+     * @return Factory|View
+     */
+    public function forgetPasswordView(): Factory|View
+    {
+        return view('authentication.forget-password');
+    }
+
+    /**
      * Login
      * @param \App\Http\Requests\Authentication\LoginRequest $request
      * @return \Illuminate\Http\RedirectResponse
@@ -56,12 +65,12 @@ class AuthController extends Controller
         return BackWithInputWithErrors(['email' => 'Email atau kata sandi tidak benar']);
     }
 
-    public function forgetPasswordView()
-    {
-        return view('authentication.forget-password');
-    }
-
-    public function forgetPassword(ForgetPasswordRequest $request)
+    /**
+     * Forget password
+     * @param \App\Http\Requests\Authentication\ForgetPasswordRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function forgetPassword(ForgetPasswordRequest $request): RedirectResponse
     {
         $user = User::where('email', $request['email'])
             ->firstOrFail();
@@ -77,12 +86,10 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             $user->update(['token' => null]);
 
-            return back()
-                ->withInput()
-                ->withErrors(['email' => 'Alamat email tidak aktif']);
+            return BackWithInputWithErrors(['email' => 'Alamat email tidak aktif']);
         }
 
-        return redirect()->route('login');
+        return RedirectWithRoute('login');
     }
 
     public function changePasswordView($token)
