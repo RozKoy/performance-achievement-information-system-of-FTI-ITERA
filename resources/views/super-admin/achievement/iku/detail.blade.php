@@ -62,7 +62,7 @@
             </div>
 
             @if (auth()->user()->access === 'editor')
-                <x-partials.button.add submit text="Simpan" />
+                <x-partials.button.add style="ml-auto" submit text="Simpan" />
             @endif
 
         </form>

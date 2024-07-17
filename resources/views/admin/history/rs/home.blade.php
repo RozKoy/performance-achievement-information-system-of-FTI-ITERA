@@ -29,7 +29,7 @@
             </form>
             <x-partials.badge.time :data="$badge" />
         </div>
-        <button title="Unduh Excel" type="button" class="ml-auto flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
+        {{-- <button title="Unduh Excel" type="button" class="ml-auto flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
             <img src="{{ url(asset('storage/assets/icons/excel.png')) }}" alt="Excel" class="w-7 max-md:w-6">
             Unduh
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-2.5 max-md:w-2">
@@ -38,7 +38,7 @@
                     <path d="M22,16v5a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V16H0v5a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3V16Z" />
                 </g>
             </svg>
-        </button>
+        </button> --}}
         <div class="w-full overflow-x-auto rounded-lg">
             <table class="min-w-full max-lg:text-sm max-md:text-xs">
                 <thead>

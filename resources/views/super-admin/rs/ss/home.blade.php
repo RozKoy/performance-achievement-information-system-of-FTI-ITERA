@@ -90,7 +90,7 @@
                         @csrf
                         <input type="file" name="file" accept=".xlsx, .xls, .csv">
                         <p class="text-sm max-md:text-xs">Belum memiliki template? <a href="{{ url(asset('storage/assets/excel/template.xlsx')) }}" class="underline hover:text-primary/75" download="">Unduh</a></p>
-                        <x-partials.button.add submit />
+                        <x-partials.button.add style="ml-auto" submit />
 
                     </form>
                 </div>

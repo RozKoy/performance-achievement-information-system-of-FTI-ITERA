@@ -87,7 +87,7 @@
         </div>
 
         @if (auth()->user()->access === 'editor' && ($period === '3' || $ik['type'] === 'teks' || $ik['status'] !== 'aktif'))
-            <x-partials.button.add submit text="Simpan" />
+            <x-partials.button.add style="ml-auto" submit text="Simpan" />
         @endif
 
     </form>

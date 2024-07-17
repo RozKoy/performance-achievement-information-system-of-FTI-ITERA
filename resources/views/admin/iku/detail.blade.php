@@ -167,7 +167,7 @@
                             </div>
                         @endforeach
 
-                        <x-partials.button.add submit />
+                        <x-partials.button.add style="ml-auto" submit />
 
                     </form>
                 </div>
