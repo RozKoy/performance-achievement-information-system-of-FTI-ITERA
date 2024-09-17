@@ -1,5 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+	content: [
+		"./node_modules/flowbite/**/*.js",
+		"./resources/**/*.blade.php",
+		"./resources/**/*.vue",
+		"./resources/**/*.js",
+	],
 	theme: {
 		fontFamily: {
 			primary: ["Poppins"],
@@ -10,4 +16,7 @@ export default {
 			},
 		},
 	},
+	plugins: [
+		require('flowbite/plugin')
+	],
 };
