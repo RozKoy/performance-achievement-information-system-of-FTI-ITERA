@@ -7,6 +7,9 @@ use App\Http\Requests\Users\AddAdminRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\Users\EditRequest;
 use App\Http\Requests\Users\AddRequest;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use App\Models\Unit;
 use App\Models\User;
@@ -19,7 +22,12 @@ class UsersController extends Controller
     | -----------------------------------------------------------------
     */
 
-    public function homeView(Request $request)
+    /**
+     * User home view
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function homeView(Request $request): Factory|View
     {
         $data = User::whereKeyNot(auth()->user()->id)
             ->doesntHave('unit')
@@ -66,7 +74,11 @@ class UsersController extends Controller
         return view('super-admin.users.home', compact('data'));
     }
 
-    public function addView()
+    /**
+     * User add view
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function addView(): Factory|View
     {
         $units = Unit::select([
             'name AS text',
@@ -86,7 +98,12 @@ class UsersController extends Controller
         return view('super-admin.users.add', compact('data'));
     }
 
-    public function add(AddRequest $request)
+    /**
+     * User add function
+     * @param \App\Http\Requests\Users\AddRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function add(AddRequest $request): RedirectResponse
     {
         if (in_array($request['access'], ['super-admin-editor', 'super-admin-viewer'])) {
             $request['role'] = 'super admin';
@@ -123,10 +140,15 @@ class UsersController extends Controller
             'unit_id',
         ]));
 
-        return redirect()->route('super-admin-users');
+        return _ControllerHelpers::RedirectWithRoute('super-admin-users');
     }
 
-    public function editView(User $user)
+    /**
+     * User edit view
+     * @param \App\Models\User $user
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function editView(User $user): Factory|View
     {
         $units = Unit::select([
             'name AS text',
@@ -163,7 +185,13 @@ class UsersController extends Controller
         ]));
     }
 
-    public function edit(EditRequest $request, User $user)
+    /**
+     * User edit function
+     * @param \App\Http\Requests\Users\EditRequest $request
+     * @param \App\Models\User $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function edit(EditRequest $request, User $user): RedirectResponse
     {
         $newEmail = $request['email'];
 
@@ -201,10 +229,15 @@ class UsersController extends Controller
 
         $user->save();
 
-        return redirect()->route('super-admin-users');
+        return _ControllerHelpers::RedirectWithRoute('super-admin-users');
     }
 
-    public function delete(User $user)
+    /**
+     * User delete function
+     * @param \App\Models\User $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function delete(User $user): RedirectResponse
     {
         $user->forceDelete();
 
@@ -218,7 +251,12 @@ class UsersController extends Controller
     | -----------------------------------------------------------------
     */
 
-    public function homeViewAdmin(Request $request)
+    /**
+     * User home view
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function homeViewAdmin(Request $request): Factory|View
     {
         $data = auth()->user()
             ->unit
@@ -251,12 +289,21 @@ class UsersController extends Controller
         return view('admin.users.home', compact('data'));
     }
 
-    public function addViewAdmin()
+    /**
+     * User add view
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function addViewAdmin(): Factory|View
     {
         return view('admin.users.add');
     }
 
-    public function addAdmin(AddAdminRequest $request)
+    /**
+     * User add function
+     * @param \App\Http\Requests\Users\AddAdminRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addAdmin(AddAdminRequest $request): RedirectResponse
     {
         User::create(
             [
@@ -267,10 +314,15 @@ class UsersController extends Controller
             ]
         );
 
-        return redirect()->route('admin-users');
+        return _ControllerHelpers::RedirectWithRoute('admin-users');
     }
 
-    public function editViewAdmin($id)
+    /**
+     * User edit view
+     * @param mixed $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function editViewAdmin($id): Factory|View
     {
         $user = auth()->user()
             ->unit
@@ -287,7 +339,13 @@ class UsersController extends Controller
         return view('admin.users.edit', compact('user'));
     }
 
-    public function editAdmin(EditAdminRequest $request, User $id)
+    /**
+     * User edit function
+     * @param \App\Http\Requests\Users\EditAdminRequest $request
+     * @param \App\Models\User $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function editAdmin(EditAdminRequest $request, User $id): RedirectResponse
     {
         $user = auth()->user()
             ->unit
@@ -314,10 +372,15 @@ class UsersController extends Controller
 
         $user->save();
 
-        return redirect()->route('admin-users');
+        return _ControllerHelpers::RedirectWithRoute('admin-users');
     }
 
-    public function deleteAdmin(User $user)
+    /**
+     * User delete function
+     * @param \App\Models\User $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteAdmin(User $user): RedirectResponse
     {
         $user = auth()->user()
             ->unit
