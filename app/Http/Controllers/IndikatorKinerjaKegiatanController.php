@@ -6,13 +6,22 @@ use App\Http\Requests\IndikatorKinerjaKegiatan\EditRequest;
 use App\Http\Requests\IndikatorKinerjaKegiatan\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerjaKegiatan;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\View;
 use App\Models\SasaranKegiatan;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 
 class IndikatorKinerjaKegiatanController extends Controller
 {
-    public function homeView(Request $request, SasaranKegiatan $sk)
+    /**
+     * Indikator kinerja kegiatan home view
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\SasaranKegiatan $sk
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function homeView(Request $request, SasaranKegiatan $sk): Factory|View
     {
         $sk = SasaranKegiatan::currentOrFail($sk->id);
 
@@ -45,7 +54,12 @@ class IndikatorKinerjaKegiatanController extends Controller
         ]));
     }
 
-    public function addView(SasaranKegiatan $sk)
+    /**
+     * Indikator kinerja kegiatan add view
+     * @param \App\Models\SasaranKegiatan $sk
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function addView(SasaranKegiatan $sk): Factory|View
     {
         $sk = SasaranKegiatan::currentOrFail($sk->id);
 
@@ -75,16 +89,20 @@ class IndikatorKinerjaKegiatanController extends Controller
         ]));
     }
 
-    public function add(AddRequest $request, SasaranKegiatan $sk)
+    /**
+     * Indikator kinerja kegiatan add function
+     * @param \App\Http\Requests\IndikatorKinerjaKegiatan\AddRequest $request
+     * @param \App\Models\SasaranKegiatan $sk
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function add(AddRequest $request, SasaranKegiatan $sk): RedirectResponse
     {
         $sk = SasaranKegiatan::currentOrFail($sk->id);
 
         $number = $request['number'];
         $dataCount = $sk->indikatorKinerjaKegiatan->count();
         if ($number > $dataCount + 1) {
-            return back()
-                ->withInput()
-                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+            return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
         }
 
         if ($number <= $dataCount) {
@@ -98,10 +116,16 @@ class IndikatorKinerjaKegiatanController extends Controller
         $ikk->sasaranKegiatan()->associate($sk);
         $ikk->save();
 
-        return redirect()->route('super-admin-iku-ikk', ['sk' => $sk->id]);
+        return _ControllerHelpers::RedirectWithRoute('super-admin-iku-ikk', ['sk' => $sk->id]);
     }
 
-    public function editView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk)
+    /**
+     * Indikator kinerja kegiatan edit view
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function editView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk): Factory|View
     {
         if ($sk->id === $ikk->sasaranKegiatan->id) {
             $count = $sk->indikatorKinerjaKegiatan->count();
@@ -149,14 +173,19 @@ class IndikatorKinerjaKegiatanController extends Controller
         abort(404);
     }
 
-    public function edit(EditRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk)
+    /**
+     * Indikator kinerja kegiatan edit function
+     * @param \App\Http\Requests\IndikatorKinerjaKegiatan\EditRequest $request
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function edit(EditRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk): RedirectResponse
     {
         if ($sk->id === $ikk->sasaranKegiatan->id) {
             $number = (int) $request['number'];
             if ($number > $sk->indikatorKinerjaKegiatan->count()) {
-                return back()
-                    ->withInput()
-                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+                return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
             }
 
             $currentNumber = $ikk->number;
@@ -180,9 +209,9 @@ class IndikatorKinerjaKegiatanController extends Controller
             $ikk->save();
 
             if ($sk->time->year === Carbon::now()->format('Y')) {
-                return redirect()->route('super-admin-iku-ikk', ['sk' => $sk->id]);
+                return _ControllerHelpers::RedirectWithRoute('super-admin-iku-ikk', ['sk' => $sk->id]);
             } else {
-                return redirect()->route('super-admin-achievement-iku', [
+                return _ControllerHelpers::RedirectWithRoute('super-admin-achievement-iku', [
                     'year' => $sk->time->year
                 ]);
             }
@@ -191,7 +220,13 @@ class IndikatorKinerjaKegiatanController extends Controller
         abort(404);
     }
 
-    public function delete(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk)
+    /**
+     * Indikator kinerja kegiatan delete function
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function delete(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk): RedirectResponse
     {
         if ($sk->id === $ikk->sasaranKegiatan->id) {
             $sk = SasaranKegiatan::currentOrFail($sk->id);
