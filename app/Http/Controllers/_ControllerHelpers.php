@@ -21,8 +21,8 @@ class _ControllerHelpers
      * @param string $route
      * @return \Illuminate\Http\RedirectResponse
      */
-    public static function RedirectWithRoute(string $route): RedirectResponse
+    public static function RedirectWithRoute(string $route, array $parameters = []): RedirectResponse
     {
-        return redirect()->route($route);
+        return redirect()->route($route, $parameters);
     }
 }
