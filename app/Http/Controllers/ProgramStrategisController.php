@@ -6,6 +6,9 @@ use App\Http\Requests\ProgramStrategis\EditRequest;
 use App\Http\Requests\ProgramStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerjaKegiatan;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\View;
 use App\Models\ProgramStrategis;
 use App\Models\SasaranKegiatan;
 use Illuminate\Support\Carbon;
@@ -13,7 +16,14 @@ use Illuminate\Http\Request;
 
 class ProgramStrategisController extends Controller
 {
-    public function homeView(Request $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk)
+    /**
+     * Program strategis home view
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function homeView(Request $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk): Factory|View
     {
         if ($sk->id === $ikk->sasaranKegiatan->id) {
             $sk = SasaranKegiatan::currentOrFail($sk->id);
@@ -63,7 +73,13 @@ class ProgramStrategisController extends Controller
         abort(404);
     }
 
-    public function addView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk)
+    /**
+     * Program strategis add view
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function addView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk): Factory|View
     {
         if ($sk->id === $ikk->sasaranKegiatan->id) {
             $sk = SasaranKegiatan::currentOrFail($sk->id);
@@ -103,7 +119,14 @@ class ProgramStrategisController extends Controller
         abort(404);
     }
 
-    public function add(AddRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk)
+    /**
+     * Program strategis add function
+     * @param \App\Http\Requests\ProgramStrategis\AddRequest $request
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function add(AddRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk): RedirectResponse
     {
         if ($sk->id === $ikk->sasaranKegiatan->id) {
             $sk = SasaranKegiatan::currentOrFail($sk->id);
@@ -111,9 +134,7 @@ class ProgramStrategisController extends Controller
             $number = $request['number'];
             $dataCount = $ikk->programStrategis->count();
             if ($number > $dataCount + 1) {
-                return back()
-                    ->withInput()
-                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+                return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
             }
 
             if ($number <= $dataCount) {
@@ -127,13 +148,20 @@ class ProgramStrategisController extends Controller
             $ps->indikatorKinerjaKegiatan()->associate($ikk);
             $ps->save();
 
-            return redirect()->route('super-admin-iku-ps', ['sk' => $sk->id, 'ikk' => $ikk->id]);
+            return _ControllerHelpers::RedirectWithRoute('super-admin-iku-ps', ['sk' => $sk->id, 'ikk' => $ikk->id]);
         }
 
         abort(404);
     }
 
-    public function editView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps)
+    /**
+     * Program strategis edit view
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @param \App\Models\ProgramStrategis $ps
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function editView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps): Factory|View
     {
         if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id) {
             $count = $ikk->programStrategis->count();
@@ -188,14 +216,20 @@ class ProgramStrategisController extends Controller
         abort(404);
     }
 
-    public function edit(EditRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps)
+    /**
+     * Program strategis edit function
+     * @param \App\Http\Requests\ProgramStrategis\EditRequest $request
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @param \App\Models\ProgramStrategis $ps
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function edit(EditRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps): RedirectResponse
     {
         if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id) {
             $number = (int) $request['number'];
             if ($number > $ikk->programStrategis->count()) {
-                return back()
-                    ->withInput()
-                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+                return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
             }
             $currentNumber = $ps->number;
             if ($number !== $currentNumber) {
@@ -218,9 +252,9 @@ class ProgramStrategisController extends Controller
             $ps->save();
 
             if ($sk->time->year === Carbon::now()->format('Y')) {
-                return redirect()->route('super-admin-iku-ps', ['sk' => $sk->id, 'ikk' => $ikk->id]);
+                return _ControllerHelpers::RedirectWithRoute('super-admin-iku-ps', ['sk' => $sk->id, 'ikk' => $ikk->id]);
             } else {
-                return redirect()->route('super-admin-achievement-iku', [
+                return _ControllerHelpers::RedirectWithRoute('super-admin-achievement-iku', [
                     'year' => $sk->time->year
                 ]);
             }
@@ -229,7 +263,14 @@ class ProgramStrategisController extends Controller
         abort(404);
     }
 
-    public function delete(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps)
+    /**
+     * Program strategis delete function
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @param \App\Models\ProgramStrategis $ps
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function delete(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps): RedirectResponse
     {
         if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id) {
             $sk = SasaranKegiatan::currentOrFail($sk->id);
