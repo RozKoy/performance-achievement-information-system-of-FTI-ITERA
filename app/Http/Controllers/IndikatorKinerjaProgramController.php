@@ -7,6 +7,9 @@ use App\Http\Requests\IndikatorKinerjaProgram\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerjaKegiatan;
 use App\Models\IndikatorKinerjaProgram;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\View;
 use App\Models\ProgramStrategis;
 use App\Models\SasaranKegiatan;
 use Illuminate\Support\Carbon;
@@ -25,7 +28,15 @@ class IndikatorKinerjaProgramController extends Controller
         ],
     ];
 
-    public function homeView(Request $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps)
+    /**
+     * Indikator kinerja program home view
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @param \App\Models\ProgramStrategis $ps
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function homeView(Request $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps): Factory|View
     {
         if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id) {
             $sk = SasaranKegiatan::currentOrFail($sk->id);
@@ -80,7 +91,14 @@ class IndikatorKinerjaProgramController extends Controller
         abort(404);
     }
 
-    public function addView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps)
+    /**
+     * Indikator kinerja program add view
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @param \App\Models\ProgramStrategis $ps
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function addView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps): Factory|View
     {
         if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id) {
             $sk = SasaranKegiatan::currentOrFail($sk->id);
@@ -133,7 +151,15 @@ class IndikatorKinerjaProgramController extends Controller
         abort(404);
     }
 
-    public function add(AddRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps)
+    /**
+     * Indikator kinerja program add function
+     * @param \App\Http\Requests\IndikatorKinerjaProgram\AddRequest $request
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @param \App\Models\ProgramStrategis $ps
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function add(AddRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps): RedirectResponse
     {
         if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id) {
             $sk = SasaranKegiatan::currentOrFail($sk->id);
@@ -141,9 +167,7 @@ class IndikatorKinerjaProgramController extends Controller
             $number = $request['number'];
             $dataCount = $ps->indikatorKinerjaProgram->count();
             if ($number > $dataCount + 1) {
-                return back()
-                    ->withInput()
-                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+                return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
             }
 
             if ($number <= $dataCount) {
@@ -177,13 +201,21 @@ class IndikatorKinerjaProgramController extends Controller
                 ]);
             }
 
-            return redirect()->route('super-admin-iku-ikp', ['sk' => $sk->id, 'ikk' => $ikk->id, 'ps' => $ps->id]);
+            return _ControllerHelpers::RedirectWithRoute('super-admin-iku-ikp', ['sk' => $sk->id, 'ikk' => $ikk->id, 'ps' => $ps->id]);
         }
 
         abort(404);
     }
 
-    public function editView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp)
+    /**
+     * Indikator kinerja program edit view
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @param \App\Models\ProgramStrategis $ps
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function editView(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp): Factory|View
     {
         if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id && $ps->id === $ikp->programStrategis->id) {
             $current = $sk->time->year === Carbon::now()->format('Y');
@@ -267,14 +299,21 @@ class IndikatorKinerjaProgramController extends Controller
         abort(404);
     }
 
-    public function edit(EditRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp)
+    /**
+     * Indikator kinerja program edit function
+     * @param \App\Http\Requests\IndikatorKinerjaProgram\EditRequest $request
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @param \App\Models\ProgramStrategis $ps
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function edit(EditRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
         if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id && $ps->id === $ikp->programStrategis->id) {
             $number = (int) $request['number'];
             if ($number > $ps->indikatorKinerjaProgram->count()) {
-                return back()
-                    ->withInput()
-                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+                return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
             }
 
             $currentNumber = $ikp->number;
@@ -301,9 +340,9 @@ class IndikatorKinerjaProgramController extends Controller
             $ikp->save();
 
             if ($sk->time->year === Carbon::now()->format('Y')) {
-                return redirect()->route('super-admin-iku-ikp', ['sk' => $sk->id, 'ikk' => $ikk->id, 'ps' => $ps->id]);
+                return _ControllerHelpers::RedirectWithRoute('super-admin-iku-ikp', ['sk' => $sk->id, 'ikk' => $ikk->id, 'ps' => $ps->id]);
             } else {
-                return redirect()->route('super-admin-achievement-iku', [
+                return _ControllerHelpers::RedirectWithRoute('super-admin-achievement-iku', [
                     'year' => $sk->time->year
                 ]);
             }
@@ -312,7 +351,15 @@ class IndikatorKinerjaProgramController extends Controller
         abort(404);
     }
 
-    public function statusToggle(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp)
+    /**
+     * Indikator kinerja program status toggle function
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @param \App\Models\ProgramStrategis $ps
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function statusToggle(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
         if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id && $ps->id === $ikp->programStrategis->id) {
             $sk = SasaranKegiatan::currentOrFail($sk->id);
@@ -332,7 +379,15 @@ class IndikatorKinerjaProgramController extends Controller
         abort(404);
     }
 
-    public function delete(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp)
+    /**
+     * Indikator kinerja program delete function
+     * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
+     * @param \App\Models\ProgramStrategis $ps
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function delete(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk, ProgramStrategis $ps, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
         if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id && $ps->id === $ikp->programStrategis->id) {
             $sk = SasaranKegiatan::currentOrFail($sk->id);
