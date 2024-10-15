@@ -10,7 +10,7 @@
 <x-super-admin-template title="Unit - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
 
-    <x-partials.heading.h2 text="manajemen unit" :tooltip="true">
+    <x-partials.heading.h2 text="manajemen unit" tooltip>
         @if (auth()->user()->access === 'editor')
             <p>
                 Halaman ini merupakan halaman untuk melihat, <span class="text-green-400">menambah</span>, <span class="text-yellow-400">mengubah</span>, atau <span class="text-red-400">menghapus</span> unit.
