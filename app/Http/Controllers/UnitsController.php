@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\Units\EditRequest;
 use App\Http\Requests\Units\AddRequest;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Unit;
@@ -12,7 +15,12 @@ use App\Models\User;
 
 class UnitsController extends Controller
 {
-    public function homeView(Request $request)
+    /**
+     * Unit home view
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function homeView(Request $request): Factory|View
     {
         $data = Unit::where(function (Builder $query) use ($request) {
             if ($request->search) {
@@ -39,7 +47,11 @@ class UnitsController extends Controller
         return view('super-admin.unit.home', compact('data'));
     }
 
-    public function addView()
+    /**
+     * Unit add view
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function addView(): Factory|View
     {
         $users = User::where('role', 'admin')
             ->doesntHave('unit')
@@ -55,7 +67,12 @@ class UnitsController extends Controller
         return view('super-admin.unit.add', compact('users'));
     }
 
-    public function add(AddRequest $request)
+    /**
+     * Unit add function
+     * @param \App\Http\Requests\Units\AddRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function add(AddRequest $request): RedirectResponse
     {
         $unitExists = Unit::withTrashed()
             ->firstWhere('name', $request['name']);
@@ -64,9 +81,7 @@ class UnitsController extends Controller
             if ($unitExists->deleted_at) {
                 $unitExists->restore();
             } else {
-                return back()
-                    ->withInput()
-                    ->withErrors(['name' => 'Nama unit sudah digunakan']);
+                return _ControllerHelpers::BackWithInputWithErrors(['name' => 'Nama unit sudah digunakan']);
             }
 
             $unit = $unitExists;
@@ -83,10 +98,15 @@ class UnitsController extends Controller
             }
         }
 
-        return redirect()->route('super-admin-unit');
+        return _ControllerHelpers::RedirectWithRoute('super-admin-unit');
     }
 
-    public function editView(Unit $unit)
+    /**
+     * Unit edit view
+     * @param \App\Models\Unit $unit
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function editView(Unit $unit): Factory|View
     {
         $usersList = User::doesntHave('unit')
             ->where('role', 'admin')
@@ -122,7 +142,13 @@ class UnitsController extends Controller
         ]));
     }
 
-    public function edit(EditRequest $request, Unit $unit)
+    /**
+     * Unit edit function
+     * @param \App\Http\Requests\Units\EditRequest $request
+     * @param \App\Models\Unit $unit
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function edit(EditRequest $request, Unit $unit): RedirectResponse
     {
         $newName = $request['name'];
 
@@ -159,10 +185,15 @@ class UnitsController extends Controller
             $user->save();
         }
 
-        return redirect()->route('super-admin-unit');
+        return _ControllerHelpers::RedirectWithRoute('super-admin-unit');
     }
 
-    public function delete(Unit $unit)
+    /**
+     * Unit delete function
+     * @param \App\Models\Unit $unit
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function delete(Unit $unit): RedirectResponse
     {
         $currentYear = Carbon::now()->format('Y');
 
