@@ -29,11 +29,64 @@
             ],
         ],
     ];
+    $stepper = [
+        [
+            'name' => 'Sasaran Kegiatan',
+            'status' => true,
+        ],
+        [
+            'name' => 'Indikator Kinerja Kegiatan',
+            'status' => true,
+        ],
+        [
+            'name' => 'Program Strategis',
+            'status' => true,
+        ],
+        [
+            'name' => 'Indikator Kinerja Program',
+            'status' => true,
+        ],
+    ];
 @endphp
 
 <x-super-admin-template title="IKU - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="manajemen indikator kinerja utama - indikator kinerja program" previousRoute="{{ route('super-admin-iku-ps', ['sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" />
+    <x-partials.stepper.default :$stepper />
+    <x-partials.heading.h2 text="manajemen indikator kinerja utama - indikator kinerja program" previousRoute="{{ route('super-admin-iku-ps', ['sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" tooltip>
+        @if (auth()->user()->access === 'editor')
+            <p>
+                Halaman ini merupakan halaman untuk melihat, <span class="text-green-400">menambah</span>, <span class="text-yellow-400">mengubah</span>, atau <span class="text-red-400">menghapus</span> indikator kinerja program.
+            </p>
+            <hr>
+            <table>
+                <tr class="*:py-1 align-middle">
+                    <td>
+                        <x-partials.button.add viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk kehalaman tambah</td>
+                </tr>
+                <tr class="*:py-1 align-middle">
+                    <td class="flex items-center justify-end">
+                        <x-partials.button.edit link="#" viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk kehalaman ubah</td>
+                </tr>
+                <tr class="*:py-1 align-middle">
+                    <td class="flex items-center justify-end">
+                        <x-partials.button.delete viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk menghapus data</td>
+                </tr>
+            </table>
+        @else
+            <p>
+                Halaman ini merupakan halaman untuk melihat indikator kinerja program.
+            </p>
+        @endif
+    </x-partials.heading.h2>
     <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
     <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="{{ $ikk['number'] }}" dataText="{{ $ikk['name'] }}" />
     <x-partials.heading.h3 title="Program strategis" dataNumber="{{ $ps['number'] }}" dataText="{{ $ps['name'] }}" />
