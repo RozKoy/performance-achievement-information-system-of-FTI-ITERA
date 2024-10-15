@@ -9,7 +9,43 @@
 
 <x-super-admin-template title="Unit - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="manajemen unit" />
+
+    <x-partials.heading.h2 text="manajemen unit" :tooltip="true">
+        @if (auth()->user()->access === 'editor')
+            <p>
+                Halaman ini merupakan halaman untuk melihat, <span class="text-green-400">menambah</span>, <span class="text-yellow-400">mengubah</span>, atau <span class="text-red-400">menghapus</span> unit.
+            </p>
+            <hr>
+            <table>
+                <tr class="*:py-1 align-middle">
+                    <td>
+                        <x-partials.button.add viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk kehalaman tambah unit</td>
+                </tr>
+                <tr class="*:py-1 align-middle">
+                    <td class="flex justify-end">
+                        <x-partials.button.edit link="#" viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk kehalaman ubah unit</td>
+                </tr>
+                <tr class="*:py-1 align-middle">
+                    <td class="flex justify-end">
+                        <x-partials.button.delete viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk menghapus data unit</td>
+                </tr>
+            </table>
+        @else
+            <p>
+                Halaman ini merupakan halaman untuk melihat unit.
+            </p>
+        @endif
+    </x-partials.heading.h2>
+
     <x-partials.search.default />
 
     @if (auth()->user()->access === 'editor')
