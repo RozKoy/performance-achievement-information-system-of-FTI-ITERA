@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RencanaStrategis\AddEvaluationRequest;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use App\Http\Requests\RencanaStrategis\AddTargetRequest;
 use App\Http\Requests\RencanaStrategis\ImportRequest;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Http\Requests\RencanaStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
 use App\Imports\RencanaStrategisSheets;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Contracts\View\View;
 use App\Models\IndikatorKinerja;
 use App\Models\SasaranStrategis;
 use Illuminate\Support\Carbon;
@@ -32,7 +36,12 @@ class RSController extends Controller
     | -----------------------------------------------------------------
     */
 
-    public function homeView(Request $request)
+    /**
+     * RS home view 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function homeView(Request $request): Factory|View
     {
         if (isset($request->year) && !is_numeric($request->year)) {
             abort(404);
@@ -247,7 +256,13 @@ class RSController extends Controller
         ]));
     }
 
-    public function detailView(Request $request, IndikatorKinerja $ik)
+    /**
+     * RS detail view 
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\IndikatorKinerja $ik
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function detailView(Request $request, IndikatorKinerja $ik): Factory|View
     {
         $status = [
             [
@@ -428,7 +443,12 @@ class RSController extends Controller
         ]));
     }
 
-    public function targetView($year)
+    /**
+     * RS target view 
+     * @param mixed $year
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function targetView($year): Factory|View
     {
         $yearInstance = RSYear::where('year', $year)
             ->firstOrFail();
@@ -527,7 +547,13 @@ class RSController extends Controller
         ]));
     }
 
-    public function periodFirstOrNew($yearId, $value)
+    /**
+     * period first or new function 
+     * @param mixed $yearId
+     * @param mixed $value
+     * @return void
+     */
+    public function periodFirstOrNew($yearId, $value): void
     {
         $temp = RSPeriod::firstOrNew([
             'year_id' => $yearId,
@@ -541,7 +567,13 @@ class RSController extends Controller
         }
     }
 
-    public function checkRoutine($currentYear, $currentPeriod)
+    /**
+     * Check routine function 
+     * @param mixed $currentYear
+     * @param mixed $currentPeriod
+     * @return void
+     */
+    public function checkRoutine($currentYear, $currentPeriod): void
     {
         $currentPeriod = RSPeriod::where('period', $currentPeriod)
             ->whereHas('year', function (Builder $query) use ($currentYear) {
@@ -558,7 +590,12 @@ class RSController extends Controller
         }
     }
 
-    public function statusToggle(RSPeriod $period)
+    /**
+     * RS status toggle function 
+     * @param \App\Models\RSPeriod $period
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function statusToggle(RSPeriod $period): RedirectResponse
     {
         if ($period->status) {
             $period->status = false;
@@ -580,7 +617,13 @@ class RSController extends Controller
         return back();
     }
 
-    public function addEvaluation(AddEvaluationRequest $request, IndikatorKinerja $ik)
+    /**
+     * RS add evaluation function 
+     * @param \App\Http\Requests\RencanaStrategis\AddEvaluationRequest $request
+     * @param \App\Models\IndikatorKinerja $ik
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addEvaluation(AddEvaluationRequest $request, IndikatorKinerja $ik): RedirectResponse
     {
         if ($request['period'] === '3') {
             if ($request['target'] === null && ($ik->type === 'teks' || $ik->status !== 'aktif')) {
@@ -688,7 +731,14 @@ class RSController extends Controller
         return back();
     }
 
-    public function addTarget(AddTargetRequest $request, $ikId, $unitId)
+    /**
+     * RS add target function 
+     * @param \App\Http\Requests\RencanaStrategis\AddTargetRequest $request
+     * @param mixed $ikId
+     * @param mixed $unitId
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addTarget(AddTargetRequest $request, $ikId, $unitId): RedirectResponse
     {
         $ik = IndikatorKinerja::findOrFail($ikId);
         Unit::withTrashed()->findOrFail($unitId);
@@ -744,7 +794,12 @@ class RSController extends Controller
         abort(404);
     }
 
-    public function RSImport(ImportRequest $request)
+    /**
+     * RS excel import function 
+     * @param \App\Http\Requests\RencanaStrategis\ImportRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function RSImport(ImportRequest $request): RedirectResponse
     {
         Excel::import(
             new RencanaStrategisSheets,
@@ -754,7 +809,12 @@ class RSController extends Controller
         return back();
     }
 
-    public function exportRS(Request $request)
+    /**
+     * RS excel download function 
+     * @param \Illuminate\Http\Request $request
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportRS(Request $request): BinaryFileResponse
     {
         if (isset($request->year) && !is_numeric($request->year)) {
             abort(404);
@@ -936,7 +996,12 @@ class RSController extends Controller
     | -----------------------------------------------------------------
     */
 
-    public function homeViewAdmin(Request $request)
+    /**
+     * RS admin home view 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function homeViewAdmin(Request $request): Factory|View
     {
         $status = [
             [
@@ -1208,7 +1273,14 @@ class RSController extends Controller
         ]));
     }
 
-    public function addAdmin(AddRequest $request, $periodId, $ikId)
+    /**
+     * RS admin add function 
+     * @param \App\Http\Requests\RencanaStrategis\AddRequest $request
+     * @param mixed $periodId
+     * @param mixed $ikId
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addAdmin(AddRequest $request, $periodId, $ikId): RedirectResponse
     {
         $realization = $request["realization-$ikId"];
 
@@ -1332,7 +1404,12 @@ class RSController extends Controller
         return back();
     }
 
-    public function historyAdmin(Request $request)
+    /**
+     * RS admin history view 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function historyAdmin(Request $request): Factory|View
     {
         $status = [
             [
