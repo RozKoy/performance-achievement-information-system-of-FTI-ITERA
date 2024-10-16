@@ -4,11 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\IndikatorKinerjaUtama\AddEvaluationRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddTargetRequest;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use App\Http\Requests\IndikatorKinerjaUtama\AddRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 use App\Models\IndikatorKinerjaProgram;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Contracts\View\View;
 use App\Models\IKUAchievementData;
 use Illuminate\Support\Carbon;
 use App\Models\IKUAchievement;
@@ -19,7 +24,6 @@ use App\Models\IKUPeriod;
 use App\Models\IKUTarget;
 use App\Models\IKUYear;
 use App\Models\Unit;
-use Maatwebsite\Excel\Facades\Excel;
 
 class IKUController extends Controller
 {
@@ -29,7 +33,12 @@ class IKUController extends Controller
     | -----------------------------------------------------------------
     */
 
-    public function homeView(Request $request)
+    /**
+     * IKU home view
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function homeView(Request $request): Factory|View
     {
         if (isset($request->year) && !is_numeric($request->year)) {
             abort(404);
@@ -195,7 +204,13 @@ class IKUController extends Controller
         ]));
     }
 
-    public function detailView(Request $request, IndikatorKinerjaProgram $ikp)
+    /**
+     * IKU detail view 
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function detailView(Request $request, IndikatorKinerjaProgram $ikp): Factory|View
     {
         if (isset($request->period) && !in_array($request->period, ['1', '2', '3', '4', '5'])) {
             abort(404);
@@ -328,7 +343,12 @@ class IKUController extends Controller
         ]));
     }
 
-    public function targetView($year)
+    /**
+     * IKU target view 
+     * @param mixed $year
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function targetView($year): Factory|View
     {
         $yearInstance = IKUYear::where('year', $year)
             ->firstOrFail();
@@ -447,7 +467,13 @@ class IKUController extends Controller
         ]));
     }
 
-    public function periodFirstOrNew($yearId, $value)
+    /**
+     * Period first or new function
+     * @param mixed $yearId
+     * @param mixed $value
+     * @return void
+     */
+    public function periodFirstOrNew($yearId, $value): void
     {
         $temp = IKUPeriod::firstOrNew([
             'year_id' => $yearId,
@@ -461,7 +487,13 @@ class IKUController extends Controller
         }
     }
 
-    public function checkRoutine($currentYear, $currentPeriod)
+    /**
+     * Check routine function 
+     * @param mixed $currentYear
+     * @param mixed $currentPeriod
+     * @return void
+     */
+    public function checkRoutine($currentYear, $currentPeriod): void
     {
         $currentPeriod = IKUPeriod::where('period', $currentPeriod)
             ->whereHas('year', function (Builder $query) use ($currentYear) {
@@ -478,7 +510,12 @@ class IKUController extends Controller
         }
     }
 
-    public function statusToggle(IKUPeriod $period)
+    /**
+     * IKU status toggle function 
+     * @param \App\Models\IKUPeriod $period
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function statusToggle(IKUPeriod $period): RedirectResponse
     {
         if ($period->status) {
             $period->status = false;
@@ -509,7 +546,13 @@ class IKUController extends Controller
         return back();
     }
 
-    public function addEvaluation(AddEvaluationRequest $request, IndikatorKinerjaProgram $ikp)
+    /**
+     * IKU add evaluation fuction 
+     * @param \App\Http\Requests\IndikatorKinerjaUtama\AddEvaluationRequest $request
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addEvaluation(AddEvaluationRequest $request, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
         $ps = $ikp->programStrategis;
         $ikk = $ps->indikatorKinerjaKegiatan;
@@ -544,7 +587,14 @@ class IKUController extends Controller
         abort(404);
     }
 
-    public function addTarget(AddTargetRequest $request, $ikpId, $unitId)
+    /**
+     * IKU add target function
+     * @param \App\Http\Requests\IndikatorKinerjaUtama\AddTargetRequest $request
+     * @param mixed $ikpId
+     * @param mixed $unitId
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addTarget(AddTargetRequest $request, $ikpId, $unitId): RedirectResponse
     {
         $ikp = IndikatorKinerjaProgram::findOrFail($ikpId);
 
@@ -589,7 +639,12 @@ class IKUController extends Controller
         abort(404);
     }
 
-    public function exportIKU(Request $request)
+    /**
+     * IKU excel download function 
+     * @param \Illuminate\Http\Request $request
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportIKU(Request $request): BinaryFileResponse
     {
         if (isset($request->year) && !is_numeric($request->year)) {
             abort(404);
@@ -760,7 +815,13 @@ class IKUController extends Controller
         return Excel::download(new IKUExport($collection->toArray()), 'indikator-kinerja-utama.xlsx');
     }
 
-    public function detailExportIKU(Request $request, IndikatorKinerjaProgram $ikp)
+    /**
+     * IKU detail excel download function 
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function detailExportIKU(Request $request, IndikatorKinerjaProgram $ikp): BinaryFileResponse
     {
         if (isset($request->period) && !in_array($request->period, ['1', '2', '3', '4', '5'])) {
             abort(404);
@@ -897,7 +958,12 @@ class IKUController extends Controller
     | -----------------------------------------------------------------
     */
 
-    public function homeViewAdmin(Request $request)
+    /**
+     * IKU admin home view
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function homeViewAdmin(Request $request): Factory|View
     {
         if (!is_numeric($request->year) && isset($request->year)) {
             abort(404);
@@ -1084,7 +1150,13 @@ class IKUController extends Controller
         ]));
     }
 
-    public function detailViewAdmin(Request $request, IndikatorKinerjaProgram $ikp)
+    /**
+     * IKU admin detail view 
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function detailViewAdmin(Request $request, IndikatorKinerjaProgram $ikp): Factory|View
     {
         if ($ikp->status !== 'aktif') {
             abort(404);
@@ -1233,7 +1305,12 @@ class IKUController extends Controller
         ]));
     }
 
-    public function historyAdmin(Request $request)
+    /**
+     * IKU admin history view 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function historyAdmin(Request $request): Factory|View
     {
         if (!is_numeric($request->year) && isset($request->year)) {
             abort(404);
@@ -1402,7 +1479,13 @@ class IKUController extends Controller
         ]));
     }
 
-    public function historyDetailAdmin(Request $request, IndikatorKinerjaProgram $ikp)
+    /**
+     * IKU admin history detail view 
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function historyDetailAdmin(Request $request, IndikatorKinerjaProgram $ikp): Factory|View
     {
         if ($ikp->status !== 'aktif') {
             abort(404);
@@ -1539,7 +1622,14 @@ class IKUController extends Controller
         ]));
     }
 
-    public function addData(AddRequest $request, $period, IndikatorKinerjaProgram $ikp)
+    /**
+     * IKU add data function 
+     * @param \App\Http\Requests\IndikatorKinerjaUtama\AddRequest $request
+     * @param mixed $period
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addData(AddRequest $request, $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
         if ($ikp->status === 'aktif') {
             $columns = $ikp->columns()
@@ -1646,7 +1736,13 @@ class IKUController extends Controller
         abort(404);
     }
 
-    public function delete(IndikatorKinerjaProgram $ikp, IKUAchievement $achievement)
+    /**
+     * IKU delete function 
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @param \App\Models\IKUAchievement $achievement
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function delete(IndikatorKinerjaProgram $ikp, IKUAchievement $achievement): RedirectResponse
     {
         if ($ikp->id === $achievement->indikatorKinerjaProgram->id && $ikp->status === 'aktif') {
             if ($achievement->period->status == 1 && $achievement->period->deadline !== null) {
