@@ -20,11 +20,60 @@
             ],
         ],
     ];
+    $stepper = [
+        [
+            'name' => 'Sasaran Strategis',
+            'status' => true,
+        ],
+        [
+            'name' => 'Kegiatan',
+            'status' => true,
+        ],
+        [
+            'name' => 'Indikator Kinerja',
+            'status' => true,
+        ],
+    ];
 @endphp
 
 <x-super-admin-template title="Renstra - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="manajemen rencana strategis - indikator kinerja" previousRoute="{{ route('super-admin-rs-k', ['ss' => $ss['id']]) }}" />
+    <x-partials.stepper.default :$stepper />
+    <x-partials.heading.h2 text="manajemen rencana strategis - indikator kinerja" previousRoute="{{ route('super-admin-rs-k', ['ss' => $ss['id']]) }}" tooltip>
+        @if (auth()->user()->access === 'editor')
+            <p>
+                Halaman ini merupakan halaman untuk melihat, <span class="text-green-400">menambah</span>, <span class="text-yellow-400">mengubah</span>, atau <span class="text-red-400">menghapus</span> indikator kinerja.
+            </p>
+            <hr>
+            <table>
+                <tr class="*:py-1 align-middle">
+                    <td>
+                        <x-partials.button.add viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk kehalaman tambah</td>
+                </tr>
+                <tr class="*:py-1 align-middle">
+                    <td class="flex items-center justify-end">
+                        <x-partials.button.edit link="#" viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk kehalaman ubah</td>
+                </tr>
+                <tr class="*:py-1 align-middle">
+                    <td class="flex items-center justify-end">
+                        <x-partials.button.delete viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk menghapus data</td>
+                </tr>
+            </table>
+        @else
+            <p>
+                Halaman ini merupakan halaman untuk melihat indikator kinerja.
+            </p>
+        @endif
+    </x-partials.heading.h2>
     <x-partials.heading.h3 title="Sasaran strategis" dataNumber="{{ $ss['number'] }}" dataText="{{ $ss['name'] }}" />
     <x-partials.heading.h3 title="Kegiatan" dataNumber="{{ $k['number'] }}" dataText="{{ $k['name'] }}" />
     <x-partials.search.default />
