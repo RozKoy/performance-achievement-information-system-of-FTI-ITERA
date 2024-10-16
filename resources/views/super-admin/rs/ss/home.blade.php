@@ -5,11 +5,75 @@
             'name' => 'Renstra - Sasaran Strategis',
         ],
     ];
+    $stepper = [
+        [
+            'name' => 'Sasaran Strategis',
+            'status' => true,
+        ],
+        [
+            'name' => 'Kegiatan',
+        ],
+        [
+            'name' => 'Indikator Kinerja',
+        ],
+    ];
 @endphp
 
 <x-super-admin-template title="Renstra - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
-    <x-partials.heading.h2 text="manajemen rencana strategis - sasaran strategis" />
+    <x-partials.stepper.default :$stepper />
+    <x-partials.heading.h2 text="manajemen rencana strategis - sasaran strategis" tooltip>
+        @if (auth()->user()->access === 'editor')
+            <p>
+                Halaman ini merupakan halaman untuk melihat, <span class="text-green-400">menambah</span>, <span class="text-yellow-400">mengubah</span>, atau <span class="text-red-400">menghapus</span> sasaran strategis.
+            </p>
+            <hr>
+            <table>
+                <tr class="*:py-1 align-middle">
+                    <td>
+                        <x-partials.button.add viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk kehalaman tambah</td>
+                </tr>
+                <tr class="*:py-1 align-middle">
+                    <td class="flex items-center justify-end">
+                        <x-partials.button.manage link="#" viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk kehalaman kelola kegiatan</td>
+                </tr>
+                <tr class="*:py-1 align-middle">
+                    <td class="flex items-center justify-end">
+                        <x-partials.button.edit link="#" viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk kehalaman ubah</td>
+                </tr>
+                <tr class="*:py-1 align-middle">
+                    <td class="flex items-center justify-end">
+                        <x-partials.button.delete viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk menghapus data</td>
+                </tr>
+            </table>
+        @else
+            <p>
+                Halaman ini merupakan halaman untuk melihat sasaran strategis.
+            </p>
+            <hr>
+            <table>
+                <tr class="*:py-1 align-middle">
+                    <td class="flex items-center justify-end">
+                        <x-partials.button.manage link="#" viewOnly />
+                    </td>
+                    <td>:</td>
+                    <td>Untuk kehalaman kelola kegiatan</td>
+                </tr>
+            </table>
+        @endif
+    </x-partials.heading.h2>
     <x-partials.search.default />
 
     @if (auth()->user()->access === 'editor')
