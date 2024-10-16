@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SasaranStrategis\EditRequest;
 use App\Http\Requests\SasaranStrategis\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\View;
 use App\Models\SasaranStrategis;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
@@ -12,7 +15,12 @@ use App\Models\RSYear;
 
 class SasaranStrategisController extends Controller
 {
-    public function homeView(Request $request)
+    /**
+     * Sasaran strategis home view
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function homeView(Request $request): Factory|View
     {
         $time = RSYear::currentTime();
 
@@ -36,7 +44,11 @@ class SasaranStrategisController extends Controller
         return view('super-admin.rs.ss.home', compact('data'));
     }
 
-    public function addView()
+    /**
+     * Sasaran strategis add view
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function addView(): Factory|View
     {
         $time = RSYear::currentTime();
 
@@ -57,16 +69,19 @@ class SasaranStrategisController extends Controller
         return view('super-admin.rs.ss.add', compact('data'));
     }
 
-    public function add(AddRequest $request)
+    /**
+     * Sasaran strategis add function
+     * @param \App\Http\Requests\SasaranStrategis\AddRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function add(AddRequest $request): RedirectResponse
     {
         $time = RSYear::currentTime();
 
         $number = (int) $request['number'];
         $dataCount = $time->sasaranStrategis->count();
         if ($number > $dataCount + 1) {
-            return back()
-                ->withInput()
-                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+            return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
         }
 
         if ($number <= $dataCount) {
@@ -80,10 +95,15 @@ class SasaranStrategisController extends Controller
         $ss->time()->associate($time);
         $ss->save();
 
-        return redirect()->route('super-admin-rs-ss');
+        return _ControllerHelpers::RedirectWithRoute('super-admin-rs-ss');
     }
 
-    public function editView(SasaranStrategis $ss)
+    /**
+     * Sasaran strategis edit view
+     * @param \App\Models\SasaranStrategis $ss
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function editView(SasaranStrategis $ss): Factory|View
     {
         $count = $ss->time->sasaranStrategis->count();
 
@@ -119,15 +139,19 @@ class SasaranStrategisController extends Controller
         ]));
     }
 
-    public function edit(EditRequest $request, SasaranStrategis $ss)
+    /**
+     * Sasaran strategis edit function
+     * @param \App\Http\Requests\SasaranStrategis\EditRequest $request
+     * @param \App\Models\SasaranStrategis $ss
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function edit(EditRequest $request, SasaranStrategis $ss): RedirectResponse
     {
         $time = $ss->time;
 
         $number = (int) $request['number'];
         if ($number > $time->sasaranStrategis->count()) {
-            return back()
-                ->withInput()
-                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+            return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
         }
 
         $currentNumber = $ss->number;
@@ -151,15 +175,20 @@ class SasaranStrategisController extends Controller
         $ss->save();
 
         if ($time->year === Carbon::now()->format('Y')) {
-            return redirect()->route('super-admin-rs-ss');
+            return _ControllerHelpers::RedirectWithRoute('super-admin-rs-ss');
         } else {
-            return redirect()->route('super-admin-achievement-rs', [
+            return _ControllerHelpers::RedirectWithRoute('super-admin-achievement-rs', [
                 'year' => $time->year
             ]);
         }
     }
 
-    public function delete($id)
+    /**
+     * Sasaran strategis delete function
+     * @param mixed $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function delete($id): RedirectResponse
     {
         $ss = SasaranStrategis::currentOrFail($id);
 
