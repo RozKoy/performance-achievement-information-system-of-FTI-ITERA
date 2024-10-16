@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Kegiatan\EditRequest;
 use App\Http\Requests\Kegiatan\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\View;
 use App\Models\SasaranStrategis;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
@@ -12,7 +15,13 @@ use App\Models\Kegiatan;
 
 class KegiatanController extends Controller
 {
-    public function homeView(Request $request, SasaranStrategis $ss)
+    /**
+     * Kegiatan home view
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\SasaranStrategis $ss
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function homeView(Request $request, SasaranStrategis $ss): Factory|View
     {
         $ss = SasaranStrategis::currentOrFail($ss->id);
 
@@ -52,7 +61,12 @@ class KegiatanController extends Controller
         ]));
     }
 
-    public function addView(SasaranStrategis $ss)
+    /**
+     * Kegiatan add view
+     * @param \App\Models\SasaranStrategis $ss
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function addView(SasaranStrategis $ss): Factory|View
     {
         $ss = SasaranStrategis::currentOrFail($ss->id);
 
@@ -82,16 +96,20 @@ class KegiatanController extends Controller
         ]));
     }
 
-    public function add(AddRequest $request, SasaranStrategis $ss)
+    /**
+     * Kegiatan add function
+     * @param \App\Http\Requests\Kegiatan\AddRequest $request
+     * @param \App\Models\SasaranStrategis $ss
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function add(AddRequest $request, SasaranStrategis $ss): RedirectResponse
     {
         $ss = SasaranStrategis::currentOrFail($ss->id);
 
         $number = $request['number'];
         $dataCount = $ss->kegiatan->count();
         if ($number > $dataCount + 1) {
-            return back()
-                ->withInput()
-                ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+            return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
         }
 
         if ($number <= $dataCount) {
@@ -105,10 +123,16 @@ class KegiatanController extends Controller
         $k->sasaranStrategis()->associate($ss);
         $k->save();
 
-        return redirect()->route('super-admin-rs-k', ['ss' => $ss->id]);
+        return _ControllerHelpers::RedirectWithRoute('super-admin-rs-k', ['ss' => $ss->id]);
     }
 
-    public function editView(SasaranStrategis $ss, Kegiatan $k)
+    /**
+     * Kegiatan edit view
+     * @param \App\Models\SasaranStrategis $ss
+     * @param \App\Models\Kegiatan $k
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function editView(SasaranStrategis $ss, Kegiatan $k): Factory|View
     {
         if ($ss->id === $k->sasaranStrategis->id) {
             $count = $ss->kegiatan->count();
@@ -154,14 +178,19 @@ class KegiatanController extends Controller
         abort(404);
     }
 
-    public function edit(EditRequest $request, SasaranStrategis $ss, Kegiatan $k)
+    /**
+     * Kegiatan edit function
+     * @param \App\Http\Requests\Kegiatan\EditRequest $request
+     * @param \App\Models\SasaranStrategis $ss
+     * @param \App\Models\Kegiatan $k
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function edit(EditRequest $request, SasaranStrategis $ss, Kegiatan $k): RedirectResponse
     {
         if ($ss->id === $k->sasaranStrategis->id) {
             $number = (int) $request['number'];
             if ($number > $ss->kegiatan->count()) {
-                return back()
-                    ->withInput()
-                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+                return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
             }
 
             $currentNumber = $k->number;
@@ -185,9 +214,9 @@ class KegiatanController extends Controller
             $k->save();
 
             if ($ss->time->year === Carbon::now()->format('Y')) {
-                return redirect()->route('super-admin-rs-k', ['ss' => $ss->id]);
+                return _ControllerHelpers::RedirectWithRoute('super-admin-rs-k', ['ss' => $ss->id]);
             } else {
-                return redirect()->route('super-admin-achievement-rs', [
+                return _ControllerHelpers::RedirectWithRoute('super-admin-achievement-rs', [
                     'year' => $ss->time->year
                 ]);
             }
@@ -196,7 +225,13 @@ class KegiatanController extends Controller
         abort(404);
     }
 
-    public function delete(SasaranStrategis $ss, Kegiatan $k)
+    /**
+     * Kegiatan delete function
+     * @param \App\Models\SasaranStrategis $ss
+     * @param \App\Models\Kegiatan $k
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function delete(SasaranStrategis $ss, Kegiatan $k): RedirectResponse
     {
         if ($ss->id === $k->sasaranStrategis->id) {
             $ss = SasaranStrategis::currentOrFail($ss->id);
