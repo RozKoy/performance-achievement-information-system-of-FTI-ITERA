@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IndikatorKinerja\EditRequest;
 use App\Http\Requests\IndikatorKinerja\AddRequest;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\View;
 use App\Models\IndikatorKinerja;
 use App\Models\SasaranStrategis;
 use Illuminate\Support\Carbon;
@@ -28,7 +31,14 @@ class IndikatorKinerjaController extends Controller
         ],
     ];
 
-    public function homeView(Request $request, SasaranStrategis $ss, Kegiatan $k)
+    /**
+     * Indikator kinerja home view 
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\SasaranStrategis $ss
+     * @param \App\Models\Kegiatan $k
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function homeView(Request $request, SasaranStrategis $ss, Kegiatan $k): Factory|View
     {
         if ($ss->id === $k->sasaranStrategis->id) {
             $ss = SasaranStrategis::currentOrFail($ss->id);
@@ -74,7 +84,13 @@ class IndikatorKinerjaController extends Controller
         abort(404);
     }
 
-    public function addView(SasaranStrategis $ss, Kegiatan $k)
+    /**
+     * Indikator kinerja add view 
+     * @param \App\Models\SasaranStrategis $ss
+     * @param \App\Models\Kegiatan $k
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function addView(SasaranStrategis $ss, Kegiatan $k): Factory|View
     {
         if ($ss->id === $k->sasaranStrategis->id) {
             $ss = SasaranStrategis::currentOrFail($ss->id);
@@ -117,7 +133,14 @@ class IndikatorKinerjaController extends Controller
         abort(404);
     }
 
-    public function add(AddRequest $request, SasaranStrategis $ss, Kegiatan $k)
+    /**
+     * Indikator kinerja add function
+     * @param \App\Http\Requests\IndikatorKinerja\AddRequest $request
+     * @param \App\Models\SasaranStrategis $ss
+     * @param \App\Models\Kegiatan $k
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function add(AddRequest $request, SasaranStrategis $ss, Kegiatan $k): RedirectResponse
     {
         if ($ss->id === $k->sasaranStrategis->id) {
             $ss = SasaranStrategis::currentOrFail($ss->id);
@@ -125,9 +148,7 @@ class IndikatorKinerjaController extends Controller
             $number = $request['number'];
             $dataCount = $k->indikatorKinerja->count();
             if ($number > $dataCount + 1) {
-                return back()
-                    ->withInput()
-                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+                return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
             }
 
             if ($number <= $dataCount) {
@@ -143,13 +164,20 @@ class IndikatorKinerjaController extends Controller
 
             $ik->save();
 
-            return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
+            return _ControllerHelpers::RedirectWithRoute('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
         }
 
         abort(404);
     }
 
-    public function editView(SasaranStrategis $ss, Kegiatan $k, IndikatorKinerja $ik)
+    /**
+     * Indikator kinerja edit view 
+     * @param \App\Models\SasaranStrategis $ss
+     * @param \App\Models\Kegiatan $k
+     * @param \App\Models\IndikatorKinerja $ik
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function editView(SasaranStrategis $ss, Kegiatan $k, IndikatorKinerja $ik): Factory|View
     {
         if ($ss->id === $k->sasaranStrategis->id && $k->id === $ik->kegiatan->id) {
             $current = $ss->time->year === Carbon::now()->format('Y');
@@ -208,14 +236,20 @@ class IndikatorKinerjaController extends Controller
         abort(404);
     }
 
-    public function edit(EditRequest $request, SasaranStrategis $ss, Kegiatan $k, IndikatorKinerja $ik)
+    /**
+     * Indikator kinerja edit function 
+     * @param \App\Http\Requests\IndikatorKinerja\EditRequest $request
+     * @param \App\Models\SasaranStrategis $ss
+     * @param \App\Models\Kegiatan $k
+     * @param \App\Models\IndikatorKinerja $ik
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function edit(EditRequest $request, SasaranStrategis $ss, Kegiatan $k, IndikatorKinerja $ik): RedirectResponse
     {
         if ($ss->id === $k->sasaranStrategis->id && $k->id === $ik->kegiatan->id) {
             $number = (int) $request['number'];
             if ($number > $k->indikatorKinerja->count()) {
-                return back()
-                    ->withInput()
-                    ->withErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
+                return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
             }
 
             $currentNumber = $ik->number;
@@ -239,9 +273,9 @@ class IndikatorKinerjaController extends Controller
             $ik->save();
 
             if ($ss->time->year === Carbon::now()->format('Y')) {
-                return redirect()->route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
+                return _ControllerHelpers::RedirectWithRoute('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
             } else {
-                return redirect()->route('super-admin-achievement-rs', [
+                return _ControllerHelpers::RedirectWithRoute('super-admin-achievement-rs', [
                     'year' => $ss->time->year
                 ]);
             }
@@ -250,7 +284,14 @@ class IndikatorKinerjaController extends Controller
         abort(404);
     }
 
-    public function statusToggle(SasaranStrategis $ss, Kegiatan $k, IndikatorKinerja $ik)
+    /**
+     * Indikator kinerja status toggle function
+     * @param \App\Models\SasaranStrategis $ss
+     * @param \App\Models\Kegiatan $k
+     * @param \App\Models\IndikatorKinerja $ik
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function statusToggle(SasaranStrategis $ss, Kegiatan $k, IndikatorKinerja $ik): RedirectResponse
     {
         if ($ss->id === $k->sasaranStrategis->id && $k->id === $ik->kegiatan->id) {
             $ss = SasaranStrategis::currentOrFail($k->sasaranStrategis->id);
@@ -270,7 +311,14 @@ class IndikatorKinerjaController extends Controller
         abort(404);
     }
 
-    public function delete(SasaranStrategis $ss, Kegiatan $k, IndikatorKinerja $ik)
+    /**
+     * Indikator kinerja delete function
+     * @param \App\Models\SasaranStrategis $ss
+     * @param \App\Models\Kegiatan $k
+     * @param \App\Models\IndikatorKinerja $ik
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function delete(SasaranStrategis $ss, Kegiatan $k, IndikatorKinerja $ik): RedirectResponse
     {
         if ($ss->id === $k->sasaranStrategis->id && $k->id === $ik->kegiatan->id) {
             $ss = SasaranStrategis::currentOrFail($k->sasaranStrategis->id);
