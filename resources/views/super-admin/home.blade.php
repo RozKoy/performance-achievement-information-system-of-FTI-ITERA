@@ -4,16 +4,16 @@
         <div class="flex w-1/2 max-w-screen-md flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-primary/75 p-3 shadow shadow-primary max-lg:w-full">
             <div class="flex w-full items-center justify-between">
                 <h6 class="text-lg uppercase md:text-xl" title="Rencana Strategis">Rencana Strategis</h6>
-                <x-partials.input.select name="rsYear" title="Pilih tahun" :data="[['value' => '2024', 'text' => '2024']]" />
+                <x-partials.input.select name="rsYear" title="Pilih tahun" :data="$rsYearList" />
             </div>
             <div class="w-full max-md:text-sm">
-                <p>Jumlah: 100</p>
-                <p>Tercapai: 80</p>
-                <p>Tidak Tercapai: 20</p>
+                <p>Jumlah: {{ $rsSum }}</p>
+                <p>Tercapai: {{ $rs['success'] }}</p>
+                <p>Tidak Tercapai: {{ $rs['failed'] }}</p>
             </div>
             <div class="relative flex aspect-square w-3/4 max-w-screen-sm items-center justify-center">
                 <canvas id="rsChart"></canvas>
-                <p class="absolute pt-7 text-3xl text-green-500 max-md:text-xl">80%</p>
+                <p class="{{ $rsPercent >= 75 ? 'text-green-500' : ($rsPercent >= 50 ? 'text-yellow-500' : 'text-red-500') }} absolute pt-7 text-3xl max-md:text-xl">{{ $rsPercent }}%</p>
             </div>
             <a href="#" class="ml-auto inline-flex items-center font-medium text-primary underline hover:text-primary/80 max-md:text-sm">
                 Selengkapnya
@@ -25,16 +25,16 @@
         <div class="flex w-1/2 max-w-screen-md flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-primary/75 p-3 shadow shadow-primary max-lg:w-full">
             <div class="flex w-full items-center justify-between">
                 <h6 class="text-lg uppercase md:text-xl" title="Indikator Kinerja Utama">Indikator Kinerja Utama</h6>
-                <x-partials.input.select name="ikuYear" title="Pilih tahun" :data="[['value' => '2024', 'text' => '2024']]" />
+                <x-partials.input.select name="ikuYear" title="Pilih tahun" :data="$ikuYearList" />
             </div>
             <div class="w-full max-md:text-sm">
-                <p>Jumlah: 100</p>
-                <p>Tercapai: 80</p>
-                <p>Tidak Tercapai: 20</p>
+                <p>Jumlah: {{ $ikuSum }}</p>
+                <p>Tercapai: {{ $iku['success'] }}</p>
+                <p>Tidak Tercapai: {{ $iku['failed'] }}</p>
             </div>
             <div class="relative flex aspect-square w-3/4 max-w-screen-sm items-center justify-center">
                 <canvas id="ikuChart"></canvas>
-                <p class="absolute pt-7 text-3xl text-green-500 max-md:text-xl">80%</p>
+                <p class="{{ $ikuPercent >= 75 ? 'text-green-500' : ($ikuPercent >= 50 ? 'text-yellow-500' : 'text-red-500') }} absolute pt-7 text-3xl max-md:text-xl">{{ $ikuPercent }}%</p>
             </div>
             <a href="#" class="ml-auto inline-flex items-center font-medium text-primary underline hover:text-primary/80 max-md:text-sm">
                 Selengkapnya
@@ -49,7 +49,14 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
         <script>
-            const setChart = (canvas) => {
+            const setChart = (canvas, data, percent) => {
+                color = {
+                    yellow: 'rgb(194 120 3)',
+                    green: 'rgb(14 159 110)',
+                    grey: 'rgb(203 213 225)',
+                    red: 'rgb(240 82 82)',
+                };
+
                 const chartOptions = {
                     type: 'doughnut',
                     data: {
@@ -59,10 +66,10 @@
                         ],
                         datasets: [{
                             label: 'Jumlah',
-                            data: [80, 20],
+                            data: [data?.success || 1, data?.failed || 0],
                             backgroundColor: [
-                                'rgb(14 159 110)',
-                                'rgb(203 213 225)',
+                                percent >= 75 ? color.green : (percent >= 50 ? color.yellow : color.red),
+                                color.grey,
                             ],
                         }],
                     },
@@ -75,8 +82,8 @@
                 new Chart(canvas, chartOptions);
             }
 
-            setChart(document.getElementById(`rsChart`));
-            setChart(document.getElementById(`ikuChart`));
+            setChart(document.getElementById(`ikuChart`), {!! json_encode($iku) !!}, {!! json_encode($ikuPercent) !!});
+            setChart(document.getElementById(`rsChart`), {!! json_encode($rs) !!}, {!! json_encode($rsPercent) !!});
         </script>
     @endpush
 
