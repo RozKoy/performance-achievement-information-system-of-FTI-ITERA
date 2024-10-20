@@ -126,7 +126,7 @@ class DashboardController extends Controller
         $ikuPercent = number_format((float) $ikuPercent, 2, '.', '');
         $rsPercent = number_format((float) $rsPercent, 2, '.', '');
 
-        return view('super-admin.home', compact([
+        return view('super-admin.dashboard.home', compact([
             'ikuYearList',
             'rsYearList',
             'ikuPercent',
