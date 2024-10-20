@@ -118,11 +118,11 @@ class DashboardController extends Controller
             }) ?? 0,
         ];
 
-        $ikuSum = $iku['success'] + $iku['failed'];
-        $rsSum = $rs['success'] + $rs['failed'];
+        $iku['sum'] = $iku['success'] + $iku['failed'];
+        $rs['sum'] = $rs['success'] + $rs['failed'];
 
-        $ikuPercent = $ikuSum ? $iku['success'] * 100 / $ikuSum : 0;
-        $rsPercent = $rsSum ? $rs['success'] * 100 / $rsSum : 0;
+        $ikuPercent = $iku['sum'] ? $iku['success'] * 100 / $iku['sum'] : 0;
+        $rsPercent = $rs['sum'] ? $rs['success'] * 100 / $rs['sum'] : 0;
 
         $ikuPercent = number_format((float) $ikuPercent, 2, '.', '');
         $rsPercent = number_format((float) $rsPercent, 2, '.', '');
@@ -132,8 +132,6 @@ class DashboardController extends Controller
             'rsYearList',
             'ikuPercent',
             'rsPercent',
-            'ikuSum',
-            'rsSum',
             'iku',
             'rs',
         ]));

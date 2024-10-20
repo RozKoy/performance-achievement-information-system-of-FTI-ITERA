@@ -7,7 +7,7 @@
                 <x-partials.input.select name="rsYear" title="Pilih tahun" :data="$rsYearList" />
             </div>
             <div class="w-full max-md:text-sm">
-                <p>Jumlah: {{ $rsSum }}</p>
+                <p>Jumlah: {{ $rs['sum'] }}</p>
                 <p>Tercapai: {{ $rs['success'] }}</p>
                 <p>Tidak Tercapai: {{ $rs['failed'] }}</p>
             </div>
@@ -28,7 +28,7 @@
                 <x-partials.input.select name="ikuYear" title="Pilih tahun" :data="$ikuYearList" />
             </div>
             <div class="w-full max-md:text-sm">
-                <p>Jumlah: {{ $ikuSum }}</p>
+                <p>Jumlah: {{ $iku['sum'] }}</p>
                 <p>Tercapai: {{ $iku['success'] }}</p>
                 <p>Tidak Tercapai: {{ $iku['failed'] }}</p>
             </div>
@@ -50,27 +50,25 @@
 
         <script>
             const setChart = (canvas, data, percent) => {
-                color = {
+                const color = {
                     yellow: 'rgb(194 120 3)',
                     green: 'rgb(14 159 110)',
                     grey: 'rgb(203 213 225)',
                     red: 'rgb(240 82 82)',
                 };
 
+                let backgroundColor = data?.sum ? [percent >= 75 ? color.green : (percent >= 50 ? color.yellow : color.red), color.grey] : [color.red];
+                let labels = data?.sum ? ['Tercapai', 'Tidak Tercapai'] : ['Belum ada data'];
+                let dataset = data?.sum ? [data?.success || 0, data?.failed || 0] : [1];
+
                 const chartOptions = {
                     type: 'doughnut',
                     data: {
-                        labels: [
-                            'Tercapai',
-                            'Tidak Tercapai',
-                        ],
+                        labels,
                         datasets: [{
                             label: 'Jumlah',
-                            data: [data?.success || 1, data?.failed || 0],
-                            backgroundColor: [
-                                percent >= 75 ? color.green : (percent >= 50 ? color.yellow : color.red),
-                                color.grey,
-                            ],
+                            backgroundColor,
+                            data: dataset,
                         }],
                     },
                     options: {
@@ -79,6 +77,7 @@
                         resizeDelay: 250,
                     },
                 };
+
                 new Chart(canvas, chartOptions);
             }
 
