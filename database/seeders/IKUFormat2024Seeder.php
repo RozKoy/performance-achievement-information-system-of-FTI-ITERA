@@ -731,21 +731,19 @@ class IKUFormat2024Seeder extends Seeder
                         ]);
                         foreach ($ikp['column'] as $colKey => $col) {
                             $file = false;
-                            if (isset($col[$colKey + 1])) {
-                                if ($col[$colKey + 1] === 1) {
+                            if (isset($ikp['column'][$colKey + 1])) {
+                                if ($ikp['column'][$colKey + 1] === 1) {
                                     $file = true;
                                 }
                             }
-                            IKPColumn::create([
-                                'indikator_kinerja_program_id' => $ikpData->id,
+                            if ($col !== 1) {
+                                IKPColumn::create([
+                                    'indikator_kinerja_program_id' => $ikpData->id,
 
-                                'number' => $colKey + 1,
-                                'file' => $file,
-                                'name' => $col,
-                            ]);
-
-                            if ($file) {
-                                break;
+                                    'number' => $colKey + 1,
+                                    'file' => $file,
+                                    'name' => $col,
+                                ]);
                             }
                         }
                     }
