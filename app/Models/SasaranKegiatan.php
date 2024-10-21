@@ -69,7 +69,7 @@ class SasaranKegiatan extends Model
             return $ss;
         }
 
-        return abort(404);
+        abort(404);
     }
 
     public function deleteOrTrashed(): void
