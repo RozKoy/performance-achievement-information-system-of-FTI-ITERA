@@ -4,7 +4,12 @@
         <div class="flex w-1/2 max-w-screen-md flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-primary/75 p-3 shadow shadow-primary max-lg:w-full">
             <div class="flex w-full items-center justify-between">
                 <h6 class="text-lg uppercase md:text-xl" title="Rencana Strategis">Rencana Strategis</h6>
-                <x-partials.input.select name="rsYear" title="Pilih tahun" :data="$rsYearList" />
+                <form action="">
+                    @if (request()->query('ikuYear'))
+                        <input type="hidden" name="ikuYear" value="{{ request()->query('ikuYear') }}">
+                    @endif
+                    <x-partials.input.select name="rsYear" title="Pilih tahun" :data="$rsYearList" onchange="this.form.submit()" />
+                </form>
             </div>
             <div class="w-full max-md:text-sm">
                 <p>Jumlah: {{ $rs['sum'] }}</p>
@@ -25,7 +30,12 @@
         <div class="flex w-1/2 max-w-screen-md flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-primary/75 p-3 shadow shadow-primary max-lg:w-full">
             <div class="flex w-full items-center justify-between">
                 <h6 class="text-lg uppercase md:text-xl" title="Indikator Kinerja Utama">Indikator Kinerja Utama</h6>
-                <x-partials.input.select name="ikuYear" title="Pilih tahun" :data="$ikuYearList" />
+                <form action="">
+                    @if (request()->query('rsYear'))
+                        <input type="hidden" name="rsYear" value="{{ request()->query('rsYear') }}">
+                    @endif
+                    <x-partials.input.select name="ikuYear" title="Pilih tahun" :data="$ikuYearList" onchange="this.form.submit()" />
+                </form>
             </div>
             <div class="w-full max-md:text-sm">
                 <p>Jumlah: {{ $iku['sum'] }}</p>
