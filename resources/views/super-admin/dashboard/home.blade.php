@@ -46,7 +46,7 @@
                 <canvas id="ikuChart"></canvas>
                 <p class="{{ $ikuPercent >= 75 ? 'text-green-500' : ($ikuPercent >= 50 ? 'text-yellow-500' : 'text-red-500') }} absolute pt-7 text-3xl max-md:text-xl">{{ $ikuPercent }}%</p>
             </div>
-            <a href="{{ url(route('super-admin-dashboard-iku')) }}" class="ml-auto inline-flex items-center font-medium text-primary underline hover:text-primary/80 max-md:text-sm">
+            <a href="{{ url(route('super-admin-dashboard-iku', ['year' => $ikuYear])) }}" class="ml-auto inline-flex items-center font-medium text-primary underline hover:text-primary/80 max-md:text-sm">
                 Selengkapnya
                 <svg class="ms-1 aspect-square w-2.5 max-md:w-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />

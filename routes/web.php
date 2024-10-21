@@ -58,7 +58,7 @@ Route::controller(AuthController::class)->group(function () {
 Route::prefix('/super-admin')->middleware('superadmin')->group(function () {
     Route::prefix('/beranda')->controller(DashboardController::class)->group(function () {
         Route::get('/', 'home')->name('super-admin-dashboard');
-        Route::get('/iku', 'iku')->name('super-admin-dashboard-iku');
+        Route::get('/iku/{year}', 'iku')->name('super-admin-dashboard-iku');
     });
 
     Route::prefix('/capaian-kinerja')->group(function () {
