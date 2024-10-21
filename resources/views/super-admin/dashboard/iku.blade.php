@@ -2,7 +2,7 @@
 
     <x-partials.heading.h2 text="Indikator Kinerja Utama" :$previousRoute />
     <form action="" class="flex items-center justify-end">
-        <x-partials.input.select name="ikuYear" title="Pilih tahun" :data="$ikuYearList" onchange="this.form.submit()" />
+        <x-partials.input.select name="year" title="Pilih tahun" :data="$ikuYearList" onchange="this.form.submit()" />
     </form>
     <div class="flex w-full flex-col gap-1 text-xs sm:text-sm md:text-base 2xl:text-lg">
 
