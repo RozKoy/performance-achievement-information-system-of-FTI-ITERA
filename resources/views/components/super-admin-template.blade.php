@@ -55,6 +55,19 @@
                 </ul>
             @endif
 
+            <ul class="space-y-2 py-1.5 font-medium">
+                <li>
+                    <div class="flex justify-end">
+                        <a href="https://drive.google.com/file/d/1lrHkpPTbaliBQ5AP2oq1cWWmf3Ljq0uj/view?usp=sharing" target="_blank" title="Manual Book" class="flex items-center gap-1 underline">
+                            Manual Book
+                            <svg class="aspect-square w-2.5 max-md:w-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
+                            </svg>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+
         </div>
     </aside>
 
