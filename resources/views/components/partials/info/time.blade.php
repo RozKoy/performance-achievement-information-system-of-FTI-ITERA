@@ -17,12 +17,18 @@
                 Rencana Strategis
             </p>
             <x-partials.badge.time :data="$rs" />
+            <p>
+                Batas waktu : {{ $rsDeadline->days }} hari
+            </p>
         </div>
         <div class="*:my-1 cursor-default px-4 py-2.5 text-sm text-primary" role="none">
             <p role="none" title="Indikator kinerja utama">
                 Indikator Kinerja Utama
             </p>
             <x-partials.badge.time :data="$iku" />
+            <p>
+                Batas waktu : {{ $ikuDeadline->days }} hari
+            </p>
         </div>
     </div>
 </div>
