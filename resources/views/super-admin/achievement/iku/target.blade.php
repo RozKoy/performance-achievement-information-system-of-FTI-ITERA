@@ -83,7 +83,7 @@
                                         <td>
                                             @if ($exists !== null)
                                                 @php
-                                                    $id = $loop->parent->parent->iteration . $loop->parent->iteration . $loop->iteration;
+                                                    $id = $loop->parent->parent->parent->parent->iteration . $loop->parent->parent->parent->iteration . $loop->parent->parent->iteration . $loop->parent->iteration . $loop->iteration;
                                                 @endphp
 
                                                 <div id="target-{{ $id }}" title="{{ $exists['target'] }}" class="group relative z-10 py-1.5">
