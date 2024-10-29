@@ -341,8 +341,10 @@ class RSController extends Controller
                 }
             })
             ->select([
+                'unit_id',
+
                 'realization',
-                'unit_id'
+                'link',
             ])
             ->latest()
             ->get()

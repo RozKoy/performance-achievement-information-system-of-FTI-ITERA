@@ -149,7 +149,10 @@
                                 <td title="{{ $item['unit']['target'] }}">{{ $item['unit']['target'] }}</td>
                             @endif
 
-                            <td title="{{ $item['realization'] }}">{{ $item['realization'] }}</td>
+                            <td title="{{ $item['realization'] }}">{{ $item['realization'] }} @if ($item['link'])
+                                    <a href="{{ $item['link'] }}" class="ms-1 text-primary underline">{{ $item['link'] }}</a>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
 
