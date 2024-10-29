@@ -1604,6 +1604,12 @@ class RSController extends Controller
                                 }
                             ], 'realization')
                             ->withAggregate([
+                                'realization AS link' => function (Builder $query) use ($periodInstance) {
+                                    $query->whereBelongsTo(auth()->user()->unit)
+                                        ->whereBelongsTo($periodInstance, 'period');
+                                }
+                            ], 'link')
+                            ->withAggregate([
                                 'target AS target' => function (Builder $query) {
                                     $query->whereBelongsTo(auth()->user()->unit);
                                 }
