@@ -77,8 +77,9 @@
                                                 $id = $loop->parent->parent->iteration . $loop->parent->iteration . $loop->iteration;
                                             @endphp
 
-                                            <div id="realization-{{ $id }}" title="{{ $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}" class="group relative z-10 py-1.5">
-                                                <p>{{ $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}</p>
+                                            <div id="realization-{{ $id }}" class="group relative z-10 flex items-center justify-center gap-1 py-1.5">
+                                                <p title="{{ $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}">{{ $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}</p>
+                                                <a href="{{}}" title="Link Bukti" class="text-primary underline">Link Bukti</a>
 
                                                 @if (auth()->user()->access === 'editor')
                                                     <x-partials.button.edit button onclick="toggleEditForm('{{ $id }}')" style="absolute hidden top-0.5 right-0.5 group-hover:block group-focus:block" />
@@ -98,6 +99,9 @@
                                                         @endif
 
                                                     </div>
+                                                    <div class="flex-1">
+                                                        <x-partials.input.text name="link-{{ $ik['id'] }}" title="link bukti" required />
+                                                    </div>
                                                     <div class="ml-auto flex items-center justify-end gap-0.5">
                                                         <x-partials.button.edit />
                                                         <x-partials.button.cancel onclick="toggleEditForm('{{ $id }}')" />
@@ -116,6 +120,9 @@
                                                             <x-partials.input.number name="realization-{{ $ik['id'] }}" title="realisasi" required />
                                                         @endif
 
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <x-partials.input.text name="link-{{ $ik['id'] }}" title="link bukti" required />
                                                     </div>
                                                     <x-partials.button.add text="" submit />
                                                 </form>
