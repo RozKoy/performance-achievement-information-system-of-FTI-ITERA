@@ -22,6 +22,7 @@ class RSAchievement extends Model
 
     protected $fillable = [
         'realization',
+        'link',
 
         'indikator_kinerja_id',
         'period_id',
