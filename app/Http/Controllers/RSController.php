@@ -1202,6 +1202,12 @@ class RSController extends Controller
                                 }
                             ], 'realization')
                             ->withAggregate([
+                                'realization AS link' => function (Builder $query) use ($periodInstance) {
+                                    $query->whereBelongsTo(auth()->user()->unit)
+                                        ->whereBelongsTo($periodInstance, 'period');
+                                }
+                            ], 'link')
+                            ->withAggregate([
                                 'target AS target' => function (Builder $query) {
                                     $query->whereBelongsTo(auth()->user()->unit);
                                 }
@@ -1283,6 +1289,7 @@ class RSController extends Controller
     public function addAdmin(AddRequest $request, $periodId, $ikId): RedirectResponse
     {
         $realization = $request["realization-$ikId"];
+        $link = $request["link-$ikId"];
 
         $currentMonth = (int) Carbon::now()->format('m');
         $currentPeriod = $currentMonth <= 6 ? '1' : '2';
@@ -1306,6 +1313,13 @@ class RSController extends Controller
                 });
             })
             ->firstOrFail();
+
+
+        if ($realization !== null && $link === null) {
+            return back()
+                ->withInput()
+                ->withErrors(["link-$ikId" => 'Link bukti wajib diisi']);
+        }
 
         if ($realization !== null && !is_numeric($realization) && ($ik->type === 'persen' || $ik->type === 'angka')) {
             return back()
@@ -1344,7 +1358,8 @@ class RSController extends Controller
         if ($realization !== null) {
             $achievement = $achievement->firstOrNew();
 
-            $achievement->realization = "$realization";
+            $achievement->realization = (string) $realization;
+            $achievement->link = (string) $link;
 
             $achievement->unit()->associate(auth()->user()->unit);
             $achievement->indikatorKinerja()->associate($ik);

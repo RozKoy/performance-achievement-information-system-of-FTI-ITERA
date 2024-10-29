@@ -22,6 +22,7 @@ class AddRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'link-*' => ['bail', 'nullable', 'string', 'max:5000'],
             'realization-*' => ['bail', 'nullable', 'max:255'],
         ];
     }
@@ -34,6 +35,7 @@ class AddRequest extends FormRequest
     {
         return [
             'realization-*' => 'Realisasi',
+            'link-*' => 'Link Bukti',
         ];
     }
 
