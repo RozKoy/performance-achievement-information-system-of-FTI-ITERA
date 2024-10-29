@@ -1737,6 +1737,13 @@ class IKUController extends Controller
         abort(404);
     }
 
+    /**
+     * Bulk add data function
+     * @param \Illuminate\Http\Request $request
+     * @param mixed $period
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function bulkAddData(Request $request, $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
         if ($ikp->status === 'aktif') {
