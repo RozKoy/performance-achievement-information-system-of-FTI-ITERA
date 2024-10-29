@@ -80,7 +80,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin-iku-data', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" enctype="multipart/form-data" class="relative w-full overflow-x-auto rounded-lg">
+    <form id="data-form" action="{{ route('admin-iku-data', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" enctype="multipart/form-data" class="w-full overflow-x-auto rounded-lg">
         @method('PUT')
         @csrf
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
@@ -177,17 +177,18 @@
 
             </tbody>
         </table>
-
-        @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
-            <button type="button" id="add-row-button" title="Tombol tambah data" onclick="addRow(0)" class="sticky left-0 right-0 my-2.5 ml-auto flex w-full items-center justify-center gap-0.5 rounded-full bg-green-500 p-0.5 text-white hover:bg-green-400">
-                <p>Tambah Data</p>
-            </button>
-            <button type="submit" title="Tombol simpan data" class="sticky left-0 right-0 my-2.5 ml-auto flex w-full items-center justify-center gap-0.5 rounded-full bg-yellow-500 p-0.5 text-white hover:bg-yellow-400">
-                <p>Simpan Data</p>
-            </button>
-        @endif
-
     </form>
+
+    @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
+        <div class="flex w-full flex-wrap gap-1.5">
+            <button type="button" id="add-row-button" title="Tombol tambah data" onclick="addRow(0)" class="sticky left-0 right-0 my-2.5 ml-auto flex w-full items-center justify-center gap-0.5 rounded-full bg-green-500 p-0.5 text-white hover:bg-green-400">
+                <p>Tambah</p>
+            </button>
+            <button type="button" onclick="document.getElementById('data-form').submit()" title="Tombol simpan data" class="sticky left-0 right-0 my-2.5 ml-auto flex w-full items-center justify-center gap-0.5 rounded-full bg-yellow-500 p-0.5 text-white hover:bg-yellow-400">
+                <p>Simpan</p>
+            </button>
+        </div>
+    @endif
 
     @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
         <table class="hidden">
