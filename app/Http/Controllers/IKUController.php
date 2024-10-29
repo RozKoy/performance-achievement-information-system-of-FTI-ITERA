@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\IndikatorKinerjaUtama\AddEvaluationRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddTargetRequest;
+use Illuminate\Http\UploadedFile;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use App\Http\Requests\IndikatorKinerjaUtama\AddRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -1717,6 +1718,177 @@ class IKUController extends Controller
                     $data->data = $fileURI;
 
                     $data->save();
+                }
+            }
+
+            $evaluation = $ikp->evaluation;
+
+            if ($evaluation) {
+                $all = $ikp->achievements()
+                    ->count();
+
+                $evaluation->status = $all >= $evaluation->target;
+                $evaluation->save();
+            }
+
+            return back();
+        }
+
+        abort(404);
+    }
+
+    public function bulkAddData(Request $request, $period, IndikatorKinerjaProgram $ikp): RedirectResponse
+    {
+        if ($ikp->status === 'aktif') {
+            $columns = $ikp->columns()
+                ->orderBy('number')
+                ->get();
+
+            $ps = $ikp->programStrategis;
+            $ikk = $ps->indikatorKinerjaKegiatan;
+            $sk = $ikk->sasaranKegiatan;
+
+            $year = $sk->time;
+
+            $currentMonth = (int) Carbon::now()->format('m');
+            $currentYear = Carbon::now()->format('Y');
+            $currentPeriod = '1';
+
+            foreach ([3, 6, 9, 12] as $key => $value) {
+                if ($currentMonth <= $value) {
+                    $temp = $key + 1;
+                    $currentPeriod = "$temp";
+
+                    break;
+                }
+            }
+
+            $periodInstance = $year->periods()
+                ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
+                    $query->where('period', $currentPeriod)
+                        ->whereHas('year', function (Builder $query) use ($currentYear) {
+                            $query->where('year', $currentYear);
+                        });
+                })
+                ->where('period', $period)
+                ->where('status', true)
+                ->firstOrFail();
+
+            $ids = collect();
+            foreach ($request['old'] ?? [] as $itemKey => $item) {
+                $inputExists = false;
+                foreach ($columns->where('file', false) as $key => $column) {
+                    if ($item['data'][(string) $column->id] !== null) {
+                        $inputExists = true;
+                        break;
+                    }
+                }
+
+                if ($inputExists) {
+                    $achievement = $ikp->achievements()->find($item['id']);
+
+                    if ($achievement) {
+                        $ids->push($achievement->id);
+
+                        $achievement->data()->whereHas('column', function (Builder $query) {
+                            $query->where('file', false);
+                        })->forceDelete();
+
+                        foreach ($columns->where('file', false) as $key => $column) {
+                            if ($item['data'][(string) $column->id] !== null) {
+                                $achievement->data()->create([
+                                    'column_id' => $column->id,
+
+                                    'data' => $item['data'][(string) $column->id],
+                                ]);
+                            }
+                        }
+
+                        if ($temp = $columns->firstWhere('file', true)) {
+                            if (isset($request->file('old')[$itemKey]['data'][$temp->id])) {
+                                if ($request->file('old')[$itemKey]['data'][$temp->id] instanceof UploadedFile) {
+                                    $file = $achievement->data()->firstOrNew(
+                                        [
+                                            'column_id' => $temp->id,
+                                        ],
+                                        [
+                                            'column_id' => $temp->id,
+                                        ],
+                                    );
+
+                                    if ($file->data) {
+                                        if (Storage::exists($file->data)) {
+                                            Storage::delete($file->data);
+                                        }
+                                    }
+
+                                    $fileURI = $request->file('old')[$itemKey]['data'][$temp->id]
+                                        ->store('IKUFiles/' . auth()->user()->unit->name . '/' . $ikp->id);
+
+                                    $file->data = $fileURI;
+                                    $file->save();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $unset = $ikp->achievements()->whereNotIn('id', $ids->toArray())->get();
+            foreach ($unset as $item) {
+                $itemData = $item->data()->whereHas('column', function (Builder $query) {
+                    $query->where('file', true);
+                })->get();
+
+                foreach ($itemData as $cItem) {
+                    if (Storage::exists($cItem->data)) {
+                        Storage::delete($cItem->data);
+                    }
+                }
+
+                $item->data()->forceDelete();
+                $item->forceDelete();
+            }
+
+            foreach ($request['new'] ?? [] as $itemKey => $item) {
+                $inputExists = false;
+                foreach ($columns->where('file', false) as $key => $column) {
+                    if ($item[(string) $column->id] !== null) {
+                        $inputExists = true;
+                        break;
+                    }
+                }
+
+                if ($inputExists) {
+                    $achievement = $ikp->achievements()->create([
+                        'unit_id' => auth()->user()->unit->id,
+                        'period_id' => $periodInstance->id,
+                    ]);
+
+                    foreach ($columns->where('file', false) as $key => $column) {
+                        if ($item[(string) $column->id] !== null) {
+                            $achievement->data()->create([
+                                'column_id' => $column->id,
+
+                                'data' => $item[(string) $column->id],
+                            ]);
+                        }
+                    }
+
+                    if ($temp = $columns->firstWhere('file', true)) {
+                        if (isset($request->file('new')[$itemKey][$temp->id])) {
+                            if ($request->file('new')[$itemKey][$temp->id] instanceof UploadedFile) {
+                                $fileURI = $request->file('new')[$itemKey][$temp->id]
+                                    ->store('IKUFiles/' . auth()->user()->unit->name . '/' . $ikp->id);
+
+                                $achievement->data()->create([
+                                    'column_id' => $temp->id,
+
+                                    'data' => $fileURI,
+                                ]);
+                            }
+                        }
+                    }
                 }
             }
 
