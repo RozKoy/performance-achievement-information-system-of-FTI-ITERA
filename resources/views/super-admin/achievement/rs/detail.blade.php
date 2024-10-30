@@ -149,8 +149,10 @@
                                 <td title="{{ $item['unit']['target'] }}">{{ $item['unit']['target'] }}</td>
                             @endif
 
-                            <td title="{{ $item['realization'] }}">{{ $item['realization'] }} @if ($item['link'])
-                                    <a href="{{ $item['link'] }}" class="ms-1 text-primary underline">{{ $item['link'] }}</a>
+                            <td title="{{ $item['realization'] }}">
+                                {{ $item['realization'] }}
+                                @if ($item['link'])
+                                    <a href="{{ $item['link'] }}" title="Link bukti" class="ms-1 text-primary underline">Link Bukti</a>
                                 @endif
                             </td>
                         </tr>
