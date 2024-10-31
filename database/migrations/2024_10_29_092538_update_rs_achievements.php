@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('rs_achievements', function (Blueprint $table) {
-            $table->tinyText('link')->nullable();
+            $table->tinyText('link')->nullable()->after('realization');
         });
     }
 
