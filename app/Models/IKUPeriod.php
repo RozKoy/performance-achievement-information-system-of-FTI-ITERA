@@ -58,6 +58,11 @@ class IKUPeriod extends Model
         return $this->hasMany(IKUAchievement::class, 'period_id');
     }
 
+    public function singleAchievements(): HasMany
+    {
+        return $this->hasMany(IKUSingleAchievement::class, 'period_id');
+    }
+
     public function periods(): HasMany
     {
         return $this->hasMany(IKUPeriod::class, 'deadline_id');
