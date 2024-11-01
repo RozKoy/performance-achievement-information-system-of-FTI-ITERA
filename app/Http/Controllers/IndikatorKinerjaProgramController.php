@@ -47,6 +47,7 @@ class IndikatorKinerjaProgramController extends Controller
                     'number',
                     'status',
                     'name',
+                    'mode',
                     'type',
                     'id',
                 ])
@@ -56,10 +57,10 @@ class IndikatorKinerjaProgramController extends Controller
                             ->orWhere('definition', 'LIKE', "%{$request->search}%")
                             ->orWhere('number', $request->search)
                             ->orWhere('status', $request->search)
+                            ->orWhere('mode', $request->search)
                             ->orWhere('type', $request->search);
                     }
                 })
-                ->withCount('columns AS column')
                 ->orderBy('number')
                 ->get()
                 ->toArray();

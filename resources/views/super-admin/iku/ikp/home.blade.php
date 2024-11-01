@@ -103,7 +103,7 @@
                     <th title="Nomor">No</th>
                     <th title="Indikator kinerja program">Indikator Kinerja Program</th>
                     <th title="Definisi operasional">Definisi Operasional</th>
-                    <th title="Kolom">Kolom</th>
+                    <th title="Mode">Mode</th>
 
                     @if (auth()->user()->access === 'editor')
                         <th title="Status">Status</th>
@@ -120,7 +120,7 @@
                             'nomor' => $item['number'],
                             'indikator kinerja program' => $item['name'],
                             'definisi operasional' => $item['definition'],
-                            'kolom' => $item['column'],
+                            'mode' => $item['mode'],
                             'jenis' => $item['type'],
                             'status' => $item['status'],
                         ];
@@ -133,7 +133,7 @@
                             <span title="{{ $item['type'] === 'iku' ? 'Indikator kinerja utama' : 'Indikator kinerja tambahan' }}" class="absolute right-1 top-1 z-10 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $item['type'] }}</span>
                         </td>
                         <td title="{{ $item['definition'] }}" class="min-w-72 w-max text-left">{{ $item['definition'] }}</td>
-                        <td title="{{ $item['column'] }}">{{ $item['column'] }}</td>
+                        <td title="{{ $item['mode'] }}" class="capitalize">{{ $item['mode'] }}</td>
 
                         @if (auth()->user()->access === 'editor')
                             <td title="{{ $item['status'] }}">
