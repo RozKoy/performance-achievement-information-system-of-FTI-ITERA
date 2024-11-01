@@ -176,29 +176,32 @@ class IndikatorKinerjaProgramController extends Controller
                     ->increment('number');
             }
 
-            $ikp = new IndikatorKinerjaProgram($request->safe()->except('columns', 'file'));
+            $ikp = new IndikatorKinerjaProgram($request->safe()->except('columns', 'file', 'mode'));
 
             $ikp->programStrategis()->associate($ps);
+            $ikp->mode = $request['mode'] ?? 'table';
             $ikp->status = 'aktif';
 
             $ikp->save();
 
-            $index = 1;
-            foreach ($request['columns'] as $value) {
-                $ikp->columns()->create([
-                    'number' => $index,
-                    'name' => $value
-                ]);
+            if ($ikp->mode === 'table') {
+                $index = 1;
+                foreach ($request['columns'] as $value) {
+                    $ikp->columns()->create([
+                        'number' => $index,
+                        'name' => $value
+                    ]);
 
-                $index++;
-            }
+                    $index++;
+                }
 
-            if ($request['file'] !== null) {
-                $ikp->columns()->create([
-                    'name' => $request['file'],
-                    'number' => $index,
-                    'file' => true
-                ]);
+                if ($request['file'] !== null) {
+                    $ikp->columns()->create([
+                        'name' => $request['file'],
+                        'number' => $index,
+                        'file' => true
+                    ]);
+                }
             }
 
             return _ControllerHelpers::RedirectWithRoute('super-admin-iku-ikp', ['sk' => $sk->id, 'ikk' => $ikk->id, 'ps' => $ps->id]);
