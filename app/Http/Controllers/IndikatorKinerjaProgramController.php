@@ -369,6 +369,7 @@ class IndikatorKinerjaProgramController extends Controller
         if ($sk->id === $ikk->sasaranKegiatan->id && $ikk->id === $ps->indikatorKinerjaKegiatan->id && $ps->id === $ikp->programStrategis->id) {
             $sk = SasaranKegiatan::currentOrFail($sk->id);
 
+            $ikp->singleAchievements()->forceDelete();
             $ikp->achievements()->forceDelete();
             $ikp->evaluation()->forceDelete();
             $ikp->target()->forceDelete();
