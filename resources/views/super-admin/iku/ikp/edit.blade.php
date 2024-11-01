@@ -66,6 +66,10 @@
 
         <div class="flex flex-wrap gap-2">
             <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
+                <x-partials.label.default for="mode" title="Mode" text="Mode" required />
+                <x-partials.input.select name="mode" title="Mode" :data="[['text' => $ikp['mode'], 'value' => $ikp['mode']]]" disabled />
+            </div>
+            <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
                 <x-partials.input.select name="number" title="Nomor" :$data required />
 
@@ -92,30 +96,34 @@
             <x-partials.label.default for="definition" title="Definisi operasional" text="Definisi Operasional" required />
             <x-partials.input.text name="definition" title="Definisi operasional" value="{{ $ikp['definition'] }}" required />
         </div>
-        <x-partials.label.default for="" title="Kolom" text="Kolom" />
-        <div class="w-full overflow-x-auto rounded-lg">
-            <table class="min-w-full max-lg:text-sm max-md:text-xs">
-                <thead>
-                    <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap *:border bg-primary/80 text-white">
-                        <th title="Nomor">No</th>
 
-                        @foreach ($columns as $column)
-                            <th title="{{ $column['name'] }}">
-                                <div class="flex items-center justify-center gap-1">
-                                    <p>{{ $column['name'] }}</p>
+        @if ($ikp['mode'] === 'table')
+            <x-partials.label.default for="" title="Kolom" text="Kolom" />
+            <div class="w-full overflow-x-auto rounded-lg">
+                <table class="min-w-full max-lg:text-sm max-md:text-xs">
+                    <thead>
+                        <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap *:border bg-primary/80 text-white">
+                            <th title="Nomor">No</th>
 
-                                    @if ($column['file'])
-                                        <p class="rounded-lg bg-white/50 px-1 py-0.5 text-xs text-primary xl:text-sm">File</p>
-                                    @endif
+                            @foreach ($columns as $column)
+                                <th title="{{ $column['name'] }}">
+                                    <div class="flex items-center justify-center gap-1">
+                                        <p>{{ $column['name'] }}</p>
 
-                                </div>
-                            </th>
-                        @endforeach
+                                        @if ($column['file'])
+                                            <p class="rounded-lg bg-white/50 px-1 py-0.5 text-xs text-primary xl:text-sm">File</p>
+                                        @endif
 
-                    </tr>
-                </thead>
-            </table>
-        </div>
+                                    </div>
+                                </th>
+                            @endforeach
+
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        @endif
+
         <x-partials.button.edit />
     </form>
 

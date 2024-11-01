@@ -283,6 +283,7 @@ class IndikatorKinerjaProgramController extends Controller
             $ikp = $ikp->only([
                 'definition',
                 'status',
+                'mode',
                 'name',
                 'id',
             ]);
