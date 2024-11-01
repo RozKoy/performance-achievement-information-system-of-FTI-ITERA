@@ -77,13 +77,10 @@
             <x-partials.label.default for="definition" title="Definisi operasional" text="Definisi Operasional" required />
             <x-partials.input.text name="definition" title="Definisi operasional" value="{{ old('definition') }}" required />
         </div>
-        <div class="flex items-center justify-start gap-2">
-            <x-partials.label.default for="columns[]" title="Kolom" text="Kolom" required />
-            <button type="button" title="Tombol tambah kolom" onclick="addColumn()" class="rounded-full bg-green-500 p-0.5 text-white hover:bg-green-400">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="aspect-square w-3 sm:w-4">
-                    <path d="m12 0a12 12 0 1 0 12 12 12.013 12.013 0 0 0 -12-12zm0 22a10 10 0 1 1 10-10 10.011 10.011 0 0 1 -10 10zm1-11h4v2h-4v4h-2v-4h-4v-2h4v-4h2z" />
-                </svg>
-            </button>
+        <div class="*:flex-1 *:rounded-lg *:p-1 *:bg-primary/80 flex gap-2.5 py-1 text-white">
+            <button id="table-mode-button" type="button" title="Mode data dukung" onclick="switchSelection('table-mode-button', 'single-mode-button')" class="hover:bg-primary/70">Mode Data Dukung</button>
+            <button id="single-mode-button" type="button" title="Mode satu nilai" onclick="switchSelection('single-mode-button', 'table-mode-button')" class="hover:bg-primary/70">Mode Satu Nilai</button>
+            <input type="hidden" name="mode" id="mode">
         </div>
 
         @error('columns')
@@ -94,20 +91,36 @@
             <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
         @enderror
 
-        <div id="columnList" class="flex flex-wrap gap-2">
-            <div class="relative flex flex-1">
-                <x-partials.input.textarea name="columns[]" title="Kolom" style="flex-1 h-full" required />
-            </div>
+        <div id="selection">
         </div>
-        <div class="flex flex-1 flex-col gap-2">
-            <x-partials.label.default for="file" title="Kolom file" text="Kolom File" />
-            <div>
-                <x-partials.input.text name="file" title="Kolom file" value="{{ old('file') }}" />
-                <p class="text-xs font-bold text-red-400">*Kosongkan kolom file jika tidak digunakan</p>
-            </div>
-        </div>
+
         <x-partials.button.add style="ml-auto" submit />
     </form>
+
+    <div id="table-mode-selection" class="hidden flex-col gap-2">
+        <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-start gap-2">
+                <x-partials.label.default for="columns[]" title="Kolom" text="Kolom" required />
+                <button type="button" title="Tombol tambah kolom" onclick="addColumn()" class="rounded-full bg-green-500 p-0.5 text-white hover:bg-green-400">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="aspect-square w-3 sm:w-4">
+                        <path d="m12 0a12 12 0 1 0 12 12 12.013 12.013 0 0 0 -12-12zm0 22a10 10 0 1 1 10-10 10.011 10.011 0 0 1 -10 10zm1-11h4v2h-4v4h-2v-4h-4v-2h4v-4h2z" />
+                    </svg>
+                </button>
+            </div>
+            <div id="columnList" class="flex flex-wrap gap-2">
+                <div class="relative flex flex-1">
+                    <x-partials.input.textarea name="columns[]" title="Kolom" style="flex-1 h-full" required />
+                </div>
+            </div>
+            <div class="flex flex-1 flex-col gap-2">
+                <x-partials.label.default for="file" title="Kolom file" text="Kolom File" />
+                <div>
+                    <x-partials.input.text name="file" title="Kolom file" value="{{ old('file') }}" />
+                    <p class="text-xs font-bold text-red-400">*Kosongkan kolom file jika tidak digunakan</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="columnInput" class="hidden">
         <div class="relative flex flex-1">
@@ -126,6 +139,45 @@
                 let columnInput = document.getElementById('columnInput').firstElementChild.cloneNode(true);
                 document.getElementById('columnList').appendChild(columnInput);
             }
+
+            function addClass(id, arr) {
+                let elementClass = document.getElementById(id).classList;
+                arr.forEach(item => {
+                    if (!elementClass.contains(item)) {
+                        elementClass.add(item);
+                    }
+                });
+            }
+
+            function removeClass(id, arr) {
+                let elementClass = document.getElementById(id).classList;
+                arr.forEach(item => {
+                    if (elementClass.contains(item)) {
+                        elementClass.remove(item);
+                    }
+                });
+            }
+
+            function switchSelection(first, second) {
+                document.getElementById(first).removeAttribute('onclick');
+                document.getElementById(second).setAttribute('onclick', `switchSelection('${ second }', '${ first }')`);
+
+                addClass(first, ['outline', 'outline-2', 'outline-offset-1', 'outline-primary']);
+                removeClass(second, ['outline', 'outline-2', 'outline-offset-1', 'outline-primary']);
+
+                if (first === 'table-mode-button') {
+                    document.getElementById('mode').value = "table";
+                    document.getElementById('selection').appendChild(document.getElementById('table-mode-selection').firstElementChild);
+                } else {
+                    document.getElementById('mode').value = "single";
+                    document.getElementById('table-mode-selection').appendChild(document.getElementById('selection').firstElementChild);
+                }
+
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('table-mode-button').click();
+            });
         </script>
     @endPushOnce
 
