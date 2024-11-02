@@ -1283,6 +1283,7 @@ class IKUController extends Controller
         $ikp = $ikp->only([
             'definition',
             'number',
+            'mode',
             'name',
             'type',
             'id',
