@@ -59,8 +59,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'UMP',
                                             '1,2',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, Tracer Study/dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, Tracer Study/dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -78,8 +76,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Jenjang Lanjutan',
                                             'Nama Prodi Lanjutan',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -98,8 +94,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Nama Prodi Lanjutan',
                                             'Beasiswa',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -119,8 +113,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'UMP',
                                             '1,2',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, Tracer Study/dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, Tracer Study/dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -135,8 +127,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Nama Prodi Asal',
                                             'Tanggal Keluar',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -151,8 +141,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Nama Prodi Asal',
                                             'Tanggal Keluar',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -168,8 +156,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Tanggal Keluar',
                                             'IPK',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -185,8 +171,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Tanggal Keluar',
                                             'IPK',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -202,8 +186,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Tanggal Keluar',
                                             'Sertifikat',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                 ],
@@ -242,8 +224,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'SKS Valid',
                                             'Total SKS MBKM',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -259,8 +239,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Level',
                                             'Peringkat',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -276,8 +254,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Level',
                                             'Peringkat',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -293,8 +269,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Level',
                                             'Peringkat',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -309,8 +283,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Nama Sertifikasi',
                                             'Nama Pemberi Sertifikasi',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -325,8 +297,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Jenjang',
                                             'Semester',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                 ],
@@ -355,8 +325,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Nama Prodi Kampus Lain',
                                             'Mata Kuliah',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -372,8 +340,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Tahun Pelaksanaan',
                                             'Lama Kegiatan',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -386,8 +352,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Jenis Aktifitas',
                                             'Judul Aktifitas',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -405,8 +369,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Waktu Mulai',
                                             'Waktu Akhir',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                 ],
@@ -442,8 +404,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Nomor',
                                             'Tahun',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                 ],
@@ -464,8 +424,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'PDDIKTI - Mata Kuliah',
                                             'FLAGSHIP - Jam Mengajar',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                 ],
@@ -497,8 +455,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Tanggal Mulai',
                                             'Tanggal',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -515,8 +471,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Tanggal Mulai',
                                             'Tanggal',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -533,8 +487,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Tanggal Mulai',
                                             'Tanggal',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                 ],
@@ -568,8 +520,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Metode',
                                             'Bobot CBL/PBL',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -588,8 +538,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Metode',
                                             'Bobot CBL/PBL',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                     [
@@ -608,8 +556,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Metode',
                                             'Bobot CBL/PBL',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                 ],
@@ -635,8 +581,6 @@ class IKUFormat2024Seeder extends Seeder
                                             'Nama Prodi',
                                             'Akreditasi',
                                             'LINK - Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            'Bukti SS sudah Upload Sistem (Siakad/Sister, dll)',
-                                            1
                                         ],
                                     ],
                                 ],
