@@ -56,11 +56,6 @@ class IndikatorKinerjaProgram extends Model
         return $this->hasMany(IKUAchievement::class);
     }
 
-    public function singleAchievements(): HasMany
-    {
-        return $this->hasMany(IKUSingleAchievement::class);
-    }
-
     public function columns(): HasMany
     {
         return $this->hasMany(IKPColumn::class);
@@ -77,6 +72,11 @@ class IndikatorKinerjaProgram extends Model
     | RELATION - HASONE
     | -----------------------------------------------------------------
     */
+
+    public function singleAchievements(): HasOne
+    {
+        return $this->hasOne(IKUSingleAchievement::class);
+    }
 
     public function evaluation(): HasOne
     {
