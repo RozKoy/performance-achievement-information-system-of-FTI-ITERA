@@ -1627,7 +1627,7 @@ class IKUController extends Controller
     }
 
     /**
-     * IKU add data function 
+     * IKU add table data function 
      * @param \App\Http\Requests\IndikatorKinerjaUtama\AddTableDataRequest $request
      * @param mixed $period
      * @param \App\Models\IndikatorKinerjaProgram $ikp
@@ -1740,6 +1740,13 @@ class IKUController extends Controller
         abort(404);
     }
 
+    /**
+     * IKU add single data function
+     * @param \App\Http\Requests\IndikatorKinerjaUtama\AddSingleDataRequest $request
+     * @param mixed $period
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function addDataSingle(AddSingleDataRequest $request, $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
         if ($ikp->status === 'aktif' && $ikp->mode === 'single') {
@@ -1815,7 +1822,7 @@ class IKUController extends Controller
     }
 
     /**
-     * Bulk add data function
+     * Bulk add table data function
      * @param \Illuminate\Http\Request $request
      * @param mixed $period
      * @param \App\Models\IndikatorKinerjaProgram $ikp
