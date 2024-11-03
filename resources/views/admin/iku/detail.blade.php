@@ -52,7 +52,7 @@
             <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
                 <td>Realisasi {{ $badge[1] }}</td>
                 <td>:</td>
-                <td>{{ $all }}</td>
+                <td>{{ $realization }}</td>
             </tr>
             <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
                 <td>Tipe</td>
@@ -81,7 +81,8 @@
             </div>
         @endif
 
-        <form id="data-form" action="{{ route('admin-iku-data-table', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" enctype="multipart/form-data" class="w-full overflow-x-auto rounded-lg">
+        <form id="data-form" action="{{ route('admin-iku-data-table-bulk', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" enctype="multipart/form-data" class="w-full overflow-x-auto rounded-lg">
+            @method('PUT')
             @csrf
             <table class="min-w-full max-lg:text-sm max-md:text-xs">
                 <thead>
@@ -179,12 +180,16 @@
             </table>
         </form>
 
+        @if (!count($data))
+            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Belum ada data</p>
+        @endif
+
         @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
-            <div class="flex w-full flex-wrap gap-1.5">
-                <button type="button" id="add-row-button" title="Tombol tambah data" onclick="addRow(0)" class="sticky left-0 right-0 my-2.5 ml-auto flex w-full items-center justify-center gap-0.5 rounded-full bg-green-500 p-0.5 text-white hover:bg-green-400">
+            <div class="flex w-full gap-1 max-xl:flex-wrap">
+                <button type="button" id="add-row-button" title="Tombol tambah data" onclick="addRow(0)" class="flex w-full items-center justify-center gap-0.5 rounded-full bg-green-500 p-0.5 text-white hover:bg-green-400">
                     <p>Tambah</p>
                 </button>
-                <button type="button" onclick="document.getElementById('data-form').submit()" title="Tombol simpan data" class="sticky left-0 right-0 my-2.5 ml-auto flex w-full items-center justify-center gap-0.5 rounded-full bg-yellow-500 p-0.5 text-white hover:bg-yellow-400">
+                <button type="button" onclick="document.getElementById('data-form').submit()" title="Tombol simpan data" class="flex w-full items-center justify-center gap-0.5 rounded-full bg-yellow-500 p-0.5 text-white hover:bg-yellow-400">
                     <p>Simpan</p>
                 </button>
             </div>
@@ -218,10 +223,6 @@
             </table>
         @endif
 
-        @if (!count($data))
-            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Belum ada data</p>
-        @endif
-
         @if (auth()->user()->access === 'editor' && request()->query('mode') !== 'edit')
             <div id="add-modal" tabindex="-1" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
                 <div class="relative max-h-full w-full max-w-md p-4">
@@ -232,7 +233,7 @@
                             </svg>
                             <span class="sr-only">Close modal</span>
                         </button>
-                        <form action="{{ route('admin-iku-data', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" class="flex flex-col gap-1 p-4 text-primary max-md:text-sm md:p-5" enctype="multipart/form-data">
+                        <form action="{{ route('admin-iku-data-table', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" class="flex flex-col gap-1 p-4 text-primary max-md:text-sm md:p-5" enctype="multipart/form-data">
                             @csrf
 
                             <p class="text-base font-semibold md:text-lg xl:text-xl">Tambah Data</p>
@@ -290,11 +291,11 @@
                 <div class="*:flex-1 flex flex-wrap gap-2">
                     <div>
                         <x-partials.label.default for="value" title="Nilai" text="Nilai" />
-                        <x-partials.input.text name="value" title="Nilai" value="" />
+                        <x-partials.input.text name="value" title="Nilai" value="{{ $data['value'] ?? '' }}" />
                     </div>
                     <div>
                         <x-partials.label.default for="link" title="Link bukti" text="Link bukti" />
-                        <x-partials.input.text name="link" title="Link bukti" value="" />
+                        <x-partials.input.text name="link" title="Link bukti" value="{{ $data['link'] ?? '' }}" />
                     </div>
                 </div>
 
@@ -312,8 +313,8 @@
 
                     <tbody id="data-body" class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
                         <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
-                            <td title="Realisasi">Realisasi</td>
-                            <td><a href="" title="Link bukti" class="text-primary underline">Link</a></td>
+                            <td title="{{ $data['value'] ?? '' }}">{{ $data['value'] ?? '' }}</td>
+                            <td><a href="{{ $data['link'] ?? '' }}" title="Link bukti" class="text-primary underline">Link</a></td>
                         </tr>
                     </tbody>
                 </table>

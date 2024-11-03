@@ -260,7 +260,7 @@ Route::prefix('/')->middleware('admin')->group(function () {
         Route::get('/', 'homeViewAdmin')->name('admin-iku');
         Route::get('/{ikp}/detail', 'detailViewAdmin')->name('admin-iku-detail');
 
-        Route::put('/{period}/{ikp}/data', 'bulkAddData')->middleware('editor')->name('admin-iku-data');
+        Route::put('/{period}/{ikp}/data-table', 'bulkAddData')->middleware('editor')->name('admin-iku-data-table-bulk');
         Route::post('/{period}/{ikp}/data-table', 'addDataTable')->middleware('editor')->name('admin-iku-data-table');
         Route::post('/{period}/{ikp}/data-single', 'addDataSingle')->middleware('editor')->name('admin-iku-data-single');
         Route::get('/{ikp}/detail/{achievement}/hapus', 'delete')->middleware('editor');
