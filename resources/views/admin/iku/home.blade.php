@@ -66,9 +66,13 @@
                                             <td title="{{ $ikp['achievements'] }}">{{ $ikp['achievements'] }}</td>
                                         @else
                                             <td title="{{ $ikp['allSingle'] }}">{{ $ikp['allSingle'] }}</td>
-                                            <td title="{{ $ikp['valueSingle'] }}">{{ $ikp['valueSingle'] }} <a href="{{ $ikp['linkSingle'] }}" title="Link bukti" class="ms-1 text-primary underline">Link</a></td>
-                                        @endif
 
+                                            @if ($ikp['valueSingle'])
+                                                <td title="{{ $ikp['valueSingle'] }}">{{ $ikp['valueSingle'] }} <a href="{{ $ikp['linkSingle'] }}" title="Link bukti" class="ms-1 text-primary underline">Link</a></td>
+                                            @else
+                                                <td></td>
+                                            @endif
+                                        @endif
 
                                         <td class="flex items-start justify-center gap-1">
                                             <x-partials.button.detail link="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => $period]) }}" />
