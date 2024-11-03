@@ -1603,32 +1603,56 @@ class IKUController extends Controller
             ->where('status', false)
             ->firstOrFail();
 
-        $columns = $ikp->columns()
-            ->select([
-                'file',
-                'name',
-                'id'
-            ])
-            ->orderBy('number')
-            ->get()
-            ->toArray();
+        $realization = null;
+        $columns = [];
+        $data = [];
 
-        $data = $periodInstance->achievements()
-            ->with('data', function (HasMany $query) {
-                $query->select([
-                    'data',
-
-                    'achievement_id',
-                    'column_id',
+        if ($ikp->mode === 'table') {
+            $columns = $ikp->columns()
+                ->select([
+                    'file',
+                    'name',
+                    'id'
                 ])
-                    ->withAggregate('column AS file', 'file');
-            })
-            ->whereBelongsTo(auth()->user()->unit)
-            ->whereBelongsTo($ikp)
-            ->select('id')
-            ->latest()
-            ->get()
-            ->toArray();
+                ->orderBy('number')
+                ->get()
+                ->toArray();
+
+            $data = $periodInstance->achievements()
+                ->with('data', function (HasMany $query) {
+                    $query->select([
+                        'data',
+
+                        'achievement_id',
+                        'column_id',
+                    ])
+                        ->withAggregate('column AS file', 'file');
+                })
+                ->whereBelongsTo(auth()->user()->unit)
+                ->whereBelongsTo($ikp)
+                ->select('id')
+                ->orderBy('created_at')
+                ->get()
+                ->toArray();
+
+            $realization = $ikp->achievements()
+                ->whereBelongsTo(auth()->user()->unit)
+                ->count();
+        } else {
+            $data = $periodInstance->singleAchievements()
+                ->whereBelongsTo(auth()->user()->unit)
+                ->whereBelongsTo($ikp)
+                ->select([
+                    'value',
+                    'link',
+                ])
+                ->first()
+                ?->toArray();
+
+            $realization = $ikp->singleAchievements()
+                ->whereBelongsTo(auth()->user()->unit)
+                ->sum('value');
+        }
 
         $target = $ikp->target()
             ->whereBelongsTo(auth()->user()->unit)
@@ -1636,10 +1660,6 @@ class IKUController extends Controller
         if ($target) {
             $target = $target->target;
         }
-
-        $all = $ikp->achievements()
-            ->whereBelongsTo(auth()->user()->unit)
-            ->count();
 
         $sk = $sk->only([
             'number',
@@ -1659,6 +1679,7 @@ class IKUController extends Controller
         $ikp = $ikp->only([
             'definition',
             'number',
+            'mode',
             'name',
             'type',
             'id',
@@ -1668,13 +1689,13 @@ class IKUController extends Controller
         $periods = $periods->toArray();
 
         return view('admin.history.iku.detail', compact([
+            'realization',
             'columns',
             'periods',
             'period',
             'target',
             'badge',
             'data',
-            'all',
             'ikk',
             'ikp',
             'ps',

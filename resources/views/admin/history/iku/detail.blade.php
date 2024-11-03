@@ -38,7 +38,7 @@
             <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
                 <td>Realisasi {{ $badge[1] }}</td>
                 <td>:</td>
-                <td>{{ $all }}</td>
+                <td>{{ $realization }}</td>
             </tr>
             <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
                 <td>Tipe</td>
@@ -53,56 +53,83 @@
         </table>
     </div>
 
-    <p class="text-primary max-xl:text-sm max-sm:text-xs">Jumlah Data : {{ count($data) }}</p>
+    @if ($ikp['mode'] === 'table')
+        <p class="text-primary max-xl:text-sm max-sm:text-xs">Jumlah Data : {{ count($data) }}</p>
 
-    <div class="w-full overflow-x-auto rounded-lg">
-        <table class="min-w-full max-lg:text-sm max-md:text-xs">
-            <thead>
-                <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap *:border bg-primary/80 text-white">
-                    <th title="Nomor">No</th>
+        <div class="w-full overflow-x-auto rounded-lg">
+            <table class="min-w-full max-lg:text-sm max-md:text-xs">
+                <thead>
+                    <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap *:border bg-primary/80 text-white">
+                        <th title="Nomor">No</th>
 
-                    @foreach ($columns as $column)
-                        <th title="{{ $column['name'] }}">{{ $column['name'] }}</th>
-                    @endforeach
-
-                </tr>
-            </thead>
-            <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
-
-                @foreach ($data as $item)
-                    <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
-
-                        <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
-
-                        @php
-                            $dataCollection = collect($item['data']);
-                        @endphp
                         @foreach ($columns as $column)
-                            @php
-                                $dataFind = $dataCollection->firstWhere('column_id', $column['id']);
-                            @endphp
-                            @if ($dataFind !== null)
-                                @if ($dataFind['file'])
-                                    <td>
-                                        <a href="{{ url(asset('storage/' . $dataFind['data'])) }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-primary hover:text-primary/75" download>Unduh</a>
-                                    </td>
-                                @else
-                                    <td title="{{ $dataFind['data'] }}">{{ $dataFind['data'] }}</td>
-                                @endif
-                            @else
-                                <td></td>
-                            @endif
+                            <th title="{{ $column['name'] }}">{{ $column['name'] }}</th>
                         @endforeach
 
                     </tr>
-                @endforeach
+                </thead>
+                <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
 
-            </tbody>
-        </table>
-    </div>
+                    @foreach ($data as $item)
+                        <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
 
-    @if (!count($data))
-        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Belum ada data</p>
+                            <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
+
+                            @php
+                                $dataCollection = collect($item['data']);
+                            @endphp
+                            @foreach ($columns as $column)
+                                @php
+                                    $dataFind = $dataCollection->firstWhere('column_id', $column['id']);
+                                @endphp
+                                @if ($dataFind !== null)
+                                    @if ($dataFind['file'])
+                                        <td>
+                                            <a href="{{ url(asset('storage/' . $dataFind['data'])) }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-primary hover:text-primary/75" download>Unduh</a>
+                                        </td>
+                                    @else
+                                        <td title="{{ $dataFind['data'] }}">{{ $dataFind['data'] }}</td>
+                                    @endif
+                                @else
+                                    <td></td>
+                                @endif
+                            @endforeach
+
+                        </tr>
+                    @endforeach
+
+                </tbody>
+            </table>
+        </div>
+
+        @if (!count($data))
+            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Belum ada data</p>
+        @endif
+    @else
+        <div class="w-full overflow-hidden rounded-lg">
+            <table class="min-w-full max-lg:text-sm max-md:text-xs">
+                <thead>
+                    <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap *:border bg-primary/80 text-white">
+                        <th title="Realisasi">Realisasi</th>
+                        <th title="Link bukti">Link Bukti</th>
+                    </tr>
+                </thead>
+
+                <tbody id="data-body" class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
+                    <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
+
+                        @if ($data['value'] ?? false)
+                            <td title="{{ $data['value'] ?? '' }}">{{ $data['value'] ?? '' }}</td>
+                            <td><a href="{{ $data['link'] ?? '' }}" title="Link bukti" class="text-primary underline">Link</a></td>
+                        @else
+                            <td></td>
+                            <td></td>
+                        @endif
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     @endif
 
 </x-admin-template>

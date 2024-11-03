@@ -313,8 +313,15 @@
 
                     <tbody id="data-body" class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
                         <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
-                            <td title="{{ $data['value'] ?? '' }}">{{ $data['value'] ?? '' }}</td>
-                            <td><a href="{{ $data['link'] ?? '' }}" title="Link bukti" class="text-primary underline">Link</a></td>
+
+                            @if ($data['value'] ?? false)
+                                <td title="{{ $data['value'] ?? '' }}">{{ $data['value'] ?? '' }}</td>
+                                <td><a href="{{ $data['link'] ?? '' }}" title="Link bukti" class="text-primary underline">Link</a></td>
+                            @else
+                                <td></td>
+                                <td></td>
+                            @endif
+
                         </tr>
                     </tbody>
                 </table>
