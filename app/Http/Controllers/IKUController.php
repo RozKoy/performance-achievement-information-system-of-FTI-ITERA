@@ -3,19 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\IndikatorKinerjaUtama\AddEvaluationRequest;
+use App\Http\Requests\IndikatorKinerjaUtama\AddSingleDataRequest;
+use App\Http\Requests\IndikatorKinerjaUtama\AddTableDataRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddTargetRequest;
-use Illuminate\Http\UploadedFile;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use App\Http\Requests\IndikatorKinerjaUtama\AddRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 use App\Models\IndikatorKinerjaProgram;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
+use App\Models\IKUSingleAchievement;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Contracts\View\View;
 use App\Models\IKUAchievementData;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use App\Models\IKUAchievement;
 use App\Models\IKUEvaluation;
@@ -1626,14 +1628,14 @@ class IKUController extends Controller
 
     /**
      * IKU add data function 
-     * @param \App\Http\Requests\IndikatorKinerjaUtama\AddRequest $request
+     * @param \App\Http\Requests\IndikatorKinerjaUtama\AddTableDataRequest $request
      * @param mixed $period
      * @param \App\Models\IndikatorKinerjaProgram $ikp
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function addData(AddRequest $request, $period, IndikatorKinerjaProgram $ikp): RedirectResponse
+    public function addDataTable(AddTableDataRequest $request, $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
-        if ($ikp->status === 'aktif') {
+        if ($ikp->status === 'aktif' && $ikp->mode === 'table') {
             $columns = $ikp->columns()
                 ->orderBy('number')
                 ->get();
@@ -1738,6 +1740,80 @@ class IKUController extends Controller
         abort(404);
     }
 
+    public function addDataSingle(AddSingleDataRequest $request, $period, IndikatorKinerjaProgram $ikp): RedirectResponse
+    {
+        if ($ikp->status === 'aktif' && $ikp->mode === 'single') {
+            if ($request['value'] && !$request['link']) {
+                return back()
+                    ->withErrors(['link' => 'Link bukti wajib diisi']);
+            }
+
+            $ps = $ikp->programStrategis;
+            $ikk = $ps->indikatorKinerjaKegiatan;
+            $sk = $ikk->sasaranKegiatan;
+
+            $year = $sk->time;
+
+            $currentMonth = (int) Carbon::now()->format('m');
+            $currentYear = Carbon::now()->format('Y');
+            $currentPeriod = '1';
+
+            foreach ([3, 6, 9, 12] as $key => $value) {
+                if ($currentMonth <= $value) {
+                    $temp = $key + 1;
+                    $currentPeriod = (string) $temp;
+
+                    break;
+                }
+            }
+
+            $periodInstance = $year->periods()
+                ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
+                    $query->where('period', $currentPeriod)
+                        ->whereHas('year', function (Builder $query) use ($currentYear) {
+                            $query->where('year', $currentYear);
+                        });
+                })
+                ->where('period', $period)
+                ->where('status', true)
+                ->firstOrFail();
+
+            if ($request['value'] && $request['link']) {
+                $achievement = $ikp->singleAchievements()->firstOrNew();
+
+                $achievement->indikatorKinerjaProgram()->associate($ikp);
+                $achievement->unit()->associate(auth()->user()->unit);
+                $achievement->period()->associate($periodInstance);
+
+                $achievement->value = $request['value'];
+                $achievement->link = $request['link'];
+
+                $achievement->save();
+            } else {
+                $ikp->singleAchievements()->forceDelete();
+            }
+
+            $evaluation = $ikp->evaluation;
+
+            if ($evaluation) {
+                $status = false;
+
+                $realization = $ikp->singleAchievements;
+                if ($realization) {
+                    $value = strpos($realization->value, '.') !== false ? (float) $realization->value : (int) $realization->value;
+                    $status = $value >= $evaluation->target;
+                }
+
+                $evaluation->status = $status;
+                $evaluation->save();
+            }
+
+            return back();
+        }
+
+        abort(404);
+    }
+
     /**
      * Bulk add data function
      * @param \Illuminate\Http\Request $request
@@ -1747,7 +1823,7 @@ class IKUController extends Controller
      */
     public function bulkAddData(Request $request, $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
-        if ($ikp->status === 'aktif') {
+        if ($ikp->status === 'aktif' && $ikp->mode === 'table') {
             $columns = $ikp->columns()
                 ->orderBy('number')
                 ->get();

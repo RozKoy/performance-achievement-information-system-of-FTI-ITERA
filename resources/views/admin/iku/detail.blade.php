@@ -81,7 +81,7 @@
             </div>
         @endif
 
-        <form id="data-form" action="{{ route('admin-iku-data', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" enctype="multipart/form-data" class="w-full overflow-x-auto rounded-lg">
+        <form id="data-form" action="{{ route('admin-iku-data-table', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" enctype="multipart/form-data" class="w-full overflow-x-auto rounded-lg">
             @csrf
             <table class="min-w-full max-lg:text-sm max-md:text-xs">
                 <thead>
@@ -285,12 +285,12 @@
         @endPushIf
     @else
         @if (auth()->user()->access === 'editor')
-            <form action="{{ route('admin-iku-data', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" enctype="multipart/form-data" class="flex w-full flex-col gap-2 overflow-x-auto rounded-lg text-primary">
+            <form action="{{ route('admin-iku-data-single', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" enctype="multipart/form-data" class="flex w-full flex-col gap-2 overflow-x-auto rounded-lg text-primary">
                 @csrf
                 <div class="*:flex-1 flex flex-wrap gap-2">
                     <div>
                         <x-partials.label.default for="value" title="Nilai" text="Nilai" />
-                        <x-partials.input.number name="value" title="Nilai" value="0" />
+                        <x-partials.input.text name="value" title="Nilai" value="" />
                     </div>
                     <div>
                         <x-partials.label.default for="link" title="Link bukti" text="Link bukti" />
