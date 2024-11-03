@@ -1806,11 +1806,18 @@ class IKUController extends Controller
                 ->firstOrFail();
 
             if ($request['value'] && $request['link']) {
-                $achievement = $ikp->singleAchievements()->firstOrNew();
-
-                $achievement->indikatorKinerjaProgram()->associate($ikp);
-                $achievement->unit()->associate(auth()->user()->unit);
-                $achievement->period()->associate($periodInstance);
+                $achievement = $ikp->singleAchievements()->firstOrNew(
+                    [
+                        'indikator_kinerja_program_id' => $ikp->id,
+                        'unit_id' => auth()->user()->unit->id,
+                        'period_id' => $periodInstance->id,
+                    ],
+                    [
+                        'indikator_kinerja_program_id' => $ikp->id,
+                        'unit_id' => auth()->user()->unit->id,
+                        'period_id' => $periodInstance->id,
+                    ],
+                );
 
                 $achievement->value = $request['value'];
                 $achievement->link = $request['link'];
@@ -1827,7 +1834,7 @@ class IKUController extends Controller
 
                 $realization = $ikp->singleAchievements;
                 if ($realization) {
-                    $value = strpos($realization->value, '.') !== false ? (float) $realization->value : (int) $realization->value;
+                    $value = $realization->sum('value');
                     $status = $value >= $evaluation->target;
                 }
 
