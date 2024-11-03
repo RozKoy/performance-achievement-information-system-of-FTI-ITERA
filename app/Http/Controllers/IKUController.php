@@ -1459,6 +1459,7 @@ class IKUController extends Controller
                             ->select([
                                 'name AS ikp',
                                 'definition',
+                                'mode',
                                 'type',
                                 'id',
 
@@ -1469,6 +1470,23 @@ class IKUController extends Controller
                                     $query->whereBelongsTo(auth()->user()->unit);
                                 }
                             ], 'target')
+                            ->withAggregate([
+                                'singleAchievements AS valueSingle' => function (Builder $query) use ($periodInstance) {
+                                    $query->whereBelongsTo(auth()->user()->unit)
+                                        ->whereBelongsTo($periodInstance, 'period');
+                                }
+                            ], 'value')
+                            ->withAggregate([
+                                'singleAchievements AS linkSingle' => function (Builder $query) use ($periodInstance) {
+                                    $query->whereBelongsTo(auth()->user()->unit)
+                                        ->whereBelongsTo($periodInstance, 'period');
+                                }
+                            ], 'link')
+                            ->withSum([
+                                'singleAchievements AS allSingle' => function (Builder $query) use ($periodInstance) {
+                                    $query->whereBelongsTo(auth()->user()->unit);
+                                }
+                            ], 'value')
                             ->withCount([
                                 'achievements AS all' => function (Builder $query) use ($periodInstance) {
                                     $query->whereBelongsTo(auth()->user()->unit);

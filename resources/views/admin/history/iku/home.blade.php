@@ -62,10 +62,13 @@
 
                                         <td title="{{ $ikp['target'] }}">{{ $ikp['target'] }}</td>
 
-                                        <td title="{{ $ikp['all'] }}">{{ $ikp['all'] }}</td>
-
-                                        <td title="{{ $ikp['achievements'] }}">{{ $ikp['achievements'] }}</td>
-
+                                        @if ($ikp['mode'] === 'table')
+                                            <td title="{{ $ikp['all'] }}">{{ $ikp['all'] }}</td>
+                                            <td title="{{ $ikp['achievements'] }}">{{ $ikp['achievements'] }}</td>
+                                        @else
+                                            <td title="{{ $ikp['allSingle'] }}">{{ $ikp['allSingle'] }}</td>
+                                            <td title="{{ $ikp['valueSingle'] }}">{{ $ikp['valueSingle'] }} <a href="{{ $ikp['linkSingle'] }}" title="Link bukti" class="ms-1 text-primary underline">Link</a></td>
+                                        @endif
 
                                         <td class="flex items-start justify-center gap-1">
                                             <x-partials.button.detail link="{{ route('admin-history-iku-detail', ['ikp' => $ikp['id'], 'period' => $period]) }}" />
