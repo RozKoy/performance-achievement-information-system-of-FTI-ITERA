@@ -1151,7 +1151,7 @@ class IKUController extends Controller
                                         ->whereBelongsTo($periodInstance, 'period');
                                 }
                             ], 'link')
-                            ->withSum([
+                            ->withAvg([
                                 'singleAchievements AS allSingle' => function (Builder $query) use ($periodInstance) {
                                     $query->whereBelongsTo(auth()->user()->unit);
                                 }
@@ -1332,7 +1332,7 @@ class IKUController extends Controller
 
             $realization = $ikp->singleAchievements()
                 ->whereBelongsTo(auth()->user()->unit)
-                ->sum('value');
+                ->average('value');
         }
 
         $target = $ikp->target()
@@ -1519,7 +1519,7 @@ class IKUController extends Controller
                                         ->whereBelongsTo($periodInstance, 'period');
                                 }
                             ], 'link')
-                            ->withSum([
+                            ->withAvg([
                                 'singleAchievements AS allSingle' => function (Builder $query) use ($periodInstance) {
                                     $query->whereBelongsTo(auth()->user()->unit);
                                 }
@@ -1688,7 +1688,7 @@ class IKUController extends Controller
 
             $realization = $ikp->singleAchievements()
                 ->whereBelongsTo(auth()->user()->unit)
-                ->sum('value');
+                ->average('value');
         }
 
         $target = $ikp->target()
