@@ -99,7 +99,7 @@
                                                     <form id="form-target-{{ $id }}" action="{{ $targetRoute }}" method="POST" class="hidden flex-col gap-0.5">
                                                         @csrf
                                                         <div class="flex-1">
-                                                            <x-partials.input.number name="{{ $inputName }}" title="target" value="{{ $exists['target'] }}" />
+                                                            <x-partials.input.text name="{{ $inputName }}" title="target" value="{{ $exists['target'] }}" />
 
                                                             @error($errorName)
                                                                 <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
@@ -117,7 +117,7 @@
                                                     <form action="{{ $targetRoute }}" method="POST" class="flex items-center gap-1">
                                                         @csrf
                                                         <div class="flex-1">
-                                                            <x-partials.input.number name="{{ $inputName }}" title="target" required />
+                                                            <x-partials.input.text name="{{ $inputName }}" title="target" required />
 
                                                             @error($errorName)
                                                                 <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>

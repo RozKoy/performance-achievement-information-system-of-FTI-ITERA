@@ -22,7 +22,7 @@ class AddTargetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'target.*' => ['bail', 'nullable', 'numeric', 'integer', 'min:0', 'max_digits:11'],
+            'target.*' => ['bail', 'nullable', 'numeric', 'min:0', 'max_digits:11'],
         ];
     }
 
@@ -45,7 +45,6 @@ class AddTargetRequest extends FormRequest
     {
         return [
             'max_digits' => ':attribute tidak boleh melebihi :max digit',
-            'integer' => ':attribute harus berupa bilangan bulat',
             'min' => ':attribute tidak boleh kurang dari :min',
             'numeric' => ':attribute harus berupa bilangan',
         ];
