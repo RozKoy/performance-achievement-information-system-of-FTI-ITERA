@@ -1881,19 +1881,17 @@ class IKUController extends Controller
 
                 $achievement->save();
             } else {
-                $ikp->singleAchievements()->forceDelete();
+                $ikp->singleAchievements()
+                    ->whereBelongsTo($periodInstance, 'period')
+                    ->whereBelongsTo(auth()->user()->unit)
+                    ->forceDelete();
             }
 
             $evaluation = $ikp->evaluation;
 
             if ($evaluation) {
-                $status = false;
-
-                $realization = $ikp->singleAchievements;
-                if ($realization) {
-                    $value = $realization->sum('value');
-                    $status = $value >= $evaluation->target;
-                }
+                $value = $ikp->singleAchievements()->sum('value');
+                $status = $value >= $evaluation->target;
 
                 $evaluation->status = $status;
                 $evaluation->save();
