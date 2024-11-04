@@ -166,35 +166,35 @@ class IKUController extends Controller
                             },
                             'achievements AS all',
                         ])
-                        ->withSum([
+                        ->withAvg([
                             'singleAchievements AS tw1Single' => function (Builder $query) {
                                 $query->whereHas('period', function (Builder $query) {
                                     $query->where('period', '1');
                                 });
                             }
                         ], 'value')
-                        ->withSum([
+                        ->withAvg([
                             'singleAchievements AS tw2Single' => function (Builder $query) {
                                 $query->whereHas('period', function (Builder $query) {
                                     $query->where('period', '2');
                                 });
                             }
                         ], 'value')
-                        ->withSum([
+                        ->withAvg([
                             'singleAchievements AS tw3Single' => function (Builder $query) {
                                 $query->whereHas('period', function (Builder $query) {
                                     $query->where('period', '3');
                                 });
                             }
                         ], 'value')
-                        ->withSum([
+                        ->withAvg([
                             'singleAchievements AS tw4Single' => function (Builder $query) {
                                 $query->whereHas('period', function (Builder $query) {
                                     $query->where('period', '4');
                                 });
                             }
                         ], 'value')
-                        ->withSum('singleAchievements AS allSingle', 'value')
+                        ->withAvg('singleAchievements AS allSingle', 'value')
                         ->withAggregate('evaluation AS evaluation', 'evaluation')
                         ->withAggregate('evaluation AS follow_up', 'follow_up')
                         ->withAggregate('evaluation AS target', 'target')
@@ -651,17 +651,25 @@ class IKUController extends Controller
                 $targetInstance->save();
             }
 
-            $sumAllTarget = $ikp->target()
-                ->sum('target');
-
-            $realization = $ikp->mode === 'table' ? $ikp->achievements()->count() : $ikp->singleAchievements()->sum('value');
+            $realization = $ikp->mode === 'table' ? $ikp->achievements()->count() : $ikp->singleAchievements()->average('value');
 
             $evaluation = IKUEvaluation::firstOrNew([
                 'indikator_kinerja_program_id' => $ikpId
             ]);
 
-            $evaluation->status = $realization >= $sumAllTarget;
-            $evaluation->target = $sumAllTarget;
+            if ($ikp->mode === 'table') {
+                $sumAllTarget = $ikp->target()
+                    ->sum('target');
+
+                $evaluation->status = $realization >= $sumAllTarget;
+                $evaluation->target = $sumAllTarget;
+            } else {
+                $avgAllTarget = $ikp->target()
+                    ->average('target');
+
+                $evaluation->status = $realization >= $avgAllTarget;
+                $evaluation->target = $avgAllTarget;
+            }
 
             $evaluation->save();
 
@@ -1919,10 +1927,7 @@ class IKUController extends Controller
             $evaluation = $ikp->evaluation;
 
             if ($evaluation) {
-                $count = $ikp->singleAchievements()->count();
-                $value = $ikp->singleAchievements()->sum('value');
-
-                $value = $count ? $value / $count : $value;
+                $value = $ikp->singleAchievements()->average('value');
 
                 $status = $value >= $evaluation->target;
 
