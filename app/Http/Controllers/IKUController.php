@@ -1919,7 +1919,11 @@ class IKUController extends Controller
             $evaluation = $ikp->evaluation;
 
             if ($evaluation) {
+                $count = $ikp->singleAchievements()->count();
                 $value = $ikp->singleAchievements()->sum('value');
+
+                $value = $count ? $value / $count : $value;
+
                 $status = $value >= $evaluation->target;
 
                 $evaluation->status = $status;
