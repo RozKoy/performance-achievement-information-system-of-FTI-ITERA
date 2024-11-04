@@ -136,6 +136,7 @@ class IKUController extends Controller
                         'name AS ikp',
                         'definition',
                         'status',
+                        'mode',
                         'type',
                         'id',
 
@@ -165,6 +166,35 @@ class IKUController extends Controller
                             },
                             'achievements AS all',
                         ])
+                        ->withSum([
+                            'singleAchievements AS tw1Single' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '1');
+                                });
+                            }
+                        ], 'value')
+                        ->withSum([
+                            'singleAchievements AS tw2Single' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '2');
+                                });
+                            }
+                        ], 'value')
+                        ->withSum([
+                            'singleAchievements AS tw3Single' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '3');
+                                });
+                            }
+                        ], 'value')
+                        ->withSum([
+                            'singleAchievements AS tw4Single' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '4');
+                                });
+                            }
+                        ], 'value')
+                        ->withSum('singleAchievements AS allSingle', 'value')
                         ->withAggregate('evaluation AS evaluation', 'evaluation')
                         ->withAggregate('evaluation AS follow_up', 'follow_up')
                         ->withAggregate('evaluation AS target', 'target')

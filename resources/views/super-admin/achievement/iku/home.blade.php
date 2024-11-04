@@ -132,13 +132,13 @@
                                     <td title="{{ $ikp['definition'] }}" class="min-w-72 w-max text-left">{{ $ikp['definition'] }}</td>
 
                                     <td title="{{ $ikp['target'] }}">{{ $ikp['target'] }}</td>
-                                    <td title="{{ $ikp['all'] }}">{{ $ikp['all'] }}</td>
+                                    <td title="{{ $ikp['mode'] === 'table' ? $ikp['all'] : $ikp['allSingle'] }}">{{ $ikp['mode'] === 'table' ? $ikp['all'] : $ikp['allSingle'] }}</td>
                                     <td title="{{ $ikp['done'] == 1 ? 'Tercapai' : 'Tidak tercapai' }}" class="{{ $ikp['done'] == 1 ? 'text-green-400' : 'text-red-400' }}">{{ $ikp['done'] == 1 ? 'Tercapai' : 'Tidak tercapai' }}</td>
 
-                                    <td title="{{ $ikp['tw1'] }}">{{ $ikp['tw1'] }}</td>
-                                    <td title="{{ $ikp['tw2'] }}">{{ $ikp['tw2'] }}</td>
-                                    <td title="{{ $ikp['tw3'] }}">{{ $ikp['tw3'] }}</td>
-                                    <td title="{{ $ikp['tw4'] }}">{{ $ikp['tw4'] }}</td>
+                                    <td title="{{ $ikp['mode'] === 'table' ? $ikp['tw1'] : $ikp['tw1Single'] }}">{{ $ikp['mode'] === 'table' ? $ikp['tw1'] : $ikp['tw1Single'] }}</td>
+                                    <td title="{{ $ikp['mode'] === 'table' ? $ikp['tw2'] : $ikp['tw2Single'] }}">{{ $ikp['mode'] === 'table' ? $ikp['tw2'] : $ikp['tw2Single'] }}</td>
+                                    <td title="{{ $ikp['mode'] === 'table' ? $ikp['tw3'] : $ikp['tw3Single'] }}">{{ $ikp['mode'] === 'table' ? $ikp['tw3'] : $ikp['tw3Single'] }}</td>
+                                    <td title="{{ $ikp['mode'] === 'table' ? $ikp['tw4'] : $ikp['tw4Single'] }}">{{ $ikp['mode'] === 'table' ? $ikp['tw4'] : $ikp['tw4Single'] }}</td>
 
                                     <td title="{{ $ikp['evaluation'] }}">{{ $ikp['evaluation'] }}</td>
                                     <td title="{{ $ikp['follow_up'] }}">{{ $ikp['follow_up'] }}</td>
