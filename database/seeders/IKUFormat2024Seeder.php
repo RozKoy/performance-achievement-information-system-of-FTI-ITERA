@@ -601,11 +601,8 @@ class IKUFormat2024Seeder extends Seeder
                                     [
                                         'ikp' => 'Persentase Penyerapan Anggaran',
                                         'definition' => 'Persentase Penyerapan Anggaran pada tahun berjalan',
+                                        'mode' => 'single',
                                         'type' => 'ikt',
-                                        'column' => [
-                                            'Tahun',
-                                            'Anggaran',
-                                        ],
                                     ],
                                 ],
                             ],
@@ -629,10 +626,8 @@ class IKUFormat2024Seeder extends Seeder
                                     [
                                         'ikp' => 'Indeks Kepuasan Masyarakat terhadap pelayanan publik',
                                         'definition' => 'Indeks Kepuasan Masyarakat terhadap pelayanan publik',
+                                        'mode' => 'single',
                                         'type' => 'ikt',
-                                        'column' => [
-                                            'Indeks Kepuasan'
-                                        ],
                                     ],
                                 ],
                             ],
@@ -669,25 +664,29 @@ class IKUFormat2024Seeder extends Seeder
 
                             'number' => $ikpKey + 1,
                             'definition' => $ikp['definition'],
+                            'mode' => $ikp['mode'] ?? 'table',
                             'type' => $ikp['type'],
                             'name' => $ikp['ikp'],
                             'status' => 'aktif',
                         ]);
-                        foreach ($ikp['column'] as $colKey => $col) {
-                            $file = false;
-                            if (isset($ikp['column'][$colKey + 1])) {
-                                if ($ikp['column'][$colKey + 1] === 1) {
-                                    $file = true;
-                                }
-                            }
-                            if ($col !== 1) {
-                                IKPColumn::create([
-                                    'indikator_kinerja_program_id' => $ikpData->id,
 
-                                    'number' => $colKey + 1,
-                                    'file' => $file,
-                                    'name' => $col,
-                                ]);
+                        if (!isset($ikp['mode'])) {
+                            foreach ($ikp['column'] as $colKey => $col) {
+                                $file = false;
+                                if (isset($ikp['column'][$colKey + 1])) {
+                                    if ($ikp['column'][$colKey + 1] === 1) {
+                                        $file = true;
+                                    }
+                                }
+                                if ($col !== 1) {
+                                    IKPColumn::create([
+                                        'indikator_kinerja_program_id' => $ikpData->id,
+
+                                        'number' => $colKey + 1,
+                                        'file' => $file,
+                                        'name' => $col,
+                                    ]);
+                                }
                             }
                         }
                     }
