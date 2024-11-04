@@ -88,7 +88,7 @@
                 <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
                     <td>Realisasi</td>
                     <td>:</td>
-                    <td>{{ $achievementCount }}</td>
+                    <td>{{ $achievement }}</td>
                 </tr>
             @endif
 
@@ -126,57 +126,92 @@
     @endif
 
     @if ($ikp['status'] === 'aktif')
-        <div class="w-full overflow-x-auto rounded-lg">
-            <table class="min-w-full text-sm max-md:text-xs">
-                <thead>
-                    <tr class="*:font-normal *:px-5 *:py-2.5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words divide-x bg-primary/80 text-white">
-                        <th title="Nomor">No</th>
+        @if ($ikp['mode'] === 'table')
+            <div class="w-full overflow-x-auto rounded-lg">
+                <table class="min-w-full text-sm max-md:text-xs">
+                    <thead>
+                        <tr class="*:font-normal *:px-5 *:py-2.5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words divide-x bg-primary/80 text-white">
+                            <th title="Nomor">No</th>
 
-                        @foreach ($columns as $column)
-                            <th title="{!! nl2br($column['name']) !!}">{!! nl2br($column['name']) !!}</th>
-                        @endforeach
+                            @foreach ($columns as $column)
+                                <th title="{!! nl2br($column['name']) !!}">{!! nl2br($column['name']) !!}</th>
+                            @endforeach
 
-                    </tr>
-                </thead>
-                <tbody class="border-b-2 border-primary/80 text-left align-top">
-
-                    @foreach ($data as $unit => $item)
-                        <tr class="*:py-2 *:px-3 *:break-words *:text-primary *:bg-primary/5 border-y font-semibold">
-                            <td title="{{ $unit }}" colspan="{{ count($columns) + 1 }}">{{ $unit }} (Data : {{ count($item) }})</td>
                         </tr>
-                        @foreach ($item as $col)
-                            <tr class="*:py-1.5 *:px-1 border-y">
-                                <td title="{{ $loop->iteration }}" class="text-center">{{ $loop->iteration }}</td>
+                    </thead>
+                    <tbody class="border-b-2 border-primary/80 text-left align-top">
 
-                                @php
-                                    $collection = collect($col['data']);
-                                @endphp
+                        @foreach ($data as $unit => $item)
+                            <tr class="*:py-2 *:px-3 *:break-words *:text-primary *:bg-primary/5 border-y font-semibold">
+                                <td title="{{ $unit }}" colspan="{{ count($columns) + 1 }}">{{ $unit }} (Data : {{ count($item) }})</td>
+                            </tr>
+                            @foreach ($item as $col)
+                                <tr class="*:py-1.5 *:px-1 border-y">
+                                    <td title="{{ $loop->iteration }}" class="text-center">{{ $loop->iteration }}</td>
 
-                                @foreach ($columns as $column)
                                     @php
-                                        $dataFind = $collection->firstWhere('column_id', $column['id']);
+                                        $collection = collect($col['data']);
                                     @endphp
 
-                                    @if ($dataFind !== null)
-                                        @if ($dataFind['file'] == 1)
-                                            <td class="text-center">
-                                                <a href="{{ url(asset('storage/' . $dataFind['data'])) }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-primary hover:text-primary/75" download>Unduh</a>
-                                            </td>
-                                        @else
-                                            <td title="{{ $dataFind['data'] }}">{{ $dataFind['data'] }}</td>
-                                        @endif
-                                    @else
-                                        <td></td>
-                                    @endif
-                                @endforeach
+                                    @foreach ($columns as $column)
+                                        @php
+                                            $dataFind = $collection->firstWhere('column_id', $column['id']);
+                                        @endphp
 
+                                        @if ($dataFind !== null)
+                                            @if ($dataFind['file'] == 1)
+                                                <td class="text-center">
+                                                    <a href="{{ url(asset('storage/' . $dataFind['data'])) }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-primary hover:text-primary/75" download>Unduh</a>
+                                                </td>
+                                            @else
+                                                <td title="{{ $dataFind['data'] }}">{{ $dataFind['data'] }}</td>
+                                            @endif
+                                        @else
+                                            <td></td>
+                                        @endif
+                                    @endforeach
+
+                                </tr>
+                            @endforeach
+                        @endforeach
+
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="w-full overflow-x-auto rounded-lg">
+                <table class="min-w-full text-sm max-md:text-xs">
+                    <thead>
+                        <tr class="*:font-normal *:px-5 *:py-2.5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words divide-x bg-primary/80 text-white">
+                            <th title="Nomor">No</th>
+                            <th title="Program studi">Program Studi</th>
+                            <th title="Realisasi">Realisasi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-b-2 border-primary/80 text-left align-top">
+
+                        @foreach ($data as $unit => $item)
+                            @php
+                                $temp = collect($item);
+                            @endphp
+                            <tr class="*:py-1.5 *:px-1 border-y">
+                                <td title="{{ $loop->iteration }}" class="text-center">{{ $loop->iteration }}</td>
+                                <td title="{{ $unit }}">{{ $unit }}</td>
+                                <td title="{{ $temp->average('value') }}" class="text-center">
+                                    {{ $temp->average('value') }}
+
+                                    @if ($temp->count() === 1)
+                                        <a href="{{ $temp->first()['link'] }}" title="Link bukti" class="text-primary underline">Link</a>
+                                    @endif
+
+                                </td>
                             </tr>
                         @endforeach
-                    @endforeach
 
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </div>
+        @endif
     @endif
 
     @if (!count($data) && $ikp['status'] === 'aktif')

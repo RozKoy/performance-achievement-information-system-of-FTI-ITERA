@@ -302,29 +302,53 @@ class IKUController extends Controller
             ->get()
             ->toArray();
 
-        $data = IKUAchievement::withTrashed()
-            ->with([
-                'data' => function (HasMany $query) {
-                    $query->select([
-                        'achievement_id',
-                        'column_id',
-                        'data',
-                    ])
-                        ->withAggregate('column AS file', 'file');
-                }
-            ])
-            ->where(function (Builder $query) use ($periodInstance) {
-                if ($periodInstance) {
-                    $query->whereBelongsTo($periodInstance, 'period');
-                }
-            })
-            ->whereBelongsTo($ikp)
-            ->select('id')
-            ->withAggregate('unit AS unit', 'name')
-            ->latest()
-            ->get();
+        $achievement = 0;
+        $data = collect();
 
-        $achievementCount = $data->count();
+        if ($ikp->mode === 'table') {
+            $data = IKUAchievement::withTrashed()
+                ->with([
+                    'data' => function (HasMany $query) {
+                        $query->select([
+                            'achievement_id',
+                            'column_id',
+                            'data',
+                        ])
+                            ->withAggregate('column AS file', 'file');
+                    }
+                ])
+                ->where(function (Builder $query) use ($periodInstance) {
+                    if ($periodInstance) {
+                        $query->whereBelongsTo($periodInstance, 'period');
+                    }
+                })
+                ->whereBelongsTo($ikp)
+                ->select('id')
+                ->withAggregate('unit AS unit', 'name')
+                ->latest()
+                ->get();
+
+            $achievement = $data->count();
+        } else {
+            $data = IKUSingleAchievement::withTrashed()
+                ->where(function (Builder $query) use ($periodInstance) {
+                    if ($periodInstance) {
+                        $query->whereBelongsTo($periodInstance, 'period');
+                    }
+                })
+                ->whereBelongsTo($ikp)
+                ->select([
+                    'value',
+                    'link',
+                    'id',
+                ])
+                ->withAggregate('unit AS unit', 'name')
+                ->latest()
+                ->get();
+
+            $achievement = $data->average('value');
+        }
+
         $data = $data->groupBy('unit')->toArray();
 
         $evaluation = $ikp->evaluation;
@@ -348,6 +372,7 @@ class IKUController extends Controller
             'definition',
             'number',
             'status',
+            'mode',
             'name',
             'type',
             'id',
@@ -361,7 +386,7 @@ class IKUController extends Controller
         $periods = $periods->toArray();
 
         return view('super-admin.achievement.iku.detail', compact([
-            'achievementCount',
+            'achievement',
             'evaluation',
             'columns',
             'periods',
