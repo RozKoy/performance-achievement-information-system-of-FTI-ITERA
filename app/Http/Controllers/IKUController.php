@@ -624,8 +624,7 @@ class IKUController extends Controller
             $sumAllTarget = $ikp->target()
                 ->sum('target');
 
-            $realization = $ikp->achievements()
-                ->count();
+            $realization = $ikp->mode === 'table' ? $ikp->achievements()->count() : $ikp->singleAchievements()->sum('value');
 
             $evaluation = IKUEvaluation::firstOrNew([
                 'indikator_kinerja_program_id' => $ikpId
