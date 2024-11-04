@@ -2009,7 +2009,12 @@ class IKUController extends Controller
                 }
             }
 
-            $unset = $ikp->achievements()->whereNotIn('id', $ids->toArray())->get();
+            $unset = $ikp->achievements()
+                ->whereNotIn('id', $ids->toArray())
+                ->whereBelongsTo($periodInstance, 'period')
+                ->whereBelongsTo(auth()->user()->unit)
+                ->get();
+
             foreach ($unset as $item) {
                 $itemData = $item->data()->whereHas('column', function (Builder $query) {
                     $query->where('file', true);
