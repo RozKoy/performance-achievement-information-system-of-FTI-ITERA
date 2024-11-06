@@ -672,7 +672,7 @@ class IKUController extends Controller
             if ($target === null && $targetInstance->id !== null) {
                 $targetInstance->forceDelete();
             } else if ($target !== null) {
-                $targetInstance->target = (int) $target;
+                $targetInstance->target = (float) $target;
                 $targetInstance->save();
             }
 
