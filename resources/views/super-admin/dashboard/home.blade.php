@@ -55,6 +55,117 @@
         </div>
     </div>
 
+    @if (count($rsIndikatorKinerja))
+        <div class="flex w-full cursor-default flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-primary/75 p-3 text-primary shadow shadow-primary">
+            <h6 class="uppercase">Rencana Strategis</h6>
+            <div class="w-full overflow-x-auto">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="*:border *:border-primary *:p-1">
+                            <th title="Indikator kinerja">Indikator Kinerja</th>
+
+                            @foreach ($units as $unit)
+                                <th title="{{ $unit['name'] }}">{{ $unit['short_name'] }}</th>
+                            @endforeach
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach ($rsIndikatorKinerja as $item)
+                            <tr class="*:border *:border-primary *:p-1">
+                                <th title="{{ $item['name'] }}" class="max-w-96 overflow-hidden truncate">{{ $item['name'] }}</th>
+
+                                @foreach ($units as $unit)
+                                    @if (collect($item['realization'])->where('unit_id', $unit['id'])->count())
+                                        @if ($item['type'] === 'teks')
+                                            <td class="bg-green-300"></td>
+                                        @else
+                                            @php
+                                                $target = collect($item['target'])->firstWhere('unit_id', $unit['id']);
+                                                $realization = 0;
+                                                $status = false;
+                                                if ($item['type'] === 'angka') {
+                                                    $realization = collect($item['realization'])
+                                                        ->where('unit_id', $unit['id'])
+                                                        ->sum('realization');
+                                                } elseif ($item['type'] === 'persen') {
+                                                    $realization = collect($item['realization'])
+                                                        ->where('unit_id', $unit['id'])
+                                                        ->average('realization');
+                                                }
+                                                if (!$target || $realization >= (float) ($target['target'] ?? $realization + 1)) {
+                                                    $status = true;
+                                                }
+                                            @endphp
+                                            <td class="{{ $status ? 'bg-green-300' : 'bg-red-300' }}"></td>
+                                        @endif
+                                    @else
+                                        <td></td>
+                                    @endif
+                                @endforeach
+
+                            </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endif
+
+    @if (count($ikuIndikatorKinerjaProgram))
+        <div class="flex w-full cursor-default flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-primary/75 p-3 text-primary shadow shadow-primary">
+            <h6 class="uppercase">Indikator Kinerja Utama</h6>
+            <div class="w-full overflow-x-auto">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="*:border *:border-primary *:p-1">
+                            <th title="Indikator kinerja">Indikator Kinerja Program</th>
+
+                            @foreach ($units as $unit)
+                                <th title="{{ $unit['name'] }}">{{ $unit['short_name'] }}</th>
+                            @endforeach
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach ($ikuIndikatorKinerjaProgram as $item)
+                            <tr class="*:border *:border-primary *:p-1">
+                                <th title="{{ $item['name'] }}" class="max-w-96 overflow-hidden truncate">{{ $item['name'] }}</th>
+
+                                @foreach ($units as $unit)
+                                    @php
+                                        $singleAchievements = collect($item['singleAchievements'])->where('unit_id', $unit['id']);
+                                        $achievements = collect($item['achievements'])->where('unit_id', $unit['id']);
+                                        $target = collect($item['target'])->firstWhere('unit_id', $unit['id']);
+                                        $realization = 0;
+                                        $status = 0;
+                                        if ($achievements->count() || $singleAchievements->count()) {
+                                            $status = 1;
+                                            if ($item['mode'] === 'table') {
+                                                $realization = $achievements->count();
+                                            } elseif ($item['mode'] === 'single') {
+                                                $realization = $singleAchievements->average('value');
+                                            }
+                                            if (!$target || $realization >= (float) ($target['target'] ?? $realization + 1)) {
+                                                $status = 2;
+                                            }
+                                        }
+                                    @endphp
+                                    <td class="{{ $status === 2 ? 'bg-green-300' : ($status === 1 ? 'bg-red-300' : '') }}"></td>
+                                @endforeach
+
+                            </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endif
+
     @push('script')
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

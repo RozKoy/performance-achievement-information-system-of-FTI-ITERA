@@ -74,7 +74,10 @@ class DashboardController extends Controller
                                 });
                         },
                     ]);
-            }
+            },
+            'sasaranKegiatan.indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram.singleAchievements',
+            'sasaranKegiatan.indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram.achievements',
+            'sasaranKegiatan.indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram.target',
         ])->first();
 
         $rs = RSYear::where('year', $rsYear)->with([
@@ -93,29 +96,48 @@ class DashboardController extends Controller
                                 });
                         },
                     ]);
-            }
+            },
+            'sasaranStrategis.kegiatan.indikatorKinerja.realization',
+            'sasaranStrategis.kegiatan.indikatorKinerja.target',
         ])->first();
 
+        $units = Unit::latest()
+            ->select([
+                'short_name',
+                'name',
+                'id',
+            ])
+            ->get()
+            ->toArray();
+
+        $ikuIndikatorKinerjaProgram = collect();
         $iku = [
-            'success' => $iku?->sasaranKegiatan?->sum(function ($item) {
-                return $item->indikatorKinerjaKegiatan->sum(function ($item) {
+            'success' => $iku?->sasaranKegiatan?->sum(function ($item) use ($ikuIndikatorKinerjaProgram) {
+                return $item->indikatorKinerjaKegiatan->sum(function ($item) use ($ikuIndikatorKinerjaProgram) {
+                    $item->programStrategis->each(function ($item) use ($ikuIndikatorKinerjaProgram) {
+                        $ikuIndikatorKinerjaProgram->push(...$item->indikatorKinerjaProgram);
+                    });
                     return $item->programStrategis->sum('success');
                 });
-            }) ?? 0,
+            }),
             'failed' => $iku?->sasaranKegiatan?->sum(function ($item) {
                 return $item->indikatorKinerjaKegiatan->sum(function ($item) {
                     return $item->programStrategis->sum('failed');
                 });
-            }) ?? 0,
+            }),
         ];
 
+        $rsIndikatorKinerja = collect();
         $rs = [
-            'success' => $rs?->sasaranStrategis?->sum(function ($item) {
+            'success' => $rs?->sasaranStrategis?->sum(function ($item) use ($rsIndikatorKinerja) {
+                $item->kegiatan->each(function ($item) use ($rsIndikatorKinerja) {
+                    $rsIndikatorKinerja->push(...$item->indikatorKinerja);
+                });
                 return $item->kegiatan->sum('success');
-            }) ?? 0,
+            }),
             'failed' => $rs?->sasaranStrategis?->sum(function ($item) {
                 return $item->kegiatan->sum('failed');
-            }) ?? 0,
+            }),
         ];
 
         $iku['sum'] = $iku['success'] + $iku['failed'];
@@ -127,13 +149,18 @@ class DashboardController extends Controller
         $ikuPercent = number_format((float) $ikuPercent, 2, '.', '');
         $rsPercent = number_format((float) $rsPercent, 2, '.', '');
 
+        $rsIndikatorKinerja = $rsIndikatorKinerja->toArray();
+
         return view('super-admin.dashboard.home', compact([
+            'ikuIndikatorKinerjaProgram',
+            'rsIndikatorKinerja',
             'ikuYearList',
             'rsYearList',
             'ikuPercent',
             'rsPercent',
             'ikuYear',
             'rsYear',
+            'units',
             'iku',
             'rs',
         ]));
