@@ -74,7 +74,7 @@
 
                         @foreach ($rsIndikatorKinerja as $item)
                             <tr class="*:border *:border-primary *:p-1">
-                                <th title="{{ $item['name'] }}" class="max-w-96 overflow-hidden truncate">{{ $item['name'] }}</th>
+                                <th title="{{ $item['name'] }}" class="max-w-96 overflow-hidden truncate text-left">{{ $item['name'] }}</th>
 
                                 @foreach ($units as $unit)
                                     @if (collect($item['realization'])->where('unit_id', $unit['id'])->count())
@@ -133,7 +133,7 @@
 
                         @foreach ($ikuIndikatorKinerjaProgram as $item)
                             <tr class="*:border *:border-primary *:p-1">
-                                <th title="{{ $item['name'] }}" class="max-w-96 overflow-hidden truncate">{{ $item['name'] }}</th>
+                                <th title="{{ $item['name'] }}" class="max-w-96 overflow-hidden truncate text-left">{{ $item['name'] }}</th>
 
                                 @foreach ($units as $unit)
                                     @php
