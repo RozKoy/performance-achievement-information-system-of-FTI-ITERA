@@ -73,7 +73,7 @@ Route::prefix('/super-admin')->middleware('superadmin')->group(function () {
             Route::get('/export', 'exportRS')->name('super-admin-achievement-rs-export');
 
             Route::middleware('editor')->group(function () {
-                Route::post('/{ik}/{unit}/target', 'addTarget')->name('super-admin-achievement-rs-target-add');
+                Route::post('/{year}/target', 'addTarget')->name('super-admin-achievement-rs-target-add');
                 Route::get('/{period}/status', 'statusToggle')->name('super-admin-achievement-rs-status');
                 Route::post('/{ik}/evaluation', 'addEvaluation')->name('super-admin-achievement-rs-evaluation');
             });

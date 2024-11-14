@@ -21,7 +21,7 @@
 <x-super-admin-template title="Renstra - Capaian Kinerja - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 :text="$heading" :$previousRoute />
-    <form action="" method="POST" class="flex w-full flex-col gap-1">
+    <form action="{{ route('super-admin-achievement-rs-target-add', ['year' => $year]) }}" method="POST" class="flex w-full flex-col gap-1">
         @csrf
 
         @if (auth()->user()->access === 'editor')
@@ -45,10 +45,6 @@
                     </tr>
                 </thead>
                 <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
-
-                    @php
-                        $index = 0;
-                    @endphp
 
                     @foreach ($data as $ss)
                         @foreach ($ss['kegiatan'] as $k)
@@ -89,13 +85,12 @@
                                             $exists = $target->where('unit_id', $unit['id'])->first();
                                             $inputName = 'target[' . $ik['id'] . '-' . $unit['id'] . ']';
                                             $errorName = 'target.' . $ik['id'] . '-' . $unit['id'];
-                                            $index++;
                                         @endphp
 
                                         <td title="Target {{ $unit['name'] }}">
 
                                             @if (auth()->user()->access === 'editor')
-                                                <x-partials.input.text name="{{ $inputName }}" title="target" value="{{ $exists['target'] ?? '' }}" required />
+                                                <x-partials.input.text name="{{ $inputName }}" title="target" value="{{ $exists['target'] ?? '' }}" />
 
                                                 @error($errorName)
                                                     <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>

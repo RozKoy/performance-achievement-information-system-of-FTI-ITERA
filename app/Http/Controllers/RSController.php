@@ -734,66 +734,77 @@ class RSController extends Controller
     }
 
     /**
-     * RS add target function 
+     * RS add target
      * @param \App\Http\Requests\RencanaStrategis\AddTargetRequest $request
-     * @param mixed $ikId
-     * @param mixed $unitId
+     * @param mixed $year
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function addTarget(AddTargetRequest $request, $ikId, $unitId): RedirectResponse
+    public function addTarget(AddTargetRequest $request, $year): RedirectResponse
     {
-        $ik = IndikatorKinerja::findOrFail($ikId);
-        Unit::withTrashed()->findOrFail($unitId);
+        $targets = $request['target'];
 
-        if ($ik->type !== 'teks' && $ik->status === 'aktif') {
-            $target = null;
-            if ($request['target'] !== null) {
-                $target = $request['target'][$ikId . '-' . $unitId];
+        $indikatorKinerja = IndikatorKinerja::where('status', 'aktif')
+            ->whereNot('type', 'teks')
+            ->whereHas('kegiatan', function (Builder $query) use ($year) {
+                $query->whereHas('sasaranStrategis', function (Builder $query) use ($year) {
+                    $query->whereHas('time', function (Builder $query) use ($year) {
+                        $query->where('year', $year);
+                    });
+                });
+            })
+            ->get();
+
+        $units = Unit::where(function (Builder $query) use ($year) {
+            $query->whereNotNull('deleted_at')
+                ->whereHas('rencanaStrategis', function (Builder $query) use ($year) {
+                    $query->whereHas('period', function (Builder $query) use ($year) {
+                        $query->whereHas('year', function (Builder $query) use ($year) {
+                            $query->where('year', $year);
+                        });
+                    });
+                });
+        })
+            ->orWhereNull('deleted_at')
+            ->withTrashed()
+            ->get();
+
+        foreach ($indikatorKinerja as $ik) {
+            foreach ($units as $unit) {
+                if ($targets["$ik->id-$unit->id"] ?? null !== null) {
+                    $temp = $ik->target()->firstOrNew(
+                        [
+                            'unit_id' => $unit->id,
+                        ],
+                        [
+                            'unit_id' => $unit->id,
+                        ],
+                    );
+
+                    $temp->target = $targets["$ik->id-$unit->id"];
+
+                    $temp->save();
+                } else {
+                    $ik->target()->where('unit_id', $unit->id)->forceDelete();
+                }
             }
+            $newTarget = $ik->type === 'angka' ? $ik->target()->sum('target') : $ik->target()->average('target');
 
-            $targetInstance = RSTarget::firstOrNew([
-                'indikator_kinerja_id' => $ikId,
-                'unit_id' => $unitId
-            ]);
+            if ($newTarget) {
+                $realization = $ik->realization()->whereNull(['period_id', 'unit_id'])->first();
+                $realization = $realization !== null ? (float) $realization->realization : $newTarget - 1;
 
-            if ($target === null && $targetInstance->id !== null) {
-                $targetInstance->forceDelete();
-            } else if ($target !== null) {
-                $targetInstance->target = $target;
-                $targetInstance->save();
+                $evaluation = $ik->evaluation()->firstOrNew();
+
+                $evaluation->target = $newTarget;
+                $evaluation->status = $realization >= $newTarget;
+
+                $evaluation->save();
+            } else {
+                $ik->evaluation()->forceDelete();
             }
-
-            $allTarget = RSTarget::whereBelongsTo($ik)
-                ->get();
-
-            $sumAllTarget = $allTarget->sum('target');
-            $countAllTarget = $allTarget->count();
-
-            $evaluation = RSEvaluation::firstOrNew([
-                'indikator_kinerja_id' => $ikId
-            ]);
-
-            if ($ik->type === 'persen') {
-                $sumAllTarget = $countAllTarget !== 0 ? $sumAllTarget / $countAllTarget : 0;
-            }
-
-            $realization = RSAchievement::whereBelongsTo($ik)
-                ->whereNull(['period_id', 'unit_id'])
-                ->first();
-
-            $evaluation->target = $sumAllTarget;
-
-            $evaluation->status = false;
-            if ($realization !== null) {
-                $evaluation->status = (float) $realization->realization >= $sumAllTarget;
-            }
-
-            $evaluation->save();
-
-            return back();
         }
 
-        abort(404);
+        return back();
     }
 
     /**
