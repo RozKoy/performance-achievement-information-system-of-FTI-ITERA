@@ -21,138 +21,102 @@
 <x-super-admin-template title="IKU - Capaian Kinerja - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 :text="$heading" :$previousRoute />
+    <form action="" method="POST" class="flex w-full flex-col gap-1">
+        @csrf
 
-    <div class="w-full overflow-x-auto rounded-lg">
-        <table class="min-w-full max-lg:text-sm max-md:text-xs">
-            <thead>
-                <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
-                    <th title="Nomor">No</th>
-                    <th title="Sasaran kegiatan">Sasaran Kegiatan</th>
-                    <th title="Indikator kinerja kegiatan">Indikator Kinerja Kegiatan</th>
-                    <th title="Program strategis">Program Strategis</th>
-                    <th title="Indikator kinerja program">Indikator Kinerja Program</th>
-                    <th title="Target {{ $year }}">Target {{ $year }}</th>
+        @if (auth()->user()->access === 'editor')
+            <x-partials.button.add text="Simpan" style="ml-auto" submit />
+        @endif
 
-                    @foreach ($units as $unit)
-                        <th title="{{ $unit['name'] }}">{{ $unit['short_name'] }}</th>
-                    @endforeach
+        <div class="w-full overflow-x-auto rounded-lg">
+            <table class="min-w-full max-lg:text-sm max-md:text-xs">
+                <thead>
+                    <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
+                        <th title="Nomor">No</th>
+                        <th title="Sasaran kegiatan">Sasaran Kegiatan</th>
+                        <th title="Indikator kinerja kegiatan">Indikator Kinerja Kegiatan</th>
+                        <th title="Program strategis">Program Strategis</th>
+                        <th title="Indikator kinerja program">Indikator Kinerja Program</th>
+                        <th title="Target {{ $year }}">Target {{ $year }}</th>
 
-                </tr>
-            </thead>
-            <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
+                        @foreach ($units as $unit)
+                            <th title="{{ $unit['name'] }}">{{ $unit['short_name'] }}</th>
+                        @endforeach
 
-                @foreach ($data as $sk)
-                    @foreach ($sk['indikator_kinerja_kegiatan'] as $ikk)
-                        @foreach ($ikk['program_strategis'] as $ps)
-                            @foreach ($ps['indikator_kinerja_program'] as $ikp)
-                                <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
+                    </tr>
+                </thead>
+                <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
 
-                                    @if ($loop->iteration === 1)
-                                        @if ($loop->parent->iteration === 1)
-                                            @if ($loop->parent->parent->iteration === 1)
-                                                <td title="{{ $sk['number'] }}" rowspan="{{ $sk['rowspan'] }}">{{ $sk['number'] }}</td>
+                    @foreach ($data as $sk)
+                        @foreach ($sk['indikator_kinerja_kegiatan'] as $ikk)
+                            @foreach ($ikk['program_strategis'] as $ps)
+                                @foreach ($ps['indikator_kinerja_program'] as $ikp)
+                                    <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
 
-                                                <td title="{{ $sk['sk'] }}" rowspan="{{ $sk['rowspan'] }}" class="min-w-72 w-max text-left">{{ $sk['sk'] }}</td>
+                                        @if ($loop->iteration === 1)
+                                            @if ($loop->parent->iteration === 1)
+                                                @if ($loop->parent->parent->iteration === 1)
+                                                    <td title="{{ $sk['number'] }}" rowspan="{{ $sk['rowspan'] }}">{{ $sk['number'] }}</td>
+
+                                                    <td title="{{ $sk['sk'] }}" rowspan="{{ $sk['rowspan'] }}" class="min-w-72 w-max text-left">{{ $sk['sk'] }}</td>
+                                                @endif
+
+                                                <td title="{{ $ikk['ikk'] }}" rowspan="{{ $ikk['rowspan'] }}" class="min-w-72 w-max text-left">{{ $ikk['ikk'] }}</td>
                                             @endif
 
-                                            <td title="{{ $ikk['ikk'] }}" rowspan="{{ $ikk['rowspan'] }}" class="min-w-72 w-max text-left">{{ $ikk['ikk'] }}</td>
+                                            <td title="{{ $ps['ps'] }}" rowspan="{{ $ps['rowspan'] }}" class="min-w-72 w-max text-left">{{ $ps['ps'] }}</td>
                                         @endif
 
-                                        <td title="{{ $ps['ps'] }}" rowspan="{{ $ps['rowspan'] }}" class="min-w-72 w-max text-left">{{ $ps['ps'] }}</td>
-                                    @endif
+                                        <td title="{{ $ikp['ikp'] }}" class="min-w-72 group relative z-10 w-max text-left">
+                                            {{ $ikp['ikp'] }}
+                                            <span title="{{ $ikp['type'] === 'iku' ? 'Indikator kinerja utama' : 'Indikator kinerja tambahan' }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ikp['type'] }}</span>
+                                        </td>
 
-                                    <td title="{{ $ikp['ikp'] }}" class="min-w-72 group relative z-10 w-max text-left">
-                                        {{ $ikp['ikp'] }}
-                                        <span title="{{ $ikp['type'] === 'iku' ? 'Indikator kinerja utama' : 'Indikator kinerja tambahan' }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ikp['type'] }}</span>
-                                    </td>
+                                        <td title="{{ $ikp['allTarget'] }}">{{ $ikp['allTarget'] }}</td>
 
-                                    <td title="{{ $ikp['allTarget'] }}">{{ $ikp['allTarget'] }}</td>
-
-                                    @php
-                                        $target = collect($ikp['target']);
-                                    @endphp
-
-                                    @foreach ($units as $unit)
                                         @php
-                                            $exists = $target->where('unit_id', $unit['id'])->first();
-                                            $targetRoute = url(route('super-admin-achievement-iku-target-add', ['ikp' => $ikp['id'], 'unit' => $unit['id']]));
-                                            $inputName = 'target[' . $ikp['id'] . '-' . $unit['id'] . ']';
-                                            $errorName = 'target.' . $ikp['id'] . '-' . $unit['id'];
+                                            $target = collect($ikp['target']);
                                         @endphp
 
-                                        <td>
-                                            @if ($exists !== null)
-                                                @php
-                                                    $id = $loop->parent->parent->parent->parent->iteration . $loop->parent->parent->parent->iteration . $loop->parent->parent->iteration . $loop->parent->iteration . $loop->iteration;
-                                                @endphp
+                                        @foreach ($units as $unit)
+                                            @php
+                                                $exists = $target->where('unit_id', $unit['id'])->first();
+                                                $inputName = 'target[' . $ikp['id'] . '-' . $unit['id'] . ']';
+                                                $errorName = 'target.' . $ikp['id'] . '-' . $unit['id'];
+                                            @endphp
 
-                                                <div id="target-{{ $id }}" title="{{ $exists['target'] }}" class="group relative z-10 py-1.5">
-                                                    <p>{{ $exists['target'] }}</p>
-
-                                                    @if (auth()->user()->access === 'editor')
-                                                        <x-partials.button.edit button onclick="toggleEditForm('{{ $id }}')" style="absolute hidden top-0.5 right-0.5 group-hover:block group-focus:block" />
-                                                    @endif
-
-                                                </div>
+                                            <td title="Target {{ $unit['name'] }}">
 
                                                 @if (auth()->user()->access === 'editor')
-                                                    <form id="form-target-{{ $id }}" action="{{ $targetRoute }}" method="POST" class="hidden flex-col gap-0.5">
-                                                        @csrf
-                                                        <div class="flex-1">
-                                                            <x-partials.input.text name="{{ $inputName }}" title="target" value="{{ $exists['target'] }}" />
+                                                    <x-partials.input.text name="{{ $inputName }}" title="target" value="{{ $exists['target'] ?? '' }}" />
 
-                                                            @error($errorName)
-                                                                <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
-                                                            @enderror
-
-                                                        </div>
-                                                        <div class="ml-auto flex items-center justify-end gap-0.5">
-                                                            <x-partials.button.edit />
-                                                            <x-partials.button.cancel onclick="toggleEditForm('{{ $id }}')" />
-                                                        </div>
-                                                    </form>
+                                                    @error($errorName)
+                                                        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
+                                                    @enderror
+                                                @else
+                                                    <p title="target {{ $unit['name'] }}">{{ $exists['target'] ?? '' }}</p>
                                                 @endif
-                                            @else
-                                                @if (auth()->user()->access === 'editor')
-                                                    <form action="{{ $targetRoute }}" method="POST" class="flex items-center gap-1">
-                                                        @csrf
-                                                        <div class="flex-1">
-                                                            <x-partials.input.text name="{{ $inputName }}" title="target" required />
 
-                                                            @error($errorName)
-                                                                <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
-                                                            @enderror
+                                            </td>
+                                        @endforeach
 
-                                                        </div>
-                                                        <x-partials.button.add text="" submit />
-                                                    </form>
-                                                @endif
-                                            @endif
-                                        </td>
-                                    @endforeach
-
-                                </tr>
+                                    </tr>
+                                @endforeach
                             @endforeach
                         @endforeach
                     @endforeach
-                @endforeach
 
-            </tbody>
-        </table>
-    </div>
+                </tbody>
+            </table>
+        </div>
 
-    @if (!count($data))
-        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data capaian kinerja</p>
-    @endif
+        @if (!count($data))
+            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data capaian kinerja</p>
+        @endif
 
-    @pushIf(auth()->user()->access === 'editor', 'script')
-    <script>
-        function toggleEditForm(id) {
-            document.getElementById('target-' + id).classList.toggle('hidden');
-            document.getElementById('form-target-' + id).classList.toggle('flex');
-            document.getElementById('form-target-' + id).classList.toggle('hidden');
-        }
-    </script>
-    @endPushIf
+        @if (auth()->user()->access === 'editor')
+            <x-partials.button.add text="Simpan" style="ml-auto" submit />
+        @endif
 
+    </form>
 </x-super-admin-template>
