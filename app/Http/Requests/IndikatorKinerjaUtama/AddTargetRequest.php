@@ -23,6 +23,7 @@ class AddTargetRequest extends FormRequest
     {
         return [
             'target.*' => ['bail', 'nullable', 'numeric', 'min:0'],
+            'target' => ['bail', 'array'],
         ];
     }
 
@@ -34,6 +35,7 @@ class AddTargetRequest extends FormRequest
     {
         return [
             'target.*' => 'Target',
+            'target' => 'Target',
         ];
     }
 
@@ -46,6 +48,7 @@ class AddTargetRequest extends FormRequest
         return [
             'min' => ':attribute tidak boleh kurang dari :min',
             'numeric' => ':attribute harus berupa bilangan',
+            'array' => ':attribute harus berupa array',
         ];
     }
 }

@@ -21,7 +21,7 @@
 <x-super-admin-template title="IKU - Capaian Kinerja - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 :text="$heading" :$previousRoute />
-    <form action="" method="POST" class="flex w-full flex-col gap-1">
+    <form action="{{ route('super-admin-achievement-iku-target-add', ['year' => $year]) }}" method="POST" class="flex w-full flex-col gap-1">
         @csrf
 
         @if (auth()->user()->access === 'editor')

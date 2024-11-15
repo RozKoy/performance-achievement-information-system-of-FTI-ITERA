@@ -646,62 +646,80 @@ class IKUController extends Controller
     }
 
     /**
-     * IKU add target function
+     * IKU add target
      * @param \App\Http\Requests\IndikatorKinerjaUtama\AddTargetRequest $request
-     * @param mixed $ikpId
-     * @param mixed $unitId
+     * @param mixed $year
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function addTarget(AddTargetRequest $request, $ikpId, $unitId): RedirectResponse
+    public function addTarget(AddTargetRequest $request, $year): RedirectResponse
     {
-        $ikp = IndikatorKinerjaProgram::findOrFail($ikpId);
+        $targets = $request['target'];
 
-        if ($ikp->status === 'aktif') {
-            Unit::withTrashed()->findOrFail($unitId);
+        $indikatorKinerjaProgram = IndikatorKinerjaProgram::where('status', 'aktif')
+            ->whereHas('programStrategis', function (Builder $query) use ($year) {
+                $query->whereHas('indikatorKinerjaKegiatan', function (Builder $query) use ($year) {
+                    $query->whereHas('sasaranKegiatan', function (Builder $query) use ($year) {
+                        $query->whereHas('time', function (Builder $query) use ($year) {
+                            $query->where('year', $year);
+                        });
+                    });
+                });
+            })
+            ->get();
 
-            $target = null;
-            if (isset($request['target'])) {
-                $target = $request['target'][$ikpId . '-' . $unitId];
+        $units = Unit::where(function (Builder $query) use ($year) {
+            $query->whereNotNull('deleted_at')
+                ->whereHas('indikatorKinerjaUtama', function (Builder $query) use ($year) {
+                    $query->whereHas('period', function (Builder $query) use ($year) {
+                        $query->whereHas('year', function (Builder $query) use ($year) {
+                            $query->where('year', $year);
+                        });
+                    });
+                });
+        })
+            ->orWhereNull('deleted_at')
+            ->withTrashed()
+            ->get();
+
+        foreach ($indikatorKinerjaProgram as $ikp) {
+            foreach ($units as $unit) {
+                if ($targets["$ikp->id-$unit->id"] ?? null !== null) {
+                    $temp = $ikp->target()->firstOrNew(
+                        [
+                            'unit_id' => $unit->id,
+                        ],
+                        [
+                            'unit_id' => $unit->id,
+                        ],
+                    );
+
+                    $temp->target = $targets["$ikp->id-$unit->id"];
+
+                    $temp->save();
+                } else {
+                    $ikp->target()->where('unit_id', $unit->id)->forceDelete();
+                }
             }
+            $newTarget = $ikp->mode === 'table' ? $ikp->target()->sum('target') : $ikp->target()->average('target');
 
-            $targetInstance = IKUTarget::firstOrNew([
-                'indikator_kinerja_program_id' => $ikpId,
-                'unit_id' => $unitId
-            ]);
+            if ($newTarget) {
+                $realization = $ikp->achievements()->count();
+                if ($ikp->mode === 'single') {
+                    $realization = $ikp->singleAchievements()->average('value') ?? $newTarget - 1;
+                }
 
-            if ($target === null && $targetInstance->id !== null) {
-                $targetInstance->forceDelete();
-            } else if ($target !== null) {
-                $targetInstance->target = (float) $target;
-                $targetInstance->save();
-            }
+                $evaluation = $ikp->evaluation()->firstOrNew();
 
-            $realization = $ikp->mode === 'table' ? $ikp->achievements()->count() : $ikp->singleAchievements()->average('value');
+                $evaluation->target = $newTarget;
+                $evaluation->status = $realization >= $newTarget;
 
-            $evaluation = IKUEvaluation::firstOrNew([
-                'indikator_kinerja_program_id' => $ikpId
-            ]);
-
-            if ($ikp->mode === 'table') {
-                $sumAllTarget = $ikp->target()
-                    ->sum('target');
-
-                $evaluation->status = $realization >= $sumAllTarget;
-                $evaluation->target = $sumAllTarget;
+                $evaluation->save();
             } else {
-                $avgAllTarget = $ikp->target()
-                    ->average('target');
-
-                $evaluation->status = $realization >= $avgAllTarget;
-                $evaluation->target = $avgAllTarget;
+                $ikp->evaluation()->forceDelete();
             }
-
-            $evaluation->save();
-
-            return back();
         }
 
-        abort(404);
+        return back();
     }
 
     /**

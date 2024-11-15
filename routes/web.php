@@ -87,7 +87,7 @@ Route::prefix('/super-admin')->middleware('superadmin')->group(function () {
             Route::get('/{ikp}/export', 'detailExportIKU')->name('super-admin-achievement-iku-detail-export');
 
             Route::middleware('editor')->group(function () {
-                Route::post('/{ikp}/{unit}/target', 'addTarget')->name('super-admin-achievement-iku-target-add');
+                Route::post('/{year}/target', 'addTarget')->name('super-admin-achievement-iku-target-add');
                 Route::get('/{period}/status', 'statusToggle')->name('super-admin-achievement-iku-status');
                 Route::post('/{ikp}/evaluation', 'addEvaluation')->name('super-admin-achievement-iku-evaluation');
             });

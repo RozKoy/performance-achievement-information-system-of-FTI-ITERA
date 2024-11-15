@@ -48,6 +48,7 @@ class AddTargetRequest extends FormRequest
         return [
             'min' => ':attribute tidak boleh kurang dari :min',
             'numeric' => ':attribute harus berupa bilangan',
+            'array' => ':attribute harus berupa array',
         ];
     }
 }
