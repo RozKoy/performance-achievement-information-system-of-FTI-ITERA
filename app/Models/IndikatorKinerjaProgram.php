@@ -26,6 +26,7 @@ class IndikatorKinerjaProgram extends Model
         'definition',
         'number',
         'status',
+        'mode',
         'name',
         'type',
 
