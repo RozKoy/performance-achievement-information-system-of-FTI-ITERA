@@ -94,10 +94,13 @@ class IndikatorKinerjaProgram extends Model
     public function deleteOrTrashed(): void
     {
         $this->singleAchievements()->forceDelete();
-        $this->achievements()->forceDelete();
         $this->evaluation()->forceDelete();
         $this->columns()->forceDelete();
         $this->target()->forceDelete();
+
+        $this->achievements()->each(function (IKUAchievement $item) {
+            $item->deleteOrTrashed();
+        });
 
         $this->programStrategis->indikatorKinerjaProgram()
             ->where('number', '>', $this->number)

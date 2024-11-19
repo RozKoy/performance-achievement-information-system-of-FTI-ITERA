@@ -60,4 +60,18 @@ class IKUAchievement extends Model
     {
         return $this->hasMany(IKUAchievementData::class, 'achievement_id');
     }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | FUNCTION
+    | -----------------------------------------------------------------
+    */
+
+    public function deleteOrTrashed(): void
+    {
+        $this->data()->forceDelete();
+
+        $this->forceDelete();
+    }
 }

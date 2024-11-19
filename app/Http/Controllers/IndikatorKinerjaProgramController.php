@@ -370,9 +370,12 @@ class IndikatorKinerjaProgramController extends Controller
             $sk = SasaranKegiatan::currentOrFail($sk->id);
 
             $ikp->singleAchievements()->forceDelete();
-            $ikp->achievements()->forceDelete();
             $ikp->evaluation()->forceDelete();
             $ikp->target()->forceDelete();
+
+            $ikp->achievements()->each(function ($item) {
+                $item->deleteOrTrashed();
+            });
 
             $newStatus = $ikp->status === 'aktif' ? 'tidak aktif' : 'aktif';
             $ikp->status = $newStatus;
