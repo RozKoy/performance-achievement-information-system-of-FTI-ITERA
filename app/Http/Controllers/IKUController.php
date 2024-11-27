@@ -998,32 +998,57 @@ class IKUController extends Controller
             ->orderBy('number')
             ->get();
 
-        $data = IKUAchievement::withTrashed()
-            ->with([
-                'data' => function (HasMany $query) {
-                    $query->select([
-                        'achievement_id',
-                        'column_id',
-                        'data',
-                    ])
-                        ->withAggregate('column AS file', 'file');
-                }
-            ])
-            ->where(function (Builder $query) use ($periodInstance) {
-                if ($periodInstance) {
-                    $query->whereBelongsTo($periodInstance, 'period');
-                }
-            })
-            ->whereBelongsTo($ikp)
-            ->select('id')
-            ->withAggregate('unit AS unit', 'name')
-            ->latest()
-            ->get();
+        $data = collect([]);
+        if ($ikp->mode === 'table') {
+            $data = IKUAchievement::withTrashed()
+                ->with([
+                    'data' => function (HasMany $query) {
+                        $query->select([
+                            'achievement_id',
+                            'column_id',
+                            'data',
+                        ])
+                            ->withAggregate('column AS file', 'file');
+                    }
+                ])
+                ->where(function (Builder $query) use ($periodInstance) {
+                    if ($periodInstance) {
+                        $query->whereBelongsTo($periodInstance, 'period');
+                    }
+                })
+                ->whereBelongsTo($ikp)
+                ->select('id')
+                ->withAggregate('unit AS unit', 'name')
+                ->latest()
+                ->get();
+        } else {
+            $data = IKUSingleAchievement::withTrashed()
+                ->where(function (Builder $query) use ($periodInstance) {
+                    if ($periodInstance) {
+                        $query->whereBelongsTo($periodInstance, 'period');
+                    }
+                })
+                ->whereBelongsTo($ikp)
+                ->withAggregate('unit AS unit', 'name')
+                ->latest()
+                ->get();
+        }
 
-        $achievementCount = $data->count();
+        $achievementCount = $ikp->mode === 'table' ? $data->count() : $data->average('value');
         $data = $data->groupBy('unit');
 
         $evaluation = $ikp->evaluation;
+
+        $first = collect(['no']);
+        if ($ikp->mode === 'table') {
+            foreach ($columns as $column) {
+                $first->add($column->name);
+            }
+        } else {
+            $first->add('program studi');
+            $first->add('realisasi');
+            $first->add('bukti');
+        }
 
         $collection = collect([
             ['tahun', $year],
@@ -1036,38 +1061,41 @@ class IKUController extends Controller
             ['realisasi', $achievementCount],
             $evaluation && $period === '5' ? ['target', $evaluation->target, 'kendala', $evaluation->evaluation, 'tindak lanjut', $evaluation->follow_up] : [],
             ['data'],
-            [
-                'no',
-                ...$columns->map(function ($column) {
-                    return $column->name;
-                })
-            ],
+            $first->toArray(),
         ]);
 
-        $data->each(function ($item, $key) use ($collection, $columns) {
-            $collection->add([$key]);
-            $item->each(function ($col, $index) use ($collection, $columns) {
-                $temp = collect([$index + 1]);
+        if ($ikp->mode === 'table') {
+            $data->each(function ($item, $key) use ($collection, $columns) {
+                $collection->add([$key]);
+                $item->each(function ($col, $index) use ($collection, $columns) {
+                    $temp = collect([$index + 1]);
 
-                $columns->each(function ($column) use ($collection, $temp, $col) {
-                    $find = $col['data']->firstWhere('column_id', $column->id);
+                    $columns->each(function ($column) use ($temp, $col) {
+                        $find = $col['data']->firstWhere('column_id', $column->id);
 
-                    if ($find) {
-                        if ($find->file) {
-                            $temp->add(url(asset('storage/' . $find->data)));
+                        if ($find) {
+                            if ($find->file) {
+                                $temp->add(url(asset('storage/' . $find->data)));
+                            } else {
+                                $temp->add($find->data);
+                            }
                         } else {
-                            $temp->add($find->data);
+                            $temp->add('');
                         }
-                    } else {
-                        $temp->add('');
-                    }
+                    });
+
+                    $collection->add($temp->toArray());
                 });
-
-                $collection->add($temp->toArray());
             });
-        });
+        } else {
+            $index = 1;
+            foreach ($data as $key => $item) {
+                $collection->add([$index, $key, $item->average('value'), $item->count() === 1 ? $item->first()->link : '']);
+                $index++;
+            }
+        }
 
-        return Excel::download(new IKUExport($collection->toArray()), $ikp->name . '.xlsx');
+        return Excel::download(new IKUExport($collection->toArray()), (string) $ikp->name . '.xlsx');
     }
 
 
