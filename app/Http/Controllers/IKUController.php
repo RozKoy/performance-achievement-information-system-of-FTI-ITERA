@@ -740,7 +740,7 @@ class IKUController extends Controller
         foreach ([3, 6, 9, 12] as $key => $value) {
             if ($currentMonth <= $value) {
                 $temp = $key + 1;
-                $currentPeriod = "$temp";
+                $currentPeriod = (string) $temp;
 
                 break;
             }
@@ -791,6 +791,7 @@ class IKUController extends Controller
                 'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram' => function (HasMany $query) {
                     $query->select([
                         'definition',
+                        'mode',
                         'name',
                         'type',
                         'id',
@@ -821,10 +822,38 @@ class IKUController extends Controller
                             },
                             'achievements AS all',
                         ])
+                        ->withAvg([
+                            'singleAchievements AS singleTw1' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '1');
+                                });
+                            }
+                        ], 'value')
+                        ->withAvg([
+                            'singleAchievements AS singleTw2' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '2');
+                                });
+                            }
+                        ], 'value')
+                        ->withAvg([
+                            'singleAchievements AS singleTw3' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '3');
+                                });
+                            }
+                        ], 'value')
+                        ->withAvg([
+                            'singleAchievements AS singleTw4' => function (Builder $query) {
+                                $query->whereHas('period', function (Builder $query) {
+                                    $query->where('period', '4');
+                                });
+                            }
+                        ], 'value')
                         ->withAggregate('evaluation AS evaluation', 'evaluation')
                         ->withAggregate('evaluation AS follow_up', 'follow_up')
                         ->withAggregate('evaluation AS target', 'target')
-                        ->withAggregate('evaluation AS done', 'status');
+                        ->withAggregate('evaluation AS status', 'status');
                 },
             ])
             ->select([
@@ -880,14 +909,21 @@ class IKUController extends Controller
                         $temp[7] = $ikp->target;
                         $temp[8] = $ikp->all;
 
-                        $temp[9] = $ikp->tw1;
-                        $temp[10] = $ikp->tw2;
-                        $temp[11] = $ikp->tw3;
-                        $temp[12] = $ikp->tw4;
+                        if ($ikp->mode === 'table') {
+                            $temp[9] = $ikp->tw1;
+                            $temp[10] = $ikp->tw2;
+                            $temp[11] = $ikp->tw3;
+                            $temp[12] = $ikp->tw4;
+                        } else {
+                            $temp[9] = $ikp->singleTw1;
+                            $temp[10] = $ikp->singleTw2;
+                            $temp[11] = $ikp->singleTw3;
+                            $temp[12] = $ikp->singleTw4;
+                        }
 
                         $temp[13] = $ikp->evaluation;
                         $temp[14] = $ikp->follow_up;
-                        $temp[15] = $ikp->done ? 'Tercapai' : 'Tidak tercapai';
+                        $temp[15] = $ikp->status ? 'Tercapai' : 'Tidak tercapai';
 
                         $collection->add($temp);
                     });
