@@ -219,7 +219,7 @@
             </table>
         @endif
 
-        @if (auth()->user()->access === 'editor' && request()->query('mode') !== 'edit')
+        @if (auth()->user()->access === 'editor')
             <div id="import-modal" tabindex="-1" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
                 <div class="relative max-h-full w-full max-w-md p-4">
                     <div class="relative rounded-lg bg-white shadow shadow-primary">
@@ -229,7 +229,7 @@
                             </svg>
                             <span class="sr-only">Close modal</span>
                         </button>
-                        <form action="{{ route('super-admin-rs-import') }}" method="POST" class="flex flex-col gap-1 p-4 text-primary max-md:text-sm md:p-5" enctype="multipart/form-data">
+                        <form action="{{ route('admin-iku-data-table-import', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" class="flex flex-col gap-1 p-4 text-primary max-md:text-sm md:p-5" enctype="multipart/form-data">
                             @csrf
                             <input type="file" name="file" accept=".xlsx, .xls, .csv">
                             <p class="text-sm max-md:text-xs">Belum memiliki template? <a href="{{ route('admin-iku-template-download', ['ikp' => $ikp['id']]) }}" class="underline hover:text-primary/75" target="_blank">Unduh</a></p>
@@ -238,38 +238,40 @@
                     </div>
                 </div>
             </div>
-            <div id="add-modal" tabindex="-1" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
-                <div class="relative max-h-full w-full max-w-md p-4">
-                    <div class="relative rounded-lg bg-white shadow shadow-primary">
-                        <button type="button" title="Tutup" onclick="popDeleteId()" class="absolute end-2.5 top-3 ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-primary hover:bg-gray-200 hover:text-primary/80" data-modal-hide="add-modal">
-                            <svg class="h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                            </svg>
-                            <span class="sr-only">Close modal</span>
-                        </button>
-                        <form action="{{ route('admin-iku-data-table', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" class="flex flex-col gap-1 p-4 text-primary max-md:text-sm md:p-5" enctype="multipart/form-data">
-                            @csrf
+            @if (request()->query('mode') !== 'edit')
+                <div id="add-modal" tabindex="-1" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
+                    <div class="relative max-h-full w-full max-w-md p-4">
+                        <div class="relative rounded-lg bg-white shadow shadow-primary">
+                            <button type="button" title="Tutup" onclick="popDeleteId()" class="absolute end-2.5 top-3 ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-primary hover:bg-gray-200 hover:text-primary/80" data-modal-hide="add-modal">
+                                <svg class="h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                </svg>
+                                <span class="sr-only">Close modal</span>
+                            </button>
+                            <form action="{{ route('admin-iku-data-table', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" class="flex flex-col gap-1 p-4 text-primary max-md:text-sm md:p-5" enctype="multipart/form-data">
+                                @csrf
 
-                            <p class="text-base font-semibold md:text-lg xl:text-xl">Tambah Data</p>
+                                <p class="text-base font-semibold md:text-lg xl:text-xl">Tambah Data</p>
 
-                            @foreach ($columns as $column)
-                                <div>
-                                    @if ($column['file'] == 0)
-                                        <x-partials.label.default for="{{ 'data-' . $column['id'] }}" title="{{ $column['name'] }}" text="{{ $column['name'] }}" />
-                                        <x-partials.input.text name="{{ 'data-' . $column['id'] }}" title="{{ $column['name'] }}" />
-                                    @else
-                                        <x-partials.label.default for="{{ 'file-' . $column['id'] }}" title="{{ $column['name'] }}" text="{{ $column['name'] }}" />
-                                        <input type="file" id="{{ 'file-' . $column['id'] }}" name="{{ 'file-' . $column['id'] }}">
-                                    @endif
-                                </div>
-                            @endforeach
+                                @foreach ($columns as $column)
+                                    <div>
+                                        @if ($column['file'] == 0)
+                                            <x-partials.label.default for="{{ 'data-' . $column['id'] }}" title="{{ $column['name'] }}" text="{{ $column['name'] }}" />
+                                            <x-partials.input.text name="{{ 'data-' . $column['id'] }}" title="{{ $column['name'] }}" />
+                                        @else
+                                            <x-partials.label.default for="{{ 'file-' . $column['id'] }}" title="{{ $column['name'] }}" text="{{ $column['name'] }}" />
+                                            <input type="file" id="{{ 'file-' . $column['id'] }}" name="{{ 'file-' . $column['id'] }}">
+                                        @endif
+                                    </div>
+                                @endforeach
 
-                            <x-partials.button.add style="ml-auto" submit />
+                                <x-partials.button.add style="ml-auto" submit />
 
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
         @endif
 
         @pushIf(auth()->user()->access === 'editor' && request()->query('mode') === 'edit', 'script')

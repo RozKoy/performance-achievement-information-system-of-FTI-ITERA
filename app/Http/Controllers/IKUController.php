@@ -22,6 +22,8 @@ use Illuminate\Support\Carbon;
 use App\Models\IKUAchievement;
 use Illuminate\Http\Request;
 use App\Exports\IKUExport;
+use App\Http\Requests\RencanaStrategis\ImportRequest;
+use App\Imports\IKPTableDataSheets;
 use App\Models\IKUPeriod;
 use App\Models\IKUYear;
 use App\Models\Unit;
@@ -2265,15 +2267,61 @@ class IKUController extends Controller
     public function ikpExcelTemplate(IndikatorKinerjaProgram $ikp): BinaryFileResponse
     {
         if ($ikp->status === 'aktif' && $ikp->mode === 'table') {
-            $collection = collect([[$ikp->id]]);
+            $collection = collect();
 
             $columns = $ikp->columns()
                 ->orderBy('number')
                 ->pluck('name');
 
             $collection->add($columns->toArray());
+            $collection->add([]);
+            $collection->add(['Mulai isi data dari baris ke-2, jangan hapus baris 1']);
 
             return Excel::download(new IKUExport($collection->toArray()), (string) $ikp->name . ' - template.xlsx');
+        }
+
+        abort(404);
+    }
+
+    public function ikpTableDataImport(ImportRequest $request, string $period, IndikatorKinerjaProgram $ikp): RedirectResponse
+    {
+        if ($ikp->status === 'aktif' && $ikp->mode === 'table') {
+            $ps = $ikp->programStrategis;
+            $ikk = $ps->indikatorKinerjaKegiatan;
+            $sk = $ikk->sasaranKegiatan;
+
+            $year = $sk->time;
+
+            $currentMonth = (int) Carbon::now()->format('m');
+            $currentYear = Carbon::now()->format('Y');
+            $currentPeriod = '1';
+
+            foreach ([3, 6, 9, 12] as $key => $value) {
+                if ($currentMonth <= $value) {
+                    $temp = $key + 1;
+                    $currentPeriod = (string) $temp;
+
+                    break;
+                }
+            }
+
+            $periodInstance = $year->periods()
+                ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
+                    $query->where('period', $currentPeriod)
+                        ->whereHas('year', function (Builder $query) use ($currentYear) {
+                            $query->where('year', $currentYear);
+                        });
+                })
+                ->where('period', $period)
+                ->where('status', true)
+                ->firstOrFail();
+
+            Excel::import(
+                new IKPTableDataSheets($ikp, $periodInstance->id, auth()->user()->unit->id),
+                $request->file('file')
+            );
+
+            return back();
         }
 
         abort(404);
