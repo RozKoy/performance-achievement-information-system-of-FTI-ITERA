@@ -71,6 +71,10 @@
         <p class="text-primary max-xl:text-sm max-sm:text-xs">Jumlah Data : {{ count($data) }}</p>
 
         @if (auth()->user()->access === 'editor')
+            <button title="Import Excel" type="button" data-modal-target="import-modal" data-modal-toggle="import-modal" class="ml-auto flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
+                <img src="{{ url(asset('storage/assets/icons/excel.png')) }}" alt="Excel" class="w-6 max-md:w-5">
+                Import
+            </button>
             <div class="*:px-2.5 max-sm:text-sm max-[320px]:text-xs">
                 <div class="*:flex-1 *:rounded-lg *:p-1 *:bg-primary/80 flex gap-2.5 text-center text-white">
                     <a href="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => request()->query('period')]) }}" title="Tombol mode hanya lihat" class="{{ request()->query('mode') !== 'edit' ? 'outline outline-2 outline-offset-1 outline-primary' : '' }} hover:bg-primary/70">Mode Lihat</a>
@@ -216,6 +220,24 @@
         @endif
 
         @if (auth()->user()->access === 'editor' && request()->query('mode') !== 'edit')
+            <div id="import-modal" tabindex="-1" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
+                <div class="relative max-h-full w-full max-w-md p-4">
+                    <div class="relative rounded-lg bg-white shadow shadow-primary">
+                        <button type="button" title="Tutup" onclick="popDeleteId()" class="absolute end-2.5 top-3 ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-primary hover:bg-gray-200 hover:text-primary/80" data-modal-hide="import-modal">
+                            <svg class="h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                        <form action="{{ route('super-admin-rs-import') }}" method="POST" class="flex flex-col gap-1 p-4 text-primary max-md:text-sm md:p-5" enctype="multipart/form-data">
+                            @csrf
+                            <input type="file" name="file" accept=".xlsx, .xls, .csv">
+                            <p class="text-sm max-md:text-xs">Belum memiliki template? <a href="{{ route('admin-iku-template-download', ['ikp' => $ikp['id']]) }}" class="underline hover:text-primary/75" target="_blank">Unduh</a></p>
+                            <x-partials.button.add style="ml-auto" submit />
+                        </form>
+                    </div>
+                </div>
+            </div>
             <div id="add-modal" tabindex="-1" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
                 <div class="relative max-h-full w-full max-w-md p-4">
                     <div class="relative rounded-lg bg-white shadow shadow-primary">

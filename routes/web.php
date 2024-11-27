@@ -262,8 +262,9 @@ Route::prefix('/')->middleware('admin')->group(function () {
 
         Route::put('/{period}/{ikp}/data-table', 'bulkAddData')->middleware('editor')->name('admin-iku-data-table-bulk');
         Route::post('/{period}/{ikp}/data-table', 'addDataTable')->middleware('editor')->name('admin-iku-data-table');
+        Route::get('/{ikp}/template', 'ikpExcelTemplate')->middleware('editor')->name('admin-iku-template-download');
         Route::post('/{period}/{ikp}/data-single', 'addDataSingle')->middleware('editor')->name('admin-iku-data-single');
-        Route::get('/{ikp}/detail/{achievement}/hapus', 'delete')->middleware('editor');
+        // Route::get('/{ikp}/detail/{achievement}/hapus', 'delete')->middleware('editor');
     });
 
     Route::prefix('/riwayat')->group(function () {

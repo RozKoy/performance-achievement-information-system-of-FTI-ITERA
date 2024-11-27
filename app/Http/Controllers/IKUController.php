@@ -20,11 +20,9 @@ use App\Models\IKUAchievementData;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use App\Models\IKUAchievement;
-use App\Models\IKUEvaluation;
 use Illuminate\Http\Request;
 use App\Exports\IKUExport;
 use App\Models\IKUPeriod;
-use App\Models\IKUTarget;
 use App\Models\IKUYear;
 use App\Models\Unit;
 
@@ -2254,6 +2252,28 @@ class IKUController extends Controller
                     return back();
                 }
             }
+        }
+
+        abort(404);
+    }
+
+    /**
+     * IKP Excel Template Download
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function ikpExcelTemplate(IndikatorKinerjaProgram $ikp): BinaryFileResponse
+    {
+        if ($ikp->status === 'aktif' && $ikp->mode === 'table') {
+            $collection = collect([[$ikp->id]]);
+
+            $columns = $ikp->columns()
+                ->orderBy('number')
+                ->pluck('name');
+
+            $collection->add($columns->toArray());
+
+            return Excel::download(new IKUExport($collection->toArray()), (string) $ikp->name . ' - template.xlsx');
         }
 
         abort(404);
