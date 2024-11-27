@@ -2011,7 +2011,7 @@ class IKUController extends Controller
             foreach ([3, 6, 9, 12] as $key => $value) {
                 if ($currentMonth <= $value) {
                     $temp = $key + 1;
-                    $currentPeriod = "$temp";
+                    $currentPeriod = (string) $temp;
 
                     break;
                 }
@@ -2028,33 +2028,25 @@ class IKUController extends Controller
                 ->where('status', true)
                 ->firstOrFail();
 
-            $ids = collect();
             foreach ($request['old'] ?? [] as $itemKey => $item) {
-                $inputExists = false;
-                foreach ($columns->where('file', false) as $key => $column) {
-                    if ($item['data'][(string) $column->id] !== null) {
-                        $inputExists = true;
-                        break;
-                    }
-                }
+                $data = $item['data'] ?? [];
+                $id = $item['id'] ?? null;
 
-                if ($inputExists) {
-                    $achievement = $ikp->achievements()->find($item['id']);
+                if ($id && count($data)) {
+                    if ($achievement = $ikp->achievements()->find($item['id'])) {
+                        foreach ($data as $colId => $value) {
+                            if ($column = $columns->firstWhere('id', $colId)) {
+                                if ($value !== null) {
+                                    $temp = $achievement->data()->firstOrNew([
+                                        'column_id' => $column->id,
+                                    ]);
 
-                    if ($achievement) {
-                        $ids->push($achievement->id);
+                                    $temp->data = $value;
 
-                        $achievement->data()->whereHas('column', function (Builder $query) {
-                            $query->where('file', false);
-                        })->forceDelete();
-
-                        foreach ($columns->where('file', false) as $key => $column) {
-                            if ($item['data'][(string) $column->id] !== null) {
-                                $achievement->data()->create([
-                                    'column_id' => $column->id,
-
-                                    'data' => $item['data'][(string) $column->id],
-                                ]);
+                                    $temp->save();
+                                } else {
+                                    $achievement->data()->where('column_id', $column->id)->forceDelete();
+                                }
                             }
                         }
 
@@ -2062,9 +2054,6 @@ class IKUController extends Controller
                             if (isset($request->file('old')[$itemKey]['data'][$temp->id])) {
                                 if ($request->file('old')[$itemKey]['data'][$temp->id] instanceof UploadedFile) {
                                     $file = $achievement->data()->firstOrNew(
-                                        [
-                                            'column_id' => $temp->id,
-                                        ],
                                         [
                                             'column_id' => $temp->id,
                                         ],
@@ -2089,7 +2078,7 @@ class IKUController extends Controller
             }
 
             $unset = $ikp->achievements()
-                ->whereNotIn('id', $ids->toArray())
+                ->whereIn('id', $request['delete'] ?? [])
                 ->whereBelongsTo($periodInstance, 'period')
                 ->whereBelongsTo(auth()->user()->unit)
                 ->get();

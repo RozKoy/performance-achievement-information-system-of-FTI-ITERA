@@ -103,17 +103,11 @@
                 <tbody id="data-body" class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
 
                     @foreach ($data as $item)
-                        @php
-                            $deleteData = [
-                                'nomor' => $loop->iteration,
-                            ];
-                        @endphp
-
                         <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
 
                             <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                             <td class="hidden">
-                                <x-partials.input.text name="old[{{ $loop->iteration - 1 }}][id]" title="id" value="{{ $item['id'] }}" />
+                                <input type="text" title="id" id="old[{{ $loop->iteration - 1 }}][id]" name="old[{{ $loop->iteration - 1 }}][id]" value="{{ $item['id'] }}" count="0" disabled>
                             </td>
 
                             @php
@@ -135,12 +129,9 @@
                                             </td>
                                         @endif
                                     @else
-                                        @php
-                                            $deleteData[$column['name']] = $dataFind['data'];
-                                        @endphp
                                         @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
-                                            <td>
-                                                <x-partials.input.text name="old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]" title="{{ $column['name'] }}" value="{{ $dataFind['data'] }}" />
+                                            <td onclick="clickInput('old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]', 'old[{{ $loop->parent->iteration - 1 }}][id]')">
+                                                <x-partials.input.text name="old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]" title="{{ $column['name'] }}" value="{{ $dataFind['data'] }}" oldvalue="{{ $dataFind['data'] }}" onblur="blurInput('old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]', 'old[{{ $loop->parent->iteration - 1 }}][id]')" disabled />
                                             </td>
                                         @else
                                             <td title="{{ $dataFind['data'] }}">{{ $dataFind['data'] }}</td>
@@ -153,8 +144,8 @@
                                                 <input type="file" name="old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]">
                                             </td>
                                         @else
-                                            <td>
-                                                <x-partials.input.text name="old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]" title="{{ $column['name'] }}" />
+                                            <td onclick="clickInput('old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]', 'old[{{ $loop->parent->iteration - 1 }}][id]')">
+                                                <x-partials.input.text name="old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]" title="{{ $column['name'] }}" oldvalue="" onblur="blurInput('old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]', 'old[{{ $loop->parent->iteration - 1 }}][id]')" disabled />
                                             </td>
                                         @endif
                                     @else
@@ -165,7 +156,7 @@
 
                             @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
                                 <td class="flex items-start justify-center gap-1">
-                                    <button type="button" title="Hapus" onclick="this.parentElement.parentElement.remove()" class="h-fit rounded-full bg-red-500 p-0.5 text-white hover:bg-red-400">
+                                    <button type="button" title="Hapus" onclick="deleteInput(this, '{{ $item['id'] }}')" class="h-fit rounded-full bg-red-500 p-0.5 text-white hover:bg-red-400">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-4 sm:w-5">
                                             <path d="m12,0C5.383,0,0,5.383,0,12s5.383,12,12,12,12-5.383,12-12S18.617,0,12,0Zm0,22c-5.514,0-10-4.486-10-10S6.486,2,12,2s10,4.486,10,10-4.486,10-10,10Zm-5-11h10v2H7v-2Z" />
                                         </svg>
@@ -196,6 +187,7 @@
         @endif
 
         @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
+            <input id="delete-input" type="hidden" name="delete[]">
             <table class="hidden">
                 <tr id="sample" class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
                     <td id="number"></td>
@@ -260,8 +252,10 @@
 
         @pushIf(auth()->user()->access === 'editor' && request()->query('mode') === 'edit', 'script')
         <script>
+            const delInput = document.getElementById('delete-input');
             const addButton = document.getElementById('add-row-button');
             const dataBody = document.getElementById('data-body');
+            const dataForm = document.getElementById('data-form');
             const sample = document.getElementById('sample');
             const number = document.getElementById('number');
 
@@ -278,9 +272,52 @@
 
                 const data = sample.cloneNode(true);
 
+                data.removeAttribute('id');
+
                 dataBody.appendChild(data);
 
                 addButton.setAttribute('onclick', `addRow(${index + 1})`);
+            }
+
+            function clickInput(selfId, id) {
+                const selfElement = document.getElementById(selfId);
+                const idElement = document.getElementById(id);
+
+                if (selfElement.disabled) {
+                    idElement.setAttribute('count', parseInt(idElement.getAttribute('count')) + 1);
+                    idElement.disabled = false;
+                }
+
+                selfElement.disabled = false;
+                selfElement.focus();
+            }
+
+            function blurInput(selfId, id) {
+                const selfElement = document.getElementById(selfId);
+                const idElement = document.getElementById(id);
+
+                const idCount = parseInt(idElement.getAttribute('count'));
+
+                if (selfElement.value == selfElement.getAttribute('oldvalue')) {
+                    if (idCount <= 1) {
+                        idElement.setAttribute('count', '0');
+                        idElement.disabled = true;
+                    } else {
+                        idElement.setAttribute('count', idCount - 1);
+                    }
+                    selfElement.disabled = true;
+                }
+            }
+
+            function deleteInput(element, id) {
+                const newNode = delInput.cloneNode(true);
+
+                newNode.removeAttribute('id');
+                newNode.value = id;
+
+                dataForm.appendChild(newNode);
+
+                element.parentElement.parentElement.remove();
             }
         </script>
         @endPushIf
