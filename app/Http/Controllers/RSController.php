@@ -861,7 +861,7 @@ class RSController extends Controller
             $periods[] = '3';
         }
 
-        $period = isset($request->period) ? $request->period : end($periods);
+        $period = $request->period ?? end($periods);
 
         if ((int) $period > count($periods)) {
             abort(404);
@@ -905,20 +905,10 @@ class RSController extends Controller
                                 }
                             }
                         ], 'realization')
-                        ->withCount([
-                            'realization AS count' => function (Builder $query) use ($periodInstance) {
-                                $query->whereNotNull('unit_id');
-                                if ($periodInstance) {
-                                    $query->whereBelongsTo($periodInstance, 'period');
-                                } else {
-                                    $query->whereNotNull('period_id');
-                                }
-                            }
-                        ])
                         ->withAggregate('evaluation AS evaluation', 'evaluation')
                         ->withAggregate('evaluation AS follow_up', 'follow_up')
                         ->withAggregate('evaluation AS target', 'target')
-                        ->withAggregate('evaluation AS done', 'status');
+                        ->withAggregate('evaluation AS status', 'status');
                 }
             ])
             ->orderBy('number')
