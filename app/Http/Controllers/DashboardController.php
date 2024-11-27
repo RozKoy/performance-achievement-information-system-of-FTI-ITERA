@@ -198,12 +198,14 @@ class DashboardController extends Controller
                 'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram' => function (HasMany $query) {
                     $query->select([
                         'name AS ikp',
+                        'mode',
                         'id',
 
                         'program_strategis_id',
                     ])
                         ->orderBy('number');
                 },
+                'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram.singleAchievements',
                 'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram.achievements',
                 'indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram.target',
             ])
@@ -257,7 +259,11 @@ class DashboardController extends Controller
                         $targetTemp = collect();
                         $unitTemp = collect();
                         $units->each(function ($unit) use ($realizationTemp, $targetTemp, $unitTemp, $item) {
-                            $realizationTemp->push($item->achievements->where('unit_id', $unit->id)->count());
+                            if ($item->mode === 'table') {
+                                $realizationTemp->push($item->achievements->where('unit_id', $unit->id)->count());
+                            } else {
+                                $realizationTemp->push($item->singleAchievements->where('unit_id', $unit->id)->average('value'));
+                            }
                             $targetTemp->push($item->target->firstWhere('unit_id', $unit->id)?->target ?? 0);
                             $unitTemp->push($unit->short_name);
                         });
