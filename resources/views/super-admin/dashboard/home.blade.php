@@ -82,6 +82,20 @@
     @if (count($rsIndikatorKinerja))
         <div class="flex w-full cursor-default flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-primary/75 p-3 text-primary shadow shadow-primary">
             <h6 class="uppercase">Rencana Strategis</h6>
+            <div class="flex w-full flex-wrap items-center justify-center gap-5">
+                <div class="flex items-center justify-center gap-1">
+                    <div class="aspect-square h-3 border border-black"></div>
+                    <p>Belum Mengisi</p>
+                </div>
+                <div class="flex items-center justify-center gap-1">
+                    <div class="aspect-square h-3 border border-black bg-red-300"></div>
+                    <p>Belum Tercapai</p>
+                </div>
+                <div class="flex items-center justify-center gap-1">
+                    <div class="aspect-square h-3 border border-black bg-green-300"></div>
+                    <p>Sudah Tercapai</p>
+                </div>
+            </div>
             <div class="w-full overflow-x-auto">
                 <table class="min-w-full">
                     <thead>
@@ -141,6 +155,20 @@
     @if (count($ikuIndikatorKinerjaProgram))
         <div class="flex w-full cursor-default flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-primary/75 p-3 text-primary shadow shadow-primary">
             <h6 class="uppercase">Indikator Kinerja Utama</h6>
+            <div class="flex w-full flex-wrap items-center justify-center gap-5">
+                <div class="flex items-center justify-center gap-1">
+                    <div class="aspect-square h-3 border border-black"></div>
+                    <p>Belum Mengisi</p>
+                </div>
+                <div class="flex items-center justify-center gap-1">
+                    <div class="aspect-square h-3 border border-black bg-red-300"></div>
+                    <p>Belum Tercapai</p>
+                </div>
+                <div class="flex items-center justify-center gap-1">
+                    <div class="aspect-square h-3 border border-black bg-green-300"></div>
+                    <p>Sudah Tercapai</p>
+                </div>
+            </div>
             <div class="w-full overflow-x-auto">
                 <table class="min-w-full">
                     <thead>
