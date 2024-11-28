@@ -65,6 +65,7 @@
                     <th title="Capaian triwulanan" colspan="4">Capaian Triwulanan</th>
                     <th title="Analisis progress capaian" colspan="2">Analisis Progress Capaian</th>
                     <th title="Status penugasan" rowspan="2">Status Penugasan</th>
+                    <th title="Status pengisian" rowspan="2">Status Pengisian</th>
                     <th title="Aksi" rowspan="2">Aksi</th>
                 </tr>
                 <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap *:border bg-primary/80 text-white">
@@ -148,6 +149,30 @@
                                             <div class="{{ $ikp['status'] === 'aktif' ? 'bg-green-500' : 'bg-red-500' }} rounded-full p-3"></div>
                                         </div>
                                     </td>
+
+                                    @if ($ikp['status'] === 'aktif')
+                                        @php
+                                            $realizationTemp = $ikp['mode'] === 'table' ? $ikp['all'] : $ikp['allSingle'];
+                                            $targetTemp = $ikp['target'] ?? 0;
+                                            $progress = $ikp['target'] ? number_format((floatval($realizationTemp) * 100) / $targetTemp, 2) : 0;
+                                            $progress = $progress > 100 ? 100 : $progress;
+                                        @endphp
+                                        <td title="Status pengisian : {{ $progress }}%">
+                                            <div class="flex flex-col gap-1">
+                                                <p>{{ $realizationTemp }}/{{ $targetTemp }}</p>
+
+                                                <div class="relative h-4 w-full overflow-hidden rounded-full bg-gray-200">
+
+                                                    <div class="{{ $progress <= 50 ? 'bg-red-500' : ($progress <= 70 ? 'bg-yellow-500' : 'bg-green-500') }} h-full rounded-full p-0.5 text-center text-xs font-medium leading-none text-green-100" @if ($progress > 0) style="width: {{ $progress }}%" @endif></div>
+
+                                                    <p class="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center text-xs font-medium leading-none">{{ $progress }}%</p>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                    @else
+                                        <td></td>
+                                    @endif
 
                                     <td class="flex items-start justify-center gap-1">
                                         <x-partials.button.detail link="{{ route('super-admin-achievement-iku-detail', ['ikp' => $ikp['id']]) }}" />
