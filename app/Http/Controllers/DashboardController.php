@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\IKUExport;
-use App\Exports\MultipleSheets;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\View\Factory;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Contracts\View\View;
+use App\Exports\MultipleSheets;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
+use App\Exports\IKUExport;
+use App\Exports\RSExport;
 use App\Models\IKUYear;
 use App\Models\RSYear;
 use App\Models\Unit;
-use Maatwebsite\Excel\Facades\Excel;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class DashboardController extends Controller
 {
@@ -698,6 +699,6 @@ class DashboardController extends Controller
             }
         }
 
-        return Excel::download(new MultipleSheets(IKUExport::class, $names, $collection->toArray()), 'rencana-strategis.xlsx');
+        return Excel::download(new MultipleSheets(RSExport::class, $names, $collection->toArray()), 'rencana-strategis.xlsx');
     }
 }
