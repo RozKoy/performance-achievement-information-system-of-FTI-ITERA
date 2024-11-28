@@ -60,6 +60,7 @@ Route::prefix('/super-admin')->middleware('superadmin')->group(function () {
         Route::get('/', 'home')->name('super-admin-dashboard');
         Route::get('/iku/{year}', 'iku')->name('super-admin-dashboard-iku');
         Route::get('/iku/{year}/export', 'exportIKU')->name('super-admin-dashboard-iku-export');
+        Route::get('/rs/{year}/export', 'exportRS')->name('super-admin-dashboard-rs-export');
     });
 
     Route::prefix('/capaian-kinerja')->group(function () {
