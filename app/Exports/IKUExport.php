@@ -11,7 +11,7 @@ class IKUExport implements FromArray, WithTitle
      * @return \Illuminate\Support\Collection
      */
 
-    public function __construct(protected array $data, protected string|null $title)
+    public function __construct(protected array $data, protected string|null $title = null)
     {
     }
 
