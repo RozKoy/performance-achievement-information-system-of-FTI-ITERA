@@ -2283,6 +2283,13 @@ class IKUController extends Controller
         abort(404);
     }
 
+    /**
+     * Import Table Data
+     * @param \App\Http\Requests\RencanaStrategis\ImportRequest $request
+     * @param string $period
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function ikpTableDataImport(ImportRequest $request, string $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
         if ($ikp->status === 'aktif' && $ikp->mode === 'table') {
