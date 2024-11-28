@@ -21,7 +21,7 @@
                 <p class="{{ $rsPercent >= 75 ? 'text-green-500' : ($rsPercent >= 50 ? 'text-yellow-500' : 'text-red-500') }} absolute pt-7 text-3xl max-md:text-xl">{{ $rsPercent }}%</p>
             </div>
             <div class="flex w-full items-center justify-between">
-                <a href="{{ route('super-admin-dashboard-rs-export', ['year' => $rsYear]) }}" title="Unduh Excel" target="_blank" class="flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
+                <a href="{{ route('super-admin-dashboard-rs-export', ['year' => $rsYear]) }}" title="Unduh Excel" target="_blank" class="mr-auto flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
                     <img src="{{ url(asset('storage/assets/icons/excel.png')) }}" alt="Excel" class="w-7 max-md:w-6">
                     Unduh
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-2.5 max-md:w-2">
@@ -31,12 +31,12 @@
                         </g>
                     </svg>
                 </a>
-                <a href="#" class="ml-auto inline-flex items-center font-medium text-primary underline hover:text-primary/80 max-md:text-sm">
+                {{-- <a href="#" class="ml-auto inline-flex items-center font-medium text-primary underline hover:text-primary/80 max-md:text-sm">
                     Selengkapnya
                     <svg class="ms-1 aspect-square w-2.5 max-md:w-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
                     </svg>
-                </a>
+                </a> --}}
             </div>
         </div>
         <div class="flex w-1/2 max-w-screen-md flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-primary/75 p-3 shadow shadow-primary max-lg:w-full">
