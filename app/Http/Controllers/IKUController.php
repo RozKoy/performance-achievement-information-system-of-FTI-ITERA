@@ -683,24 +683,27 @@ class IKUController extends Controller
 
         foreach ($indikatorKinerjaProgram as $ikp) {
             foreach ($units as $unit) {
-                if ($targets["$ikp->id-$unit->id"] ?? null !== null) {
-                    $temp = $ikp->target()->firstOrNew(
-                        [
-                            'unit_id' => $unit->id,
-                        ],
-                        [
-                            'unit_id' => $unit->id,
-                        ],
-                    );
+                if (isset($targets["$ikp->id-$unit->id"])) {
+                    if ($targets["$ikp->id-$unit->id"] !== null) {
+                        $temp = $ikp->target()->firstOrNew(
+                            [
+                                'unit_id' => $unit->id,
+                            ],
+                            [
+                                'unit_id' => $unit->id,
+                            ],
+                        );
 
-                    $temp->target = $targets["$ikp->id-$unit->id"];
+                        $temp->target = $targets["$ikp->id-$unit->id"];
 
-                    $temp->save();
-                } else {
-                    $ikp->target()->where('unit_id', $unit->id)->forceDelete();
+                        $temp->save();
+
+                        continue;
+                    }
                 }
+                $ikp->target()->where('unit_id', $unit->id)->forceDelete();
             }
-            $newTarget = $ikp->mode === 'table' ? $ikp->target()->sum('target') : $ikp->target()->average('target');
+            $newTarget = $ikp->mode === 'table' ? $ikp->target()->sum('target') : number_format($ikp->target()->average('target'), 2);
 
             if ($newTarget) {
                 $realization = $ikp->achievements()->count();
