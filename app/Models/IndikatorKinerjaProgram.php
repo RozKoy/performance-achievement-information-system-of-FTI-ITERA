@@ -72,6 +72,11 @@ class IndikatorKinerjaProgram extends Model
         return $this->hasMany(IKUTarget::class);
     }
 
+    public function unitStatus(): HasMany
+    {
+        return $this->hasMany(IKUUnitStatus::class);
+    }
+
 
     /*
     | -----------------------------------------------------------------
