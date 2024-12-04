@@ -28,6 +28,7 @@
                         <th title="Realisasi {{ $year }}">Realisasi {{ $year }}</th>
                         <th title="Realisasi">Realisasi</th>
                         <th title="Aksi">Aksi</th>
+                        <th title="Data kosong">Data Kosong ({{ $year }})</th>
                     </tr>
                 </thead>
                 <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
@@ -61,11 +62,22 @@
 
                                         <td title="{{ $ikp['target'] }}">{{ $ikp['target'] }}</td>
 
+                                        @php
+                                            $yearRealization = -1;
+                                        @endphp
                                         @if ($ikp['mode'] === 'table')
-                                            <td title="{{ $ikp['all'] }}">{{ $ikp['all'] }}</td>
+                                            @php
+                                                $yearRealization = $ikp['all'];
+                                            @endphp
+
+                                            <td title="{{ $yearRealization }}">{{ $yearRealization }}</td>
                                             <td title="{{ $ikp['achievements'] }}">{{ $ikp['achievements'] }}</td>
                                         @else
-                                            <td title="{{ $ikp['allSingle'] }}">{{ $ikp['allSingle'] }}</td>
+                                            @php
+                                                $yearRealization = $ikp['allSingle'];
+                                            @endphp
+
+                                            <td title="{{ $yearRealization }}">{{ $yearRealization }}</td>
 
                                             @if ($ikp['valueSingle'])
                                                 <td title="{{ $ikp['valueSingle'] }}">{{ $ikp['valueSingle'] }} <a href="{{ $ikp['linkSingle'] }}" title="Link bukti" class="ms-1 text-primary underline">Link</a></td>
@@ -76,6 +88,11 @@
 
                                         <td class="flex items-start justify-center gap-1">
                                             <x-partials.button.detail link="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => $period]) }}" />
+                                        </td>
+                                        <td>
+                                            <form action="" class="p-0.5">
+                                                <input type="checkbox" name="status" title="Data kosong?" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @disabled($yearRealization !== 0)>
+                                            </form>
                                         </td>
 
                                     </tr>
