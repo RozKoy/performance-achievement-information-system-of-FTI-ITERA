@@ -189,12 +189,17 @@
 
                                 @foreach ($units as $unit)
                                     @php
+                                        $unitStatus = collect($item['unitStatus'])
+                                            ->where('status', 'blank')
+                                            ->where('unit_id', $unit['id'])
+                                            ->count();
                                         $singleAchievements = collect($item['singleAchievements'])->where('unit_id', $unit['id']);
                                         $achievements = collect($item['achievements'])->where('unit_id', $unit['id']);
                                         $target = collect($item['target'])->firstWhere('unit_id', $unit['id']);
+
                                         $realization = 0;
                                         $status = 0;
-                                        if ($achievements->count() || $singleAchievements->count()) {
+                                        if ($achievements->count() || $singleAchievements->count() || $unitStatus === 4) {
                                             $status = 1;
                                             if ($item['mode'] === 'table') {
                                                 $realization = $achievements->count();

@@ -82,6 +82,7 @@ class DashboardController extends Controller
             },
             'sasaranKegiatan.indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram.singleAchievements',
             'sasaranKegiatan.indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram.achievements',
+            'sasaranKegiatan.indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram.unitStatus',
             'sasaranKegiatan.indikatorKinerjaKegiatan.programStrategis.indikatorKinerjaProgram.target',
         ])->first();
 
