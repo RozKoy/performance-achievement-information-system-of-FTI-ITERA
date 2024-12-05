@@ -1250,6 +1250,12 @@ class IKUController extends Controller
                                 }
                             ], 'target')
                             ->withAggregate([
+                                'unitStatus AS unitStatus' => function (Builder $query) use ($periodInstance) {
+                                    $query->whereBelongsTo(auth()->user()->unit)
+                                        ->whereBelongsTo($periodInstance, 'period');
+                                }
+                            ], 'status')
+                            ->withAggregate([
                                 'singleAchievements AS valueSingle' => function (Builder $query) use ($periodInstance) {
                                     $query->whereBelongsTo(auth()->user()->unit)
                                         ->whereBelongsTo($periodInstance, 'period');
@@ -2215,6 +2221,67 @@ class IKUController extends Controller
 
                 $evaluation->status = $all >= $evaluation->target;
                 $evaluation->save();
+            }
+
+            return back();
+        }
+
+        abort(404);
+    }
+
+    public function unitStatusToggle($period, IndikatorKinerjaProgram $ikp)
+    {
+        $user = auth()->user();
+
+        $ps = $ikp->programStrategis;
+        $ikk = $ps->indikatorKinerjaKegiatan;
+        $sk = $ikk->sasaranKegiatan;
+
+        $year = $sk->time;
+
+        $currentMonth = (int) Carbon::now()->format('m');
+        $currentYear = Carbon::now()->format('Y');
+        $currentPeriod = '1';
+
+        foreach ([3, 6, 9, 12] as $key => $value) {
+            if ($currentMonth <= $value) {
+                $temp = $key + 1;
+                $currentPeriod = (string) $temp;
+
+                break;
+            }
+        }
+
+        $periodInstance = $year->periods()
+            ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
+                $query->where('period', $currentPeriod)
+                    ->whereHas('year', function (Builder $query) use ($currentYear) {
+                        $query->where('year', $currentYear);
+                    });
+            })
+            ->where('period', $period)
+            ->where('status', true)
+            ->firstOrFail();
+
+        $check = false;
+        if (
+            ($ikp->mode === 'table' && $ikp->achievements()->whereBelongsTo($user->unit, 'unit')->whereBelongsTo($periodInstance, 'period')->count() === 0)
+            ||
+            ($ikp->mode === 'single' && $ikp->singleAchievements()->whereBelongsTo($user->unit, 'unit')->whereBelongsTo($periodInstance, 'period')->count() === 0)
+        ) {
+            $check = true;
+        }
+
+        if ($ikp->status === 'aktif' && $check) {
+            if ($ikp->unitStatus()->whereBelongsTo($user->unit, 'unit')->whereBelongsTo($periodInstance, 'period')->exists()) {
+                $ikp->unitStatus()->whereBelongsTo($user->unit, 'unit')->whereBelongsTo($periodInstance, 'period')->forceDelete();
+            } else {
+                $ikp->unitStatus()->create([
+                    'status' => 'blank',
+
+                    'period_id' => $periodInstance->id,
+                    'unit_id' => $user->unit->id,
+                ]);
             }
 
             return back();

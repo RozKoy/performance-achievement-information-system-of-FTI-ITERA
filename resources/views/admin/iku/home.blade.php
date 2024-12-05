@@ -90,8 +90,10 @@
                                             <x-partials.button.detail link="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => $period]) }}" />
                                         </td>
                                         <td>
-                                            <form action="" class="p-0.5">
-                                                <input type="checkbox" name="status" title="Data kosong?" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @disabled($realization !== 0)>
+                                            <form action="{{ $realization === 0 ? route('admin-iku-unit-status', ['period' => $period, 'ikp' => $ikp['id']]) : '' }}" method="POST" class="p-0.5">
+                                                @csrf
+                                                @method('POST')
+                                                <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($ikp['unitStatus'] === 'blank') @disabled($realization !== 0)>
                                             </form>
                                         </td>
 

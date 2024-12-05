@@ -269,6 +269,8 @@ Route::prefix('/')->middleware('admin')->group(function () {
         Route::get('/{ikp}/template', 'ikpExcelTemplate')->middleware('editor')->name('admin-iku-template-download');
 
         Route::post('/{period}/{ikp}/data-single', 'addDataSingle')->middleware('editor')->name('admin-iku-data-single');
+
+        Route::post('/{period}/{ikp}/unit-status', 'unitStatusToggle')->middleware('editor')->name('admin-iku-unit-status');
         // Route::get('/{ikp}/detail/{achievement}/hapus', 'delete')->middleware('editor');
     });
 
