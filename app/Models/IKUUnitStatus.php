@@ -18,6 +18,7 @@ class IKUUnitStatus extends Model
         'status',
 
         'indikator_kinerja_program_id',
+        'period_id',
         'unit_id',
     ];
 
@@ -31,6 +32,11 @@ class IKUUnitStatus extends Model
     public function indikatorKinerjaProgram(): BelongsTo
     {
         return $this->belongsTo(IndikatorKinerjaProgram::class);
+    }
+
+    public function period(): BelongsTo
+    {
+        return $this->belongsTo(IKUPeriod::class);
     }
 
     public function unit(): BelongsTo
