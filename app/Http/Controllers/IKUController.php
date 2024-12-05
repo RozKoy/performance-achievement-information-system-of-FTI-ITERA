@@ -1968,6 +1968,11 @@ class IKUController extends Controller
                 $evaluation->save();
             }
 
+            $ikp->unitStatus()
+                ->whereBelongsTo($periodInstance, 'period')
+                ->whereBelongsTo(auth()->user()->unit, 'unit')
+                ->forceDelete();
+
             return back();
         }
 
@@ -2054,6 +2059,11 @@ class IKUController extends Controller
                 $evaluation->status = $status;
                 $evaluation->save();
             }
+
+            $ikp->unitStatus()
+                ->whereBelongsTo($periodInstance, 'period')
+                ->whereBelongsTo(auth()->user()->unit, 'unit')
+                ->forceDelete();
 
             return back();
         }
@@ -2226,6 +2236,11 @@ class IKUController extends Controller
                 $evaluation->status = $all >= $evaluation->target;
                 $evaluation->save();
             }
+
+            $ikp->unitStatus()
+                ->whereBelongsTo($periodInstance, 'period')
+                ->whereBelongsTo(auth()->user()->unit, 'unit')
+                ->forceDelete();
 
             return back();
         }
