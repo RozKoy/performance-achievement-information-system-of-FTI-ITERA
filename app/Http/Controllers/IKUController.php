@@ -1451,12 +1451,15 @@ class IKUController extends Controller
                 ->average('value');
         }
 
+        $unitStatus = $ikp->unitStatus()
+            ->whereBelongsTo($periodInstance, 'period')
+            ->whereBelongsTo(auth()->user()->unit, 'unit')
+            ->first()
+            ?->status ?? null;
         $target = $ikp->target()
             ->whereBelongsTo(auth()->user()->unit)
-            ->first();
-        if ($target) {
-            $target = $target->target;
-        }
+            ->first()
+            ?->target ?? null;
 
         $sk = $sk->only([
             'number',
@@ -1487,6 +1490,7 @@ class IKUController extends Controller
 
         return view('admin.iku.detail', compact([
             'realization',
+            'unitStatus',
             'columns',
             'periods',
             'period',

@@ -71,10 +71,18 @@
         <p class="text-primary max-xl:text-sm max-sm:text-xs">Jumlah Data : {{ count($data) }}</p>
 
         @if (auth()->user()->access === 'editor')
-            <button title="Import Excel" type="button" data-modal-target="import-modal" data-modal-toggle="import-modal" class="ml-auto flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
-                <img src="{{ url(asset('storage/assets/icons/excel.png')) }}" alt="Excel" class="w-6 max-md:w-5">
-                Import
-            </button>
+            <div class="flex w-full flex-wrap items-center justify-center">
+                <form action="{{ count($data) === 0 ? route('admin-iku-unit-status', ['period' => $period, 'ikp' => $ikp['id']]) : '' }}" method="POST" class="flex w-fit items-center justify-center gap-1 p-0.5 text-primary max-md:text-sm max-sm:text-xs">
+                    @csrf
+                    @method('POST')
+                    <p>Data Kosong?</p>
+                    <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($unitStatus === 'blank') @disabled(count($data) !== 0)>
+                </form>
+                <button title="Import Excel" type="button" data-modal-target="import-modal" data-modal-toggle="import-modal" class="ml-auto flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
+                    <img src="{{ url(asset('storage/assets/icons/excel.png')) }}" alt="Excel" class="w-6 max-md:w-5">
+                    Import
+                </button>
+            </div>
             <div class="*:px-2.5 max-sm:text-sm max-[320px]:text-xs">
                 <div class="*:flex-1 *:rounded-lg *:p-1 *:bg-primary/80 flex gap-2.5 text-center text-white">
                     <a href="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => request()->query('period')]) }}" title="Tombol mode hanya lihat" class="{{ request()->query('mode') !== 'edit' ? 'outline outline-2 outline-offset-1 outline-primary' : '' }} hover:bg-primary/70">Mode Lihat</a>
@@ -347,6 +355,12 @@
         @endPushIf
     @else
         @if (auth()->user()->access === 'editor')
+            <form action="{{ $data === null ? route('admin-iku-unit-status', ['period' => $period, 'ikp' => $ikp['id']]) : '' }}" method="POST" class="flex w-fit items-center justify-center gap-1 p-0.5 text-primary max-md:text-sm max-sm:text-xs">
+                @csrf
+                @method('POST')
+                <p>Data Kosong?</p>
+                <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($unitStatus === 'blank') @disabled($data !== null)>
+            </form>
             <form action="{{ route('admin-iku-data-single', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" enctype="multipart/form-data" class="flex w-full flex-col gap-2 overflow-x-auto rounded-lg text-primary">
                 @csrf
                 <div class="*:flex-1 flex flex-wrap gap-2">
