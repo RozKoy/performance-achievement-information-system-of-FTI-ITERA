@@ -999,32 +999,34 @@ class RSController extends Controller
     | -----------------------------------------------------------------
     */
 
+    protected $adminStatus = [
+        [
+            'text' => 'Semua',
+            'value' => '',
+        ],
+        [
+            'text' => 'Belum diisi',
+            'value' => 'undone',
+        ],
+        [
+            'text' => 'Sudah diisi',
+            'value' => 'done',
+        ],
+    ];
+
     /**
-     * RS admin home view 
+     * RS admin home view
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function homeViewAdmin(Request $request): Factory|View
     {
-        $status = [
-            [
-                'text' => 'Semua',
-                'value' => '',
-            ],
-            [
-                'text' => 'Belum diisi',
-                'value' => 'undone',
-            ],
-            [
-                'text' => 'Sudah diisi',
-                'value' => 'done',
-            ],
-        ];
+        $status = $this->adminStatus;
 
-        if (isset($request->year) && !is_numeric($request->year)) {
+        if ($request->year !== null && !is_numeric($request->year)) {
             abort(404);
         }
-        if (isset($request->period) && !in_array($request->period, ['1', '2'])) {
+        if ($request->period !== null && !in_array($request->period, ['1', '2'])) {
             abort(404);
         }
 
@@ -1072,7 +1074,7 @@ class RSController extends Controller
             ->toArray();
 
         if (count($years)) {
-            $year = isset($request->year) ? $request->year : end($years);
+            $year = $request->year ?? end($years);
             $yearInstance = RSYear::where('year', $year)->firstOrFail();
 
             $periods = $yearInstance->periods()
@@ -1101,7 +1103,7 @@ class RSController extends Controller
                 abort(404);
             }
 
-            $period = isset($request->period) ? $request->period : end($periods)['value'];
+            $period = $request->period ?? end($periods)['value'];
 
             $periodInstance = RSPeriod::where('status', true)
                 ->where('year_id', $yearInstance->id)
@@ -1192,10 +1194,10 @@ class RSController extends Controller
 
                                 'kegiatan_id',
                             ])
-                            ->withSum([
+                            ->withAggregate([
                                 'realization AS yearRealization' => function (Builder $query) {
                                     $query->whereBelongsTo(auth()->user()->unit)
-                                        ->whereHas('period');
+                                        ->whereDoesntHave('period');
                                 }
                             ], 'realization')
                             ->withAggregate([
@@ -1278,18 +1280,18 @@ class RSController extends Controller
             'badge',
             'years',
             'year',
-            'data'
+            'data',
         ]));
     }
 
     /**
-     * RS admin add function 
+     * RS admin add function
      * @param \App\Http\Requests\RencanaStrategis\AddRequest $request
-     * @param mixed $periodId
-     * @param mixed $ikId
+     * @param string $periodId
+     * @param string $ikId
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function addAdmin(AddRequest $request, $periodId, $ikId): RedirectResponse
+    public function addAdmin(AddRequest $request, string $periodId, string $ikId): RedirectResponse
     {
         $realization = $request["realization-$ikId"];
         $link = $request["link-$ikId"];
@@ -1330,9 +1332,13 @@ class RSController extends Controller
                 ->withErrors(["realization-$ikId" => 'Realisasi tidak sesuai dengan tipe data']);
         }
 
-        if ($ik->type !== 'teks') {
-            if ((float) $realization < 0) {
-                $realization = (float) $realization * -1;
+        if ($ik->type !== 'teks' && $realization !== null) {
+            $realization = (float) $realization;
+            if ($realization < 0) {
+                $realization *= -1;
+            }
+            if (!ctype_digit((string) $realization)) {
+                $realization = number_format($realization, 2);
             }
         }
 
@@ -1370,11 +1376,7 @@ class RSController extends Controller
 
             $achievement->save();
         } else {
-            $achievement = $achievement->first();
-
-            if ($achievement !== null) {
-                $achievement->forceDelete();
-            }
+            $achievement->forceDelete();
         }
 
         if ($ik->type !== 'teks') {
@@ -1394,20 +1396,13 @@ class RSController extends Controller
                     })
                     ->get();
 
-                $sum = $all->sum('realization');
+                $sum = $ik->type === 'angka' ? $all->sum('realization') : $all->average('realization');
 
-                if ($ik->type === 'persen') {
-                    $count = $all->count();
-                    if ($count) {
-                        $sum /= $count;
-                    }
-                }
-
-                if (!ctype_digit("$sum")) {
+                if (!ctype_digit((string) $sum)) {
                     $sum = number_format($sum, 2);
                 }
 
-                $instance->realization = "$sum";
+                $instance->realization = (string) $sum;
                 $instance->save();
             }
 
