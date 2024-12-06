@@ -86,6 +86,7 @@
                         <span class="self-center whitespace-nowrap border-l-2 border-gray-200 px-0.5 text-lg font-semibold text-primary before:content-['SICAKI'] group-hover/logo:underline sm:px-1.5 sm:text-2xl sm:before:content-['Sistem_Informasi_Capaian_Kinerja']"></span>
                     </a>
                 </div>
+
                 <div class="flex items-center">
                     <div class="ms-3 flex items-center gap-2">
                         <p title="Editor Access" class="inline-flex items-center justify-center truncate rounded-full bg-primary px-2 py-1 text-xs font-semibold uppercase text-white max-[400px]:hidden lg:text-sm 2xl:text-base">{{ auth()->user()->access }}</p>
