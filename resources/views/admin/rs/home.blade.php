@@ -91,13 +91,7 @@
                                                 <form id="form-realization-{{ $id }}" action="{{ route('admin-rs-add', ['period' => $periodId, 'ik' => $ik['id']]) }}" method="POST" class="hidden flex-col gap-0.5">
                                                     @csrf
                                                     <div class="flex-1">
-
-                                                        @if ($ik['type'] === 'teks')
-                                                            <x-partials.input.text name="realization-{{ $ik['id'] }}" title="realisasi" value="{{ $ik['realization'] }}" />
-                                                        @else
-                                                            <x-partials.input.number name="realization-{{ $ik['id'] }}" title="realisasi" value="{{ $ik['realization'] }}" />
-                                                        @endif
-
+                                                        <x-partials.input.text name="realization-{{ $ik['id'] }}" title="realisasi ({{ $ik['type'] }})" value="{{ $ik['realization'] }}" />
                                                     </div>
                                                     <div class="flex-1">
                                                         <x-partials.input.text name="link-{{ $ik['id'] }}" title="link bukti" value="{{ $ik['link'] }}" required />
@@ -113,13 +107,7 @@
                                                 <form action="{{ route('admin-rs-add', ['period' => $periodId, 'ik' => $ik['id']]) }}" method="POST" class="flex items-center gap-1">
                                                     @csrf
                                                     <div class="flex-1">
-
-                                                        @if ($ik['type'] === 'teks')
-                                                            <x-partials.input.text name="realization-{{ $ik['id'] }}" title="realisasi" required />
-                                                        @else
-                                                            <x-partials.input.number name="realization-{{ $ik['id'] }}" title="realisasi" required />
-                                                        @endif
-
+                                                        <x-partials.input.text name="realization-{{ $ik['id'] }}" title="realisasi ({{ $ik['type'] }})" required />
                                                     </div>
                                                     <div class="flex-1">
                                                         <x-partials.input.text name="link-{{ $ik['id'] }}" title="link bukti" required />
