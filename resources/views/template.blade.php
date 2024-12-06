@@ -9,6 +9,7 @@
     <title>{{ $title }} | {{ env('APP_NAME') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
 
 </head>
