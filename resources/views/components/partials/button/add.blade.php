@@ -1,11 +1,11 @@
 @php
     /**
      * @optional @param route: route|string
+     * @optional @param viewOnly: mixed
+     * @optional @param submit: mixed
      * @optional @param style: string
-     * @optional @param viewOnly: any
      * @optional @param href: string
      * @optional @param text: string
-     * @optional @param submit: any
      */
 @endphp
 
