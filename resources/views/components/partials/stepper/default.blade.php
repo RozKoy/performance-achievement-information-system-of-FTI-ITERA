@@ -1,3 +1,14 @@
+@php
+    /**
+     * @type Type [
+     *      @required name: string
+     *      @optional status: mixed
+     * ]
+     *
+     * @required @param stepper: Type[]
+     */
+@endphp
+
 <ol class="flex w-full items-center gap-2 rounded-lg border border-gray-200 bg-white p-3 text-center text-xs font-medium text-gray-400 shadow-sm sm:text-sm">
 
     @foreach ($stepper as $item)
