@@ -1,3 +1,12 @@
+@php
+    /**
+     * @required @param route: string
+     * @required @param name: string
+     *
+     * @optional @param slot: child
+     */
+@endphp
+
 <a href="{{ url(route($route)) }}" title="Halaman {{ $name }}" class="{{ request()->routeIs($route) || request()->routeIs($route . '-*') ? 'bg-primary hover:bg-opacity-25 text-white hover:text-primary' : 'hover:bg-gray-100 hover:text-gray-700' }} group flex items-center rounded-lg p-2">
 
     {{ $slot }}
