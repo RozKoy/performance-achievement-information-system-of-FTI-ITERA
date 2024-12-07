@@ -6,7 +6,7 @@
      * @if viewOnly is not set
      *
      *  @required @param modal: string
-     *  @required @param data: string
+     *  @required @param data: mixed
      *  @required @param id: string
      *
      * @eif
