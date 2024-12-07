@@ -1,3 +1,26 @@
+@php
+    /**
+     * @optional @param link: route|string
+     * @optional @param style: string
+     *
+     * @if link is set
+     *
+     * @optional @param viewOnly: mixed
+     *
+     * @el
+     *
+     *  @optional @param button: mixed
+     *
+     *  @if button is set
+     *
+     *  @optional @param onclick: string
+     *
+     *  @eif
+     *
+     * @eif
+     */
+@endphp
+
 @if (isset($link))
     <a href="{{ url($link) }}" title="Ubah" class="{{ isset($style) ? $style : '' }} {{ isset($viewOnly) ? 'pointer-events-none' : 'hover:bg-yellow-400' }} rounded-full bg-yellow-500 p-0.5 text-white">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="{{ isset($viewOnly) ? '' : 'sm:w-6' }} aspect-square w-5">
