@@ -1,9 +1,11 @@
 <form class="m-0 flex w-full">
+
     @foreach (request()->query() as $index => $item)
         @if ($index !== 'search')
             <input type="hidden" name="{{ $index }}" value="{{ $item }}">
         @endif
     @endforeach
+
     <div class="relative flex-1 text-primary">
         <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-3 sm:w-4" aria-hidden="true">
@@ -18,15 +20,13 @@
 </form>
 
 @pushIf(request()->query('search') !== null, 'script')
-@pushOnce('script')
-    <script>
-        function clearSearch(element) {
-            if (element.value === '') {
-                element.form.submit();
-            } else {
-                element.setCustomValidity('');
-            }
+<script>
+    function clearSearch(element) {
+        if (element.value === '') {
+            element.form.submit();
+        } else {
+            element.setCustomValidity('');
         }
-    </script>
-@endPushOnce
+    }
+</script>
 @endPushIf
