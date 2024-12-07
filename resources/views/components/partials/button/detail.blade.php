@@ -1,3 +1,9 @@
+@php
+    /**
+     * @required @param link: string
+     */
+@endphp
+
 <a href="{{ url($link) }}" title="Detail" class="p-0.5 text-orange-500 hover:text-orange-400">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-5 sm:w-6">
         <g>
