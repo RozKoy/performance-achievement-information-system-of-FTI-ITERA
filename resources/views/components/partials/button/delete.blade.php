@@ -1,3 +1,18 @@
+@php
+    /**
+     * @optional @param viewOnly: mixed
+     *
+     *
+     * @if viewOnly is not set
+     *
+     *  @required @param modal: string
+     *  @required @param data: string
+     *  @required @param id: string
+     *
+     * @eif
+     */
+@endphp
+
 @if (!isset($viewOnly))
     <button type="button" title="Hapus" data-id="{{ $id }}" onclick="pushDeleteId(this)" data-modal-target="{{ $modal }}" data-modal-toggle="{{ $modal }}" data-body='{!! json_encode($data) !!}' class="rounded-full bg-red-500 p-0.5 text-white hover:bg-red-400">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-5 sm:w-6">
