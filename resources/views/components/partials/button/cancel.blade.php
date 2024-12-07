@@ -1,3 +1,9 @@
+@php
+    /**
+     * @optional @param onclick: string
+     */
+@endphp
+
 <button title="Tombol batal" type="button" @isset($onclick) onclick="{{ $onclick }}" @endisset class="ml-auto flex items-center gap-1 rounded-lg bg-red-500 px-2 py-1.5 text-center text-xs text-white hover:bg-red-400 focus:outline-none focus:ring-2 focus:ring-red-400 max-sm:w-fit sm:text-sm">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-3 sm:w-4">
         <g>
