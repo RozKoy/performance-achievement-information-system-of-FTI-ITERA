@@ -1,9 +1,17 @@
 @php
-    $dashboardRoute = 'admin-dashboard';
+    /**
+     * @type Type [
+     *      @required link: string
+     *      @required name: string
+     *      @optional params: string[]
+     * ]
+     *
+     * @required @param breadCrumbs: Type[]
+     */
+@endphp
 
-    if (!isset($admin)) {
-        $dashboardRoute = 'super-admin-dashboard';
-    }
+@php
+    $dashboardRoute = auth()->user()->role === 'super admin' ? 'super-admin-dashboard' : 'admin-dashboard';
 @endphp
 
 <nav class="flex" aria-label="Breadcrumb">
