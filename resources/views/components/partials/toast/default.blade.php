@@ -1,3 +1,13 @@
+@php
+    /**
+     * @required @param message: string
+     * @required @param id: string
+     * @optional @param success: mixed
+     * @optional @param warning: mixed
+     * @optional @param danger: mixed
+     */
+@endphp
+
 @isset($success)
     <div id="{{ $id }}-toast" class="flex w-full max-w-xs items-center rounded-lg bg-green-100 p-3 text-gray-500 outline outline-2 outline-green-500 max-2xl:text-sm max-lg:text-xs 2xl:max-w-sm" role="alert">
         <div class="inline-flex flex-shrink-0 items-center justify-center rounded-lg bg-green-50 p-2 text-green-500">
