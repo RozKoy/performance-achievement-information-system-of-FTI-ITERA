@@ -1,3 +1,13 @@
+@php
+    /**
+     * @required @param title: string
+     * @required @param name: string
+     * @optional @param autofocus: mixed
+     * @optional @param required: mixed
+     * @optional @param style: string
+     */
+@endphp
+
 <div class="relative">
     <input type="password" name="{{ $name }}" id="{{ $name }}" code="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" title="{{ ucfirst($title) }}" oninvalid="inputPasswordCustomMessage(this)" oninput="inputPasswordCustomMessage(this)" class="{{ isset($style) ?? $style }} w-full rounded-lg border-2 border-slate-100 px-2 py-1.5 text-primary focus:border-primary focus:outline-none focus:ring-0 max-sm:text-sm" @isset($autofocus) autofocus @endisset @required(isset($required))>
     <button type="button" id="eye-open-{{ $name }}" target="{{ $name }}" onclick="togglePassword(this)" title="Lihat kata sandi" class="absolute bottom-0 right-2 top-0 my-auto">
