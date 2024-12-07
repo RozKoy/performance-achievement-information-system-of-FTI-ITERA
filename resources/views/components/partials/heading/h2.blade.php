@@ -1,3 +1,15 @@
+@php
+    /**
+     * @required @param text: string
+     * @optional @param previousRoute: route|string
+     * @optional @param previous: string
+     * @optional @param tooltip: mixed
+     * @optional @param back: mixed
+     *
+     * @optional @param slot: child
+     */
+@endphp
+
 <div class="flex items-center gap-2 max-md:flex-wrap">
 
     @if (isset($back) || isset($previous) || isset($previousRoute))
@@ -29,7 +41,6 @@
             <div class="space-y-2 p-3">
                 {{ $slot }}
             </div>
-            {{-- <div data-popper-arrow></div> --}}
         </div>
     @endif
 
