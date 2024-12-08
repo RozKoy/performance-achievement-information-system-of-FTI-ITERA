@@ -270,6 +270,7 @@ Route::prefix('/')->middleware('admin')->group(function () {
 
         Route::post('/{period}/{ikp}/data-single', 'addDataSingle')->middleware('editor')->name('admin-iku-data-single');
 
+        Route::post('/{ikp}/year-unit-status', 'yearUnitStatusToggle')->middleware('editor')->name('admin-iku-year-unit-status');
         Route::post('/{period}/{ikp}/unit-status', 'unitStatusToggle')->middleware('editor')->name('admin-iku-unit-status');
         // Route::get('/{ikp}/detail/{achievement}/hapus', 'delete')->middleware('editor');
     });

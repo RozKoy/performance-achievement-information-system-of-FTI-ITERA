@@ -111,10 +111,10 @@
                                                 </div>
                                                 <div class="flex flex-col items-center justify-center px-1">
                                                     <p>{{ $year }}</p>
-                                                    <form action="{{ $yearRealization === 0 ? route('admin-iku-unit-status', ['period' => $period, 'ikp' => $ikp['id']]) : '' }}" method="POST">
+                                                    <form action="{{ $yearRealization === 0 ? route('admin-iku-year-unit-status', ['ikp' => $ikp['id']]) : '' }}" method="POST">
                                                         @csrf
                                                         @method('POST')
-                                                        <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($ikp['unitStatus'] === 'blank') @disabled($yearRealization !== 0)>
+                                                        <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($ikp['yearUnitStatus'] === 4) @disabled($yearRealization !== 0)>
                                                     </form>
                                                 </div>
                                             </div>

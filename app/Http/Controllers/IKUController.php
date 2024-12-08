@@ -1273,6 +1273,9 @@ class IKUController extends Controller
                                 }
                             ], 'value')
                             ->withCount([
+                                'unitStatus AS yearUnitStatus' => function (Builder $query) use ($periodInstance) {
+                                    $query->whereBelongsTo(auth()->user()->unit);
+                                },
                                 'achievements AS all' => function (Builder $query) use ($periodInstance) {
                                     $query->whereBelongsTo(auth()->user()->unit);
                                 },
@@ -2241,6 +2244,47 @@ class IKUController extends Controller
                 ->whereBelongsTo($periodInstance, 'period')
                 ->whereBelongsTo(auth()->user()->unit, 'unit')
                 ->forceDelete();
+
+            return back();
+        }
+
+        abort(404);
+    }
+
+    public function yearUnitStatusToggle(IndikatorKinerjaProgram $ikp)
+    {
+        $user = auth()->user();
+
+        $ps = $ikp->programStrategis;
+        $ikk = $ps->indikatorKinerjaKegiatan;
+        $sk = $ikk->sasaranKegiatan;
+
+        $year = $sk->time;
+
+        $check = false;
+        if (
+            ($ikp->mode === 'table' && $ikp->achievements()->whereBelongsTo($user->unit, 'unit')->count() === 0)
+            ||
+            ($ikp->mode === 'single' && $ikp->singleAchievements()->whereBelongsTo($user->unit, 'unit')->count() === 0)
+        ) {
+            $check = true;
+        }
+
+        if ($ikp->status === 'aktif' && $check) {
+            $unitStatus = $ikp->unitStatus()->whereBelongsTo($user->unit, 'unit')->count();
+
+            $ikp->unitStatus()->whereBelongsTo($user->unit, 'unit')->forceDelete();
+
+            if ($unitStatus !== 4) {
+                foreach ($year->periods as $period) {
+                    $ikp->unitStatus()->create([
+                        'status' => 'blank',
+
+                        'period_id' => $period->id,
+                        'unit_id' => $user->unit->id,
+                    ]);
+                }
+            }
 
             return back();
         }
