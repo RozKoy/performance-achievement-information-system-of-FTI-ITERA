@@ -19,7 +19,13 @@
     @yield('content')
 
     <div class="absolute bottom-0 left-0 z-40 flex flex-col gap-2 p-6">
+
+        @if ($message = Session::get('success'))
+            <x-partials.toast.default id="{{ str_replace(' ', '-', $message) }}" message="{{ $message }}" />
+        @endif
+
         @stack('notification')
+
     </div>
 
     @stack('script')

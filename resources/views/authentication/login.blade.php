@@ -6,10 +6,6 @@
     <x-partials.link.default route="forget-password" title="lupa kata sandi" name="Lupa Kata Sandi?" right />
     <x-partials.button.submit title="masuk" />
 
-    @pushIf($message = Session::get('success'), 'notification')
-    <x-partials.toast.default id="{{ str_replace(' ', '-', $message) }}" message="{{ $message }}" />
-    @endPushIf
-
     @pushIf($errors->any(), 'notification')
     <x-partials.toast.default id="login-error" message="Gagal masuk" withTimeout danger />
     @endPushIf
