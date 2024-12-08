@@ -33,6 +33,10 @@
                 </thead>
                 <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
 
+                    @php
+                        $tw = Str::substr(reset($badge), 0, 4);
+                    @endphp
+
                     @foreach ($data as $sk)
                         @foreach ($sk['indikator_kinerja_kegiatan'] as $ikk)
                             @foreach ($ikk['program_strategis'] as $ps)
@@ -63,16 +67,22 @@
                                         <td title="{{ $ikp['target'] }}">{{ $ikp['target'] }}</td>
 
                                         @php
+                                            $yearRealization = -1;
                                             $realization = -1;
                                         @endphp
                                         @if ($ikp['mode'] === 'table')
                                             @php
                                                 $realization = $ikp['achievements'];
+                                                $yearRealization = $ikp['all'];
                                             @endphp
 
-                                            <td title="{{ $ikp['all'] }}">{{ $ikp['all'] }}</td>
+                                            <td title="{{ $yearRealization }}">{{ $yearRealization }}</td>
                                             <td title="{{ $realization }}">{{ $realization }}</td>
                                         @else
+                                            @php
+                                                $yearRealization = $ikp['allSingle'] === null ? 0 : -1;
+                                            @endphp
+
                                             <td title="{{ $ikp['allSingle'] }}">{{ $ikp['allSingle'] }}</td>
 
                                             @if ($ikp['valueSingle'] !== null)
@@ -90,11 +100,24 @@
                                             <x-partials.button.detail link="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => $period]) }}" />
                                         </td>
                                         <td>
-                                            <form action="{{ $realization === 0 ? route('admin-iku-unit-status', ['period' => $period, 'ikp' => $ikp['id']]) : '' }}" method="POST" class="p-0.5">
-                                                @csrf
-                                                @method('POST')
-                                                <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($ikp['unitStatus'] === 'blank') @disabled($realization !== 0)>
-                                            </form>
+                                            <div class="mx-auto flex items-center justify-center divide-x-2 p-0.5">
+                                                <div class="flex flex-col items-center justify-center px-1">
+                                                    <p>{{ $tw }}</p>
+                                                    <form action="{{ $realization === 0 ? route('admin-iku-unit-status', ['period' => $period, 'ikp' => $ikp['id']]) : '' }}" method="POST">
+                                                        @csrf
+                                                        @method('POST')
+                                                        <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($ikp['unitStatus'] === 'blank') @disabled($realization !== 0)>
+                                                    </form>
+                                                </div>
+                                                <div class="flex flex-col items-center justify-center px-1">
+                                                    <p>{{ $year }}</p>
+                                                    <form action="{{ $yearRealization === 0 ? route('admin-iku-unit-status', ['period' => $period, 'ikp' => $ikp['id']]) : '' }}" method="POST">
+                                                        @csrf
+                                                        @method('POST')
+                                                        <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($ikp['unitStatus'] === 'blank') @disabled($yearRealization !== 0)>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </td>
 
                                     </tr>
