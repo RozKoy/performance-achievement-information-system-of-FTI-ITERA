@@ -1414,31 +1414,18 @@ class RSController extends Controller
     }
 
     /**
-     * RS admin history view 
+     * RS admin history view
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function historyAdmin(Request $request): Factory|View
     {
-        $status = [
-            [
-                'text' => 'Semua',
-                'value' => '',
-            ],
-            [
-                'text' => 'Belum diisi',
-                'value' => 'undone',
-            ],
-            [
-                'text' => 'Sudah diisi',
-                'value' => 'done',
-            ],
-        ];
+        $status = $this->adminStatus;
 
-        if (isset($request->year) && !is_numeric($request->year)) {
+        if ($request->year !== null && !is_numeric($request->year)) {
             abort(404);
         }
-        if (isset($request->period) && !in_array($request->period, ['1', '2'])) {
+        if ($request->period !== null && !in_array($request->period, ['1', '2'])) {
             abort(404);
         }
 
@@ -1475,7 +1462,7 @@ class RSController extends Controller
             ->toArray();
 
         if (count($years)) {
-            $year = isset($request->year) ? $request->year : end($years);
+            $year = $request->year ?? end($years);
             $yearInstance = RSYear::where('year', $year)->firstOrFail();
 
             $periods = $yearInstance->periods()
@@ -1485,12 +1472,8 @@ class RSController extends Controller
                 ->flatten()
                 ->unique()
                 ->map(function ($item) {
-                    $title = 'Januari - Juni';
-                    if ($item === '2') {
-                        $title = 'Juli - Desember';
-                    }
                     return [
-                        'title' => $title,
+                        'title' => $item === '1' ? 'Januari - Juni' : 'Juli - Desember',
                         'value' => $item
                     ];
                 })
@@ -1500,7 +1483,7 @@ class RSController extends Controller
                 abort(404);
             }
 
-            $period = isset($request->period) ? $request->period : end($periods)['value'];
+            $period = $request->period ?? end($periods)['value'];
 
             $periodInstance = RSPeriod::where('status', false)
                 ->where('year_id', $yearInstance->id)
@@ -1585,10 +1568,10 @@ class RSController extends Controller
 
                                 'kegiatan_id',
                             ])
-                            ->withSum([
+                            ->withAggregate([
                                 'realization AS yearRealization' => function (Builder $query) {
                                     $query->whereBelongsTo(auth()->user()->unit)
-                                        ->whereHas('period');
+                                        ->whereDoesntHave('period');
                                 }
                             ], 'realization')
                             ->withAggregate([
