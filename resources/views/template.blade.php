@@ -18,6 +18,10 @@
 
     @yield('content')
 
+    <div class="absolute bottom-0 left-0 z-40 flex flex-col gap-2 p-6">
+        @stack('notification')
+    </div>
+
     @stack('script')
 
 </body>
