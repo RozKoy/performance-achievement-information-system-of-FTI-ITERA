@@ -1088,12 +1088,8 @@ class RSController extends Controller
                 ->orderBy('period')
                 ->pluck('period')
                 ->map(function ($item) {
-                    $title = 'Januari - Juni';
-                    if ($item === '2') {
-                        $title = 'Juli - Desember';
-                    }
                     return [
-                        'title' => $title,
+                        'title' => $item === '1' ? 'Januari - Juni' : 'Juli - Desember',
                         'value' => $item
                     ];
                 })
