@@ -4,4 +4,9 @@
     <x-partials.input.password name="password" title="Kata sandi baru" autofocus required />
     <x-partials.button.submit title="ubah kata sandi" />
     <x-partials.link.default route="login" title="masuk" name="Masuk" center />
+
+    @pushIf($errors->any(), 'notification')
+    <x-partials.toast.default id="change-password-error" message="Gagal merubah kata sandi" withTimeout danger />
+    @endPushIf
+
 </x-auth-template>
