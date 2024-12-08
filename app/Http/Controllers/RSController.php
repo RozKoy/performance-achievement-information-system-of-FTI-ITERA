@@ -1376,7 +1376,7 @@ class RSController extends Controller
         }
 
         if ($ik->type !== 'teks') {
-            foreach ([$allAchievement, $periodAchievement, $unitAchievement] as $key => $instance) {
+            foreach ([$allAchievement, $periodAchievement, $unitAchievement] as $instance) {
                 $all = RSAchievement::whereBelongsTo($ik)
                     ->where(function (Builder $query) use ($instance) {
                         if ($instance->period) {
@@ -1410,7 +1410,7 @@ class RSController extends Controller
             }
         }
 
-        return back();
+        return _ControllerHelpers::Back()->with('success', 'Berhasil memperbaharui data');
     }
 
     /**
