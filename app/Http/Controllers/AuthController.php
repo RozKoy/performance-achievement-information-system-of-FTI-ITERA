@@ -56,22 +56,22 @@ class AuthController extends Controller
     public function login(LoginRequest $request): RedirectResponse
     {
         $user = User::where('email', $request['email'])
-            ->firstOrFail();
+            ->first();
 
-        if ($user->role === 'admin' && $user->unit()->doesntExist()) {
-            return _ControllerHelpers::BackWithInputWithErrors(['email' => 'Email tidak dapat ditemukan']);
-        }
-
-        if (Auth::attempt($request->safe()->toArray())) {
-            if ($user->token) {
-                $user->update(['token' => null]);
+        if ($user) {
+            if ($user->role === 'admin' && $user->unit()->doesntExist()) {
+                return _ControllerHelpers::BackWithInputWithErrors(['email' => 'Akun tidak valid']);
             }
 
-            if ($user->role === 'super admin') {
-                return _ControllerHelpers::RedirectWithRoute('super-admin-dashboard');
-            }
+            if (Auth::attempt($request->safe()->toArray())) {
+                if ($user->token) {
+                    $user->update(['token' => null]);
+                }
 
-            return _ControllerHelpers::RedirectWithRoute('admin-dashboard');
+                $route = $user->role === 'super admin' ? 'super-admin-dashboard' : 'admin-rs';
+
+                return _ControllerHelpers::RedirectWithRoute($route)->with('success', 'Berhasil masuk. Selamat datang ~ SICAKI');
+            }
         }
 
         return _ControllerHelpers::BackWithInputWithErrors(['email' => 'Email atau kata sandi tidak benar']);
@@ -85,23 +85,28 @@ class AuthController extends Controller
     public function forgetPassword(ForgetPasswordRequest $request): RedirectResponse
     {
         $user = User::where('email', $request['email'])
-            ->firstOrFail();
+            ->first();
 
-        try {
-            $user->update(['token' => uuid_create()]);
+        if ($user) {
+            try {
+                $user->update(['token' => uuid_create()]);
 
-            Mail::to($user->email)->send(new ForgetPasswordEmailSender($user->only([
-                'email',
-                'token',
-                'name',
-            ])));
-        } catch (\Exception $e) {
-            $user->update(['token' => null]);
+                Mail::to($user->email)->send(new ForgetPasswordEmailSender($user->only([
+                    'email',
+                    'token',
+                    'name',
+                ])));
 
-            return _ControllerHelpers::BackWithInputWithErrors(['email' => 'Alamat email tidak aktif']);
+                return _ControllerHelpers::RedirectWithRoute('login')
+                    ->with('success', 'Berhasil mengirim link ubah kata sandi, silahkan cek email anda');
+            } catch (\Exception $e) {
+                $user->update(['token' => null]);
+
+                return _ControllerHelpers::BackWithInputWithErrors(['email' => 'Alamat email tidak aktif']);
+            }
         }
 
-        return _ControllerHelpers::RedirectWithRoute('login');
+        return _ControllerHelpers::BackWithInputWithErrors(['email' => 'Alamat email tidak valid']);
     }
 
     /**
@@ -120,7 +125,8 @@ class AuthController extends Controller
             'token' => null
         ]);
 
-        return _ControllerHelpers::RedirectWithRoute('login');
+        return _ControllerHelpers::RedirectWithRoute('login')
+            ->with('success', 'Berhasil merubah kata sandi');
     }
 
     /**
@@ -133,6 +139,7 @@ class AuthController extends Controller
             auth()->logout();
         }
 
-        return _ControllerHelpers::RedirectWithRoute('login');
+        return _ControllerHelpers::RedirectWithRoute('login')
+            ->with('success', 'Berhasil keluar');
     }
 }

@@ -22,7 +22,7 @@ class ForgetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['bail', 'required', 'max:255', 'email', 'exists:users'],
+            'email' => ['bail', 'required', 'string', 'max:255', 'email'],
         ];
     }
 
@@ -45,7 +45,7 @@ class ForgetPasswordRequest extends FormRequest
     {
         return [
             'max' => ':attribute tidak boleh melebihi :max karakter',
-            'exists' => ':attribute tidak dapat ditemukan',
+            'string' => ':attribute harus berupa teks',
             'required' => ':attribute wajib diisi',
             'email' => ':attribute tidak valid',
         ];

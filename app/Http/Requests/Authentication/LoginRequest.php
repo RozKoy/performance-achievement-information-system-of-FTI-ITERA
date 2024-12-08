@@ -22,8 +22,8 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['bail', 'required', 'max:255', 'email', 'exists:users'],
-            'password' => ['bail', 'required', 'max:255'],
+            'email' => ['bail', 'required', 'string', 'max:255', 'email'],
+            'password' => ['bail', 'required', 'string', 'max:255'],
         ];
     }
 
@@ -47,7 +47,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'max' => ':attribute tidak boleh melebihi :max karakter',
-            'exists' => ':attribute tidak dapat ditemukan',
+            'string' => ':attribute harus berupa teks',
             'required' => ':attribute wajib diisi',
             'email' => ':attribute tidak valid',
         ];
