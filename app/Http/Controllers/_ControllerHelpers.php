@@ -7,6 +7,15 @@ use Illuminate\Http\RedirectResponse;
 class _ControllerHelpers
 {
     /**
+     * Back
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public static function Back(): RedirectResponse
+    {
+        return back();
+    }
+
+    /**
      * BackWithInputWithErrors
      * @param string|array $errors
      * @return \Illuminate\Http\RedirectResponse
