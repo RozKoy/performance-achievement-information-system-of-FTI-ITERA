@@ -14,14 +14,16 @@
     ];
     $previousRoute = route('admin-iku', ['period' => $period]);
 @endphp
+
 <x-admin-template title="IKU - Capaian Kinerja - {{ auth()->user()->unit->name }}">
-    <x-partials.breadcrumbs.default :$breadCrumbs admin />
+    <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="detail - capaian kinerja - indikator kinerja utama" :$previousRoute />
     <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
     <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="{{ $ikk['number'] }}" dataText="{{ $ikk['name'] }}" />
     <x-partials.heading.h3 title="Program strategis" dataNumber="{{ $ps['number'] }}" dataText="{{ $ps['name'] }}" />
     <x-partials.heading.h3 title="Indikator kinerja program" dataNumber="{{ $ikp['number'] }}" dataText="{{ $ikp['name'] }}" />
     <x-partials.filter.period :$periods :$period />
+
     <div class="flex items-center">
         <x-partials.badge.time :data="$badge" />
 
@@ -72,11 +74,11 @@
 
         @if (auth()->user()->access === 'editor')
             <div class="flex w-full flex-wrap items-center justify-center">
-                <form action="{{ count($data) === 0 ? route('admin-iku-unit-status', ['period' => $period, 'ikp' => $ikp['id']]) : '' }}" method="POST" class="flex w-fit items-center justify-center gap-1 p-0.5 text-primary max-md:text-sm max-sm:text-xs">
+                <form action="{{ !count($data) ? route('admin-iku-unit-status', ['period' => $period, 'ikp' => $ikp['id']]) : '' }}" method="POST" class="flex w-fit items-center justify-center gap-1 p-0.5 text-primary max-md:text-sm max-sm:text-xs">
                     @csrf
                     @method('POST')
                     <p>Data Kosong?</p>
-                    <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($unitStatus === 'blank') @disabled(count($data) !== 0)>
+                    <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($unitStatus === 'blank') @disabled(count($data))>
                 </form>
                 <button title="Import Excel" type="button" data-modal-target="import-modal" data-modal-toggle="import-modal" class="ml-auto flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
                     <img src="{{ url(asset('storage/assets/icons/excel.png')) }}" alt="Excel" class="w-6 max-md:w-5">
@@ -87,8 +89,6 @@
                 <div class="*:flex-1 *:rounded-lg *:p-1 *:bg-primary/80 flex gap-2.5 text-center text-white">
                     <a href="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => request()->query('period')]) }}" title="Tombol mode hanya lihat" class="{{ request()->query('mode') !== 'edit' ? 'outline outline-2 outline-offset-1 outline-primary' : '' }} hover:bg-primary/70">Mode Lihat</a>
                     <a href="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => request()->query('period'), 'mode' => 'edit']) }}" title="Tombol mode kelola data" class="{{ request()->query('mode') === 'edit' ? 'outline outline-2 outline-offset-1 outline-primary' : '' }} hover:bg-primary/70">Mode Kelola</a>
-                </div>
-                <div id="selection" class="*:rounded-lg *:border *:border-slate-100 *:shadow *:p-1.5 *:gap-1 flex flex-wrap items-center justify-center gap-2 text-primary">
                 </div>
             </div>
         @endif
@@ -128,12 +128,15 @@
                             @foreach ($columns as $column)
                                 @php
                                     $dataFind = $dataCollection->firstWhere('column_id', $column['id']);
+
+                                    $id = 'old[' . $loop->parent->iteration - 1 . '][data][' . $column['id'] . ']';
+                                    $parentId = 'old[' . $loop->parent->iteration - 1 . '][id]';
                                 @endphp
                                 @if ($dataFind !== null)
                                     @if ($dataFind['file'])
                                         @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
                                             <td class="bg-green-100">
-                                                <input type="file" name="old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]">
+                                                <input type="file" name="{{ $id }}">
                                             </td>
                                         @else
                                             <td>
@@ -142,8 +145,9 @@
                                         @endif
                                     @else
                                         @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
-                                            <td onclick="clickInput('old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]', 'old[{{ $loop->parent->iteration - 1 }}][id]')">
-                                                <x-partials.input.text name="old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]" title="{{ $column['name'] }}" value="{{ $dataFind['data'] }}" oldvalue="{{ $dataFind['data'] }}" onblur="blurInput('old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]', 'old[{{ $loop->parent->iteration - 1 }}][id]')" disabled />
+                                            <td class="relative">
+                                                <div id="{{ $id }}-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, '{{ $id }}', '{{ $parentId }}')"></div>
+                                                <x-partials.input.text name="{{ $id }}" title="{{ $column['name'] }}" value="{{ $dataFind['data'] }}" oldvalue="{{ $dataFind['data'] }}" onblur="blurInput('{{ $id }}', '{{ $parentId }}', '{{ $id }}-cover')" disabled />
                                             </td>
                                         @else
                                             <td title="{{ $dataFind['data'] }}">{{ $dataFind['data'] }}</td>
@@ -153,11 +157,12 @@
                                     @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
                                         @if ($column['file'])
                                             <td class="bg-red-100">
-                                                <input type="file" name="old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]">
+                                                <input type="file" name="{{ $id }}">
                                             </td>
                                         @else
-                                            <td onclick="clickInput('old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]', 'old[{{ $loop->parent->iteration - 1 }}][id]')">
-                                                <x-partials.input.text name="old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]" title="{{ $column['name'] }}" oldvalue="" onblur="blurInput('old[{{ $loop->parent->iteration - 1 }}][data][{{ $column['id'] }}]', 'old[{{ $loop->parent->iteration - 1 }}][id]')" disabled />
+                                            <td class="relative">
+                                                <div id="{{ $id }}-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, '{{ $id }}', '{{ $parentId }}')"></div>
+                                                <x-partials.input.text name="{{ $id }}" title="{{ $column['name'] }}" oldvalue="" onblur="blurInput('{{ $id }}', '{{ $parentId }}', '{{ $id }}-cover')" disabled />
                                             </td>
                                         @endif
                                     @else
@@ -231,7 +236,7 @@
             <div id="import-modal" tabindex="-1" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
                 <div class="relative max-h-full w-full max-w-md p-4">
                     <div class="relative rounded-lg bg-white shadow shadow-primary">
-                        <button type="button" title="Tutup" onclick="popDeleteId()" class="absolute end-2.5 top-3 ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-primary hover:bg-gray-200 hover:text-primary/80" data-modal-hide="import-modal">
+                        <button type="button" title="Tutup" class="absolute end-2.5 top-3 ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-primary hover:bg-gray-200 hover:text-primary/80" data-modal-hide="import-modal">
                             <svg class="h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 14 14">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                             </svg>
@@ -240,17 +245,20 @@
                         <form action="{{ route('admin-iku-data-table-import', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" class="flex flex-col gap-1 p-4 text-primary max-md:text-sm md:p-5" enctype="multipart/form-data">
                             @csrf
                             <input type="file" name="file" accept=".xlsx, .xls, .csv">
-                            <p class="text-sm max-md:text-xs">Belum memiliki template? <a href="{{ route('admin-iku-template-download', ['ikp' => $ikp['id']]) }}" class="underline hover:text-primary/75" target="_blank">Unduh</a></p>
+                            <p class="text-sm max-md:text-xs">
+                                Belum memiliki template? <a href="{{ route('admin-iku-template-download', ['ikp' => $ikp['id']]) }}" class="underline hover:text-primary/75" target="_blank">Unduh</a>
+                            </p>
                             <x-partials.button.add style="ml-auto" submit />
                         </form>
                     </div>
                 </div>
             </div>
+
             @if (request()->query('mode') !== 'edit')
                 <div id="add-modal" tabindex="-1" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
                     <div class="relative max-h-full w-full max-w-md p-4">
                         <div class="relative rounded-lg bg-white shadow shadow-primary">
-                            <button type="button" title="Tutup" onclick="popDeleteId()" class="absolute end-2.5 top-3 ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-primary hover:bg-gray-200 hover:text-primary/80" data-modal-hide="add-modal">
+                            <button type="button" title="Tutup" class="absolute end-2.5 top-3 ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-primary hover:bg-gray-200 hover:text-primary/80" data-modal-hide="add-modal">
                                 <svg class="h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 14 14">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                 </svg>
@@ -284,12 +292,12 @@
 
         @pushIf(auth()->user()->access === 'editor' && request()->query('mode') === 'edit', 'script')
         <script>
-            const delInput = document.getElementById('delete-input');
             const addButton = document.getElementById('add-row-button');
+            const delInput = document.getElementById('delete-input');
             const dataBody = document.getElementById('data-body');
             const dataForm = document.getElementById('data-form');
-            const sample = document.getElementById('sample');
             const number = document.getElementById('number');
+            const sample = document.getElementById('sample');
 
             const inputs = sample.getElementsByTagName('input');
 
@@ -311,7 +319,7 @@
                 addButton.setAttribute('onclick', `addRow(${index + 1})`);
             }
 
-            function clickInput(selfId, id) {
+            function clickInput(self, selfId, id) {
                 const selfElement = document.getElementById(selfId);
                 const idElement = document.getElementById(id);
 
@@ -322,9 +330,12 @@
 
                 selfElement.disabled = false;
                 selfElement.focus();
+
+                self.classList.toggle('hidden');
             }
 
-            function blurInput(selfId, id) {
+            function blurInput(selfId, id, coverId) {
+                const coverElement = document.getElementById(coverId);
                 const selfElement = document.getElementById(selfId);
                 const idElement = document.getElementById(id);
 
@@ -338,6 +349,8 @@
                         idElement.setAttribute('count', idCount - 1);
                     }
                     selfElement.disabled = true;
+
+                    coverElement.classList.toggle('hidden');
                 }
             }
 
@@ -403,5 +416,9 @@
             </div>
         @endif
     @endif
+
+    @pushIf($errors->any(), 'notification')
+    <x-partials.toast.default id="iku-add-data-error" message="Gagal memperbaharui data" withTimeout danger />
+    @endPushIf
 
 </x-admin-template>
