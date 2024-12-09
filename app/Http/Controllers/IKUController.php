@@ -1326,7 +1326,7 @@ class IKUController extends Controller
     }
 
     /**
-     * IKU admin detail view 
+     * IKU admin detail view
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\IndikatorKinerjaProgram $ikp
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
@@ -1336,7 +1336,7 @@ class IKUController extends Controller
         if ($ikp->status !== 'aktif') {
             abort(404);
         }
-        if (isset($request->period) && !in_array($request->period, ['1', '2', '3', '4'])) {
+        if ($request->period !== null && !in_array($request->period, ['1', '2', '3', '4'])) {
             abort(404);
         }
 
@@ -1352,9 +1352,7 @@ class IKUController extends Controller
 
         foreach ([3, 6, 9, 12] as $key => $value) {
             if ($currentMonth <= $value) {
-                $temp = $key + 1;
-                $currentPeriod = "$temp";
-
+                $currentPeriod = (string) ($key + 1);
                 break;
             }
         }
@@ -1389,7 +1387,7 @@ class IKUController extends Controller
             abort(404);
         }
 
-        $period = isset($request->period) ? $request->period : $periods->last()['value'];
+        $period = $request->period ?? $periods->last()['value'];
         $periodInstance = $year->periods()
             ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
                 $query->where('period', $currentPeriod)
