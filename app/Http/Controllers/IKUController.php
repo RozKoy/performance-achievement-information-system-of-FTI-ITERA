@@ -1504,16 +1504,16 @@ class IKUController extends Controller
     }
 
     /**
-     * IKU admin history view 
+     * IKU admin history view
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function historyAdmin(Request $request): Factory|View
     {
-        if (!is_numeric($request->year) && isset($request->year)) {
+        if ($request->year !== null && !is_numeric($request->year)) {
             abort(404);
         }
-        if (!in_array($request->period, ['1', '2', '3', '4']) && isset($request->period)) {
+        if ($request->period !== null && !in_array($request->period, ['1', '2', '3', '4'])) {
             abort(404);
         }
 
@@ -1523,9 +1523,7 @@ class IKUController extends Controller
 
         foreach ([3, 6, 9, 12] as $key => $value) {
             if ($currentMonth <= $value) {
-                $temp = $key + 1;
-                $currentPeriod = "$temp";
-
+                $currentPeriod = (string) ($key + 1);
                 break;
             }
         }
@@ -1546,7 +1544,7 @@ class IKUController extends Controller
         $year = '';
 
         if (count($years)) {
-            $year = isset($request->year) ? $request->year : end($years);
+            $year = $request->year ?? end($years);
             $yearInstance = IKUYear::where('year', $year)->firstOrFail();
 
             $periods = $yearInstance->periods()
@@ -1569,7 +1567,7 @@ class IKUController extends Controller
                     ];
                 });
 
-            $period = isset($request->period) ? $request->period : $periods->last()['value'];
+            $period = $request->period ?? $periods->last()['value'];
             $periodInstance = $yearInstance->periods()
                 ->where('period', $period)
                 ->where('status', false)
