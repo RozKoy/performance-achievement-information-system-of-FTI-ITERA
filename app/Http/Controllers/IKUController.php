@@ -7,23 +7,23 @@ use App\Http\Requests\IndikatorKinerjaUtama\AddSingleDataRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddTableDataRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddTargetRequest;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use App\Http\Requests\RencanaStrategis\ImportRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Storage;
 use App\Models\IndikatorKinerjaProgram;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
 use App\Models\IKUSingleAchievement;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\IKPTableDataSheets;
 use Illuminate\Contracts\View\View;
 use App\Models\IKUAchievementData;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Carbon;
 use App\Models\IKUAchievement;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Exports\IKUExport;
-use App\Http\Requests\RencanaStrategis\ImportRequest;
-use App\Imports\IKPTableDataSheets;
 use App\Models\IKUPeriod;
 use App\Models\IKUYear;
 use App\Models\Unit;
@@ -1115,10 +1115,10 @@ class IKUController extends Controller
      */
     public function homeViewAdmin(Request $request): Factory|View
     {
-        if (!is_numeric($request->year) && isset($request->year)) {
+        if ($request->year !== null && !is_numeric($request->year)) {
             abort(404);
         }
-        if (!in_array($request->period, ['1', '2', '3', '4']) && isset($request->period)) {
+        if ($request->period !== null && !in_array($request->period, ['1', '2', '3', '4'])) {
             abort(404);
         }
 
@@ -1128,9 +1128,7 @@ class IKUController extends Controller
 
         foreach ([3, 6, 9, 12] as $key => $value) {
             if ($currentMonth <= $value) {
-                $temp = $key + 1;
-                $currentPeriod = "$temp";
-
+                $currentPeriod = (string) ($key + 1);
                 break;
             }
         }
@@ -1157,7 +1155,7 @@ class IKUController extends Controller
         $year = '';
 
         if (count($years)) {
-            $year = isset($request->year) ? $request->year : end($years);
+            $year = $request->year ?? end($years);
             $yearInstance = IKUYear::where('year', $year)->firstOrFail();
 
             $periods = $yearInstance->periods()
@@ -1186,7 +1184,7 @@ class IKUController extends Controller
                     ];
                 });
 
-            $period = isset($request->period) ? $request->period : $periods->last()['value'];
+            $period = $request->period ?? $periods->last()['value'];
             $periodInstance = $yearInstance->periods()
                 ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear) {
                     $query->where('period', $currentPeriod)
@@ -1268,15 +1266,15 @@ class IKUController extends Controller
                                 }
                             ], 'link')
                             ->withAvg([
-                                'singleAchievements AS allSingle' => function (Builder $query) use ($periodInstance) {
+                                'singleAchievements AS allSingle' => function (Builder $query) {
                                     $query->whereBelongsTo(auth()->user()->unit);
                                 }
                             ], 'value')
                             ->withCount([
-                                'unitStatus AS yearUnitStatus' => function (Builder $query) use ($periodInstance) {
+                                'unitStatus AS yearUnitStatus' => function (Builder $query) {
                                     $query->whereBelongsTo(auth()->user()->unit);
                                 },
-                                'achievements AS all' => function (Builder $query) use ($periodInstance) {
+                                'achievements AS all' => function (Builder $query) {
                                     $query->whereBelongsTo(auth()->user()->unit);
                                 },
                                 'achievements AS achievements' => function (Builder $query) use ($periodInstance) {
