@@ -127,10 +127,14 @@
                                                 $yearRealization = $ikp['allSingle'] === null ? 0 : -1;
                                             @endphp
 
-                                            <td title="{{ $ikp['allSingle'] }}">{{ $ikp['allSingle'] }}</td>
+                                            <td title="{{ $ikp['allSingle'] === null ? '' : (!ctype_digit((string) $ikp['allSingle']) ? number_format($ikp['allSingle'], 2) : $ikp['allSingle']) }}">
+                                                {{ $ikp['allSingle'] === null ? '' : (!ctype_digit((string) $ikp['allSingle']) ? number_format($ikp['allSingle'], 2) : $ikp['allSingle']) }}
+                                            </td>
 
                                             @if ($ikp['valueSingle'] !== null)
-                                                <td title="{{ $ikp['valueSingle'] }}">{{ $ikp['valueSingle'] }} <a href="{{ $ikp['linkSingle'] }}" title="Link bukti" class="ms-1 text-primary underline">Link</a></td>
+                                                <td title="{{ $ikp['valueSingle'] }}">
+                                                    {{ $ikp['valueSingle'] }} <a href="{{ $ikp['linkSingle'] }}" title="Link bukti" class="ms-1 text-primary underline">Link</a>
+                                                </td>
                                             @else
                                                 @php
                                                     $realization = 0;
