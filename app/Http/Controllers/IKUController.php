@@ -1975,16 +1975,15 @@ class IKUController extends Controller
     /**
      * IKU add single data function
      * @param \App\Http\Requests\IndikatorKinerjaUtama\AddSingleDataRequest $request
-     * @param mixed $period
+     * @param string $period
      * @param \App\Models\IndikatorKinerjaProgram $ikp
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function addDataSingle(AddSingleDataRequest $request, $period, IndikatorKinerjaProgram $ikp): RedirectResponse
+    public function addDataSingle(AddSingleDataRequest $request, string $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
         if ($ikp->status === 'aktif' && $ikp->mode === 'single') {
             if ($request['value'] && !$request['link']) {
-                return back()
-                    ->withErrors(['link' => 'Link bukti wajib diisi']);
+                return _ControllerHelpers::BackWithInputWithErrors(['link' => 'Link bukti wajib diisi']);
             }
 
             $ps = $ikp->programStrategis;
@@ -1999,9 +1998,7 @@ class IKUController extends Controller
 
             foreach ([3, 6, 9, 12] as $key => $value) {
                 if ($currentMonth <= $value) {
-                    $temp = $key + 1;
-                    $currentPeriod = (string) $temp;
-
+                    $currentPeriod = (string) ($key + 1);
                     break;
                 }
             }
@@ -2058,7 +2055,8 @@ class IKUController extends Controller
                 ->whereBelongsTo(auth()->user()->unit, 'unit')
                 ->forceDelete();
 
-            return back();
+            return _ControllerHelpers::Back()
+                ->with('success', 'Berhasil memperbarui data');
         }
 
         abort(404);
