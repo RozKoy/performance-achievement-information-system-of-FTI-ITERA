@@ -2396,7 +2396,7 @@ class IKUController extends Controller
     }
 
     /**
-     * IKP Excel Template Download
+     * IKP excel template download
      * @param \App\Models\IndikatorKinerjaProgram $ikp
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
@@ -2420,7 +2420,7 @@ class IKUController extends Controller
     }
 
     /**
-     * Import Table Data
+     * Import table data function
      * @param \App\Http\Requests\RencanaStrategis\ImportRequest $request
      * @param string $period
      * @param \App\Models\IndikatorKinerjaProgram $ikp
@@ -2441,9 +2441,7 @@ class IKUController extends Controller
 
             foreach ([3, 6, 9, 12] as $key => $value) {
                 if ($currentMonth <= $value) {
-                    $temp = $key + 1;
-                    $currentPeriod = (string) $temp;
-
+                    $currentPeriod = (string) ($key + 1);
                     break;
                 }
             }
@@ -2464,7 +2462,8 @@ class IKUController extends Controller
                 $request->file('file')
             );
 
-            return back();
+            return _ControllerHelpers::Back()
+                ->with('success', 'Berhasil import data tabel (*Silahkan periksa kembali)');
         }
 
         abort(404);
