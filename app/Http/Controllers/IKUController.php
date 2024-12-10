@@ -2065,11 +2065,11 @@ class IKUController extends Controller
     /**
      * Bulk add table data function
      * @param \Illuminate\Http\Request $request
-     * @param mixed $period
+     * @param string $period
      * @param \App\Models\IndikatorKinerjaProgram $ikp
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function bulkAddData(Request $request, $period, IndikatorKinerjaProgram $ikp): RedirectResponse
+    public function bulkAddData(Request $request, string $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
         if ($ikp->status === 'aktif' && $ikp->mode === 'table') {
             $columns = $ikp->columns()
@@ -2088,9 +2088,7 @@ class IKUController extends Controller
 
             foreach ([3, 6, 9, 12] as $key => $value) {
                 if ($currentMonth <= $value) {
-                    $temp = $key + 1;
-                    $currentPeriod = (string) $temp;
-
+                    $currentPeriod = (string) ($key + 1);
                     break;
                 }
             }
@@ -2123,7 +2121,8 @@ class IKUController extends Controller
 
                                     $temp->save();
                                 } else {
-                                    $achievement->data()->where('column_id', $column->id)->forceDelete();
+                                    $achievement->data()->where('column_id', $column->id)
+                                        ->forceDelete();
                                 }
                             }
                         }
@@ -2164,7 +2163,8 @@ class IKUController extends Controller
             foreach ($unset as $item) {
                 $itemData = $item->data()->whereHas('column', function (Builder $query) {
                     $query->where('file', true);
-                })->get();
+                })
+                    ->get();
 
                 foreach ($itemData as $cItem) {
                     if (Storage::exists($cItem->data)) {
@@ -2192,11 +2192,12 @@ class IKUController extends Controller
                     ]);
 
                     foreach ($columns->where('file', false) as $key => $column) {
-                        if ($item[(string) $column->id] !== null) {
+                        $value = $item[(string) $column->id];
+                        if ($value !== null) {
                             $achievement->data()->create([
                                 'column_id' => $column->id,
 
-                                'data' => $item[(string) $column->id],
+                                'data' => $value,
                             ]);
                         }
                     }
@@ -2221,8 +2222,7 @@ class IKUController extends Controller
             $evaluation = $ikp->evaluation;
 
             if ($evaluation) {
-                $all = $ikp->achievements()
-                    ->count();
+                $all = $ikp->achievements()->count();
 
                 $evaluation->status = $all >= $evaluation->target;
                 $evaluation->save();
@@ -2233,7 +2233,8 @@ class IKUController extends Controller
                 ->whereBelongsTo(auth()->user()->unit, 'unit')
                 ->forceDelete();
 
-            return back();
+            return _ControllerHelpers::Back()
+                ->with('success', 'Berhasil memperbarui data tabel');
         }
 
         abort(404);
