@@ -2353,7 +2353,7 @@ class IKUController extends Controller
     }
 
     /**
-     * IKU delete function 
+     * IKU delete function
      * @param \App\Models\IndikatorKinerjaProgram $ikp
      * @param \App\Models\IKUAchievement $achievement
      * @return \Illuminate\Http\RedirectResponse
@@ -2363,16 +2363,19 @@ class IKUController extends Controller
         if ($ikp->id === $achievement->indikatorKinerjaProgram->id && $ikp->status === 'aktif') {
             if ($achievement->period->status == 1 && $achievement->period->deadline !== null) {
                 if ($achievement->unit->id === auth()->user()->unit->id) {
-                    $achievement->data->each(function ($data) {
-                        if ($data->column->file) {
-                            if (Storage::exists($data->data)) {
-                                Storage::delete($data->data);
-                            }
-                        }
-                        $data->forceDelete();
-                    });
+                    $temp = $achievement->data()->whereNotNull('data')
+                        ->whereHas('column', function (Builder $query) {
+                            $query->where('file', true);
+                        })
+                        ->get();
 
-                    $achievement->forceDelete();
+                    foreach ($temp as $item) {
+                        if (Storage::exists($item->data)) {
+                            Storage::delete($item->data);
+                        }
+                    }
+
+                    $achievement->deleteOrTrashed();
 
                     $evaluation = $ikp->evaluation;
                     if ($evaluation) {
@@ -2383,7 +2386,8 @@ class IKUController extends Controller
                         $evaluation->save();
                     }
 
-                    return back();
+                    return _ControllerHelpers::Back()
+                        ->with('success', 'Berhasil menghapus data');
                 }
             }
         }
