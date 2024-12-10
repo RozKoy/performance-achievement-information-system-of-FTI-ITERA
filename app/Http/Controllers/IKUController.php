@@ -2240,7 +2240,12 @@ class IKUController extends Controller
         abort(404);
     }
 
-    public function yearUnitStatusToggle(IndikatorKinerjaProgram $ikp)
+    /**
+     * Year unit status toggle function
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function yearUnitStatusToggle(IndikatorKinerjaProgram $ikp): RedirectResponse
     {
         $user = auth()->user();
 
@@ -2250,32 +2255,29 @@ class IKUController extends Controller
 
         $year = $sk->time;
 
-        $check = false;
-        if (
-            ($ikp->mode === 'table' && $ikp->achievements()->whereBelongsTo($user->unit, 'unit')->count() === 0)
-            ||
-            ($ikp->mode === 'single' && $ikp->singleAchievements()->whereBelongsTo($user->unit, 'unit')->count() === 0)
-        ) {
-            $check = true;
-        }
+        $singleData = $ikp->singleAchievements()->whereBelongsTo($user->unit, 'unit')->get();
+        $tableData = $ikp->achievements()->whereBelongsTo($user->unit, 'unit')->get();
+
+        $check = ($ikp->mode === 'table' && $tableData->count() === 0) || ($ikp->mode === 'single' && $singleData->count() === 0);
 
         if ($ikp->status === 'aktif' && $check) {
-            $unitStatus = $ikp->unitStatus()->whereBelongsTo($user->unit, 'unit')->count();
+            $unitStatus = $ikp->unitStatus()->whereBelongsTo($user->unit, 'unit');
 
-            $ikp->unitStatus()->whereBelongsTo($user->unit, 'unit')->forceDelete();
+            $unitStatus->forceDelete();
 
-            if ($unitStatus !== 4) {
+            if ($unitStatus->count() !== 4) {
                 foreach ($year->periods as $period) {
                     $ikp->unitStatus()->create([
-                        'status' => 'blank',
-
-                        'period_id' => $period->id,
                         'unit_id' => $user->unit->id,
+                        'period_id' => $period->id,
+
+                        'status' => 'blank',
                     ]);
                 }
             }
 
-            return back();
+            return _ControllerHelpers::Back()
+                ->with('success', 'Berhasil memperbarui status data tahunan');
         }
 
         abort(404);
