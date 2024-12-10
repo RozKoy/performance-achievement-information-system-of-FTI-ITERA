@@ -2283,7 +2283,13 @@ class IKUController extends Controller
         abort(404);
     }
 
-    public function unitStatusToggle($period, IndikatorKinerjaProgram $ikp)
+    /**
+     * Unit status toggle function
+     * @param string $period
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function unitStatusToggle(string $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
         $user = auth()->user();
 
@@ -2299,9 +2305,7 @@ class IKUController extends Controller
 
         foreach ([3, 6, 9, 12] as $key => $value) {
             if ($currentMonth <= $value) {
-                $temp = $key + 1;
-                $currentPeriod = (string) $temp;
-
+                $currentPeriod = (string) ($key + 1);
                 break;
             }
         }
@@ -2317,28 +2321,32 @@ class IKUController extends Controller
             ->where('status', true)
             ->firstOrFail();
 
-        $check = false;
-        if (
-            ($ikp->mode === 'table' && $ikp->achievements()->whereBelongsTo($user->unit, 'unit')->whereBelongsTo($periodInstance, 'period')->count() === 0)
-            ||
-            ($ikp->mode === 'single' && $ikp->singleAchievements()->whereBelongsTo($user->unit, 'unit')->whereBelongsTo($periodInstance, 'period')->count() === 0)
-        ) {
-            $check = true;
-        }
+        $singleData = $ikp->singleAchievements()->whereBelongsTo($user->unit, 'unit')
+            ->whereBelongsTo($periodInstance, 'period')
+            ->get();
+        $tableData = $ikp->achievements()->whereBelongsTo($user->unit, 'unit')
+            ->whereBelongsTo($periodInstance, 'period')
+            ->get();
+
+        $check = ($ikp->mode === 'table' && $tableData->count() === 0) || ($ikp->mode === 'single' && $singleData->count() === 0);
 
         if ($ikp->status === 'aktif' && $check) {
-            if ($ikp->unitStatus()->whereBelongsTo($user->unit, 'unit')->whereBelongsTo($periodInstance, 'period')->exists()) {
-                $ikp->unitStatus()->whereBelongsTo($user->unit, 'unit')->whereBelongsTo($periodInstance, 'period')->forceDelete();
+            $unitStatus = $ikp->unitStatus()->whereBelongsTo($user->unit, 'unit')
+                ->whereBelongsTo($periodInstance, 'period');
+
+            if ($unitStatus->exists()) {
+                $unitStatus->forceDelete();
             } else {
                 $ikp->unitStatus()->create([
-                    'status' => 'blank',
-
                     'period_id' => $periodInstance->id,
                     'unit_id' => $user->unit->id,
+
+                    'status' => 'blank',
                 ]);
             }
 
-            return back();
+            return _ControllerHelpers::Back()
+                ->with('success', 'Berhasil memperbarui unit status');
         }
 
         abort(404);
