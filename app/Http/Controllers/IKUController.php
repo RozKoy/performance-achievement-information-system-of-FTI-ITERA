@@ -1856,13 +1856,13 @@ class IKUController extends Controller
     }
 
     /**
-     * IKU add table data function 
+     * IKU add table data function
      * @param \App\Http\Requests\IndikatorKinerjaUtama\AddTableDataRequest $request
-     * @param mixed $period
+     * @param string $period
      * @param \App\Models\IndikatorKinerjaProgram $ikp
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function addDataTable(AddTableDataRequest $request, $period, IndikatorKinerjaProgram $ikp): RedirectResponse
+    public function addDataTable(AddTableDataRequest $request, string $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
         if ($ikp->status === 'aktif' && $ikp->mode === 'table') {
             $columns = $ikp->columns()
@@ -1871,15 +1871,14 @@ class IKUController extends Controller
 
             $inputExists = false;
             foreach ($columns->where('file', false) as $key => $column) {
-                if ($request['data-' . $column->id] !== null) {
+                if ($request["data-$column->id"] !== null) {
                     $inputExists = true;
                     break;
                 }
             }
 
             if (!$inputExists) {
-                return back()
-                    ->withErrors(['input' => 'Data yang dimasukkan tidak boleh kosong semua']);
+                return _ControllerHelpers::BackWithInputWithErrors(['input' => 'Data yang dimasukkan tidak boleh kosong semua']);
             }
 
             $ps = $ikp->programStrategis;
@@ -1894,9 +1893,7 @@ class IKUController extends Controller
 
             foreach ([3, 6, 9, 12] as $key => $value) {
                 if ($currentMonth <= $value) {
-                    $temp = $key + 1;
-                    $currentPeriod = "$temp";
-
+                    $currentPeriod = (string) ($key + 1);
                     break;
                 }
             }
@@ -1921,7 +1918,7 @@ class IKUController extends Controller
             $achievement->save();
 
             $columns->where('file', false)->each(function ($column) use ($achievement, $request) {
-                $input = $request['data-' . $column->id];
+                $input = $request["data-$column->id"];
                 if ($input !== null) {
                     $data = new IKUAchievementData();
 
@@ -1937,7 +1934,7 @@ class IKUController extends Controller
             $file = $columns->firstWhere('file', true);
 
             if ($file !== null) {
-                $name = 'file-' . $file->id;
+                $name = "file-$file->id";
                 if ($request->hasFile($name)) {
                     $fileURI = $request->file($name)
                         ->store('IKUFiles/' . auth()->user()->unit->name . '/' . $ikp->id);
@@ -1968,7 +1965,8 @@ class IKUController extends Controller
                 ->whereBelongsTo(auth()->user()->unit, 'unit')
                 ->forceDelete();
 
-            return back();
+            return _ControllerHelpers::Back()
+                ->with('success', 'Berhasil menambahkan data tabel');
         }
 
         abort(404);
