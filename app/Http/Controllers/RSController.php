@@ -1315,15 +1315,11 @@ class RSController extends Controller
 
 
         if ($realization !== null && $link === null) {
-            return back()
-                ->withInput()
-                ->withErrors(["link-$ikId" => 'Link bukti wajib diisi']);
+            return _ControllerHelpers::BackWithInputWithErrors(["link-$ikId" => 'Link bukti wajib diisi']);
         }
 
         if ($realization !== null && !is_numeric($realization) && ($ik->type === 'persen' || $ik->type === 'angka')) {
-            return back()
-                ->withInput()
-                ->withErrors(["realization-$ikId" => 'Realisasi tidak sesuai dengan tipe data']);
+            return _ControllerHelpers::BackWithInputWithErrors(["realization-$ikId" => 'Realisasi tidak sesuai dengan tipe data']);
         }
 
         if ($ik->type !== 'teks' && $realization !== null) {
