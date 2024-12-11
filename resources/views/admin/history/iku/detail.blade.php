@@ -14,14 +14,16 @@
     ];
     $previousRoute = route('admin-history-iku', ['period' => $period]);
 @endphp
+
 <x-admin-template title="IKU - Riwayat Capaian Kinerja - {{ auth()->user()->unit->name }}">
-    <x-partials.breadcrumbs.default :$breadCrumbs admin />
+    <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="detail - riwayat capaian kinerja - indikator kinerja utama" :$previousRoute />
     <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
     <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="{{ $ikk['number'] }}" dataText="{{ $ikk['name'] }}" />
     <x-partials.heading.h3 title="Program strategis" dataNumber="{{ $ps['number'] }}" dataText="{{ $ps['name'] }}" />
     <x-partials.heading.h3 title="Indikator kinerja program" dataNumber="{{ $ikp['number'] }}" dataText="{{ $ikp['name'] }}" />
     <x-partials.filter.period :$periods :$period />
+
     <div class="flex items-center">
         <x-partials.badge.time :data="$badge" />
     </div>
