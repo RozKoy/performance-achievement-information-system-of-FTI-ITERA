@@ -391,6 +391,7 @@ class UsersController extends Controller
 
         $user->forceDelete();
 
-        return back();
+        return _ControllerHelpers::Back()
+            ->with('success', 'Berhasil menghapus data pengguna');
     }
 }
