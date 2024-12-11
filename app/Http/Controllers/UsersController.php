@@ -320,10 +320,10 @@ class UsersController extends Controller
 
     /**
      * User edit view
-     * @param mixed $id
+     * @param string $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function editViewAdmin($id): Factory|View
+    public function editViewAdmin(string $id): Factory|View
     {
         $user = auth()->user()
             ->unit
