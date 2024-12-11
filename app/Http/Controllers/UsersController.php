@@ -314,7 +314,8 @@ class UsersController extends Controller
             ]
         );
 
-        return _ControllerHelpers::RedirectWithRoute('admin-users');
+        return _ControllerHelpers::RedirectWithRoute('admin-users')
+            ->with('success', 'Berhasil menambahkan pengguna');
     }
 
     /**
