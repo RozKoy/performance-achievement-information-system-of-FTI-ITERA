@@ -8,7 +8,7 @@
 @endphp
 
 <x-admin-template title="Pengguna - {{ auth()->user()->unit->name }}">
-    <x-partials.breadcrumbs.default :$breadCrumbs admin />
+    <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="manajemen pengguna" />
     <x-partials.search.default />
 
@@ -74,7 +74,9 @@
                 <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Pencarian : "{{ request()->query('search') }}"</p>
             @endif
 
-            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ request()->query('search') !== null ? 'Tidak dapat ditemukan' : 'Tidak ada data pengguna' }}</p>
+            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">
+                {{ request()->query('search') !== null ? 'Tidak dapat ditemukan' : 'Tidak ada data pengguna' }}
+            </p>
         </div>
     @endif
 
