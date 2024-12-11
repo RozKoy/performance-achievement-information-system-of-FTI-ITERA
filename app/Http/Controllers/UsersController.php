@@ -373,7 +373,8 @@ class UsersController extends Controller
 
         $user->save();
 
-        return _ControllerHelpers::RedirectWithRoute('admin-users');
+        return _ControllerHelpers::RedirectWithRoute('admin-users')
+            ->with('success', 'Berhasil memperbarui data pengguna');
     }
 
     /**
