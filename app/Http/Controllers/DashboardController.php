@@ -538,6 +538,11 @@ class DashboardController extends Controller
         );
     }
 
+    /**
+     * Super admin rs excel export function
+     * @param string $year
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public function exportRS(string $year): BinaryFileResponse
     {
         $yearInstance = RSYear::withTrashed()->where('year', $year)->firstOrFail();
@@ -713,6 +718,9 @@ class DashboardController extends Controller
             }
         }
 
-        return Excel::download(new MultipleSheets(RSExport::class, $names, $collection->toArray()), 'rencana-strategis.xlsx');
+        return Excel::download(
+            new MultipleSheets(RSExport::class, $names, $collection->toArray()),
+            'rencana-strategis.xlsx'
+        );
     }
 }
