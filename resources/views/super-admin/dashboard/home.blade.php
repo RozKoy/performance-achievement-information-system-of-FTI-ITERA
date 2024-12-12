@@ -1,13 +1,10 @@
 <x-super-admin-template title="Beranda - Super Admin">
-
     <div class="flex w-full items-center justify-center gap-3 text-primary max-lg:flex-wrap">
         <div class="flex w-1/2 max-w-screen-md flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-primary/75 p-3 shadow shadow-primary max-lg:w-full">
             <div class="flex w-full items-center justify-between">
                 <h6 class="text-lg uppercase md:text-xl" title="Rencana Strategis">Rencana Strategis</h6>
                 <form action="">
-                    @if (request()->query('ikuYear'))
-                        <input type="hidden" name="ikuYear" value="{{ request()->query('ikuYear') }}">
-                    @endif
+                    <x-functions.query-handler :data="['ikuYear']" />
                     <x-partials.input.select name="rsYear" title="Pilih tahun" :data="$rsYearList" onchange="this.form.submit()" />
                 </form>
             </div>
@@ -43,9 +40,7 @@
             <div class="flex w-full items-center justify-between">
                 <h6 class="text-lg uppercase md:text-xl" title="Indikator Kinerja Utama">Indikator Kinerja Utama</h6>
                 <form action="">
-                    @if (request()->query('rsYear'))
-                        <input type="hidden" name="rsYear" value="{{ request()->query('rsYear') }}">
-                    @endif
+                    <x-functions.query-handler :data="['rsYear']" />
                     <x-partials.input.select name="ikuYear" title="Pilih tahun" :data="$ikuYearList" onchange="this.form.submit()" />
                 </form>
             </div>
@@ -84,6 +79,10 @@
             <h6 class="uppercase">Rencana Strategis</h6>
             <div class="flex w-full flex-wrap items-center justify-center gap-5">
                 <div class="flex items-center justify-center gap-1">
+                    <div class="aspect-square h-3 border border-black bg-yellow-300"></div>
+                    <p>Capaian Teks</p>
+                </div>
+                <div class="flex items-center justify-center gap-1">
                     <div class="aspect-square h-3 border border-black"></div>
                     <p>Belum Mengisi</p>
                 </div>
@@ -111,32 +110,44 @@
                     <tbody>
 
                         @foreach ($rsIndikatorKinerja as $item)
-                            <tr class="*:border *:border-primary *:p-1">
+                            <tr class="*:border *:border-primary *:p-1 *:text-center">
                                 <th title="{{ $item['name'] }}" class="max-w-96 overflow-hidden truncate text-left">{{ $item['name'] }}</th>
 
                                 @foreach ($units as $unit)
-                                    @if (collect($item['realization'])->where('unit_id', $unit['id'])->count())
+                                    @php
+                                        $realization = collect($item['realization'])->where('unit_id', $unit['id']);
+                                    @endphp
+                                    @if ($realization->count())
                                         @if ($item['type'] === 'teks')
-                                            <td class="bg-green-300"></td>
+                                            @php
+                                                $text = join(',', $realization->pluck('realization')->toArray());
+                                            @endphp
+                                            <td title="{{ $text }}" class="max-w-16 truncate bg-yellow-300">
+                                                {{ $text }}
+                                            </td>
                                         @else
                                             @php
                                                 $target = collect($item['target'])->firstWhere('unit_id', $unit['id']);
-                                                $realization = 0;
                                                 $status = false;
-                                                if ($item['type'] === 'angka') {
-                                                    $realization = collect($item['realization'])
-                                                        ->where('unit_id', $unit['id'])
-                                                        ->sum('realization');
-                                                } elseif ($item['type'] === 'persen') {
-                                                    $realization = collect($item['realization'])
-                                                        ->where('unit_id', $unit['id'])
-                                                        ->average('realization');
-                                                }
+                                                $percent = 0;
+
+                                                $realization = $item['type'] === 'angka' ? $realization->sum('realization') : $realization->average('realization');
+
                                                 if (!$target || $realization >= (float) ($target['target'] ?? $realization + 1)) {
+                                                    $percent = 100;
                                                     $status = true;
+                                                } elseif ((float) $target['target']) {
+                                                    $percent = ($realization * 100) / (float) $target['target'];
+                                                    $percent = $percent > 100 ? 100 : $percent;
+                                                }
+                                                if (!ctype_digit((string) $percent)) {
+                                                    $percent = number_format($percent, 2);
                                                 }
                                             @endphp
-                                            <td class="{{ $status ? 'bg-green-300' : 'bg-red-300' }}"></td>
+
+                                            <td class="{{ $status ? 'bg-green-300' : 'bg-red-300' }}">
+                                                {{ $percent }}%
+                                            </td>
                                         @endif
                                     @else
                                         <td></td>
@@ -184,7 +195,7 @@
                     <tbody>
 
                         @foreach ($ikuIndikatorKinerjaProgram as $item)
-                            <tr class="*:border *:border-primary *:p-1">
+                            <tr class="*:border *:border-primary *:p-1 *:text-center">
                                 <th title="{{ $item['name'] }}" class="max-w-96 overflow-hidden truncate text-left">{{ $item['name'] }}</th>
 
                                 @foreach ($units as $unit)
@@ -198,6 +209,7 @@
                                         $target = collect($item['target'])->firstWhere('unit_id', $unit['id']);
 
                                         $realization = 0;
+                                        $percent = null;
                                         $status = 0;
                                         if ($achievements->count() || $singleAchievements->count() || $unitStatus === 4) {
                                             $status = 1;
@@ -207,11 +219,22 @@
                                                 $realization = $singleAchievements->average('value');
                                             }
                                             if (!$target || $realization >= (float) ($target['target'] ?? $realization + 1)) {
+                                                $percent = 100;
                                                 $status = 2;
+                                            } elseif ((float) $target['target']) {
+                                                $percent = ($realization * 100) / (float) $target['target'];
+                                                $percent = $percent > 100 ? 100 : $percent;
+                                            }
+                                            if (!ctype_digit((string) $percent)) {
+                                                $percent = number_format($percent, 2);
                                             }
                                         }
                                     @endphp
-                                    <td class="{{ $status === 2 ? 'bg-green-300' : ($status === 1 ? 'bg-red-300' : '') }}"></td>
+                                    <td class="{{ $status === 2 ? 'bg-green-300' : ($status === 1 ? 'bg-red-300' : '') }}">
+                                        @if ($percent !== null)
+                                            {{ $percent }}%
+                                        @endif
+                                    </td>
                                 @endforeach
 
                             </tr>
