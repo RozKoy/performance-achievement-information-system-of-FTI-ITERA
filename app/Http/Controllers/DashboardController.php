@@ -173,7 +173,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Super admin iku dashboard
+     * Super admin iku dashboard function
      * @param string $year
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
@@ -317,6 +317,11 @@ class DashboardController extends Controller
         ]));
     }
 
+    /**
+     * Super admin iku excel export function
+     * @param string $year
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public function exportIKU(string $year): BinaryFileResponse
     {
         $yearInstance = IKUYear::withTrashed()->where('year', $year)->firstOrFail();
@@ -527,7 +532,10 @@ class DashboardController extends Controller
             }
         }
 
-        return Excel::download(new MultipleSheets(IKUExport::class, $names, $collection->toArray()), 'indikator-kinerja-utama.xlsx');
+        return Excel::download(
+            new MultipleSheets(IKUExport::class, $names, $collection->toArray()),
+            'indikator-kinerja-utama.xlsx'
+        );
     }
 
     public function exportRS(string $year): BinaryFileResponse
