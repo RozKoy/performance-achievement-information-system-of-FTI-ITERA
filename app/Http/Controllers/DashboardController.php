@@ -172,6 +172,11 @@ class DashboardController extends Controller
         ]));
     }
 
+    /**
+     * Super admin iku dashboard
+     * @param string $year
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function iku(string $year): Factory|View
     {
         $yearInstance = IKUYear::withTrashed()->where('year', $year)->firstOrFail();
