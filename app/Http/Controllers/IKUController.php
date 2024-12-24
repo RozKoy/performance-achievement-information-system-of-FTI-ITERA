@@ -23,6 +23,7 @@ use Illuminate\Http\UploadedFile;
 use App\Models\IKUAchievement;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Exports\IKUExport;
 use App\Models\IKUPeriod;
 use App\Models\IKUYear;
@@ -1098,7 +1099,7 @@ class IKUController extends Controller
             }
         }
 
-        return Excel::download(new IKUExport($collection->toArray()), (string) $ikp->name . '.xlsx');
+        return Excel::download(new IKUExport($collection->toArray()), Str::replace(['/', '\\'], '-', (string) $ikp->name) . '.xlsx');
     }
 
 
@@ -1443,7 +1444,7 @@ class IKUController extends Controller
                     'link',
                 ])
                 ->first()
-                ?->toArray();
+                    ?->toArray();
 
             $realization = $ikp->singleAchievements()
                 ->whereBelongsTo(auth()->user()->unit)
@@ -1454,11 +1455,11 @@ class IKUController extends Controller
             ->whereBelongsTo($periodInstance, 'period')
             ->whereBelongsTo(auth()->user()->unit, 'unit')
             ->first()
-            ?->status ?? null;
+                ?->status ?? null;
         $target = $ikp->target()
             ->whereBelongsTo(auth()->user()->unit)
             ->first()
-            ?->target ?? null;
+                ?->target ?? null;
 
         $sk = $sk->only([
             'number',
@@ -1799,7 +1800,7 @@ class IKUController extends Controller
                     'link',
                 ])
                 ->first()
-                ?->toArray();
+                    ?->toArray();
 
             $realization = $ikp->singleAchievements()
                 ->whereBelongsTo(auth()->user()->unit)
