@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -43,7 +44,7 @@ class AuthController extends Controller
         $user = User::where('token', $token)
             ->firstOrFail();
 
-        $user->only('email');
+        $user = $user->only('email');
 
         return view('authentication.change-password', compact('user'));
     }
@@ -88,6 +89,8 @@ class AuthController extends Controller
             ->first();
 
         if ($user) {
+            DB::beginTransaction();
+
             try {
                 $user->update(['token' => uuid_create()]);
 
@@ -97,10 +100,12 @@ class AuthController extends Controller
                     'name',
                 ])));
 
+                DB::commit();
+
                 return _ControllerHelpers::RedirectWithRoute('login')
                     ->with('success', 'Berhasil mengirim link ubah kata sandi, silahkan cek email anda');
             } catch (\Exception $e) {
-                $user->update(['token' => null]);
+                DB::rollBack();
 
                 return _ControllerHelpers::BackWithInputWithErrors(['email' => 'Alamat email tidak aktif']);
             }
