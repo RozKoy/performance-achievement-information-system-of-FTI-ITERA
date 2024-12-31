@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
+use App\Models\User;
 use Closure;
 
 class Admin
@@ -16,7 +17,8 @@ class Admin
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check()) {
-            if (auth()->user()->role === 'admin' && auth()->user()->unit()->exists()) {
+            $user = User::find(auth()->user()->id);
+            if ($user->role === 'admin' && $user->unit()->exists()) {
                 return $next($request);
             }
 
