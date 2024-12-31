@@ -40,6 +40,11 @@ class Unit extends Model
         return $this->hasMany(RSTarget::class);
     }
 
+    public function IKUStatus(): HasMany
+    {
+        return $this->hasMany(IKUUnitStatus::class);
+    }
+
     public function indikatorKinerjaUtama(): HasMany
     {
         return $this->hasMany(IKUAchievement::class);
@@ -47,7 +52,7 @@ class Unit extends Model
 
     public function singleIndikatorKinerjaUtama(): HasMany
     {
-        return $this->hasMany(IKUAchievement::class);
+        return $this->hasMany(IKUSingleAchievement::class);
     }
 
     public function rencanaStrategis(): HasMany
