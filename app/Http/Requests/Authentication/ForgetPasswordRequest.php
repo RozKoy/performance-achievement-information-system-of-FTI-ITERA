@@ -3,9 +3,12 @@
 namespace App\Http\Requests\Authentication;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Traits\RequestErrorMessage;
 
 class ForgetPasswordRequest extends FormRequest
 {
+    use RequestErrorMessage;
+
     /**
      * Determine if the user is authorized to make this request.
      * @return bool
@@ -34,20 +37,6 @@ class ForgetPasswordRequest extends FormRequest
     {
         return [
             'email' => 'Alamat email pengguna',
-        ];
-    }
-
-    /**
-     * Error message
-     * @return array
-     */
-    public function messages(): array
-    {
-        return [
-            'max' => ':attribute tidak boleh melebihi :max karakter',
-            'string' => ':attribute harus berupa teks',
-            'required' => ':attribute wajib diisi',
-            'email' => ':attribute tidak valid',
         ];
     }
 }

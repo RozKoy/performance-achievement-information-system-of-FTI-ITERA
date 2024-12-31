@@ -3,11 +3,14 @@
 namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Traits\RequestErrorMessage;
 use App\Rules\Unique;
 use App\Models\User;
 
 class EditAdminRequest extends FormRequest
 {
+    use RequestErrorMessage;
+
     /**
      * Determine if the user is authorized to make this request.
      * @return bool
@@ -41,21 +44,6 @@ class EditAdminRequest extends FormRequest
             'access' => 'Akses pengguna',
             'name' => 'Nama pengguna',
             'unit' => 'Unit'
-        ];
-    }
-
-    /**
-     * Error message
-     * @return array
-     */
-    public function messages(): array
-    {
-        return [
-            'max' => ':attribute tidak boleh melebihi :max karakter',
-            'string' => ':attribute harus berupa teks',
-            'email.email' => ':attribute tidak valid',
-            'required' => ':attribute wajib diisi',
-            'in' => ':attribute tidak sesuai',
         ];
     }
 }

@@ -3,9 +3,12 @@
 namespace App\Http\Requests\RencanaStrategis;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Traits\RequestErrorMessage;
 
 class ImportRequest extends FormRequest
 {
+    use RequestErrorMessage;
+
     /**
      * Determine if the user is authorized to make this request.
      * @return bool
@@ -34,19 +37,6 @@ class ImportRequest extends FormRequest
     {
         return [
             'file' => 'File',
-        ];
-    }
-
-    /**
-     * Error message
-     * @return array
-     */
-    public function messages(): array
-    {
-        return [
-            'mimes' => ':attribute harus berbentuk .csv/.xls/xlsx',
-            'file' => ':attribute harus berupa file',
-            'required' => ':attribute wajib diisi',
         ];
     }
 }

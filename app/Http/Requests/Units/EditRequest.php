@@ -3,11 +3,14 @@
 namespace App\Http\Requests\Units;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Traits\RequestErrorMessage;
 use App\Rules\Unique;
 use App\Models\Unit;
 
 class EditRequest extends FormRequest
 {
+    use RequestErrorMessage;
+
     /**
      * Determine if the user is authorized to make this request.
      * @return bool
@@ -42,21 +45,6 @@ class EditRequest extends FormRequest
             'users.old' => 'Pengguna',
             'users.new' => 'Pengguna',
             'name' => 'Nama unit',
-        ];
-    }
-
-    /**
-     * Error message
-     * @return array
-     */
-    public function messages(): array
-    {
-        return [
-            'max' => ':attribute tidak boleh melebihi :max karakter',
-            'exists' => ':attribute tidak dapat ditemukan',
-            'string' => ':attribute harus berupa teks',
-            'array' => ':attribute harus berupa array',
-            'required' => ':attribute wajib diisi'
         ];
     }
 }

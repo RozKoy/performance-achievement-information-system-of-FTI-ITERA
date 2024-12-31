@@ -3,9 +3,12 @@
 namespace App\Http\Requests\RencanaStrategis;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Traits\RequestErrorMessage;
 
 class AddEvaluationRequest extends FormRequest
 {
+    use RequestErrorMessage;
+
     /**
      * Determine if the user is authorized to make this request.
      * @return bool
@@ -44,21 +47,6 @@ class AddEvaluationRequest extends FormRequest
             'period' => 'Periode',
             'status' => 'Status',
             'target' => 'Target',
-        ];
-    }
-
-    /**
-     * Error message
-     * @return array
-     */
-    public function messages(): array
-    {
-        return [
-            'max' => ':attribute tidak boleh melebihi :max karakter',
-            'boolean' => ':attribute harus bernilai boolean',
-            'string' => ':attribute harus berupa teks',
-            'required' => ':attribute wajib diisi',
-            'in' => ':attribute tidak sesuai',
         ];
     }
 }

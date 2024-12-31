@@ -3,9 +3,12 @@
 namespace App\Http\Requests\Units;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Traits\RequestErrorMessage;
 
 class AddRequest extends FormRequest
 {
+    use RequestErrorMessage;
+
     /**
      * Determine if the user is authorized to make this request.
      * @return bool
@@ -38,21 +41,6 @@ class AddRequest extends FormRequest
             'short_name' => 'Nama pendek unit',
             'name' => 'Nama unit',
             'users' => 'Pengguna'
-        ];
-    }
-
-    /**
-     * Error message
-     * @return array
-     */
-    public function messages(): array
-    {
-        return [
-            'max' => ':attribute tidak boleh melebihi :max karakter',
-            'exists' => ':attribute tidak dapat ditemukan',
-            'string' => ':attribute harus berupa teks',
-            'array' => ':attribute harus berupa array',
-            'required' => ':attribute wajib diisi'
         ];
     }
 }

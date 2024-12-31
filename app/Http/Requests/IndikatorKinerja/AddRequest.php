@@ -3,9 +3,12 @@
 namespace App\Http\Requests\IndikatorKinerja;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Traits\RequestErrorMessage;
 
 class AddRequest extends FormRequest
 {
+    use RequestErrorMessage;
+
     /**
      * Determine if the user is authorized to make this request.
      * @return bool
@@ -38,24 +41,6 @@ class AddRequest extends FormRequest
             'name' => 'Indikator kinerja',
             'type' => 'Tipe data',
             'number' => 'Nomor',
-        ];
-    }
-
-    /**
-     * Error message
-     * @return array
-     */
-    public function messages(): array
-    {
-        return [
-            'max_digits' => ':attribute tidak boleh melebihi :max digit',
-            'max' => ':attribute tidak boleh melebihi :max karakter',
-            'integer' => ':attribute harus berupa bilangan bulat',
-            'min' => ':attribute tidak boleh kurang dari :min',
-            'numeric' => ':attribute harus berupa bilangan',
-            'string' => ':attribute harus berupa teks',
-            'required' => ':attribute wajib diisi',
-            'in' => ':attribute tidak sesuai',
         ];
     }
 }

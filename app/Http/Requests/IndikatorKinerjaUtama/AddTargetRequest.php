@@ -3,9 +3,12 @@
 namespace App\Http\Requests\IndikatorKinerjaUtama;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Traits\RequestErrorMessage;
 
 class AddTargetRequest extends FormRequest
 {
+    use RequestErrorMessage;
+
     /**
      * Determine if the user is authorized to make this request.
      * @return bool
@@ -36,19 +39,6 @@ class AddTargetRequest extends FormRequest
         return [
             'target.*' => 'Target',
             'target' => 'Target',
-        ];
-    }
-
-    /**
-     * Error message
-     * @return array
-     */
-    public function messages(): array
-    {
-        return [
-            'min' => ':attribute tidak boleh kurang dari :min',
-            'numeric' => ':attribute harus berupa bilangan',
-            'array' => ':attribute harus berupa array',
         ];
     }
 }

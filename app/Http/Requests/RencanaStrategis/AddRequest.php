@@ -3,9 +3,12 @@
 namespace App\Http\Requests\RencanaStrategis;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Traits\RequestErrorMessage;
 
 class AddRequest extends FormRequest
 {
+    use RequestErrorMessage;
+
     /**
      * Determine if the user is authorized to make this request.
      * @return bool
@@ -36,17 +39,6 @@ class AddRequest extends FormRequest
         return [
             'realization-*' => 'Realisasi',
             'link-*' => 'Link Bukti',
-        ];
-    }
-
-    /**
-     * Error message
-     * @return array
-     */
-    public function messages(): array
-    {
-        return [
-            'max' => ':attribute tidak boleh melebihi :max karakter',
         ];
     }
 }
