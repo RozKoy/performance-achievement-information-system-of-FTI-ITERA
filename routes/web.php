@@ -162,6 +162,8 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
                 Route::put('{sk}/ubah', [SasaranKegiatanController::class, 'edit']);
 
                 Route::get('{sk}/hapus', [SasaranKegiatanController::class, 'delete']);
+
+                Route::post('duplicate', [SasaranKegiatanController::class, 'duplicateFormat'])->name('super-admin-iku-duplicate');
             });
         });
 

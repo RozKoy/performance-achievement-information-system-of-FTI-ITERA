@@ -41,7 +41,18 @@ class SasaranKegiatanController extends Controller
             ->get()
             ->toArray();
 
-        return view('super-admin.iku.sk.home', compact('data'));
+        $canDuplicate = false;
+
+        if ($time->sasaranKegiatan()->count() === 0) {
+            if (IKUYear::where('year', (string) (((int) $time->year) - 1))->first()?->sasaranKegiatan()->count()) {
+                $canDuplicate = true;
+            }
+        }
+
+        return view('super-admin.iku.sk.home', compact([
+            'canDuplicate',
+            'data',
+        ]));
     }
 
     /**
@@ -97,6 +108,59 @@ class SasaranKegiatanController extends Controller
         $sk->save();
 
         return _ControllerHelpers::RedirectWithRoute('super-admin-iku-sk');
+    }
+
+    /**
+     * Duplicate format function
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function duplicateFormat(): RedirectResponse
+    {
+        $time = IKUYear::currentTime();
+
+        if ($time->sasaranKegiatan()->count() === 0) {
+            if ($temp = IKUYear::where('year', (string) (((int) $time->year) - 1))->first()) {
+                if ($temp->sasaranKegiatan()->count()) {
+                    foreach ($temp->sasaranKegiatan as $sk) {
+                        $newSk = $time->sasaranKegiatan()->create($sk->only([
+                            'number',
+                            'name',
+                        ]));
+                        foreach ($sk->indikatorKinerjaKegiatan as $ikk) {
+                            $newIkk = $newSk->indikatorKinerjaKegiatan()->create($ikk->only([
+                                'number',
+                                'name',
+                            ]));
+                            foreach ($ikk->programStrategis as $ps) {
+                                $newPs = $newIkk->programStrategis()->create($ps->only([
+                                    'number',
+                                    'name',
+                                ]));
+                                foreach ($ps->indikatorKinerjaProgram as $ikp) {
+                                    $newIkp = $newPs->indikatorKinerjaProgram()->create($ikp->only([
+                                        'definition',
+                                        'number',
+                                        'status',
+                                        'mode',
+                                        'name',
+                                        'type',
+                                    ]));
+                                    foreach ($ikp->columns as $column) {
+                                        $newIkp->columns()->create($column->only([
+                                            'number',
+                                            'file',
+                                            'name',
+                                        ]));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return back();
     }
 
     /**
