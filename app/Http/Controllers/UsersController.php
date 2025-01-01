@@ -11,6 +11,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Models\Unit;
 use App\Models\User;
 
@@ -31,7 +32,7 @@ class UsersController extends Controller
     {
         $data = User::whereKeyNot(auth()->user()->id)
             ->doesntHave('unit')
-            ->where(function (Builder $query) use ($request) {
+            ->where(function (Builder $query) use ($request): void {
                 if ($request->search) {
                     $query->whereAny(
                         [
@@ -45,7 +46,7 @@ class UsersController extends Controller
                     );
                 }
             })
-            ->orWhereHas('unit', function (Builder $query) use ($request) {
+            ->orWhereHas('unit', function (Builder $query) use ($request): void {
                 if ($request->search) {
                     $query->whereAny(
                         [
@@ -128,7 +129,7 @@ class UsersController extends Controller
                 $request['unit_id'] = $request['unit'];
             }
         }
-        $request['password'] = str_replace(" ", "_", $request['name']);
+        $request['password'] = Str::replace(" ", "_", $request['name']);
 
         User::create($request->only([
             'password',
@@ -155,7 +156,7 @@ class UsersController extends Controller
             'id AS value',
         ])
             ->get()
-            ->map(function ($unit) use ($user) {
+            ->map(function ($unit) use ($user): array {
                 $data = $unit->toArray();
                 if ($unit->value === $user->unit_id) {
                     $data['selected'] = true;
@@ -262,7 +263,7 @@ class UsersController extends Controller
             ->unit
             ->users()
             ->whereKeyNot(auth()->user()->id)
-            ->where(function (Builder $query) use ($request) {
+            ->where(function (Builder $query) use ($request): void {
                 if ($request->search) {
                     $query->whereAny(
                         [
@@ -308,7 +309,7 @@ class UsersController extends Controller
         User::create(
             [
                 ...$request->safe()->all(),
-                'password' => str_replace(" ", "_", $request['name']),
+                'password' => Str::replace(" ", "_", $request['name']),
                 'unit_id' => auth()->user()->unit_id,
                 'role' => 'admin'
             ]
@@ -343,15 +344,15 @@ class UsersController extends Controller
     /**
      * User edit function
      * @param \App\Http\Requests\Users\EditAdminRequest $request
-     * @param \App\Models\User $id
+     * @param string $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function editAdmin(EditAdminRequest $request, User $id): RedirectResponse
+    public function editAdmin(EditAdminRequest $request, string $id): RedirectResponse
     {
         $user = auth()->user()
             ->unit
             ->users()
-            ->findOrFail($id->id);
+            ->findOrFail($id);
 
         $newEmail = $request['email'];
 
