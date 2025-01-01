@@ -22,7 +22,7 @@ class UnitsController extends Controller
      */
     public function homeView(Request $request): Factory|View
     {
-        $data = Unit::where(function (Builder $query) use ($request) {
+        $data = Unit::where(function (Builder $query) use ($request): void {
             if ($request->search) {
                 $query->whereAny(
                     [
@@ -171,7 +171,7 @@ class UnitsController extends Controller
             }
         }
 
-        $unit->users()->each(function ($user) use ($oldUsers) {
+        $unit->users()->each(function ($user) use ($oldUsers): void {
             if (!in_array($user->id, $oldUsers)) {
                 $user->unit()->dissociate();
                 $user->save();
@@ -195,203 +195,215 @@ class UnitsController extends Controller
      */
     public function delete(Unit $unit): RedirectResponse
     {
-        $currentYear = Carbon::now()->format('Y');
+        // $currentYear = Carbon::now()->format('Y');
 
-        $RSAchievements = $unit->rencanaStrategis()
-            ->whereHas('period', function (Builder $query) use ($currentYear) {
-                $query->whereHas('year', function (Builder $query) use ($currentYear) {
-                    $query->where('year', $currentYear);
-                });
-            })
-            ->get();
+        // $RSAchievements = $unit->rencanaStrategis()
+        //     ->whereHas('period', function (Builder $query) use ($currentYear): void {
+        //         $query->whereHas('year', function (Builder $query) use ($currentYear): void {
+        //             $query->where('year', $currentYear);
+        //         });
+        //     })
+        //     ->get();
 
-        foreach ($RSAchievements as $key => $RSAchievement) {
-            $ik = $RSAchievement->indikatorKinerja;
+        // foreach ($RSAchievements as $key => $RSAchievement) {
+        //     $ik = $RSAchievement->indikatorKinerja;
 
-            $ik->realization()
-                ->whereBelongsTo($unit)
-                ->whereNull('period_id')
-                ->forceDelete();
+        //     $ik->realization()
+        //         ->whereBelongsTo($unit)
+        //         ->whereNull('period_id')
+        //         ->forceDelete();
 
-            $RSAchievement->forceDelete();
+        //     $RSAchievement->forceDelete();
 
-            if ($ik->type !== 'teks' && $ik->status === 'aktif') {
-                $allAchievement = $ik->realization()
-                    ->whereNull(['period_id', 'unit_id'])
-                    ->first();
-                $periodAchievement = $ik->realization()
-                    ->whereBelongsTo($RSAchievement->period, 'period')
-                    ->whereNull('unit_id')
-                    ->first();
+        //     if ($ik->type !== 'teks' && $ik->status === 'aktif') {
+        //         $allAchievement = $ik->realization()
+        //             ->whereNull(['period_id', 'unit_id'])
+        //             ->first();
+        //         $periodAchievement = $ik->realization()
+        //             ->whereBelongsTo($RSAchievement->period, 'period')
+        //             ->whereNull('unit_id')
+        //             ->first();
 
-                foreach ([$periodAchievement, $allAchievement] as $key => $achievementInstance) {
-                    if ($achievementInstance) {
-                        $realization = $ik->realization()
-                            ->where(function (Builder $query) use ($achievementInstance) {
-                                $query->whereNotNull('unit_id');
-                                if ($achievementInstance->period) {
-                                    $query->whereBelongsTo($achievementInstance->period, 'period');
-                                } else {
-                                    $query->whereNotNull('period_id');
-                                }
-                            })
-                            ->get();
+        //         foreach ([$periodAchievement, $allAchievement] as $key => $achievementInstance) {
+        //             if ($achievementInstance) {
+        //                 $realization = $ik->realization()
+        //                     ->where(function (Builder $query) use ($achievementInstance): void {
+        //                         $query->whereNotNull('unit_id');
+        //                         if ($achievementInstance->period) {
+        //                             $query->whereBelongsTo($achievementInstance->period, 'period');
+        //                         } else {
+        //                             $query->whereNotNull('period_id');
+        //                         }
+        //                     });
 
-                        $sumRealization = $realization->sum('realization');
+        //                 $achievementInstance->realization = $ik->type === 'persen' ? $realization->average('realization') : $realization->sum('realization');
+        //                 $achievementInstance->save();
+        //             }
+        //         }
+        //     }
+        // }
 
-                        if ($ik->type === 'persen') {
-                            $count = $realization->count();
+        // $RSTargets = $unit->rencanaStrategisTarget()
+        //     ->whereHas('indikatorKinerja', function (Builder $query) use ($currentYear): void {
+        //         $query->whereHas('kegiatan', function (Builder $query) use ($currentYear): void {
+        //             $query->whereHas('sasaranStrategis', function (Builder $query) use ($currentYear): void {
+        //                 $query->whereHas('time', function (Builder $query) use ($currentYear): void {
+        //                     $query->where('year', $currentYear);
+        //                 });
+        //             });
+        //         });
+        //     })
+        //     ->get();
 
-                            if ($count) {
-                                $sumRealization /= $count;
-                            }
-                        }
+        // foreach ($RSTargets as $key => $RSTarget) {
+        //     $ik = $RSTarget->indikatorKinerja;
+        //     $evaluation = $ik->evaluation;
 
-                        $achievementInstance->realization = "$sumRealization";
-                        $achievementInstance->save();
-                    }
-                }
-            }
-        }
+        //     $RSTarget->forceDelete();
 
-        $RSTargets = $unit->rencanaStrategisTarget()
-            ->whereHas('indikatorKinerja', function (Builder $query) use ($currentYear) {
-                $query->whereHas('kegiatan', function (Builder $query) use ($currentYear) {
-                    $query->whereHas('sasaranStrategis', function (Builder $query) use ($currentYear) {
-                        $query->whereHas('time', function (Builder $query) use ($currentYear) {
-                            $query->where('year', $currentYear);
-                        });
-                    });
-                });
-            })
-            ->get();
+        //     if ($evaluation !== null && $ik->type !== 'teks' && $ik->status === 'aktif') {
+        //         $sumTarget = $ik->type === 'persen' ? $ik->target->average('target') : $ik->target->sum('target');
 
-        foreach ($RSTargets as $key => $RSTarget) {
-            $ik = $RSTarget->indikatorKinerja;
-            $evaluation = $ik->evaluation;
+        //         $allAchievement = $ik->realization()
+        //             ->whereNull(['period_id', 'unit_id'])
+        //             ->first();
 
-            $RSTarget->forceDelete();
+        //         $evaluation->target = $sumTarget;
+        //         $evaluation->status = false;
 
-            if ($evaluation !== null && $ik->type !== 'teks' && $ik->status === 'aktif') {
-                $sumTarget = $ik->target->sum('target');
+        //         if ($allAchievement) {
+        //             $evaluation->status = (float) $allAchievement->realization >= $sumTarget;
+        //         }
 
-                if ($ik->type === 'persen') {
-                    $count = $ik->target->count();
+        //         $evaluation->save();
+        //     }
+        // }
 
-                    if ($count) {
-                        $sumTarget /= $count;
-                    }
-                }
+        // $IKUAchievements = $unit->indikatorKinerjaUtama()
+        //     ->whereHas('period', function (Builder $query) use ($currentYear): void {
+        //         $query->whereHas('year', function (Builder $query) use ($currentYear): void {
+        //             $query->where('year', $currentYear);
+        //         });
+        //     })
+        //     ->get();
 
-                $allAchievement = $ik->realization()
-                    ->whereNull(['period_id', 'unit_id'])
-                    ->first();
+        // foreach ($IKUAchievements as $key => $IKUAchievement) {
+        //     $IKUAchievement->deleteOrTrashed();
+        // }
 
-                $evaluation->target = "$sumTarget";
-                $evaluation->status = false;
+        // $unit->singleIndikatorKinerjaUtama()
+        //     ->whereHas('period', function (Builder $query) use ($currentYear): void {
+        //         $query->whereHas('year', function (Builder $query) use ($currentYear): void {
+        //             $query->where('year', $currentYear);
+        //         });
+        //     })
+        //     ->forceDelete();
 
-                if ($allAchievement) {
-                    $evaluation->status = (float) $allAchievement->realization >= $sumTarget;
-                }
+        // $unit->IKUStatus()
+        //     ->whereHas('period', function (Builder $query) use ($currentYear): void {
+        //         $query->whereHas('year', function (Builder $query) use ($currentYear): void {
+        //             $query->where('year', $currentYear);
+        //         });
+        //     })
+        //     ->forceDelete();
 
-                $evaluation->save();
-            }
-        }
+        // $IKUTargets = $unit->indikatorKinerjaUtamaTarget()
+        //     ->whereHas('indikatorKinerjaProgram', function (Builder $query) use ($currentYear): void {
+        //         $query->whereHas('programStrategis', function (Builder $query) use ($currentYear): void {
+        //             $query->whereHas('indikatorKinerjaKegiatan', function (Builder $query) use ($currentYear): void {
+        //                 $query->whereHas('sasaranKegiatan', function (Builder $query) use ($currentYear): void {
+        //                     $query->whereHas('time', function (Builder $query) use ($currentYear): void {
+        //                         $query->where('year', $currentYear);
+        //                     });
+        //                 });
+        //             });
+        //         });
+        //     })
+        //     ->get();
 
-        $IKUAchievements = $unit->indikatorKinerjaUtama()
-            ->whereHas('period', function (Builder $query) use ($currentYear) {
-                $query->whereHas('year', function (Builder $query) use ($currentYear) {
-                    $query->where('year', $currentYear);
-                });
-            })
-            ->get();
+        // foreach ($IKUTargets as $key => $IKUTarget) {
+        //     $ikp = $IKUTarget->indikatorKinerjaProgram;
+        //     $evaluation = $ikp->evaluation;
 
-        foreach ($IKUAchievements as $key => $IKUAchievement) {
-            $IKUAchievement->data()->forceDelete();
-            $IKUAchievement->forceDelete();
-        }
+        //     $IKUTarget->forceDelete();
 
-        $IKUTargets = $unit->indikatorKinerjaUtamaTarget()
-            ->whereHas('indikatorKinerjaProgram', function (Builder $query) use ($currentYear) {
-                $query->whereHas('programStrategis', function (Builder $query) use ($currentYear) {
-                    $query->whereHas('indikatorKinerjaKegiatan', function (Builder $query) use ($currentYear) {
-                        $query->whereHas('sasaranKegiatan', function (Builder $query) use ($currentYear) {
-                            $query->whereHas('time', function (Builder $query) use ($currentYear) {
-                                $query->where('year', $currentYear);
-                            });
-                        });
-                    });
-                });
-            })
-            ->get();
+        //     if ($evaluation) {
+        //         $realization = $ikp->mode === 'table' ? $ikp->achievements->count() : $ikp->singleAchievements->average('value');
+        //         $sumTarget = $ikp->mode === 'table' ? $ikp->target->sum('target') : $ikp->target->average('target');
 
-        foreach ($IKUTargets as $key => $IKUTarget) {
-            $ikp = $IKUTarget->indikatorKinerjaProgram;
-            $evaluation = $ikp->evaluation;
+        //         $evaluation->target = $sumTarget;
+        //         $evaluation->status = $realization >= $sumTarget;
 
-            $IKUTarget->forceDelete();
+        //         $evaluation->save();
+        //     }
+        // }
 
-            if ($evaluation) {
-                $realization = $ikp->achievements->count();
-                $sumTarget = $ikp->target->sum('target');
+        // $RSOldAchievements = $unit->rencanaStrategis()
+        //     ->whereHas('period', function (Builder $query) use ($currentYear): void {
+        //         $query->whereHas('year', function (Builder $query) use ($currentYear): void {
+        //             $query->whereNot('year', $currentYear);
+        //         });
+        //     })
+        //     ->exists();
 
-                $evaluation->target = $sumTarget;
-                $evaluation->status = $realization >= $sumTarget;
+        // $RSOldTargets = $unit->rencanaStrategisTarget()
+        //     ->whereHas('indikatorKinerja', function (Builder $query) use ($currentYear): void {
+        //         $query->whereHas('kegiatan', function (Builder $query) use ($currentYear): void {
+        //             $query->whereHas('sasaranStrategis', function (Builder $query) use ($currentYear): void {
+        //                 $query->whereHas('time', function (Builder $query) use ($currentYear): void {
+        //                     $query->whereNot('year', $currentYear);
+        //                 });
+        //             });
+        //         });
+        //     })
+        //     ->exists();
 
-                $evaluation->save();
-            }
-        }
+        // $IKUOldAchievements = $unit->indikatorKinerjaUtama()
+        //     ->whereHas('period', function (Builder $query) use ($currentYear): void {
+        //         $query->whereHas('year', function (Builder $query) use ($currentYear): void {
+        //             $query->whereNot('year', $currentYear);
+        //         });
+        //     })
+        //     ->exists();
 
-        $RSOldAchievements = $unit->rencanaStrategis()
-            ->whereHas('period', function (Builder $query) use ($currentYear) {
-                $query->whereHas('year', function (Builder $query) use ($currentYear) {
-                    $query->whereNot('year', $currentYear);
-                });
-            })
-            ->exists();
+        // $IKUOldSingleAchievements = $unit->singleIndikatorKinerjaUtama()
+        //     ->whereHas('period', function (Builder $query) use ($currentYear): void {
+        //         $query->whereHas('year', function (Builder $query) use ($currentYear): void {
+        //             $query->whereNot('year', $currentYear);
+        //         });
+        //     })
+        //     ->exists();
 
-        $RSOldTargets = $unit->rencanaStrategisTarget()
-            ->whereHas('indikatorKinerja', function (Builder $query) use ($currentYear) {
-                $query->whereHas('kegiatan', function (Builder $query) use ($currentYear) {
-                    $query->whereHas('sasaranStrategis', function (Builder $query) use ($currentYear) {
-                        $query->whereHas('time', function (Builder $query) use ($currentYear) {
-                            $query->whereNot('year', $currentYear);
-                        });
-                    });
-                });
-            })
-            ->exists();
+        // $IKUOldTargets = $unit->indikatorKinerjaUtamaTarget()
+        //     ->whereHas('indikatorKinerjaProgram', function (Builder $query) use ($currentYear): void {
+        //         $query->whereHas('programStrategis', function (Builder $query) use ($currentYear): void {
+        //             $query->whereHas('indikatorKinerjaKegiatan', function (Builder $query) use ($currentYear): void {
+        //                 $query->whereHas('sasaranKegiatan', function (Builder $query) use ($currentYear): void {
+        //                     $query->whereHas('time', function (Builder $query) use ($currentYear): void {
+        //                         $query->whereNot('year', $currentYear);
+        //                     });
+        //                 });
+        //             });
+        //         });
+        //     })
+        //     ->exists();
 
-        $IKUOldAchievements = $unit->indikatorKinerjaUtama()
-            ->whereHas('period', function (Builder $query) use ($currentYear) {
-                $query->whereHas('year', function (Builder $query) use ($currentYear) {
-                    $query->whereNot('year', $currentYear);
-                });
-            })
-            ->exists();
+        // $IKUStatus = $unit->IKUStatus()
+        //     ->whereHas('period', function (Builder $query) use ($currentYear): void {
+        //         $query->whereHas('year', function (Builder $query) use ($currentYear): void {
+        //             $query->whereNot('year', $currentYear);
+        //         });
+        //     })
+        //     ->exists();
 
-        $IKUOldTargets = $unit->indikatorKinerjaUtamaTarget()
-            ->whereHas('indikatorKinerjaProgram', function (Builder $query) use ($currentYear) {
-                $query->whereHas('programStrategis', function (Builder $query) use ($currentYear) {
-                    $query->whereHas('indikatorKinerjaKegiatan', function (Builder $query) use ($currentYear) {
-                        $query->whereHas('sasaranKegiatan', function (Builder $query) use ($currentYear) {
-                            $query->whereHas('time', function (Builder $query) use ($currentYear) {
-                                $query->whereNot('year', $currentYear);
-                            });
-                        });
-                    });
-                });
-            })
-            ->exists();
+        // User::where('unit_id', $unit->id)
+        //     ->update(['unit_id' => null]);
 
-        User::where('unit_id', $unit->id)
-            ->update(['unit_id' => null]);
-
-        if ($RSOldAchievements || $RSOldTargets || $IKUOldAchievements || $IKUOldTargets) {
-            $unit->delete();
-        } else {
-            $unit->forceDelete();
-        }
+        // if ($RSOldAchievements || $RSOldTargets || $IKUOldAchievements || $IKUOldSingleAchievements || $IKUOldTargets || $IKUStatus) {
+        //     $unit->delete();
+        // } else {
+        //     $unit->forceDelete();
+        // }
 
         return back();
     }
