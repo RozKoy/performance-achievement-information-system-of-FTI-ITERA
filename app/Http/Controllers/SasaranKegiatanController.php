@@ -30,7 +30,7 @@ class SasaranKegiatanController extends Controller
                 'name',
                 'id',
             ])
-            ->where(function (Builder $query) use ($request) {
+            ->where(function (Builder $query) use ($request): void {
                 if (isset($request->search)) {
                     $query->where('name', 'LIKE', "%{$request->search}%")
                         ->orWhere('number', $request->search);
@@ -80,6 +80,7 @@ class SasaranKegiatanController extends Controller
 
         $number = (int) $request['number'];
         $dataCount = $time->sasaranKegiatan->count();
+
         if ($number > $dataCount + 1) {
             return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
         }
