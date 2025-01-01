@@ -51,7 +51,7 @@ class IndikatorKinerjaProgramController extends Controller
                     'type',
                     'id',
                 ])
-                ->where(function (Builder $query) use ($request) {
+                ->where(function (Builder $query) use ($request): void {
                     if (isset($request->search)) {
                         $query->where('name', 'LIKE', "%{$request->search}%")
                             ->orWhere('definition', 'LIKE', "%{$request->search}%")
@@ -373,7 +373,7 @@ class IndikatorKinerjaProgramController extends Controller
             $ikp->evaluation()->forceDelete();
             $ikp->target()->forceDelete();
 
-            $ikp->achievements()->each(function ($item) {
+            $ikp->achievements()->each(function ($item): void {
                 $item->deleteOrTrashed();
             });
 
