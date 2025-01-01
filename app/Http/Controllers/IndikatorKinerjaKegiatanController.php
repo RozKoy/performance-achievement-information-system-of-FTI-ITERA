@@ -31,7 +31,7 @@ class IndikatorKinerjaKegiatanController extends Controller
                 'name',
                 'id',
             ])
-            ->where(function (Builder $query) use ($request) {
+            ->where(function (Builder $query) use ($request): void {
                 if (isset($request->search)) {
                     $query->where('name', 'LIKE', "%{$request->search}%")
                         ->orWhere('number', $request->search);
