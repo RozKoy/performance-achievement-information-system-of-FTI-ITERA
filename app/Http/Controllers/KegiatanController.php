@@ -31,17 +31,17 @@ class KegiatanController extends Controller
                 'name',
                 'id',
             ])
-            ->where(function (Builder $query) use ($request) {
+            ->where(function (Builder $query) use ($request): void {
                 if (isset($request->search)) {
                     $query->where('name', 'LIKE', "%{$request->search}%")
                         ->orWhere('number', $request->search);
                 }
             })
             ->withCount([
-                'indikatorKinerja AS active' => function (Builder $query) {
+                'indikatorKinerja AS active' => function (Builder $query): void {
                     $query->where('status', 'aktif');
                 },
-                'indikatorKinerja AS inactive' => function (Builder $query) {
+                'indikatorKinerja AS inactive' => function (Builder $query): void {
                     $query->where('status', 'tidak aktif');
                 }
             ])
