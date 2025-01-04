@@ -225,8 +225,10 @@ class IndikatorKinerjaController extends Controller
                 'id',
             ]);
             $ik = $ik->only([
+                'textSelections',
                 'status',
                 'name',
+                'type',
                 'id',
             ]);
 

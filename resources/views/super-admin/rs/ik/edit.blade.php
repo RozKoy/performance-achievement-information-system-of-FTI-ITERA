@@ -54,7 +54,7 @@
         @method('PUT')
 
         <div class="flex flex-wrap gap-2">
-            <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
+            <div class="flex min-w-28 flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
                 <x-partials.input.select name="number" title="Nomor" :$data required />
 
@@ -77,6 +77,22 @@
 
             </div>
         </div>
+
+        @if ($ik['type'] === 'teks')
+            <div class="flex flex-col gap-3 rounded-lg border-2 border-dashed border-primary p-3 text-primary">
+                <p>Pilihan</p>
+                @if (count($ik['textSelections']))
+                    <div class="flex flex-wrap items-center justify-start gap-1.5 max-md:text-sm">
+                        @foreach ($ik['textSelections'] as $item)
+                            <p class="rounded-lg border-2 border-primary p-1">{{ $item['value'] }}</p>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-red-500 max-md:text-sm">Tidak ada pilihan teks</p>
+                @endif
+            </div>
+        @endif
+
         <x-partials.button.edit />
     </form>
 
