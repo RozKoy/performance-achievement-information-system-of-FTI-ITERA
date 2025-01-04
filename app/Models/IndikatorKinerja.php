@@ -60,6 +60,11 @@ class IndikatorKinerja extends Model
         return $this->hasMany(RSTarget::class);
     }
 
+    public function textSelections(): HasMany
+    {
+        return $this->hasMany(IndikatorKinerjaTextSelection::class);
+    }
+
 
     /*
     | -----------------------------------------------------------------
