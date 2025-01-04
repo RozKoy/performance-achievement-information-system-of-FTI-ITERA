@@ -51,7 +51,7 @@ class IndikatorKinerjaController extends Controller
                     'type',
                     'id',
                 ])
-                ->where(function (Builder $query) use ($request) {
+                ->where(function (Builder $query) use ($request): void {
                     if (isset($request->search)) {
                         $query->where('name', 'LIKE', "%{$request->search}%")
                             ->orWhere('type', $request->search)
@@ -163,6 +163,14 @@ class IndikatorKinerjaController extends Controller
             $ik->status = 'aktif';
 
             $ik->save();
+
+            if ($ik->type === 'teks' && is_array($request['selection'])) {
+                foreach ($request['selection'] as $item) {
+                    $ik->textSelections()->create([
+                        'value' => $item,
+                    ]);
+                }
+            }
 
             return _ControllerHelpers::RedirectWithRoute('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
         }

@@ -28,6 +28,8 @@ class AddRequest extends FormRequest
             'number' => ['bail', 'required', 'numeric', 'integer', 'min:1', 'max_digits:10'],
             'type' => ['bail', 'required', 'in:persen,angka,teks'],
             'name' => ['bail', 'required', 'string', 'max:65000'],
+            'selection.*' => ['bail', 'string', 'max:255'],
+            'selection' => ['bail', 'nullable', 'array'],
         ];
     }
 
@@ -39,6 +41,7 @@ class AddRequest extends FormRequest
     {
         return [
             'name' => 'Indikator kinerja',
+            'selection' => 'Pilihan',
             'type' => 'Tipe data',
             'number' => 'Nomor',
         ];
