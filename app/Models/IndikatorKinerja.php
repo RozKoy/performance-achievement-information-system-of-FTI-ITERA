@@ -94,6 +94,7 @@ class IndikatorKinerja extends Model
             ->where('number', '>', $this->number)
             ->decrement('number');
 
+        $this->textSelections()->forceDelete();
         $this->forceDelete();
     }
 }
