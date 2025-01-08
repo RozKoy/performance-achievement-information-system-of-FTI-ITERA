@@ -30,7 +30,7 @@
         <div class="w-full overflow-x-auto rounded-lg">
             <table class="min-w-full max-lg:text-sm max-md:text-xs">
                 <thead>
-                    <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
+                    <tr class="divide-x bg-primary/80 text-white *:whitespace-nowrap *:px-5 *:py-2.5 *:font-normal">
 
                         @if (request()->query('ss') === 'show')
                             <th title="Nomor">No</th>
@@ -61,7 +61,7 @@
                     @foreach ($data as $ss)
                         @foreach ($ss['kegiatan'] as $k)
                             @foreach ($k['indikator_kinerja'] as $ik)
-                                <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
+                                <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
 
                                     @if ($loop->iteration === 1)
                                         @if ($loop->parent->iteration === 1)
@@ -81,7 +81,7 @@
                                         </td>
                                     @endif
 
-                                    <td title="{{ $ik['ik'] }}" class="min-w-72 group relative z-10 w-max text-left">
+                                    <td title="{{ $ik['ik'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                         {{ $ik['ik'] }}
                                         <span title="{{ $ik['type'] }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">
                                             {{ $ik['type'] }}
@@ -94,6 +94,27 @@
                                     <td title="{{ $ik['yearRealization'] }}{{ $ik['type'] === 'persen' && $ik['yearRealization'] !== null ? '%' : '' }}">
                                         {{ $ik['yearRealization'] }}{{ $ik['type'] === 'persen' && $ik['yearRealization'] !== null ? '%' : '' }}
                                     </td>
+                                    @php
+                                        $textSelections = [
+                                            [
+                                                'text' => 'Pilih Realisasi (teks)',
+                                                'value' => '',
+                                            ],
+                                        ];
+                                        $textRealization = '';
+
+                                        foreach ($ik['text_selections'] as $selection) {
+                                            $temp = [
+                                                'text' => $selection['value'],
+                                                'value' => $selection['id'],
+                                            ];
+                                            if ($temp['value'] === $ik['realization']) {
+                                                $temp = [...$temp, 'selected' => true];
+                                                $textRealization = $temp['text'];
+                                            }
+                                            $textSelections[] = $temp;
+                                        }
+                                    @endphp
 
                                     <td>
                                         @if (isset($ik['realization']))
@@ -103,7 +124,7 @@
 
                                             <div id="realization-{{ $id }}" class="group relative z-10 flex items-center justify-center gap-1 py-1.5">
                                                 <p title="{{ $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}">
-                                                    {{ $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}
+                                                    {{ $ik['type'] === 'teks' ? $textRealization : $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}
                                                 </p>
                                                 <a href="{{ $ik['link'] }}" title="Link Bukti" target="__blank" class="text-primary underline">Link Bukti</a>
 
@@ -116,8 +137,12 @@
                                             @if (auth()->user()->access === 'editor')
                                                 <form id="form-realization-{{ $id }}" action="{{ route('admin-rs-add', ['period' => $periodId, 'ik' => $ik['id']]) }}" method="POST" class="hidden flex-col gap-0.5">
                                                     @csrf
-                                                    <div class="*:w-full flex items-start justify-center max-lg:flex-wrap">
-                                                        <x-partials.input.text name="realization-{{ $ik['id'] }}" title="realisasi ({{ $ik['type'] }})" value="{{ $ik['realization'] }}" />
+                                                    <div class="mx-auto flex items-start justify-center *:w-full max-lg:flex-wrap">
+                                                        @if ($ik['type'] === 'teks')
+                                                            <x-partials.input.select name="realization-{{ $ik['id'] }}" title="realisasi ({{ $ik['type'] }})" :data="$textSelections" />
+                                                        @else
+                                                            <x-partials.input.text name="realization-{{ $ik['id'] }}" title="realisasi ({{ $ik['type'] }})" value="{{ $ik['realization'] }}" />
+                                                        @endif
                                                         <x-partials.input.text name="link-{{ $ik['id'] }}" title="link bukti" value="{{ $ik['link'] }}" required />
                                                     </div>
                                                     <div class="ml-auto flex items-center justify-end gap-0.5">
@@ -130,8 +155,12 @@
                                             @if (auth()->user()->access === 'editor')
                                                 <form action="{{ route('admin-rs-add', ['period' => $periodId, 'ik' => $ik['id']]) }}" method="POST" class="flex flex-wrap items-center gap-1">
                                                     @csrf
-                                                    <div class="*:w-full flex items-start justify-center max-lg:flex-wrap">
-                                                        <x-partials.input.text name="realization-{{ $ik['id'] }}" title="realisasi ({{ $ik['type'] }})" required />
+                                                    <div class="mx-auto flex items-start justify-center *:w-full max-lg:flex-wrap">
+                                                        @if ($ik['type'] === 'teks')
+                                                            <x-partials.input.select name="realization-{{ $ik['id'] }}" title="realisasi ({{ $ik['type'] }})" :data="$textSelections" />
+                                                        @else
+                                                            <x-partials.input.text name="realization-{{ $ik['id'] }}" title="realisasi ({{ $ik['type'] }})" required />
+                                                        @endif
                                                         <x-partials.input.text name="link-{{ $ik['id'] }}" title="link bukti" required />
                                                     </div>
                                                     <x-partials.button.add text="" style="ml-auto" submit />

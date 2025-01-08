@@ -1126,7 +1126,7 @@ class RSController extends Controller
                     }
                 })
                 ->with([
-                    'kegiatan' => function (HasMany $query) use ($statusIndex, $periodInstance) {
+                    'kegiatan' => function (HasMany $query) use ($statusIndex, $periodInstance): void {
                         $query->whereHas('indikatorKinerja', function (Builder $query) use ($statusIndex, $periodInstance): void {
                             $query->where('status', 'aktif');
                             if ($statusIndex === 1) {
@@ -1211,7 +1211,8 @@ class RSController extends Controller
                                     $query->whereBelongsTo(auth()->user()->unit);
                                 }
                             ], 'target');
-                    }
+                    },
+                    'kegiatan.indikatorKinerja.textSelections',
                 ])
                 ->orderBy('number')
                 ->select([
@@ -1330,6 +1331,11 @@ class RSController extends Controller
             if (!ctype_digit((string) $realization)) {
                 $realization = number_format($realization, 2);
             }
+        } else if ($ik->type === 'teks' && $realization !== null) {
+            $selectionExists = $ik->textSelections()->find($realization);
+            if ($selectionExists === null) {
+                return _ControllerHelpers::BackWithInputWithErrors(["realization-$ikId" => 'Pilihan tidak dapat ditemukan']);
+            }
         }
 
         $allAchievement = RSAchievement::firstOrNew([
@@ -1395,13 +1401,23 @@ class RSController extends Controller
                 $instance->realization = (string) $sum;
                 $instance->save();
             }
+        }
 
-            $evaluation = $ik->evaluation;
+        $evaluation = $ik->evaluation;
 
-            if ($evaluation) {
+        if ($evaluation) {
+            if ($ik->type === 'teks') {
+                $unexpectedCount = RSAchievement::whereNotNull('unit_id')
+                    ->whereBelongsTo($period, 'period')
+                    ->whereBelongsTo($ik)
+                    ->whereNot('realization', $evaluation->target)
+                    ->count();
+
+                $evaluation->status = $unexpectedCount === 0;
+            } else {
                 $evaluation->status = (float) $allAchievement->realization >= (float) $evaluation->target;
-                $evaluation->save();
             }
+            $evaluation->save();
         }
 
         return _ControllerHelpers::Back()->with('success', 'Berhasil memperbaharui data');
