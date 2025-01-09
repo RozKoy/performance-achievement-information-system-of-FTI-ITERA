@@ -61,6 +61,32 @@
                     @foreach ($data as $ss)
                         @foreach ($ss['kegiatan'] as $k)
                             @foreach ($k['indikator_kinerja'] as $ik)
+                                @php
+                                    $textSelections = [
+                                        [
+                                            'text' => 'Pilih Realisasi (teks)',
+                                            'value' => '',
+                                        ],
+                                    ];
+                                    $textRealization = '';
+                                    $textTarget = '';
+
+                                    foreach ($ik['text_selections'] as $selection) {
+                                        $temp = [
+                                            'text' => $selection['value'],
+                                            'value' => $selection['id'],
+                                        ];
+                                        if ($temp['value'] === $ik['realization']) {
+                                            $temp = [...$temp, 'selected' => true];
+                                            $textRealization = $temp['text'];
+                                        }
+                                        $textSelections[] = $temp;
+                                        if ($temp['value'] === $ik['target']) {
+                                            $textTarget = $temp['text'];
+                                        }
+                                    }
+                                @endphp
+
                                 <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
 
                                     @if ($loop->iteration === 1)
@@ -88,33 +114,12 @@
                                         </span>
                                     </td>
 
-                                    <td title="{{ $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}">
-                                        {{ $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}
+                                    <td title="{{ $ik['type'] === 'teks' ? $textTarget : $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}">
+                                        {{ $ik['type'] === 'teks' ? $textTarget : $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}
                                     </td>
                                     <td title="{{ $ik['yearRealization'] }}{{ $ik['type'] === 'persen' && $ik['yearRealization'] !== null ? '%' : '' }}">
                                         {{ $ik['yearRealization'] }}{{ $ik['type'] === 'persen' && $ik['yearRealization'] !== null ? '%' : '' }}
                                     </td>
-                                    @php
-                                        $textSelections = [
-                                            [
-                                                'text' => 'Pilih Realisasi (teks)',
-                                                'value' => '',
-                                            ],
-                                        ];
-                                        $textRealization = '';
-
-                                        foreach ($ik['text_selections'] as $selection) {
-                                            $temp = [
-                                                'text' => $selection['value'],
-                                                'value' => $selection['id'],
-                                            ];
-                                            if ($temp['value'] === $ik['realization']) {
-                                                $temp = [...$temp, 'selected' => true];
-                                                $textRealization = $temp['text'];
-                                            }
-                                            $textSelections[] = $temp;
-                                        }
-                                    @endphp
 
                                     <td>
                                         @if (isset($ik['realization']))
@@ -123,7 +128,7 @@
                                             @endphp
 
                                             <div id="realization-{{ $id }}" class="group relative z-10 flex items-center justify-center gap-1 py-1.5">
-                                                <p title="{{ $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}">
+                                                <p title="{{ $ik['type'] === 'teks' ? $textRealization : $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}">
                                                     {{ $ik['type'] === 'teks' ? $textRealization : $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}
                                                 </p>
                                                 <a href="{{ $ik['link'] }}" title="Link Bukti" target="__blank" class="text-primary underline">Link Bukti</a>

@@ -1601,7 +1601,8 @@ class RSController extends Controller
                                     $query->whereBelongsTo(auth()->user()->unit);
                                 }
                             ], 'target');
-                    }
+                    },
+                    'kegiatan.indikatorKinerja.textSelections'
                 ])
                 ->orderBy('number')
                 ->select([

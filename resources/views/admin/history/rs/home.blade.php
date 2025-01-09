@@ -27,7 +27,7 @@
         <div class="w-full overflow-x-auto rounded-lg">
             <table class="min-w-full max-lg:text-sm max-md:text-xs">
                 <thead>
-                    <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
+                    <tr class="divide-x bg-primary/80 text-white *:whitespace-nowrap *:px-5 *:py-2.5 *:font-normal">
 
                         @if (request()->query('ss') === 'show')
                             <th title="Nomor">No</th>
@@ -59,7 +59,11 @@
                     @foreach ($data as $ss)
                         @foreach ($ss['kegiatan'] as $k)
                             @foreach ($k['indikator_kinerja'] as $ik)
-                                <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
+                                @php
+                                    $textSelections = collect($ik['text_selections']);
+                                @endphp
+
+                                <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
 
                                     @if ($loop->iteration === 1)
                                         @if ($loop->parent->iteration === 1)
@@ -79,27 +83,30 @@
                                         </td>
                                     @endif
 
-                                    <td title="{{ $ik['ik'] }}" class="min-w-72 group relative z-10 w-max text-left">
+                                    <td title="{{ $ik['ik'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                         {{ $ik['ik'] }}
                                         <span title="{{ $ik['type'] }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">
                                             {{ $ik['type'] }}
                                         </span>
                                     </td>
 
-                                    <td title="{{ $ik['target'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}">
-                                        {{ $ik['target'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}
+                                    <td title="{{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $ik['target'])['value'] ?? '' : $ik['target'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}">
+                                        {{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $ik['target'])['value'] ?? '' : $ik['target'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}
                                     </td>
                                     <td title="{{ $ik['yearRealization'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}">
                                         {{ $ik['yearRealization'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}
                                     </td>
-
-                                    <td title="{{ $ik['realization'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}">
-                                        {{ $ik['realization'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}
+                                    <td title="{{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $ik['realization'])['value'] ?? '' : $ik['realization'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}">
+                                        {{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $ik['realization'])['value'] ?? '' : $ik['realization'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}
                                     </td>
                                     <td>
-                                        <a href="{{ $ik['link'] }}" class="text-primary underline">
-                                            Link
-                                        </a>
+
+                                        @if ($ik['realization'] !== null)
+                                            <a href="{{ $ik['link'] }}" target="__blank" class="text-primary underline">
+                                                Link
+                                            </a>
+                                        @endif
+
                                     </td>
 
                                 </tr>
