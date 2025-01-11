@@ -64,7 +64,7 @@
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
-                <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
+                <tr class="divide-x bg-primary/80 text-white *:whitespace-nowrap *:px-5 *:py-2.5 *:font-normal">
                     <th title="Nomor">No</th>
                     <th title="Sasaran strategis">Sasaran Strategis</th>
                     <th title="Kegiatan">Kegiatan</th>
@@ -92,13 +92,13 @@
                 @foreach ($data as $ss)
                     @foreach ($ss['kegiatan'] as $k)
                         @foreach ($k['indikator_kinerja'] as $ik)
-                            <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
+                            <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
 
                                 @if ($loop->iteration === 1)
                                     @if ($loop->parent->iteration === 1)
                                         <td title="{{ $ss['number'] }}" rowspan="{{ $ss['rowspan'] }}">{{ $ss['number'] }}</td>
 
-                                        <td title="{{ $ss['ss'] }}" rowspan="{{ $ss['rowspan'] }}" class="min-w-72 group relative z-10 w-max text-left">
+                                        <td title="{{ $ss['ss'] }}" rowspan="{{ $ss['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                             {{ $ss['ss'] }}
 
                                             @if (auth()->user()->access === 'editor')
@@ -108,7 +108,7 @@
                                         </td>
                                     @endif
 
-                                    <td title="{{ $k['k'] }}" rowspan="{{ $k['rowspan'] }}" class="min-w-72 group relative z-10 w-max text-left">
+                                    <td title="{{ $k['k'] }}" rowspan="{{ $k['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                         {{ $k['k'] }}
 
                                         @if (auth()->user()->access === 'editor')
@@ -118,7 +118,7 @@
                                     </td>
                                 @endif
 
-                                <td title="{{ $ik['ik'] }}" class="min-w-72 group relative z-10 w-max text-left">
+                                <td title="{{ $ik['ik'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                     {{ $ik['ik'] }}
 
                                     @if (auth()->user()->access === 'editor')
@@ -132,14 +132,14 @@
                                     @if ($ik['type'] === 'persen' && $ik['realization'] !== null)
                                         <td title="{{ $ik['target'] }}%">{{ $ik['target'] }}%</td>
                                     @else
-                                        <td title="{{ $ik['target'] }}">{{ $ik['target'] }}</td>
+                                        <td title="{{ $ik['type'] === 'teks' ? collect($ik['text_selections'])->firstWhere('id', $ik['target'])['value'] ?? '' : $ik['target'] }}">{{ $ik['target'] }}</td>
                                     @endif
                                 @endif
 
                                 @if ($ik['type'] === 'persen' && $ik['realization'] !== null)
                                     <td title="{{ $ik['realization'] }}%">{{ $ik['realization'] }}%</td>
                                 @else
-                                    <td title="{{ $ik['realization'] }}">{{ $ik['realization'] }}</td>
+                                    <td title="{{ $ik['type'] === 'teks' ? collect($ik['text_selections'])->firstWhere('id', $ik['realization'])['value'] ?? '' : $ik['realization'] }}">{{ $ik['realization'] }}</td>
                                 @endif
 
                                 @if ($period === '3')

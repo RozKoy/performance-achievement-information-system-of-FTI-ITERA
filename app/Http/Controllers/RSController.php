@@ -176,7 +176,8 @@ class RSController extends Controller
                         ->withAggregate('evaluation AS follow_up', 'follow_up')
                         ->withAggregate('evaluation AS target', 'target')
                         ->withAggregate('evaluation AS done', 'status');
-                }
+                },
+                'kegiatan.indikatorKinerja.textSelections'
             ])
             ->orderBy('number')
             ->select([
