@@ -45,23 +45,23 @@
     <div class="text-primary max-xl:text-sm max-sm:text-xs">
         <table class="*:align-top">
 
-            <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
+            <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
                 <td>Target {{ $badge[1] }}</td>
                 <td>:</td>
                 <td>{{ $target }}</td>
             </tr>
 
-            <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
+            <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
                 <td>Realisasi {{ $badge[1] }}</td>
                 <td>:</td>
                 <td>{{ $realization }}</td>
             </tr>
-            <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
+            <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
                 <td>Tipe</td>
                 <td>:</td>
                 <td>{{ strtoupper($ikp['type']) }}</td>
             </tr>
-            <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
+            <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
                 <td>Definisi Operasional</td>
                 <td>:</td>
                 <td>{{ $ikp['definition'] }}</td>
@@ -86,7 +86,7 @@
                 </button>
             </div>
             <div class="*:px-2.5 max-sm:text-sm max-[320px]:text-xs">
-                <div class="*:flex-1 *:rounded-lg *:p-1 *:bg-primary/80 flex gap-2.5 text-center text-white">
+                <div class="flex gap-2.5 text-center text-white *:flex-1 *:rounded-lg *:bg-primary/80 *:p-1">
                     <a href="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => request()->query('period')]) }}" title="Tombol mode hanya lihat" class="{{ request()->query('mode') !== 'edit' ? 'outline outline-2 outline-offset-1 outline-primary' : '' }} hover:bg-primary/70">Mode Lihat</a>
                     <a href="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => request()->query('period'), 'mode' => 'edit']) }}" title="Tombol mode kelola data" class="{{ request()->query('mode') === 'edit' ? 'outline outline-2 outline-offset-1 outline-primary' : '' }} hover:bg-primary/70">Mode Kelola</a>
                 </div>
@@ -98,7 +98,7 @@
             @csrf
             <table class="min-w-full max-lg:text-sm max-md:text-xs">
                 <thead>
-                    <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap *:border bg-primary/80 text-white">
+                    <tr class="bg-primary/80 text-white *:whitespace-nowrap *:border *:px-5 *:py-2.5 *:font-normal">
                         <th title="Nomor">No</th>
 
                         @foreach ($columns as $column)
@@ -115,7 +115,7 @@
                 <tbody id="data-body" class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
 
                     @foreach ($data as $item)
-                        <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
+                        <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
 
                             <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
                             <td class="hidden">
@@ -146,8 +146,8 @@
                                     @else
                                         @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
                                             <td class="relative">
-                                                <div id="{{ $id }}-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, '{{ $id }}', '{{ $parentId }}')"></div>
                                                 <x-partials.input.text name="{{ $id }}" title="{{ $column['name'] }}" value="{{ $dataFind['data'] }}" oldvalue="{{ $dataFind['data'] }}" onblur="blurInput('{{ $id }}', '{{ $parentId }}', '{{ $id }}-cover')" disabled />
+                                                <div id="{{ $id }}-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, '{{ $id }}', '{{ $parentId }}')"></div>
                                             </td>
                                         @else
                                             <td title="{{ $dataFind['data'] }}">{{ $dataFind['data'] }}</td>
@@ -161,8 +161,8 @@
                                             </td>
                                         @else
                                             <td class="relative">
-                                                <div id="{{ $id }}-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, '{{ $id }}', '{{ $parentId }}')"></div>
                                                 <x-partials.input.text name="{{ $id }}" title="{{ $column['name'] }}" oldvalue="" onblur="blurInput('{{ $id }}', '{{ $parentId }}', '{{ $id }}-cover')" disabled />
+                                                <div id="{{ $id }}-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, '{{ $id }}', '{{ $parentId }}')"></div>
                                             </td>
                                         @endif
                                     @else
@@ -206,7 +206,7 @@
         @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
             <input id="delete-input" type="hidden" name="delete[]">
             <table class="hidden">
-                <tr id="sample" class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
+                <tr id="sample" class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
                     <td id="number"></td>
 
                     @foreach ($columns as $column)
@@ -376,7 +376,7 @@
             </form>
             <form action="{{ route('admin-iku-data-single', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" enctype="multipart/form-data" class="flex w-full flex-col gap-2 overflow-x-auto rounded-lg text-primary">
                 @csrf
-                <div class="*:flex-1 flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2 *:flex-1">
                     <div>
                         <x-partials.label.default for="value" title="Nilai" text="Nilai" />
                         <x-partials.input.text name="value" title="Nilai" value="{{ $data['value'] ?? '' }}" />
@@ -393,14 +393,14 @@
             <div class="w-full overflow-hidden rounded-lg">
                 <table class="min-w-full max-lg:text-sm max-md:text-xs">
                     <thead>
-                        <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap *:border bg-primary/80 text-white">
+                        <tr class="bg-primary/80 text-white *:whitespace-nowrap *:border *:px-5 *:py-2.5 *:font-normal">
                             <th title="Realisasi">Realisasi</th>
                             <th title="Link bukti">Link Bukti</th>
                         </tr>
                     </thead>
 
                     <tbody id="data-body" class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
-                        <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
+                        <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
 
                             @if ($data['value'] ?? false)
                                 <td title="{{ $data['value'] ?? '' }}">{{ $data['value'] ?? '' }}</td>
