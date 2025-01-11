@@ -79,7 +79,7 @@ class RSController extends Controller
             ->pluck('year')
             ->toArray();
 
-        $year = isset($request->year) ? $request->year : end($years);
+        $year = $request->year ?? end($years);
         $yearInstance = RSYear::where('year', $year)->firstOrFail();
 
         $this->periodFirstOrNew($yearInstance->id, '1');

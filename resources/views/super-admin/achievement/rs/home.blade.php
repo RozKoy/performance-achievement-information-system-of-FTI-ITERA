@@ -129,18 +129,10 @@
                                 </td>
 
                                 @if ($period === '3')
-                                    @if ($ik['type'] === 'persen' && $ik['realization'] !== null)
-                                        <td title="{{ $ik['target'] }}%">{{ $ik['target'] }}%</td>
-                                    @else
-                                        <td title="{{ $ik['type'] === 'teks' ? collect($ik['text_selections'])->firstWhere('id', $ik['target'])['value'] ?? '' : $ik['target'] }}">{{ $ik['target'] }}</td>
-                                    @endif
+                                    <td title="{{ $ik['type'] === 'teks' ? collect($ik['text_selections'])->firstWhere('id', $ik['target'])['value'] ?? '' : $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}">{{ $ik['type'] === 'teks' ? collect($ik['text_selections'])->firstWhere('id', $ik['target'])['value'] ?? '' : $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}</td>
                                 @endif
 
-                                @if ($ik['type'] === 'persen' && $ik['realization'] !== null)
-                                    <td title="{{ $ik['realization'] }}%">{{ $ik['realization'] }}%</td>
-                                @else
-                                    <td title="{{ $ik['type'] === 'teks' ? collect($ik['text_selections'])->firstWhere('id', $ik['realization'])['value'] ?? '' : $ik['realization'] }}">{{ $ik['realization'] }}</td>
-                                @endif
+                                <td title="{{ $ik['type'] === 'teks' ? collect($ik['text_selections'])->firstWhere('id', $ik['realization'])['value'] ?? '' : $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}">{{ $ik['type'] === 'teks' ? collect($ik['text_selections'])->firstWhere('id', $ik['realization'])['value'] ?? '' : $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}</td>
 
                                 @if ($period === '3')
                                     <td title="{{ $ik['done'] == 1 ? 'Tercapai' : 'Tidak tercapai' }}">{{ $ik['done'] == 1 ? 'Iya' : 'Tidak' }}</td>
