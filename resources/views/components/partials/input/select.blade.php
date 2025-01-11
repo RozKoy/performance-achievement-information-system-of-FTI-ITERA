@@ -10,14 +10,16 @@
      * @required @param name: string
      * @required @param data: Type[]
      * @optional @param autofocus: mixed
+     * @optional @param oldvalue: string
      * @optional @param onchange: string
      * @optional @param disabled: mixed
      * @optional @param required: mixed
+     * @optional @param onblur: string
      * @optional @param style: string
      */
 @endphp
 
-<select name="{{ $name }}" id="{{ $name }}" title="{{ $title }}" oninvalid="inputSelectCustomMessage(this)" @isset($onchange) onchange="{{ $onchange }}" @endisset class="{{ $style ?? '' }} rounded-lg border-2 !border-slate-100 !py-1.5 !pl-2 !pr-8 text-primary focus:!border-primary focus:!outline-none focus:!ring-0 disabled:cursor-not-allowed disabled:bg-primary/10 max-sm:text-sm" @isset($disabled) disabled @endisset @isset($autofocus) autofocus @endisset @isset($required) required @endisset>
+<select name="{{ $name }}" id="{{ $name }}" title="{{ $title }}" oninvalid="inputSelectCustomMessage(this)" @isset($onchange) onchange="{{ $onchange }}" @endisset @isset($onblur) onblur="{{ $onblur }}" @endisset @isset($oldvalue) oldvalue="{{ $oldvalue }}" @endisset class="{{ $style ?? '' }} rounded-lg border-2 !border-slate-100 !py-1.5 !pl-2 !pr-8 text-primary focus:!border-primary focus:!outline-none focus:!ring-0 disabled:cursor-not-allowed disabled:bg-primary/10 max-sm:text-sm" @isset($disabled) disabled @endisset @isset($autofocus) autofocus @endisset @isset($required) required @endisset>
 
     @foreach ($data as $item)
         <option value="{{ $item['value'] }}" @isset($item['selected']) selected @endif>{{ $item['text'] }}</option>

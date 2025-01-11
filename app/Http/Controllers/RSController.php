@@ -444,25 +444,23 @@ class RSController extends Controller
     }
 
     /**
-     * RS target view 
-     * @param mixed $year
+     * RS target view
+     * @param string $year
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function targetView($year): Factory|View
+    public function targetView(string $year): Factory|View
     {
         $yearInstance = RSYear::where('year', $year)
             ->firstOrFail();
 
         $data = $yearInstance->sasaranStrategis()
             ->whereHas('indikatorKinerja', function (Builder $query): void {
-                $query->where('status', 'aktif')
-                    ->whereNot('type', 'teks');
+                $query->where('status', 'aktif');
             })
             ->with([
                 'kegiatan' => function (HasMany $query) {
                     $query->whereHas('indikatorKinerja', function (Builder $query): void {
-                        $query->where('status', 'aktif')
-                            ->whereNot('type', 'teks');
+                        $query->where('status', 'aktif');
                     })
                         ->orderBy('number')
                         ->select([
@@ -474,14 +472,12 @@ class RSController extends Controller
                         ])
                         ->withCount([
                             'indikatorKinerja AS rowspan' => function (Builder $query): void {
-                                $query->where('status', 'aktif')
-                                    ->whereNot('type', 'teks');
+                                $query->where('status', 'aktif');
                             }
                         ]);
                 },
                 'kegiatan.indikatorKinerja' => function (HasMany $query): void {
                     $query->where('status', 'aktif')
-                        ->whereNot('type', 'teks')
                         ->orderBy('number')
                         ->select([
                             'name AS ik',
@@ -502,7 +498,8 @@ class RSController extends Controller
                                 'unit_id',
                             ]);
                         });
-                }
+                },
+                'kegiatan.indikatorKinerja.textSelections'
             ])
             ->orderBy('number')
             ->select([
@@ -512,8 +509,7 @@ class RSController extends Controller
             ])
             ->withCount([
                 'indikatorKinerja AS rowspan' => function (Builder $query): void {
-                    $query->where('status', 'aktif')
-                        ->whereNot('type', 'teks');
+                    $query->where('status', 'aktif');
                 }
             ])
             ->get()
@@ -734,15 +730,14 @@ class RSController extends Controller
     /**
      * RS add target
      * @param \App\Http\Requests\RencanaStrategis\AddTargetRequest $request
-     * @param mixed $year
+     * @param string $year
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function addTarget(AddTargetRequest $request, $year): RedirectResponse
+    public function addTarget(AddTargetRequest $request, string $year): RedirectResponse
     {
         $targets = $request['target'];
 
         $indikatorKinerja = IndikatorKinerja::where('status', 'aktif')
-            ->whereNot('type', 'teks')
             ->whereHas('kegiatan', function (Builder $query) use ($year): void {
                 $query->whereHas('sasaranStrategis', function (Builder $query) use ($year): void {
                     $query->whereHas('time', function (Builder $query) use ($year): void {
@@ -752,53 +747,77 @@ class RSController extends Controller
             })
             ->get();
 
-        $units = Unit::where(function (Builder $query) use ($year): void {
-            $query->whereNotNull('deleted_at')
-                ->whereHas('rencanaStrategis', function (Builder $query) use ($year): void {
-                    $query->whereHas('period', function (Builder $query) use ($year): void {
-                        $query->whereHas('year', function (Builder $query) use ($year): void {
-                            $query->where('year', $year);
+        $units = Unit::withTrashed()
+            ->where(function (Builder $query) use ($year): void {
+                $query->whereNotNull('deleted_at')
+                    ->whereHas('rencanaStrategis', function (Builder $query) use ($year): void {
+                        $query->whereHas('period', function (Builder $query) use ($year): void {
+                            $query->whereHas('year', function (Builder $query) use ($year): void {
+                                $query->where('year', $year);
+                            });
                         });
                     });
-                });
-        })
+            })
             ->orWhereNull('deleted_at')
-            ->withTrashed()
             ->get();
 
         foreach ($indikatorKinerja as $ik) {
             foreach ($units as $unit) {
-                if ($targets["$ik->id-$unit->id"] ?? null !== null) {
-                    $temp = $ik->target()->firstOrNew(
-                        [
-                            'unit_id' => $unit->id,
-                        ],
-                        [
-                            'unit_id' => $unit->id,
-                        ],
-                    );
+                try {
+                    if ($targets["$ik->id-$unit->id"] !== null) {
+                        if (!is_numeric($targets["$ik->id-$unit->id"]) && ($ik->type === 'persen' || $ik->type === 'angka')) {
+                            return _ControllerHelpers::BackWithInputWithErrors(["target.$ik->id-$unit->id" => 'Realisasi tidak sesuai dengan tipe data']);
+                        }
 
-                    $temp->target = $targets["$ik->id-$unit->id"];
+                        $temp = $ik->target()->firstOrNew(
+                            [
+                                'unit_id' => $unit->id,
+                            ],
+                            [
+                                'unit_id' => $unit->id,
+                            ],
+                        );
 
-                    $temp->save();
-                } else {
-                    $ik->target()->where('unit_id', $unit->id)->forceDelete();
+                        $temp->target = $targets["$ik->id-$unit->id"];
+
+                        $temp->save();
+                    } else {
+                        $ik->target()->where('unit_id', $unit->id)->forceDelete();
+                    }
+                } catch (\Exception $e) {
                 }
             }
-            $newTarget = $ik->type === 'angka' ? $ik->target()->sum('target') : $ik->target()->average('target');
 
-            if ($newTarget) {
-                $realization = $ik->realization()->whereNull(['period_id', 'unit_id'])->first();
-                $realization = $realization !== null ? (float) $realization->realization : $newTarget - 1;
+            if ($ik->type !== 'teks') {
+                $newTarget = $ik->type === 'angka' ? $ik->target()->sum('target') : $ik->target()->average('target');
 
-                $evaluation = $ik->evaluation()->firstOrNew();
+                if ($newTarget) {
+                    $realization = $ik->realization()->whereNull(['period_id', 'unit_id'])->first();
+                    $realization = $realization !== null ? (float) $realization->realization : $newTarget - 1;
 
-                $evaluation->target = $newTarget;
-                $evaluation->status = $realization >= $newTarget;
+                    $evaluation = $ik->evaluation()->firstOrNew();
 
-                $evaluation->save();
+                    $evaluation->target = $newTarget;
+                    $evaluation->status = $realization >= $newTarget;
+
+                    $evaluation->save();
+                } else {
+                    $ik->evaluation()->forceDelete();
+                }
             } else {
-                $ik->evaluation()->forceDelete();
+                try {
+                    if ($targets[(string) $ik->id] !== null) {
+                        $evaluation = $ik->evaluation()->firstOrNew();
+
+                        $evaluation->target = $targets[(string) $ik->id];
+                        $evaluation->status ??= false;
+
+                        $evaluation->save();
+                    } else {
+                        $ik->evaluation()->forceDelete();
+                    }
+                } catch (\Exception $e) {
+                }
             }
         }
 

@@ -25,7 +25,7 @@ class AddTargetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'target.*' => ['bail', 'nullable', 'numeric', 'min:0'],
+            'target.*' => ['bail', 'nullable', 'max:255'],
             'target' => ['bail', 'array'],
         ];
     }
