@@ -111,6 +111,8 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
                 Route::put('{ss}/ubah', [SasaranStrategisController::class, 'edit']);
 
                 Route::get('{id}/hapus', [SasaranStrategisController::class, 'delete']);
+
+                Route::post('duplicate', [SasaranStrategisController::class, 'duplicateFormat'])->name('super-admin-rs-duplicate');
             });
         });
 

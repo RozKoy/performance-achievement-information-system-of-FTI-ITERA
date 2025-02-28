@@ -29,28 +29,28 @@
             </p>
             <hr>
             <table>
-                <tr class="*:py-1 align-middle">
+                <tr class="align-middle *:py-1">
                     <td>
                         <x-partials.button.add viewOnly />
                     </td>
                     <td>:</td>
                     <td>Untuk kehalaman tambah</td>
                 </tr>
-                <tr class="*:py-1 align-middle">
+                <tr class="align-middle *:py-1">
                     <td class="flex items-center justify-end">
                         <x-partials.button.manage link="#" viewOnly />
                     </td>
                     <td>:</td>
                     <td>Untuk kehalaman kelola kegiatan</td>
                 </tr>
-                <tr class="*:py-1 align-middle">
+                <tr class="align-middle *:py-1">
                     <td class="flex items-center justify-end">
                         <x-partials.button.edit link="#" viewOnly />
                     </td>
                     <td>:</td>
                     <td>Untuk kehalaman ubah</td>
                 </tr>
-                <tr class="*:py-1 align-middle">
+                <tr class="align-middle *:py-1">
                     <td class="flex items-center justify-end">
                         <x-partials.button.delete viewOnly />
                     </td>
@@ -64,7 +64,7 @@
             </p>
             <hr>
             <table>
-                <tr class="*:py-1 align-middle">
+                <tr class="align-middle *:py-1">
                     <td class="flex items-center justify-end">
                         <x-partials.button.manage link="#" viewOnly />
                     </td>
@@ -84,12 +84,24 @@
                 Import
             </button>
         </div>
+
+        @if ($canDuplicate)
+            <div class="rounded-lg border border-dashed border-primary p-3 text-primary max-md:text-sm">
+                <form action="{{ route('super-admin-rs-duplicate') }}" method="post" class="flex items-center justify-start gap-1">
+                    @csrf
+
+                    <p>Gunakan format data {{ ((int) Carbon\Carbon::now()->format('Y')) - 1 }}?</p>
+                    <button type="submit" class="rounded-lg bg-green-500 px-1 text-white hover:bg-green-400">Iya</button>
+                </form>
+                <p class="text-sm italic text-red-500 max-md:text-xs">*Abaikan jika tidak ingin menggunakan format data sebelumnya</p>
+            </div>
+        @endif
     @endif
 
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
-                <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
+                <tr class="divide-x bg-primary/80 text-white *:whitespace-nowrap *:px-5 *:py-2.5 *:font-normal">
                     <th title="Nomor">No</th>
                     <th title="Sasaran strategis">Sasaran Strategis</th>
                     <th title="Jumlah kegiatan">Jumlah Kegiatan</th>
@@ -107,9 +119,9 @@
                         ];
                     @endphp
 
-                    <tr class="*:py-2 *:px-5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
+                    <tr class="border-y *:max-w-[500px] *:break-words *:px-5 *:py-2 2xl:*:max-w-[50vw]">
                         <td title="{{ $item['number'] }}">{{ $item['number'] }}</td>
-                        <td title="{{ $item['name'] }}" class="min-w-72 w-max text-left">{{ $item['name'] }}</td>
+                        <td title="{{ $item['name'] }}" class="w-max min-w-72 text-left">{{ $item['name'] }}</td>
                         <td title="{{ $item['k'] }}">{{ $item['k'] }}</td>
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.manage link="{{ route('super-admin-rs-k', ['ss' => $item['id']]) }}" />

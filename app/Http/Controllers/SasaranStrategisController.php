@@ -41,7 +41,18 @@ class SasaranStrategisController extends Controller
             ->get()
             ->toArray();
 
-        return view('super-admin.rs.ss.home', compact('data'));
+        $canDuplicate = false;
+
+        if ($time->sasaranStrategis()->count() === 0) {
+            if (RSYear::where('year', (string) (((int) $time->year) - 1))->first()?->sasaranStrategis()->count()) {
+                $canDuplicate = true;
+            }
+        }
+
+        return view('super-admin.rs.ss.home', compact([
+            'canDuplicate',
+            'data',
+        ]));
     }
 
     /**
@@ -96,6 +107,49 @@ class SasaranStrategisController extends Controller
         $ss->save();
 
         return _ControllerHelpers::RedirectWithRoute('super-admin-rs-ss');
+    }
+
+    /**
+     * Duplicate format function
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function duplicateFormat(): RedirectResponse
+    {
+        $time = RSYear::currentTime();
+
+        if ($time->sasaranStrategis()->count() === 0) {
+            if ($temp = RSYear::where('year', (string) (((int) $time->year) - 1))->first()) {
+                if ($temp->sasaranStrategis()->count()) {
+                    foreach ($temp->sasaranStrategis as $ss) {
+                        $newSs = $time->sasaranStrategis()->create($ss->only([
+                            'number',
+                            'name',
+                        ]));
+                        foreach ($ss->kegiatan as $k) {
+                            $newK = $newSs->kegiatan()->create($k->only([
+                                'number',
+                                'name',
+                            ]));
+                            foreach ($k->indikatorKinerja as $ik) {
+                                $newIkp = $newK->indikatorKinerja()->create($ik->only([
+                                    'number',
+                                    'status',
+                                    'name',
+                                    'type',
+                                ]));
+                                foreach ($ik->textSelections as $textSelection) {
+                                    $newIkp->columns()->create($textSelection->only([
+                                        'value',
+                                    ]));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return back();
     }
 
     /**
