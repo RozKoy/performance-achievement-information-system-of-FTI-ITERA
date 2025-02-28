@@ -411,6 +411,42 @@ class RSController extends Controller
             $year
         ];
 
+        $textSelections = $ik->textSelections;
+        $textRealization = [
+            [
+                'text' => 'Pilih Realisasi',
+                'value' => '',
+            ],
+            ...$textSelections->map(function ($selection) use ($realization): array {
+                $temp = [
+                    'text' => $selection['value'],
+                    'value' => $selection['id'],
+                ];
+                if ($temp['value'] === $realization) {
+                    $temp = [...$temp, 'selected' => true];
+                }
+                return $temp;
+            }),
+        ];
+        $textTarget = [
+            [
+                'text' => 'Pilih Target',
+                'value' => '',
+            ],
+            ...$textSelections->map(function ($selection) use ($evaluation): array {
+                $temp = [
+                    'text' => $selection['value'],
+                    'value' => $selection['id'],
+                ];
+                if ($evaluation) {
+                    if ($temp['value'] === $evaluation['target']) {
+                        $temp = [...$temp, 'selected' => true];
+                    }
+                }
+                return $temp;
+            }),
+        ];
+
         $ss = $ss->only([
             'number',
             'name',
@@ -429,8 +465,11 @@ class RSController extends Controller
 
         return view('super-admin.achievement.rs.detail', compact([
             'realizationCount',
+            'textRealization',
+            'textSelections',
             'realization',
             'evaluation',
+            'textTarget',
             'unitCount',
             'periods',
             'period',

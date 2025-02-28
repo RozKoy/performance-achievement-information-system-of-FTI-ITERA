@@ -36,9 +36,13 @@
                 <x-partials.label.default for="realization" title="Realisasi" text="Realisasi" required />
 
                 @if (auth()->user()->access === 'editor' && ($ik['type'] === 'teks' || ($ik['status'] !== 'aktif' && $period !== '3')))
-                    <x-partials.input.text name="realization" title="Realisasi" value="{{ $realization }}" autofocus />
+                    @if ($ik['type'] === 'teks')
+                        <x-partials.input.select name="realization" title="Realisasi" :data="$textRealization" autofocus />
+                    @else
+                        <x-partials.input.text name="realization" title="Realisasi" value="{{ $realization }}" autofocus />
+                    @endif
                 @else
-                    <x-partials.input.text name="realization" title="Realisasi" value="{{ $realization }}" disabled />
+                    <x-partials.input.text name="realization" title="Realisasi" value="{{ $realization }}{{ $realization && $ik['type'] === 'persen' ? '%' : '' }}" disabled />
                 @endif
 
             </div>
@@ -47,10 +51,14 @@
                 <div class="flex flex-1 flex-col gap-2">
                     <x-partials.label.default for="target" title="Target" text="Target" required />
 
-                    @if (auth()->user()->access === 'editor' && ($ik['type'] === 'teks' || $ik['status'] !== 'aktif'))
-                        <x-partials.input.text name="target" title="Target" value="{{ isset($evaluation) ? $evaluation['target'] : '' }}" autofocus required />
+                    @if (auth()->user()->access === 'editor' && $ik['status'] !== 'aktif')
+                        @if ($ik['type'] === 'teks')
+                            <x-partials.input.select name="target" title="Target" :data="$textTarget" autofocus />
+                        @else
+                            <x-partials.input.text name="target" title="Target" value="{{ isset($evaluation) ? $evaluation['target'] : '' }}" autofocus required />
+                        @endif
                     @else
-                        <x-partials.input.text name="target" title="Target" value="{{ isset($evaluation) ? $evaluation['target'] : '' }}" disabled />
+                        <x-partials.input.text name="target" title="Target" value="{{ isset($evaluation) ? ($ik['type'] === 'teks' ? $textSelections->firstWhere('id', $evaluation['target'])['value'] ?? '' : $evaluation['target']) : '' }}{{ isset($evaluation) && $ik['type'] === 'persen' ? '%' : '' }}" disabled />
                     @endif
 
                 </div>
@@ -86,7 +94,7 @@
 
         </div>
 
-        @if (auth()->user()->access === 'editor' && ($period === '3' || $ik['type'] === 'teks' || $ik['status'] !== 'aktif'))
+        @if (auth()->user()->access === 'editor' && ($period === '3' || $ik['status'] !== 'aktif' || $ik['type'] === 'teks'))
             <x-partials.button.add style="ml-auto" submit text="Simpan" />
         @endif
 
@@ -117,6 +125,7 @@
                 if ($unitCount) {
                     $percent = ($realizationCount * 100) / $unitCount;
                 }
+                $percent = number_format($percent, 2);
             @endphp
             , Status Pengisian : <span class="font-bold capitalize">{{ $percent }}%</span>
         @endif
@@ -127,11 +136,11 @@
         <div class="w-full overflow-x-auto rounded-lg">
             <table class="min-w-full max-lg:text-sm max-md:text-xs">
                 <thead>
-                    <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
+                    <tr class="divide-x bg-primary/80 text-white *:whitespace-nowrap *:px-5 *:py-2.5 *:font-normal">
                         <th title="Nomor">No</th>
                         <th title="Unit">Unit</th>
 
-                        @if ($ik['type'] !== 'teks' && $period === '3')
+                        @if ($period === '3')
                             <th title="Target">Target</th>
                         @endif
 
@@ -141,16 +150,16 @@
                 <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
 
                     @foreach ($data as $item)
-                        <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
+                        <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
                             <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
-                            <td title="{{ $item['unit']['name'] }}" class="min-w-72 w-max text-left">{{ $item['unit']['name'] }}</td>
+                            <td title="{{ $item['unit']['name'] }}" class="w-max min-w-72 text-left">{{ $item['unit']['name'] }}</td>
 
-                            @if ($ik['type'] !== 'teks' && $period === '3')
-                                <td title="{{ $item['unit']['target'] }}">{{ $item['unit']['target'] }}</td>
+                            @if ($period === '3')
+                                <td title="{{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $item['unit']['target'])['value'] ?? '' : $item['unit']['target'] }}">{{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $item['unit']['target'])['value'] ?? '' : $item['unit']['target'] }}</td>
                             @endif
 
-                            <td title="{{ $item['realization'] }}">
-                                {{ $item['realization'] }}
+                            <td title="{{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $item['realization'])['value'] ?? '' : $item['realization'] }}">
+                                {{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $item['realization'])['value'] ?? '' : $item['realization'] }}
                                 @if ($item['link'])
                                     <a href="{{ $item['link'] }}" title="Link bukti" class="ms-1 text-primary underline">Link Bukti</a>
                                 @endif
