@@ -662,7 +662,7 @@ class RSController extends Controller
     public function addEvaluation(AddEvaluationRequest $request, IndikatorKinerja $ik): RedirectResponse
     {
         if ($request['period'] === '3') {
-            if ($request['target'] === null && ($ik->type === 'teks' || $ik->status !== 'aktif')) {
+            if ($request['target'] === null && $ik->status !== 'aktif') {
                 return back()->withErrors(['target' => 'Target wajib diisi']);
             } else if ($ik->type !== 'teks' && $ik->status !== 'aktif' && !is_numeric($request['target'])) {
                 return back()->withErrors(['target' => 'Target harus berupa angka']);
@@ -677,6 +677,19 @@ class RSController extends Controller
             } else if ((float) $request['realization'] < 0) {
                 $request['realization'] *= -1;
                 $request['realization'] = "{$request['realization']}";
+            }
+        }
+
+        if ($ik->type === 'teks') {
+            if ($request['realization']) {
+                if (!$ik->textSelections->firstWhere('id', $request['realization'])) {
+                    return back()->withErrors(['realization' => 'Realisasi tidak valid']);
+                }
+            }
+            if ($request['target']) {
+                if (!$ik->textSelections->firstWhere('id', $request['target'])) {
+                    return back()->withErrors(['target' => 'Target tidak valid']);
+                }
             }
         }
 
