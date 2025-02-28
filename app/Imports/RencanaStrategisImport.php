@@ -36,12 +36,26 @@ class RencanaStrategisImport implements ToCollection
                 if ($row[2] && $row[3] && $k) {
                     $type = strtolower($row[3]);
                     if (in_array($type, ['teks', 'angka', 'persen'])) {
-                        $k->indikatorKinerja()->create([
+                        $ik = $k->indikatorKinerja()->create([
                             'number' => $k->indikatorKinerja()->count() + 1,
                             'status' => 'aktif',
                             'name' => $row[2],
                             'type' => $type
                         ]);
+
+                        if ($type === 'teks') {
+                            $options = ['ada', 'tidak ada'];
+                            if ($row[4]) {
+                                $options = explode('#', $row[4]);
+                            }
+                            if (is_array($options)) {
+                                foreach ($options as $option) {
+                                    $ik->textSelections()->create([
+                                        'value' => $option,
+                                    ]);
+                                }
+                            }
+                        }
                     }
                 }
             }
