@@ -120,7 +120,13 @@
                                     @if ($realization->count())
                                         @if ($item['type'] === 'teks')
                                             @php
-                                                $text = join(',', $realization->pluck('realization')->toArray());
+                                                $text = join(
+                                                    ',',
+                                                    collect($item['text_selections'])
+                                                        ->whereIn('id', $realization->pluck('realization')->toArray())
+                                                        ->pluck('value')
+                                                        ->toArray(),
+                                                );
                                             @endphp
                                             <td title="{{ $text }}" class="max-w-16 truncate bg-yellow-300">
                                                 {{ $text }}
@@ -200,10 +206,7 @@
 
                                 @foreach ($units as $unit)
                                     @php
-                                        $unitStatus = collect($item['unitStatus'])
-                                            ->where('status', 'blank')
-                                            ->where('unit_id', $unit['id'])
-                                            ->count();
+                                        $unitStatus = collect($item['unitStatus'])->where('status', 'blank')->where('unit_id', $unit['id'])->count();
                                         $singleAchievements = collect($item['singleAchievements'])->where('unit_id', $unit['id']);
                                         $achievements = collect($item['achievements'])->where('unit_id', $unit['id']);
                                         $target = collect($item['target'])->firstWhere('unit_id', $unit['id']);

@@ -103,6 +103,7 @@ class DashboardController extends Controller
                         },
                     ]);
             },
+            'sasaranStrategis.kegiatan.indikatorKinerja.textSelections',
             'sasaranStrategis.kegiatan.indikatorKinerja.realization',
             'sasaranStrategis.kegiatan.indikatorKinerja.target',
         ])->first();
