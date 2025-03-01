@@ -22,6 +22,9 @@ class IKUUnitStatus extends Model
         'unit_id',
     ];
 
+    // 'status' values
+    public const STATUS_BLANK = 'blank';
+
 
     /*
     | -----------------------------------------------------------------
@@ -42,5 +45,19 @@ class IKUUnitStatus extends Model
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
+    }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | FUNCTION
+    | -----------------------------------------------------------------
+    */
+
+    public static function getStatusValues(): array
+    {
+        return [
+            self::STATUS_BLANK,
+        ];
     }
 }

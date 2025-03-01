@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('ikp_columns', function (Blueprint $table) {
+        Schema::create('ikp_columns', function (Blueprint $table): void {
             $table->uuid('id');
 
             $table->boolean('file')->default(false);

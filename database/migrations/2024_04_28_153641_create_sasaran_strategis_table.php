@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('sasaran_strategis', function (Blueprint $table) {
+        Schema::create('sasaran_strategis', function (Blueprint $table): void {
             $table->uuid('id');
 
             $table->unsignedInteger('number');

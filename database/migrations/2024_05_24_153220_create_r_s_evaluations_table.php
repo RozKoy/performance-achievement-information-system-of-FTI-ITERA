@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('rs_evaluations', function (Blueprint $table) {
+        Schema::create('rs_evaluations', function (Blueprint $table): void {
             $table->uuid('id');
 
             $table->string('evaluation')->nullable();

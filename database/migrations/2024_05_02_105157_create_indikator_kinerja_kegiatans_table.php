@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('indikator_kinerja_kegiatan', function (Blueprint $table) {
+        Schema::create('indikator_kinerja_kegiatan', function (Blueprint $table): void {
             $table->uuid('id');
 
             $table->unsignedInteger('number');

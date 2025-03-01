@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('rs_years', function (Blueprint $table) {
+        Schema::create('rs_years', function (Blueprint $table): void {
             $table->uuid('id');
 
             $table->char('year', 4);
@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->unique('year');
         });
 
-        Schema::table('sasaran_strategis', function (Blueprint $table) {
+        Schema::table('sasaran_strategis', function (Blueprint $table): void {
             $table->foreignUuid('time_id')->constrained('rs_years');
         });
     }
@@ -32,6 +32,13 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        // Schema::disableForeignKeyConstraints();
+
+        Schema::table('sasaran_strategis', function (Blueprint $table): void {
+            $table->dropForeign(['time_id']);
+            $table->dropColumn('time_id');
+        });
+
         Schema::dropIfExists('rs_years');
     }
 };

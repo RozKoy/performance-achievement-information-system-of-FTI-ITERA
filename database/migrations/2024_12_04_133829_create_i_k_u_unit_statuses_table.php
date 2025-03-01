@@ -3,18 +3,18 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\IKUUnitStatus;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('iku_unit_statuses', function (Blueprint $table) {
+        Schema::create('iku_unit_statuses', function (Blueprint $table): void {
             $table->uuid('id');
 
-            $table->enum('status', ['blank']);
+            $table->enum('status', IKUUnitStatus::getStatusValues());
 
             $table->timestamps();
             $table->softDeletes();

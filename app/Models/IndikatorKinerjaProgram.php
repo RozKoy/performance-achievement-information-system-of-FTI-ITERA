@@ -33,6 +33,10 @@ class IndikatorKinerjaProgram extends Model
         'program_strategis_id',
     ];
 
+    // 'mode' values
+    public const MODE_SINGLE = 'single';
+    public const MODE_TABLE = 'table';
+
 
     /*
     | -----------------------------------------------------------------
@@ -96,13 +100,21 @@ class IndikatorKinerjaProgram extends Model
     | -----------------------------------------------------------------
     */
 
+    public static function getModeValues(): array
+    {
+        return [
+            self::MODE_SINGLE,
+            self::MODE_TABLE,
+        ];
+    }
+
     public function deleteOrTrashed(): void
     {
         $this->singleAchievements()->forceDelete();
         $this->evaluation()->forceDelete();
         $this->target()->forceDelete();
 
-        $this->achievements()->each(function (IKUAchievement $item) {
+        $this->achievements()->each(function (IKUAchievement $item): void {
             $item->deleteOrTrashed();
         });
 

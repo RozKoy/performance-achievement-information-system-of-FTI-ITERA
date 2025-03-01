@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('iku_achievement_data', function (Blueprint $table) {
+        Schema::create('iku_achievement_data', function (Blueprint $table): void {
             $table->uuid('id');
 
             $table->text('data');
