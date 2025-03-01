@@ -38,9 +38,10 @@ class RencanaStrategisImport implements ToCollection
                     if (in_array($type, ['teks', 'angka', 'persen'])) {
                         $ik = $k->indikatorKinerja()->create([
                             'number' => $k->indikatorKinerja()->count() + 1,
-                            'status' => 'aktif',
                             'name' => $row[2],
-                            'type' => $type
+                            'type' => $type,
+
+                            'status' => 'aktif',
                         ]);
 
                         if ($type === 'teks') {

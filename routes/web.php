@@ -153,6 +153,8 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
             return redirect()->route('super-admin-iku-sk');
         })->name('super-admin-iku');
 
+        Route::post('import-excel', [IKUController::class, 'IKUImport'])->middleware('editor')->name('super-admin-iku-import');
+
         Route::prefix('sasaran-kegiatan')->group(function (): void {
             Route::get('/', [SasaranKegiatanController::class, 'homeView'])->name('super-admin-iku-sk');
 

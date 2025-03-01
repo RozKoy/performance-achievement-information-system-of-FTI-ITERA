@@ -6,9 +6,10 @@ use App\Http\Requests\IndikatorKinerjaUtama\AddEvaluationRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddSingleDataRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddTableDataRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddTargetRequest;
+use App\Http\Requests\IndikatorKinerjaUtama\ImportRequest;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use App\Http\Requests\RencanaStrategis\ImportRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Imports\IndikatorKinerjaUtamaSheets;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\IndikatorKinerjaProgram;
 use Illuminate\Support\Facades\Storage;
@@ -722,6 +723,21 @@ class IKUController extends Controller
                 $ikp->evaluation()->forceDelete();
             }
         }
+
+        return back();
+    }
+
+    /**
+     * IKU excel import function
+     * @param \App\Http\Requests\IndikatorKinerjaUtama\ImportRequest $request
+     * @return RedirectResponse
+     */
+    public function IKUImport(ImportRequest $request): RedirectResponse
+    {
+        Excel::import(
+            new IndikatorKinerjaUtamaSheets,
+            $request->file('file')
+        );
 
         return back();
     }
@@ -2422,10 +2438,10 @@ class IKUController extends Controller
 
     /**
      * Import table data function
-     * @param \App\Http\Requests\RencanaStrategis\ImportRequest $request
+     * @param \App\Http\Requests\IndikatorKinerjaUtama\ImportRequest $request
      * @param string $period
      * @param \App\Models\IndikatorKinerjaProgram $ikp
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function ikpTableDataImport(ImportRequest $request, string $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
