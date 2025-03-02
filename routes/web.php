@@ -1,6 +1,9 @@
 <?php
 
 // Authentication
+
+use App\Http\Controllers\Admin\RencanaStrategis\AddRencanaStrategisAdminController;
+use App\Http\Controllers\Admin\RencanaStrategis\HomeRencanaStrategisAdminController;
 use App\Http\Controllers\Authentication\ChangePasswordController;
 use App\Http\Controllers\Authentication\ForgetPasswordController;
 use App\Http\Controllers\Authentication\LogoutController;
@@ -268,9 +271,9 @@ Route::prefix('/')->middleware('admin')->group(function (): void {
     })->name('admin-dashboard');
 
     Route::prefix('rencana-strategis')->group(function (): void {
-        Route::get('/', [RSController::class, 'homeViewAdmin'])->name('admin-rs');
+        Route::get('/', [HomeRencanaStrategisAdminController::class, 'view'])->name('admin-rs');
 
-        Route::post('{period}/{ik}', [RSController::class, 'addAdmin'])->middleware('editor')->name('admin-rs-add');
+        Route::post('{period}/{ik}', [AddRencanaStrategisAdminController::class, 'action'])->middleware('editor')->name('admin-rs-add');
     });
 
     Route::prefix('indikator-kinerja-utama')->group(function (): void {

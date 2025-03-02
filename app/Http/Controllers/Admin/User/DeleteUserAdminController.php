@@ -9,6 +9,10 @@ use App\Models\User;
 
 class DeleteUserAdminController extends Controller
 {
+    /**
+     * @param \App\Models\User $user
+     * @return RedirectResponse
+     */
     public function action(User $user): RedirectResponse
     {
         if ($user->unit_id !== auth()->user()->unit_id) {
