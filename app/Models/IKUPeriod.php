@@ -22,10 +22,11 @@ class IKUPeriod extends Model
     protected $table = 'iku_periods';
 
     protected $fillable = [
+        'deadline',
         'period',
         'status',
 
-        'deadline_id',
+        // 'deadline_id',
         'year_id',
     ];
 
@@ -36,10 +37,10 @@ class IKUPeriod extends Model
     | -----------------------------------------------------------------
     */
 
-    public function deadline(): BelongsTo
-    {
-        return $this->belongsTo(IKUPeriod::class);
-    }
+    // public function deadline(): BelongsTo
+    // {
+    //     return $this->belongsTo(IKUPeriod::class);
+    // }
 
     public function year(): BelongsTo
     {
