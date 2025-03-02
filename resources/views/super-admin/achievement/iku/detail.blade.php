@@ -127,7 +127,9 @@
 
     @if ($ikp['status'] === 'aktif')
         @if ($ikp['mode'] === 'table')
-            <form @if (auth()->user()->access === 'editor') id="data-form" method="POST" action="" @endif class="w-full overflow-x-auto rounded-lg">
+            <form @if (auth()->user()->access === 'editor') id="data-form" method="POST" action="{{ route('super-admin-achievement-iku-detail-validation', ['ikp' => $ikp['id']]) }}" @endif class="w-full overflow-x-auto rounded-lg">
+                @csrf
+
                 <table class="min-w-full text-sm max-md:text-xs">
                     <thead>
                         <tr class="divide-x bg-primary/80 text-white *:max-w-[500px] *:break-words *:px-5 *:py-2.5 *:font-normal 2xl:*:max-w-[50vw]">
@@ -154,15 +156,21 @@
 
                                 <tr class="{{ !$col['status'] ? 'bg-red-300' : '' }} border-y *:px-1 *:py-1.5">
                                     <td title="Terima/Tolak" class="relative text-center">
-                                        <input id="{{ $id }}" name="data[{{ $id }}][status]" type="checkbox" title="Tolak data?" oldValue="{{ !$col['status'] }}" class="rounded border-2 border-red-500 text-red-500 checked:outline-red-500 focus:outline-red-500 disabled:border-slate-300" @if (auth()->user()->access === 'editor') onblur="blurInput(this, '{{ $id }}-status-cover')" @endif @checked(!$col['status']) disabled>
+                                        <input id="{{ $id }}" name="" type="checkbox" title="Tolak data?" oldValue="{{ !$col['status'] }}" class="rounded border-2 border-red-500 text-red-500 checked:outline-red-500 focus:outline-red-500 disabled:border-slate-300" @if (auth()->user()->access === 'editor') onblur="blurInput(this, '{{ $id }}-status-cover')" @endif @checked(!$col['status']) disabled>
+                                        <input id="{{ $id }}-status-cover-hidden" type="hidden" name="data[{{ $id }}][status]" value="toggle" disabled>
                                         <div id="{{ $id }}-status-cover" class="absolute left-0 top-0 h-full w-full" @if (auth()->user()->access === 'editor') onclick="clickInput(this, '{{ $id }}')" @endif></div>
                                     </td>
-                                    <td title="Catatan" class="relative text-center">
+                                    <td title="Catatan" class="relative">
                                         @if (auth()->user()->access === 'editor')
                                             <x-partials.input.text name="data[{{ $id }}][note]" title="Catatan" value="{{ $col['note'] }}" oldvalue="{{ $col['note'] }}" onblur="blurInput(this, '{{ $id }}-note-cover')" disabled />
+
+                                            @error("data.$id.note")
+                                                <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+                                            @enderror
+
                                             <div id="{{ $id }}-note-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, 'data[{{ $id }}][note]')"></div>
                                         @else
-                                            Catatan
+                                            {{ $col['note'] }}
                                         @endif
                                     </td>
                                     <td title="{{ $loop->iteration }}" class="text-center">{{ $loop->iteration }}</td>
@@ -217,12 +225,22 @@
                             const selfElement = document.getElementById(id);
 
                             if (
-                                (self.type === 'checkbox' && self.checked === (self.getAttribute('oldvalue') === 'true')) ||
+                                (self.type === 'checkbox' && self.checked === (self.getAttribute('oldvalue') === '1')) ||
                                 (self.type !== 'checkbox' && self.value === self.getAttribute('oldvalue'))
                             ) {
                                 self.disabled = true;
 
                                 selfElement.classList.toggle('hidden');
+
+                                if (self.type === 'checkbox') {
+                                    const hiddenValue = document.getElementById(id + '-hidden');
+
+                                    hiddenValue.disabled = true;
+                                }
+                            } else if (self.type === 'checkbox') {
+                                const hiddenValue = document.getElementById(id + '-hidden');
+
+                                hiddenValue.disabled = false;
                             }
                         }
                     </script>

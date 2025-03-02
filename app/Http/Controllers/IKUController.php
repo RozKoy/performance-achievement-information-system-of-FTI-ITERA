@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IndikatorKinerjaUtama\AddEvaluationRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddSingleDataRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddTableDataRequest;
+use App\Http\Requests\IndikatorKinerjaUtama\ValidationRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\AddTargetRequest;
 use App\Http\Requests\IndikatorKinerjaUtama\ImportRequest;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -725,6 +726,34 @@ class IKUController extends Controller
                 $evaluation->save();
             } else {
                 $ikp->evaluation()->forceDelete();
+            }
+        }
+
+        return back();
+    }
+
+    /**
+     * Validation data
+     * @param \App\Http\Requests\IndikatorKinerjaUtama\ValidationRequest $request
+     * @param \App\Models\IndikatorKinerjaProgram $ikp
+     * @return RedirectResponse
+     */
+    public function validation(ValidationRequest $request, IndikatorKinerjaProgram $ikp): RedirectResponse
+    {
+        [
+            'data' => $data,
+        ] = $request;
+
+        foreach ($data ?? [] as $id => $item) {
+            if ($achievement = $ikp->achievements()->find($id)) {
+                try {
+                    $achievement->note = $item['note'];
+                } catch (\Exception $e) {
+                }
+                if (isset($item['status'])) {
+                    $achievement->status = !$achievement->status;
+                }
+                $achievement->save();
             }
         }
 

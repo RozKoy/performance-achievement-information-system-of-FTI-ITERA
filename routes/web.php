@@ -89,6 +89,7 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
                 Route::post('{year}/target', [IKUController::class, 'addTarget'])->name('super-admin-achievement-iku-target-add');
                 Route::get('{period}/status', [IKUController::class, 'statusToggle'])->name('super-admin-achievement-iku-status');
                 Route::post('{ikp}/evaluation', [IKUController::class, 'addEvaluation'])->name('super-admin-achievement-iku-evaluation');
+                Route::post('{ikp}/validation', [IKUController::class, 'validation'])->name('super-admin-achievement-iku-detail-validation');
             });
         });
     });
