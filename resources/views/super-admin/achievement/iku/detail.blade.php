@@ -73,36 +73,36 @@
 
             @if ($ikp['status'] === 'aktif')
                 @if ($period === '5')
-                    <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
+                    <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
                         <td>Status</td>
                         <td>:</td>
                         <td>{{ $evaluation === null ? '' : ($evaluation['status'] == 1 ? 'Tercapai' : 'Tidak tercapai') }}</td>
                     </tr>
-                    <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
+                    <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
                         <td>Target</td>
                         <td>:</td>
                         <td>{{ $evaluation === null ? '' : ($evaluation['target'] ? $evaluation['target'] : '') }}</td>
                     </tr>
                 @endif
 
-                <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
+                <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
                     <td>Realisasi</td>
                     <td>:</td>
                     <td>{{ $achievement }}</td>
                 </tr>
             @endif
 
-            <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
+            <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
                 <td>Status Penugasan</td>
                 <td>:</td>
                 <td>{{ ucfirst($ikp['status']) }}</td>
             </tr>
-            <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
+            <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
                 <td>Tipe</td>
                 <td>:</td>
                 <td>{{ strtoupper($ikp['type']) }}</td>
             </tr>
-            <tr class="*:px-1 first:*:font-semibold first:*:whitespace-nowrap">
+            <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
                 <td>Definisi Operasional</td>
                 <td>:</td>
                 <td>{{ $ikp['definition'] }}</td>
@@ -127,10 +127,12 @@
 
     @if ($ikp['status'] === 'aktif')
         @if ($ikp['mode'] === 'table')
-            <div class="w-full overflow-x-auto rounded-lg">
+            <form @if (auth()->user()->access === 'editor') id="data-form" method="POST" action="" @endif class="w-full overflow-x-auto rounded-lg">
                 <table class="min-w-full text-sm max-md:text-xs">
                     <thead>
-                        <tr class="*:font-normal *:px-5 *:py-2.5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words divide-x bg-primary/80 text-white">
+                        <tr class="divide-x bg-primary/80 text-white *:max-w-[500px] *:break-words *:px-5 *:py-2.5 *:font-normal 2xl:*:max-w-[50vw]">
+                            <th title="Tolak">Tolak</th>
+                            <th title="Catatan">Catatan</th>
                             <th title="Nomor">No</th>
 
                             @foreach ($columns as $column)
@@ -142,11 +144,27 @@
                     <tbody class="border-b-2 border-primary/80 text-left align-top">
 
                         @foreach ($data as $unit => $item)
-                            <tr class="*:py-2 *:px-3 *:break-words *:text-primary *:bg-primary/5 border-y font-semibold">
-                                <td title="{{ $unit }}" colspan="{{ count($columns) + 1 }}">{{ $unit }} (Data : {{ count($item) }})</td>
+                            <tr class="border-y font-semibold *:break-words *:bg-primary/5 *:px-3 *:py-2 *:text-primary">
+                                <td title="{{ $unit }}" colspan="{{ count($columns) + 3 }}">{{ $unit }} (Data : {{ count($item) }})</td>
                             </tr>
                             @foreach ($item as $col)
-                                <tr class="*:py-1.5 *:px-1 border-y">
+                                @php
+                                    $id = $col['id'];
+                                @endphp
+
+                                <tr class="{{ !$col['status'] ? 'bg-red-300' : '' }} border-y *:px-1 *:py-1.5">
+                                    <td title="Terima/Tolak" class="relative text-center">
+                                        <input id="{{ $id }}" name="data[{{ $id }}][status]" type="checkbox" title="Tolak data?" oldValue="{{ !$col['status'] }}" class="rounded border-2 border-red-500 text-red-500 checked:outline-red-500 focus:outline-red-500 disabled:border-slate-300" @if (auth()->user()->access === 'editor') onblur="blurInput(this, '{{ $id }}-status-cover')" @endif @checked(!$col['status']) disabled>
+                                        <div id="{{ $id }}-status-cover" class="absolute left-0 top-0 h-full w-full" @if (auth()->user()->access === 'editor') onclick="clickInput(this, '{{ $id }}')" @endif></div>
+                                    </td>
+                                    <td title="Catatan" class="relative text-center">
+                                        @if (auth()->user()->access === 'editor')
+                                            <x-partials.input.text name="data[{{ $id }}][note]" title="Catatan" value="{{ $col['note'] }}" oldvalue="{{ $col['note'] }}" onblur="blurInput(this, '{{ $id }}-note-cover')" disabled />
+                                            <div id="{{ $id }}-note-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, 'data[{{ $id }}][note]')"></div>
+                                        @else
+                                            Catatan
+                                        @endif
+                                    </td>
                                     <td title="{{ $loop->iteration }}" class="text-center">{{ $loop->iteration }}</td>
 
                                     @php
@@ -177,12 +195,44 @@
 
                     </tbody>
                 </table>
-            </div>
+            </form>
+
+            @if (auth()->user()->access === 'editor')
+                <button type="button" onclick="document.getElementById('data-form').submit()" title="Tombol simpan data" class="flex w-full items-center justify-center gap-0.5 rounded-full bg-yellow-500 p-0.5 text-white hover:bg-yellow-400">
+                    <p>Simpan</p>
+                </button>
+
+                @push('script')
+                    <script>
+                        function clickInput(self, id) {
+                            const selfElement = document.getElementById(id);
+
+                            selfElement.disabled = false;
+                            selfElement.focus();
+
+                            self.classList.toggle('hidden');
+                        }
+
+                        function blurInput(self, id) {
+                            const selfElement = document.getElementById(id);
+
+                            if (
+                                (self.type === 'checkbox' && self.checked === (self.getAttribute('oldvalue') === 'true')) ||
+                                (self.type !== 'checkbox' && self.value === self.getAttribute('oldvalue'))
+                            ) {
+                                self.disabled = true;
+
+                                selfElement.classList.toggle('hidden');
+                            }
+                        }
+                    </script>
+                @endPush
+            @endif
         @else
             <div class="w-full overflow-x-auto rounded-lg">
                 <table class="min-w-full text-sm max-md:text-xs">
                     <thead>
-                        <tr class="*:font-normal *:px-5 *:py-2.5 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words divide-x bg-primary/80 text-white">
+                        <tr class="divide-x bg-primary/80 text-white *:max-w-[500px] *:break-words *:px-5 *:py-2.5 *:font-normal 2xl:*:max-w-[50vw]">
                             <th title="Nomor">No</th>
                             <th title="Program studi">Program Studi</th>
                             <th title="Realisasi">Realisasi</th>
@@ -194,7 +244,7 @@
                             @php
                                 $temp = collect($item);
                             @endphp
-                            <tr class="*:py-1.5 *:px-1 border-y">
+                            <tr class="border-y *:px-1 *:py-1.5">
                                 <td title="{{ $loop->iteration }}" class="text-center">{{ $loop->iteration }}</td>
                                 <td title="{{ $unit }}">{{ $unit }}</td>
                                 <td title="{{ $temp->average('value') }}" class="text-center">

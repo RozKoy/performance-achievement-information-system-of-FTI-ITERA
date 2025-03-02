@@ -325,7 +325,11 @@ class IKUController extends Controller
                     }
                 })
                 ->whereBelongsTo($ikp)
-                ->select('id')
+                ->select([
+                    'status',
+                    'note',
+                    'id',
+                ])
                 ->withAggregate('unit AS unit', 'name')
                 ->latest()
                 ->get();
