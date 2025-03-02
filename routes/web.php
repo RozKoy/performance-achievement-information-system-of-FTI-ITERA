@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\Authentication\ChangePasswordController;
+use App\Http\Controllers\Authentication\ForgetPasswordController;
+use App\Http\Controllers\Authentication\LogoutController;
+use App\Http\Controllers\Authentication\LoginController;
+
 use App\Http\Controllers\IndikatorKinerjaKegiatanController;
 use App\Http\Controllers\IndikatorKinerjaProgramController;
 use App\Http\Controllers\IndikatorKinerjaController;
@@ -10,7 +15,6 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\UsersController;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\IKUController;
 use App\Http\Controllers\RSController;
 use Illuminate\Support\Facades\Route;
@@ -33,17 +37,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('guest')->group(function (): void {
-    Route::get('masuk', [AuthController::class, 'loginView'])->name('login');
-    Route::post('masuk', [AuthController::class, 'login']);
+    Route::get('masuk', [LoginController::class, 'view'])->name('login');
+    Route::post('masuk', [LoginController::class, 'action']);
 
-    Route::get('lupa-kata-sandi', [AuthController::class, 'forgetPasswordView'])->name('forget-password');
-    Route::post('lupa-kata-sandi', [AuthController::class, 'forgetPassword']);
+    Route::get('lupa-kata-sandi', [ForgetPasswordController::class, 'view'])->name('forget-password');
+    Route::post('lupa-kata-sandi', [ForgetPasswordController::class, 'action']);
 
-    Route::get('{token}/ubah-kata-sandi', [AuthController::class, 'changePasswordView'])->name('change-password');
-    Route::post('{token}/ubah-kata-sandi', [AuthController::class, 'changePassword']);
+    Route::get('{token}/ubah-kata-sandi', [ChangePasswordController::class, 'view'])->name('change-password');
+    Route::post('{token}/ubah-kata-sandi', [ChangePasswordController::class, 'action']);
 });
 
-Route::get('keluar', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+Route::get('keluar', [LogoutController::class, 'action'])->middleware('auth')->name('logout');
 
 
 /*
