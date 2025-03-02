@@ -43,6 +43,18 @@
                         <input type="checkbox" value="{{ $period['status'] == 1 }}" class="peer sr-only" @checked($period['status'] == 1) disabled>
                         <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
                     </label>
+
+                    @if ($period['status'] == 1)
+                        <form action="{{ route('super-admin-achievement-iku-deadline', ['period' => $period['id']]) }}" method="POST" class="flex flex-col gap-0.5">
+                            @csrf
+
+                            <input type="date" name="{{ $period['id'] }}-deadline" title="Batas waktu periode ({{ $period['title'] }})" value="{{ $period['deadline'] }}" class="rounded-lg border-2 !border-slate-100 !px-2 !py-1.5 text-primary focus:!border-primary focus:!outline-none focus:!ring-0 disabled:cursor-not-allowed disabled:bg-primary/10 max-sm:text-sm" min="{{ now()->format('Y-m-d') }}" onchange="this.parentElement.submit()">
+
+                            @error($period['id'] . '-deadline')
+                                <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
+                            @enderror
+                        </form>
+                    @endif
                 @endif
 
             </div>
@@ -52,7 +64,7 @@
     <div class="w-full overflow-x-auto rounded-lg">
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
-                <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap *:border bg-primary/80 text-white">
+                <tr class="bg-primary/80 text-white *:whitespace-nowrap *:border *:px-5 *:py-2.5 *:font-normal">
                     <th title="Nomor" rowspan="2">No</th>
                     <th title="Sasaran kegiatan" rowspan="2">Sasaran Kegiatan</th>
                     <th title="Indikator kinerja kegiatan" rowspan="2">Indikator Kinerja Kegiatan</th>
@@ -68,7 +80,7 @@
                     <th title="Status pengisian" rowspan="2">Status Pengisian</th>
                     <th title="Aksi" rowspan="2">Aksi</th>
                 </tr>
-                <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap *:border bg-primary/80 text-white">
+                <tr class="bg-primary/80 text-white *:whitespace-nowrap *:border *:px-5 *:py-2.5 *:font-normal">
                     <th title="TW 1 | Januari - Maret">TW 1</th>
                     <th title="TW 2 | April - Juni">TW 2</th>
                     <th title="TW 3 | Juli - September">TW 3</th>
@@ -83,14 +95,14 @@
                     @foreach ($sk['indikator_kinerja_kegiatan'] as $ikk)
                         @foreach ($ikk['program_strategis'] as $ps)
                             @foreach ($ps['indikator_kinerja_program'] as $ikp)
-                                <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
+                                <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
 
                                     @if ($loop->iteration === 1)
                                         @if ($loop->parent->iteration === 1)
                                             @if ($loop->parent->parent->iteration === 1)
                                                 <td title="{{ $loop->parent->parent->parent->iteration }}" rowspan="{{ $sk['rowspan'] }}">{{ $loop->parent->parent->parent->iteration }}</td>
 
-                                                <td title="{{ $sk['sk'] }}" rowspan="{{ $sk['rowspan'] }}" class="min-w-72 group relative z-10 w-max text-left">
+                                                <td title="{{ $sk['sk'] }}" rowspan="{{ $sk['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                                     {{ $sk['sk'] }}
 
                                                     @if (auth()->user()->access === 'editor')
@@ -100,7 +112,7 @@
                                                 </td>
                                             @endif
 
-                                            <td title="{{ $ikk['ikk'] }}" rowspan="{{ $ikk['rowspan'] }}" class="min-w-72 group relative z-10 w-max text-left">
+                                            <td title="{{ $ikk['ikk'] }}" rowspan="{{ $ikk['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                                 {{ $ikk['ikk'] }}
 
                                                 @if (auth()->user()->access === 'editor')
@@ -110,7 +122,7 @@
                                             </td>
                                         @endif
 
-                                        <td title="{{ $ps['ps'] }}" rowspan="{{ $ps['rowspan'] }}" class="min-w-72 group relative z-10 w-max text-left">
+                                        <td title="{{ $ps['ps'] }}" rowspan="{{ $ps['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                             {{ $ps['ps'] }}
 
                                             @if (auth()->user()->access === 'editor')
@@ -120,7 +132,7 @@
                                         </td>
                                     @endif
 
-                                    <td title="{{ $ikp['ikp'] }}" class="min-w-72 group relative z-10 w-max text-left">
+                                    <td title="{{ $ikp['ikp'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                         {{ $ikp['ikp'] }}
 
                                         @if (auth()->user()->access === 'editor')
@@ -130,7 +142,7 @@
                                         <span title="{{ $ikp['type'] === 'iku' ? 'Indikator kinerja utama' : 'Indikator kinerja tambahan' }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ikp['type'] }}</span>
                                     </td>
 
-                                    <td title="{{ $ikp['definition'] }}" class="min-w-72 w-max text-left">{{ $ikp['definition'] }}</td>
+                                    <td title="{{ $ikp['definition'] }}" class="w-max min-w-72 text-left">{{ $ikp['definition'] }}</td>
 
                                     <td title="{{ $ikp['target'] }}">{{ $ikp['target'] }}</td>
                                     <td title="{{ $ikp['mode'] === 'table' ? $ikp['all'] : $ikp['allSingle'] }}">{{ $ikp['mode'] === 'table' ? $ikp['all'] : $ikp['allSingle'] }}</td>

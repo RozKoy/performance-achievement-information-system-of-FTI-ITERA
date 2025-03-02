@@ -27,6 +27,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Exports\IKUExport;
+use App\Http\Requests\IndikatorKinerjaUtama\SetDeadlineRequest;
 use App\Models\IKUPeriod;
 use App\Models\IKUYear;
 use App\Models\Unit;
@@ -89,6 +90,7 @@ class IKUController extends Controller
         $periods = $yearInstance->periods()
             ->orderBy('period')
             ->select([
+                'deadline',
                 'period',
                 'status',
                 'id',
@@ -560,19 +562,11 @@ class IKUController extends Controller
      */
     public function checkRoutine($currentYear, $currentPeriod): void
     {
-        $currentPeriod = IKUPeriod::where('period', $currentPeriod)
-            ->whereHas('year', function (Builder $query) use ($currentYear) {
-                $query->where('year', $currentYear);
-            })
-            ->first();
-
-        if ($currentPeriod) {
-            IKUPeriod::whereNot('deadline_id', $currentPeriod->id)
-                ->update([
-                    'deadline_id' => null,
-                    'status' => false,
-                ]);
-        }
+        IKUPeriod::whereDate('deadline', '<', Carbon::now())
+            ->update([
+                'deadline' => null,
+                'status' => false,
+            ]);
     }
 
     /**
@@ -607,6 +601,21 @@ class IKUController extends Controller
             $period->status = true;
         }
         $period->save();
+
+        return back();
+    }
+
+    public function setDeadline(SetDeadlineRequest $request, IKUPeriod $period): RedirectResponse
+    {
+        [
+            "$period->id-deadline" => $deadline,
+        ] = $request;
+
+        if ($period->status) {
+            $period->update([
+                'deadline' => $deadline,
+            ]);
+        }
 
         return back();
     }
