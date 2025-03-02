@@ -55,6 +55,10 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    // 'access' value
+    public const ACCESS_EDITOR = 'editor';
+    public const ACCESS_VIEWER = 'viewer';
+
 
     /*
     | -----------------------------------------------------------------
@@ -65,5 +69,30 @@ class User extends Authenticatable
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
+    }
+
+
+    /*
+    | -----------------------------------------------------------------
+    | FUNCTION
+    | -----------------------------------------------------------------
+    */
+
+    public static function getAccessValues(): array
+    {
+        return [
+            self::ACCESS_EDITOR,
+            self::ACCESS_VIEWER,
+        ];
+    }
+
+    public function isEditor(): bool
+    {
+        return $this->access === self::ACCESS_EDITOR;
+    }
+
+    public function isViewer(): bool
+    {
+        return $this->access === self::ACCESS_VIEWER;
     }
 }

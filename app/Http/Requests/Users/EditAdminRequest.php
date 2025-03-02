@@ -28,7 +28,7 @@ class EditAdminRequest extends FormRequest
     {
         return [
             'email' => ['bail', 'required', 'string', 'max:255', 'email', new Unique(new User(), 'id')],
-            'access' => ['bail', 'required', 'in:editor,viewer'],
+            'access' => ['bail', 'required', 'in:' . implode(',', User::getAccessValues())],
             'name' => ['bail', 'required', 'string', 'max:255'],
         ];
     }

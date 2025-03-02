@@ -4,6 +4,7 @@ namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Traits\RequestErrorMessage;
+use App\Models\User;
 
 class AddAdminRequest extends FormRequest
 {
@@ -25,8 +26,8 @@ class AddAdminRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'access' => ['bail', 'required', 'in:' . implode(',', User::getAccessValues())],
             'email' => ['bail', 'required', 'string', 'max:255', 'email', 'unique:users'],
-            'access' => ['bail', 'required', 'in:editor,viewer'],
             'name' => ['bail', 'required', 'string', 'max:255'],
         ];
     }

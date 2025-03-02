@@ -29,7 +29,7 @@
                 </li>
             </ul>
 
-            @if (auth()->user()->access === 'editor')
+            @if (auth()->user()->isEditor())
                 <ul class="space-y-2 py-1.5 font-medium">
                     <li>
                         <x-partials.link.sidebar route="admin-users" name="pengguna">
@@ -86,7 +86,7 @@
                             </button>
                         </div>
                         <div class="z-40 my-4 hidden list-none divide-y divide-gray-100 rounded bg-white text-base shadow shadow-primary" id="user-menu">
-                            <div class="*:overflow-hidden *:truncate *:max-w-40 sm:*:max-w-60 2xl:*:max-w-96 cursor-default px-4 py-3 text-sm text-primary" role="none">
+                            <div class="cursor-default px-4 py-3 text-sm text-primary *:max-w-40 *:overflow-hidden *:truncate sm:*:max-w-60 2xl:*:max-w-96" role="none">
                                 <p role="none" title="Neil Sims">
                                     {{ auth()->user()->name }}
                                 </p>

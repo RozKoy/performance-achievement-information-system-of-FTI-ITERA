@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
+use App\Models\User;
 use Closure;
 
 class Editor
@@ -16,7 +17,7 @@ class Editor
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check()) {
-            if (auth()->user()->access === 'editor') {
+            if (User::find(auth()->id())?->isEditor()) {
                 return $next($request);
             }
         }

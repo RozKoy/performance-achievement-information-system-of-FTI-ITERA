@@ -1,9 +1,15 @@
 <?php
 
+// Authentication
 use App\Http\Controllers\Authentication\ChangePasswordController;
 use App\Http\Controllers\Authentication\ForgetPasswordController;
 use App\Http\Controllers\Authentication\LogoutController;
 use App\Http\Controllers\Authentication\LoginController;
+// User - Admin
+use App\Http\Controllers\Admin\User\CreateUserAdminController;
+use App\Http\Controllers\Admin\User\DeleteUserAdminController;
+use App\Http\Controllers\Admin\User\UpdateUserAdminController;
+use App\Http\Controllers\Admin\User\HomeUserAdminController;
 
 use App\Http\Controllers\IndikatorKinerjaKegiatanController;
 use App\Http\Controllers\IndikatorKinerjaProgramController;
@@ -300,14 +306,14 @@ Route::prefix('/')->middleware('admin')->group(function (): void {
     });
 
     Route::prefix('pengguna')->middleware('editor')->group(function (): void {
-        Route::get('/', [UsersController::class, 'homeViewAdmin'])->name('admin-users');
+        Route::get('/', [HomeUserAdminController::class, 'view'])->name('admin-users');
 
-        Route::get('tambah', [UsersController::class, 'addViewAdmin'])->name('admin-users-add');
-        Route::post('tambah', [UsersController::class, 'addAdmin']);
+        Route::get('tambah', [CreateUserAdminController::class, 'view'])->name('admin-users-add');
+        Route::post('tambah', [CreateUserAdminController::class, 'action']);
 
-        Route::get('{id}/ubah', [UsersController::class, 'editViewAdmin'])->name('admin-users-edit');
-        Route::put('{id}/ubah', [UsersController::class, 'editAdmin']);
+        Route::get('{id}/ubah', [UpdateUserAdminController::class, 'view'])->name('admin-users-edit');
+        Route::put('{id}/ubah', [UpdateUserAdminController::class, 'action']);
 
-        Route::get('{user}/hapus', [UsersController::class, 'deleteAdmin']);
+        Route::get('{user}/hapus', [DeleteUserAdminController::class, 'action']);
     });
 });

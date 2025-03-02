@@ -24,6 +24,10 @@ class Unique implements ValidationRule
     {
         $instance = request()->route($this->route);
 
+        if (is_string($instance)) {
+            $instance = $this->model->find($instance);
+        }
+
         if ($instance[$attribute] !== $value) {
             $temp = $this->model::withTrashed()
                 ->whereKeyNot($instance->id)
