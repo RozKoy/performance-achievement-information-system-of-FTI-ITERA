@@ -576,31 +576,28 @@ class IKUController extends Controller
      */
     public function statusToggle(IKUPeriod $period): RedirectResponse
     {
-        if ($period->status) {
-            $period->status = false;
-            $period->deadline()->dissociate();
-        } else {
+        $deadline = null;
+        $status = false;
+
+        if (!$period->status) {
             $currentMonth = (int) Carbon::now()->format('m');
-            $currentPeriod = '1';
+            $deadline = Carbon::now();
 
             foreach ([3, 6, 9, 12] as $key => $value) {
                 if ($currentMonth <= $value) {
-                    $temp = $key + 1;
-                    $currentPeriod = "$temp";
-
+                    $deadline->setMonth($value);
                     break;
                 }
             }
 
-            $currentYearInstance = IKUYear::currentTime();
-            $currentPeriodInstance = $currentYearInstance->periods()
-                ->where('period', $currentPeriod)
-                ->firstOrFail();
-
-            $period->deadline()->associate($currentPeriodInstance);
-            $period->status = true;
+            $deadline->setDay($deadline->daysInMonth);
+            $status = true;
         }
-        $period->save();
+
+        $period->update([
+            'deadline' => $deadline,
+            'status' => $status,
+        ]);
 
         return back();
     }
