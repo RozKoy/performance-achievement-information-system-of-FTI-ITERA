@@ -22,6 +22,9 @@ class IKUAchievement extends Model
     protected $table = 'iku_achievements';
 
     protected $fillable = [
+        'status',
+        'note',
+
         'indikator_kinerja_program_id',
         'period_id',
         'unit_id',
