@@ -49,7 +49,7 @@ class IKUYear extends Model
     | -----------------------------------------------------------------
     */
 
-    static function currentTime(): IKUYear
+    public static function currentTime(): IKUYear
     {
         $year = Carbon::now()->format('Y');
 

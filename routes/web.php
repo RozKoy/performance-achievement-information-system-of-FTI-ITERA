@@ -31,10 +31,15 @@ use App\Http\Controllers\SasaranStrategisController;
 use App\Http\Controllers\SasaranKegiatanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KegiatanController;
-use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\IKUController;
 use App\Http\Controllers\RSController;
+// Unit - Super Admin
+use App\Http\Controllers\SuperAdmin\Unit\CreateUnitSuperAdminController;
+use App\Http\Controllers\SuperAdmin\Unit\DeleteUnitSuperAdminController;
+use App\Http\Controllers\SuperAdmin\Unit\HomeUnitSuperAdminController;
+use App\Http\Controllers\SuperAdmin\Unit\UpdateUnitSuperAdminController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -255,15 +260,15 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
 
 
     Route::prefix('unit')->middleware('editor')->group(function (): void {
-        Route::get('/', [UnitsController::class, 'homeView'])->name('super-admin-unit');
+        Route::get('/', [HomeUnitSuperAdminController::class, 'view'])->name('super-admin-unit');
 
-        Route::get('tambah', [UnitsController::class, 'addView'])->name('super-admin-unit-add');
-        Route::post('tambah', [UnitsController::class, 'add']);
+        Route::get('tambah', [CreateUnitSuperAdminController::class, 'view'])->name('super-admin-unit-add');
+        Route::post('tambah', [CreateUnitSuperAdminController::class, 'action']);
 
-        Route::get('{unit}/ubah', [UnitsController::class, 'editView'])->name('super-admin-unit-edit');
-        Route::put('{unit}/ubah', [UnitsController::class, 'edit']);
+        Route::get('{unit}/ubah', [UpdateUnitSuperAdminController::class, 'view'])->name('super-admin-unit-edit');
+        Route::put('{unit}/ubah', [UpdateUnitSuperAdminController::class, 'action']);
 
-        Route::get('{unit}/hapus', [UnitsController::class, 'delete']);
+        Route::get('{unit}/hapus', [DeleteUnitSuperAdminController::class, 'action']);
     });
 });
 

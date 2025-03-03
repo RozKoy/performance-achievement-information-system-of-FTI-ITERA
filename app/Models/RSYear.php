@@ -49,7 +49,7 @@ class RSYear extends Model
     | -----------------------------------------------------------------
     */
 
-    static function currentTime(): RSYear
+    public static function currentTime(): RSYear
     {
         $year = Carbon::now()->format('Y');
 
