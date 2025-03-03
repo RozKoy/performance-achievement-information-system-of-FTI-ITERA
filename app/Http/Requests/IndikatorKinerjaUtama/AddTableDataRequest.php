@@ -26,7 +26,7 @@ class AddTableDataRequest extends FormRequest
     {
         return [
             'data-*' => ['bail', 'nullable', 'string', 'max:65000'],
-            'image-*' => ['bail', 'nullable', 'file'],
+            'file-*' => ['bail', 'nullable', 'file'],
         ];
     }
 
@@ -37,7 +37,7 @@ class AddTableDataRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'image-*' => 'Gambar',
+            'file-*' => 'Berkas',
             'data-*' => 'Data',
         ];
     }

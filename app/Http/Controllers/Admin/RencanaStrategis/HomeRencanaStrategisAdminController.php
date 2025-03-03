@@ -14,7 +14,7 @@ use App\Models\RSYear;
 
 class HomeRencanaStrategisAdminController extends Controller
 {
-    protected $adminStatus = [
+    public const ADMIN_STATUS = [
         [
             'text' => 'Semua',
             'value' => '',
@@ -37,9 +37,9 @@ class HomeRencanaStrategisAdminController extends Controller
     {
         $statusRequest = $request->query('status');
         $periodRequest = $request->query('period');
-        $yearRequest = $request->query('year');
+        $yearQuery = $request->query('year');
 
-        if ($yearRequest !== null && !is_numeric($yearRequest)) {
+        if ($yearQuery !== null && !is_numeric($yearQuery)) {
             abort(404);
         }
         if ($periodRequest !== null && !in_array($periodRequest, ['1', '2'])) {
@@ -48,7 +48,7 @@ class HomeRencanaStrategisAdminController extends Controller
 
         $user = auth()->user();
 
-        $status = $this->adminStatus;
+        $status = self::ADMIN_STATUS;
 
         $periods = [];
 
@@ -96,7 +96,7 @@ class HomeRencanaStrategisAdminController extends Controller
             ->toArray();
 
         if (count($years)) {
-            $year = $yearRequest ?? end($years);
+            $year = $yearQuery ?? end($years);
             $yearInstance = RSYear::where('year', $year)->firstOrFail();
 
             $periods = $yearInstance->periods()

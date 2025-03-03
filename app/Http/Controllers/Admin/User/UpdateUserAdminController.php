@@ -8,8 +8,8 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\View\View;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class UpdateUserAdminController extends Controller
 {

@@ -14,12 +14,20 @@ use App\Models\RSPeriod;
 
 class AddRencanaStrategisAdminController extends Controller
 {
+    /**
+     * @param \App\Http\Requests\RencanaStrategis\AddRequest $request
+     * @param string $periodId
+     * @param string $ikId
+     * @return RedirectResponse
+     */
     public function action(AddRequest $request, string $periodId, string $ikId): RedirectResponse
     {
         [
             "realization-$ikId" => $realization,
             "link-$ikId" => $link,
         ] = $request;
+
+        $user = auth()->user();
 
         $currentDate = Carbon::now();
 
@@ -83,12 +91,12 @@ class AddRencanaStrategisAdminController extends Controller
         ]);
 
         $unitAchievement = RSAchievement::firstOrNew([
-            'unit_id' => auth()->user()->unit->id,
+            'unit_id' => $user->unit->id,
             'indikator_kinerja_id' => $ik->id,
             'period_id' => null,
         ]);
 
-        $achievement = RSAchievement::whereBelongsTo(auth()->user()->unit)
+        $achievement = RSAchievement::whereBelongsTo($user->unit)
             ->whereBelongsTo($period, 'period')
             ->whereBelongsTo($ik);
 
@@ -98,7 +106,7 @@ class AddRencanaStrategisAdminController extends Controller
             $achievement->realization = (string) $realization;
             $achievement->link = (string) $link;
 
-            $achievement->unit()->associate(auth()->user()->unit);
+            $achievement->unit()->associate($user->unit);
             $achievement->indikatorKinerja()->associate($ik);
             $achievement->period()->associate($period);
 
@@ -110,12 +118,12 @@ class AddRencanaStrategisAdminController extends Controller
         if ($ik->type !== 'teks') {
             foreach ([$allAchievement, $periodAchievement, $unitAchievement] as $instance) {
                 $all = RSAchievement::whereBelongsTo($ik)
-                    ->where(function (Builder $query) use ($instance): void {
+                    ->where(function (Builder $query) use ($instance, $user): void {
                         if ($instance->period) {
                             $query->whereBelongsTo($instance->period, 'period')
                                 ->whereNotNull('unit_id');
                         } else if ($instance->unit) {
-                            $query->whereBelongsTo(auth()->user()->unit)
+                            $query->whereBelongsTo($user->unit)
                                 ->whereNotNull('period_id');
                         } else {
                             $query->whereNotNull('period_id')

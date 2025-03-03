@@ -12,10 +12,13 @@
             ],
         ],
     ];
+
     $previousRoute = route('admin-iku', ['period' => $period]);
+
+    $modeQuery = request()->query('mode');
 @endphp
 
-<x-admin-template title="IKU - Capaian Kinerja - {{ auth()->user()->unit->name }}">
+<x-admin-template title="IKU - Capaian Kinerja - {{ $user->unit->name }}">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="detail - capaian kinerja - indikator kinerja utama" :$previousRoute />
     <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
@@ -27,7 +30,7 @@
     <div class="flex items-center">
         <x-partials.badge.time :data="$badge" />
 
-        @if (auth()->user()->access === 'editor' && $ikp['mode'] === 'table' && request()->query('mode') !== 'edit')
+        @if ($user->isEditor() && $ikp['mode'] === 'table' && $modeQuery !== 'edit')
             <button type="button" title="Tombol tambah" data-modal-target="add-modal" data-modal-toggle="add-modal" class="ml-auto flex items-center gap-1 rounded-lg bg-green-500 px-2 py-1.5 text-center text-xs text-white hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-green-400 max-sm:w-fit sm:text-sm">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="aspect-square w-3 sm:w-4">
                     <path d="m12 0a12 12 0 1 0 12 12 12.013 12.013 0 0 0 -12-12zm0 22a10 10 0 1 1 10-10 10.011 10.011 0 0 1 -10 10zm1-11h4v2h-4v4h-2v-4h-4v-2h4v-4h2z" />
@@ -72,13 +75,14 @@
     @if ($ikp['mode'] === 'table')
         <p class="text-primary max-xl:text-sm max-sm:text-xs">Jumlah Data : {{ count($data) }}</p>
 
-        @if (auth()->user()->access === 'editor')
+        @if ($user->isEditor())
             <div class="flex w-full flex-wrap items-center justify-center">
                 <form action="{{ !count($data) ? route('admin-iku-unit-status', ['period' => $period, 'ikp' => $ikp['id']]) : '' }}" method="POST" class="flex w-fit items-center justify-center gap-1 p-0.5 text-primary max-md:text-sm max-sm:text-xs">
                     @csrf
                     @method('POST')
+
                     <p>Data Kosong?</p>
-                    <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($unitStatus === 'blank') @disabled(count($data))>
+                    <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($unitStatus === \App\Models\IKUUnitStatus::STATUS_BLANK) @disabled(count($data))>
                 </form>
                 <button title="Import Excel" type="button" data-modal-target="import-modal" data-modal-toggle="import-modal" class="ml-auto flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
                     <img src="{{ url(asset('storage/assets/icons/excel.png')) }}" alt="Excel" class="w-6 max-md:w-5">
@@ -87,8 +91,8 @@
             </div>
             <div class="*:px-2.5 max-sm:text-sm max-[320px]:text-xs">
                 <div class="flex gap-2.5 text-center text-white *:flex-1 *:rounded-lg *:bg-primary/80 *:p-1">
-                    <a href="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => request()->query('period')]) }}" title="Tombol mode hanya lihat" class="{{ request()->query('mode') !== 'edit' ? 'outline outline-2 outline-offset-1 outline-primary' : '' }} hover:bg-primary/70">Mode Lihat</a>
-                    <a href="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => request()->query('period'), 'mode' => 'edit']) }}" title="Tombol mode kelola data" class="{{ request()->query('mode') === 'edit' ? 'outline outline-2 outline-offset-1 outline-primary' : '' }} hover:bg-primary/70">Mode Kelola</a>
+                    <a href="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => request()->query('period')]) }}" title="Tombol mode hanya lihat" class="{{ $modeQuery !== 'edit' ? 'outline outline-2 outline-offset-1 outline-primary' : '' }} hover:bg-primary/70">Mode Lihat</a>
+                    <a href="{{ route('admin-iku-detail', ['ikp' => $ikp['id'], 'period' => request()->query('period'), 'mode' => 'edit']) }}" title="Tombol mode kelola data" class="{{ $modeQuery === 'edit' ? 'outline outline-2 outline-offset-1 outline-primary' : '' }} hover:bg-primary/70">Mode Kelola</a>
                 </div>
             </div>
         @endif
@@ -96,6 +100,7 @@
         <form id="data-form" action="{{ route('admin-iku-data-table-bulk', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" enctype="multipart/form-data" class="w-full overflow-x-auto rounded-lg">
             @method('PUT')
             @csrf
+
             <table class="min-w-full max-lg:text-sm max-md:text-xs">
                 <thead>
                     <tr class="bg-primary/80 text-white *:whitespace-nowrap *:border *:px-5 *:py-2.5 *:font-normal">
@@ -105,21 +110,25 @@
                             <th title="{{ $column['name'] }}">{{ $column['name'] }}</th>
                         @endforeach
 
-                        @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
+                        @if ($user->isEditor() && $modeQuery === 'edit')
                             <th title="Aksi">Aksi</th>
                         @endif
 
+                        <th title="Catatan">Catatan</th>
                     </tr>
                 </thead>
 
                 <tbody id="data-body" class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
 
                     @foreach ($data as $item)
-                        <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
+                        <tr class="{{ !$item['status'] ? 'bg-red-300' : '' }} border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
 
                             <td title="{{ $loop->iteration }}">{{ $loop->iteration }}</td>
+
                             <td class="hidden">
-                                <input type="text" title="id" id="old[{{ $loop->iteration - 1 }}][id]" name="old[{{ $loop->iteration - 1 }}][id]" value="{{ $item['id'] }}" count="0" disabled>
+                                @if ($item['status'])
+                                    <input type="text" title="id" id="old[{{ $loop->iteration - 1 }}][id]" name="old[{{ $loop->iteration - 1 }}][id]" value="{{ $item['id'] }}" count="0" disabled>
+                                @endif
                             </td>
 
                             @php
@@ -134,7 +143,7 @@
                                 @endphp
                                 @if ($dataFind !== null)
                                     @if ($dataFind['file'])
-                                        @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
+                                        @if ($user->isEditor() && $modeQuery === 'edit' && $item['status'])
                                             <td class="bg-green-100">
                                                 <input type="file" name="{{ $id }}">
                                             </td>
@@ -144,7 +153,7 @@
                                             </td>
                                         @endif
                                     @else
-                                        @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
+                                        @if ($user->isEditor() && $modeQuery === 'edit' && $item['status'])
                                             <td class="relative">
                                                 <x-partials.input.text name="{{ $id }}" title="{{ $column['name'] }}" value="{{ $dataFind['data'] }}" oldvalue="{{ $dataFind['data'] }}" onblur="blurInput('{{ $id }}', '{{ $parentId }}', '{{ $id }}-cover')" disabled />
                                                 <div id="{{ $id }}-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, '{{ $id }}', '{{ $parentId }}')"></div>
@@ -154,7 +163,7 @@
                                         @endif
                                     @endif
                                 @else
-                                    @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
+                                    @if ($user->isEditor() && $modeQuery === 'edit' && $item['status'])
                                         @if ($column['file'])
                                             <td class="bg-red-100">
                                                 <input type="file" name="{{ $id }}">
@@ -171,15 +180,33 @@
                                 @endif
                             @endforeach
 
-                            @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
+                            @if ($user->isEditor() && $modeQuery === 'edit')
                                 <td class="flex items-start justify-center gap-1">
-                                    <button type="button" title="Hapus" onclick="deleteInput(this, '{{ $item['id'] }}')" class="h-fit rounded-full bg-red-500 p-0.5 text-white hover:bg-red-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-4 sm:w-5">
-                                            <path d="m12,0C5.383,0,0,5.383,0,12s5.383,12,12,12,12-5.383,12-12S18.617,0,12,0Zm0,22c-5.514,0-10-4.486-10-10S6.486,2,12,2s10,4.486,10,10-4.486,10-10,10Zm-5-11h10v2H7v-2Z" />
-                                        </svg>
-                                    </button>
+
+                                    @if ($item['status'])
+                                        <button type="button" title="Hapus" onclick="deleteInput(this, '{{ $item['id'] }}')" class="h-fit rounded-full bg-red-500 p-0.5 text-white hover:bg-red-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-4 sm:w-5">
+                                                <path d="m12,0C5.383,0,0,5.383,0,12s5.383,12,12,12,12-5.383,12-12S18.617,0,12,0Zm0,22c-5.514,0-10-4.486-10-10S6.486,2,12,2s10,4.486,10,10-4.486,10-10,10Zm-5-11h10v2H7v-2Z" />
+                                            </svg>
+                                        </button>
+                                    @endif
+
                                 </td>
                             @endif
+
+                            <td>
+
+                                @isset($item['note'])
+                                    <svg title="Catatan: {{ $item['note'] }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="mx-auto aspect-square w-3 fill-red-500 sm:w-4">
+                                        <g>
+                                            <path d="M12,24A12,12,0,1,1,24,12,12.013,12.013,0,0,1,12,24ZM12,2A10,10,0,1,0,22,12,10.011,10.011,0,0,0,12,2Z" />
+                                            <path d="M13,15H11v-.743a3.954,3.954,0,0,1,1.964-3.5,2,2,0,0,0,1-2.125,2.024,2.024,0,0,0-1.6-1.595A2,2,0,0,0,10,9H8a4,4,0,1,1,5.93,3.505A1.982,1.982,0,0,0,13,14.257Z" />
+                                            <rect x="11" y="17" width="2" height="2" />
+                                        </g>
+                                    </svg>
+                                @endisset
+
+                            </td>
 
                         </tr>
                     @endforeach
@@ -192,7 +219,7 @@
             <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Belum ada data</p>
         @endif
 
-        @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
+        @if ($user->isEditor() && $modeQuery === 'edit')
             <div class="flex w-full gap-1 max-xl:flex-wrap">
                 <button type="button" id="add-row-button" title="Tombol tambah data" onclick="addRow(0)" class="flex w-full items-center justify-center gap-0.5 rounded-full bg-green-500 p-0.5 text-white hover:bg-green-400">
                     <p>Tambah</p>
@@ -203,7 +230,7 @@
             </div>
         @endif
 
-        @if (auth()->user()->access === 'editor' && request()->query('mode') === 'edit')
+        @if ($user->isEditor() && $modeQuery === 'edit')
             <input id="delete-input" type="hidden" name="delete[]">
             <table class="hidden">
                 <tr id="sample" class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
@@ -232,7 +259,7 @@
             </table>
         @endif
 
-        @if (auth()->user()->access === 'editor')
+        @if ($user->isEditor())
             <div id="import-modal" tabindex="-1" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
                 <div class="relative max-h-full w-full max-w-md p-4">
                     <div class="relative rounded-lg bg-white shadow shadow-primary">
@@ -254,7 +281,7 @@
                 </div>
             </div>
 
-            @if (request()->query('mode') !== 'edit')
+            @if ($modeQuery !== 'edit')
                 <div id="add-modal" tabindex="-1" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
                     <div class="relative max-h-full w-full max-w-md p-4">
                         <div class="relative rounded-lg bg-white shadow shadow-primary">
@@ -290,7 +317,7 @@
             @endif
         @endif
 
-        @pushIf(auth()->user()->access === 'editor' && request()->query('mode') === 'edit', 'script')
+        @pushIf($user->isEditor() && $modeQuery === 'edit', 'script')
         <script>
             const addButton = document.getElementById('add-row-button');
             const delInput = document.getElementById('delete-input');
@@ -367,12 +394,12 @@
         </script>
         @endPushIf
     @else
-        @if (auth()->user()->access === 'editor')
+        @if ($user->isEditor())
             <form action="{{ $data === null ? route('admin-iku-unit-status', ['period' => $period, 'ikp' => $ikp['id']]) : '' }}" method="POST" class="flex w-fit items-center justify-center gap-1 p-0.5 text-primary max-md:text-sm max-sm:text-xs">
                 @csrf
                 @method('POST')
                 <p>Data Kosong?</p>
-                <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($unitStatus === 'blank') @disabled($data !== null)>
+                <input type="checkbox" name="status" title="Data kosong?" onchange="this.form.submit()" class="rounded border-2 border-primary text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($unitStatus === \App\Models\IKUUnitStatus::STATUS_BLANK) @disabled($data !== null)>
             </form>
             <form action="{{ route('admin-iku-data-single', ['period' => $period, 'ikp' => $ikp['id']]) }}" method="POST" enctype="multipart/form-data" class="flex w-full flex-col gap-2 overflow-x-auto rounded-lg text-primary">
                 @csrf

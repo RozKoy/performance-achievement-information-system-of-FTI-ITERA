@@ -2,40 +2,31 @@
 
 namespace App\Http\Controllers\Admin\RencanaStrategis;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\View\Factory;
 use App\Http\Controllers\Controller;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Carbon;
+use Illuminate\Http\Request;
 use App\Models\RSPeriod;
 use App\Models\RSYear;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 
 class HistoryRencanaStrategisAdminController extends Controller
 {
-    protected $adminStatus = [
-        [
-            'text' => 'Semua',
-            'value' => '',
-        ],
-        [
-            'text' => 'Belum diisi',
-            'value' => 'undone',
-        ],
-        [
-            'text' => 'Sudah diisi',
-            'value' => 'done',
-        ],
-    ];
+    protected $adminStatus = HomeRencanaStrategisAdminController::ADMIN_STATUS;
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return Factory|View
+     */
     public function view(Request $request): Factory|View
     {
         $statusRequest = $request->query('status');
         $periodRequest = $request->query('period');
-        $yearRequest = $request->query('year');
+        $yearQuery = $request->query('year');
 
-        if ($yearRequest !== null && !is_numeric($yearRequest)) {
+        if ($yearQuery !== null && !is_numeric($yearQuery)) {
             abort(404);
         }
         if ($periodRequest !== null && !in_array($periodRequest, ['1', '2'])) {
@@ -80,7 +71,7 @@ class HistoryRencanaStrategisAdminController extends Controller
             ->toArray();
 
         if (count($years)) {
-            $year = $yearRequest ?? end($years);
+            $year = $yearQuery ?? end($years);
             $yearInstance = RSYear::where('year', $year)->firstOrFail();
 
             $periods = $yearInstance->periods()

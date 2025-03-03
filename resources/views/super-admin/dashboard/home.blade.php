@@ -206,7 +206,7 @@
 
                                 @foreach ($units as $unit)
                                     @php
-                                        $unitStatus = collect($item['unitStatus'])->where('status', 'blank')->where('unit_id', $unit['id'])->count();
+                                        $unitStatus = collect($item['unitStatus'])->where('status', \App\Models\IKUUnitStatus::STATUS_BLANK)->where('unit_id', $unit['id'])->count();
                                         $singleAchievements = collect($item['singleAchievements'])->where('unit_id', $unit['id']);
                                         $achievements = collect($item['achievements'])->where('unit_id', $unit['id']);
                                         $target = collect($item['target'])->firstWhere('unit_id', $unit['id']);

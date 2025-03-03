@@ -1,14 +1,22 @@
 <?php
 
 // Authentication
-
-use App\Http\Controllers\Admin\RencanaStrategis\AddRencanaStrategisAdminController;
-use App\Http\Controllers\Admin\RencanaStrategis\HistoryRencanaStrategisAdminController;
-use App\Http\Controllers\Admin\RencanaStrategis\HomeRencanaStrategisAdminController;
 use App\Http\Controllers\Authentication\ChangePasswordController;
 use App\Http\Controllers\Authentication\ForgetPasswordController;
 use App\Http\Controllers\Authentication\LogoutController;
 use App\Http\Controllers\Authentication\LoginController;
+// Rencana Strategis - Admin
+use App\Http\Controllers\Admin\RencanaStrategis\HistoryRencanaStrategisAdminController;
+use App\Http\Controllers\Admin\RencanaStrategis\HomeRencanaStrategisAdminController;
+use App\Http\Controllers\Admin\RencanaStrategis\AddRencanaStrategisAdminController;
+// Indikator Kinerja Utama - Admin
+use App\Http\Controllers\Admin\IndikatorKinerjaUtama\UpdateUnitStatusIndikatorKinerjaUtamaAdminController;
+use App\Http\Controllers\Admin\IndikatorKinerjaUtama\ImportTableDataIndikatorKinerjaUtamaAdminController;
+use App\Http\Controllers\Admin\IndikatorKinerjaUtama\AddSingleDataIndikatorKinerjaUtamaAdminController;
+use App\Http\Controllers\Admin\IndikatorKinerjaUtama\AddTableDataIndikatorKinerjaUtamaAdminController;
+use App\Http\Controllers\Admin\IndikatorKinerjaUtama\HistoryIndikatorKinerjaUtamaAdminController;
+use App\Http\Controllers\Admin\IndikatorKinerjaUtama\DetailIndikatorKinerjaUtamaAdminController;
+use App\Http\Controllers\Admin\IndikatorKinerjaUtama\HomeIndikatorKinerjaUtamaAdminController;
 // User - Admin
 use App\Http\Controllers\Admin\User\CreateUserAdminController;
 use App\Http\Controllers\Admin\User\DeleteUserAdminController;
@@ -278,20 +286,19 @@ Route::prefix('/')->middleware('admin')->group(function (): void {
     });
 
     Route::prefix('indikator-kinerja-utama')->group(function (): void {
-        Route::get('/', [IKUController::class, 'homeViewAdmin'])->name('admin-iku');
-        Route::get('{ikp}/detail', [IKUController::class, 'detailViewAdmin'])->name('admin-iku-detail');
+        Route::get('/', [HomeIndikatorKinerjaUtamaAdminController::class, 'view'])->name('admin-iku');
+        Route::get('{ikp}/detail', [DetailIndikatorKinerjaUtamaAdminController::class, 'view'])->name('admin-iku-detail');
 
-        Route::put('{period}/{ikp}/data-table', [IKUController::class, 'bulkAddData'])->middleware('editor')->name('admin-iku-data-table-bulk');
-        Route::post('{period}/{ikp}/data-table', [IKUController::class, 'addDataTable'])->middleware('editor')->name('admin-iku-data-table');
+        Route::put('{period}/{ikp}/data-table', [AddTableDataIndikatorKinerjaUtamaAdminController::class, 'addBulkData'])->middleware('editor')->name('admin-iku-data-table-bulk');
+        Route::post('{period}/{ikp}/data-table', [AddTableDataIndikatorKinerjaUtamaAdminController::class, 'addData'])->middleware('editor')->name('admin-iku-data-table');
 
-        Route::post('{period}/{ikp}/import', [IKUController::class, 'ikpTableDataImport'])->middleware('editor')->name('admin-iku-data-table-import');
-        Route::get('{ikp}/template', [IKUController::class, 'ikpExcelTemplate'])->middleware('editor')->name('admin-iku-template-download');
+        Route::get('{ikp}/template', [ImportTableDataIndikatorKinerjaUtamaAdminController::class, 'template'])->middleware('editor')->name('admin-iku-template-download');
+        Route::post('{period}/{ikp}/import', [ImportTableDataIndikatorKinerjaUtamaAdminController::class, 'import'])->middleware('editor')->name('admin-iku-data-table-import');
 
-        Route::post('{period}/{ikp}/data-single', [IKUController::class, 'addDataSingle'])->middleware('editor')->name('admin-iku-data-single');
+        Route::post('{period}/{ikp}/data-single', [AddSingleDataIndikatorKinerjaUtamaAdminController::class, 'action'])->middleware('editor')->name('admin-iku-data-single');
 
-        Route::post('{ikp}/year-unit-status', [IKUController::class, 'yearUnitStatusToggle'])->middleware('editor')->name('admin-iku-year-unit-status');
-        Route::post('{period}/{ikp}/unit-status', [IKUController::class, 'unitStatusToggle'])->middleware('editor')->name('admin-iku-unit-status');
-        // Route::get('{ikp}/detail/{achievement}/hapus', [IKUController::class, 'delete'])->middleware('editor');
+        Route::post('{ikp}/year-unit-status', [UpdateUnitStatusIndikatorKinerjaUtamaAdminController::class, 'yearStatusToggle'])->middleware('editor')->name('admin-iku-year-unit-status');
+        Route::post('{period}/{ikp}/unit-status', [UpdateUnitStatusIndikatorKinerjaUtamaAdminController::class, 'statusToggle'])->middleware('editor')->name('admin-iku-unit-status');
     });
 
     Route::prefix('riwayat')->group(function (): void {
@@ -304,8 +311,8 @@ Route::prefix('/')->middleware('admin')->group(function (): void {
         });
 
         Route::prefix('indikator-kinerja-utama')->group(function (): void {
-            Route::get('/', [IKUController::class, 'historyAdmin'])->name('admin-history-iku');
-            Route::get('{ikp}/detail', [IKUController::class, 'historyDetailAdmin'])->name('admin-history-iku-detail');
+            Route::get('/', [HistoryIndikatorKinerjaUtamaAdminController::class, 'view'])->name('admin-history-iku');
+            Route::get('{ikp}/detail', [HistoryIndikatorKinerjaUtamaAdminController::class, 'detailView'])->name('admin-history-iku-detail');
         });
     });
 
