@@ -3,6 +3,7 @@
 // Authentication
 
 use App\Http\Controllers\Admin\RencanaStrategis\AddRencanaStrategisAdminController;
+use App\Http\Controllers\Admin\RencanaStrategis\HistoryRencanaStrategisAdminController;
 use App\Http\Controllers\Admin\RencanaStrategis\HomeRencanaStrategisAdminController;
 use App\Http\Controllers\Authentication\ChangePasswordController;
 use App\Http\Controllers\Authentication\ForgetPasswordController;
@@ -299,7 +300,7 @@ Route::prefix('/')->middleware('admin')->group(function (): void {
         })->name('admin-history');
 
         Route::prefix('rencana-strategis')->group(function (): void {
-            Route::get('/', [RSController::class, 'historyAdmin'])->name('admin-history-rs');
+            Route::get('/', [HistoryRencanaStrategisAdminController::class, 'view'])->name('admin-history-rs');
         });
 
         Route::prefix('indikator-kinerja-utama')->group(function (): void {

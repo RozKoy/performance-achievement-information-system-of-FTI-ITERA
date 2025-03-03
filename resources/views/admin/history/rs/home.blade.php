@@ -5,9 +5,12 @@
             'name' => 'Riwayat Capaian Kinerja - Rencana Strategis',
         ],
     ];
+
+    $ssQuery = request()->query('ss');
+    $kQuery = request()->query('k');
 @endphp
 
-<x-admin-template title="Renstra - Riwayat Capaian Kinerja - {{ auth()->user()->unit->name }}">
+<x-admin-template title="Renstra - Riwayat Capaian Kinerja - {{ $user->unit->name }}">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.filter.achievement />
 
@@ -29,23 +32,23 @@
                 <thead>
                     <tr class="divide-x bg-primary/80 text-white *:whitespace-nowrap *:px-5 *:py-2.5 *:font-normal">
 
-                        @if (request()->query('ss') === 'show')
+                        @if ($ssQuery === 'show')
                             <th title="Nomor">No</th>
                         @endif
 
-                        <th title="{{ request()->query('ss') === 'show' ? 'Sasaran strategis' : 'Tampilkan sasaran strategis?' }}">
+                        <th title="{{ $ssQuery === 'show' ? 'Sasaran strategis' : 'Tampilkan sasaran strategis?' }}">
                             <form action="" method="GET" class="inline">
                                 <x-functions.query-handler :data="['year', 'period', 'status', 'k']" />
-                                <input type="checkbox" name="ss" title="Tampilkan sasaran strategis?" onchange="this.form.submit()" value="{{ request()->query('ss') !== null ? '' : 'show' }}" class="rounded border-2 border-white text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked(request()->query('ss') === 'show')>
+                                <input type="checkbox" name="ss" title="Tampilkan sasaran strategis?" onchange="this.form.submit()" value="{{ $ssQuery !== null ? '' : 'show' }}" class="rounded border-2 border-white text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($ssQuery === 'show')>
                             </form>
-                            {{ request()->query('ss') === 'show' ? 'Sasaran Strategis' : 'SS' }}
+                            {{ $ssQuery === 'show' ? 'Sasaran Strategis' : 'SS' }}
                         </th>
-                        <th title="{{ request()->query('k') === 'show' ? 'Kegiatan' : 'Tampilkan kegiatan?' }}">
+                        <th title="{{ $kQuery === 'show' ? 'Kegiatan' : 'Tampilkan kegiatan?' }}">
                             <form action="" method="GET" class="inline">
                                 <x-functions.query-handler :data="['year', 'period', 'status', 'ss']" />
-                                <input type="checkbox" name="k" title="Tampilkan kegiatan?" onchange="this.form.submit()" value="{{ request()->query('k') !== null ? '' : 'show' }}" class="rounded border-2 border-white text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked(request()->query('k') === 'show')>
+                                <input type="checkbox" name="k" title="Tampilkan kegiatan?" onchange="this.form.submit()" value="{{ $kQuery !== null ? '' : 'show' }}" class="rounded border-2 border-white text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($kQuery === 'show')>
                             </form>
-                            {{ request()->query('k') === 'show' ? 'Kegiatan' : 'K' }}
+                            {{ $kQuery === 'show' ? 'Kegiatan' : 'K' }}
                         </th>
                         <th title="Indikator kinerja">Indikator Kinerja</th>
                         <th title="Target {{ $year }}">Target {{ $year }}</th>
@@ -61,26 +64,39 @@
                             @foreach ($k['indikator_kinerja'] as $ik)
                                 @php
                                     $textSelections = collect($ik['text_selections']);
+
+                                    $textRealization = $textSelections->firstWhere('id', $ik['realization'])['value'] ?? '';
+                                    $textTarget = $textSelections->firstWhere('id', $ik['target'])['value'] ?? '';
+
+                                    $isPercent = $ik['type'] === 'persen';
+                                    $isText = $ik['type'] === 'teks';
                                 @endphp
 
                                 <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
 
                                     @if ($loop->iteration === 1)
                                         @if ($loop->parent->iteration === 1)
-                                            @if (request()->query('ss') === 'show')
+                                            @if ($ssQuery === 'show')
                                                 <td title="{{ $ss['number'] }}" rowspan="{{ $ss['rowspan'] }}">
                                                     {{ $ss['number'] }}
                                                 </td>
+                                                <td title="{{ $ss['ss'] }}" rowspan="{{ $ss['rowspan'] }}" class="w-max min-w-72 text-left">
+                                                    {{ $ss['ss'] }}
+                                                </td>
+                                            @else
+                                                <td title="" rowspan="{{ $ss['rowspan'] }}" class="w-max text-left">
+                                                </td>
                                             @endif
-
-                                            <td title="{{ request()->query('ss') === 'show' ? $ss['ss'] : '' }}" rowspan="{{ $ss['rowspan'] }}" class="{{ request()->query('ss') === 'show' ? 'min-w-72' : '' }} w-max text-left">
-                                                {{ request()->query('ss') === 'show' ? $ss['ss'] : '' }}
-                                            </td>
                                         @endif
 
-                                        <td title="{{ request()->query('k') === 'show' ? $k['k'] : '' }}" rowspan="{{ $k['rowspan'] }}" class="{{ request()->query('k') === 'show' ? 'min-w-72' : '' }} w-max text-left">
-                                            {{ request()->query('k') === 'show' ? $k['k'] : '' }}
-                                        </td>
+                                        @if ($kQuery === 'show')
+                                            <td title="{{ $k['k'] }}" rowspan="{{ $k['rowspan'] }}" class="w-max min-w-72 text-left">
+                                                {{ $k['k'] }}
+                                            </td>
+                                        @else
+                                            <td title="" rowspan="{{ $k['rowspan'] }}" class="w-max text-left">
+                                            </td>
+                                        @endif
                                     @endif
 
                                     <td title="{{ $ik['ik'] }}" class="group relative z-10 w-max min-w-72 text-left">
@@ -90,15 +106,30 @@
                                         </span>
                                     </td>
 
-                                    <td title="{{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $ik['target'])['value'] ?? '' : $ik['target'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}">
-                                        {{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $ik['target'])['value'] ?? '' : $ik['target'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}
+                                    @if ($isText)
+                                        <td title="{{ $textTarget }}">
+                                            {{ $textTarget }}
+                                        </td>
+                                    @else
+                                        <td title="{{ $ik['target'] }}{{ $isPercent && isset($ik['target']) ? '%' : '' }}">
+                                            {{ $ik['target'] }}{{ $isPercent && isset($ik['target']) ? '%' : '' }}
+                                        </td>
+                                    @endif
+
+                                    <td title="{{ $ik['yearRealization'] }}{{ $isPercent && isset($ik['yearRealization']) ? '%' : '' }}">
+                                        {{ $ik['yearRealization'] }}{{ $isPercent && isset($ik['yearRealization']) ? '%' : '' }}
                                     </td>
-                                    <td title="{{ $ik['yearRealization'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}">
-                                        {{ $ik['yearRealization'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}
-                                    </td>
-                                    <td title="{{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $ik['realization'])['value'] ?? '' : $ik['realization'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}">
-                                        {{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $ik['realization'])['value'] ?? '' : $ik['realization'] }}{{ $ik['type'] === 'persen' && isset($ik['realization']) ? '%' : '' }}
-                                    </td>
+
+                                    @if ($isText)
+                                        <td title="{{ $textRealization }}">
+                                            {{ $textRealization }}
+                                        </td>
+                                    @else
+                                        <td title="{{ $ik['realization'] }}{{ $isPercent && isset($ik['realization']) ? '%' : '' }}">
+                                            {{ $ik['realization'] }}{{ $isPercent && isset($ik['realization']) ? '%' : '' }}
+                                        </td>
+                                    @endif
+
                                     <td>
 
                                         @if ($ik['realization'] !== null)
@@ -118,12 +149,12 @@
             </table>
         </div>
 
-        @if (!count($data) && request()->query('status') === null)
+        @if (!count($data) && $statusRequest === null)
             <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data riwayat capaian kinerja</p>
         @endif
 
-        @if (!count($data) && request()->query('status'))
-            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Status : {{ request()->query('status') === 'done' ? 'Sudah diisi' : 'Belum diisi' }}<br>Riwayat capaian kinerja tidak dapat ditemukan</p>
+        @if (!count($data) && $statusRequest)
+            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Status : {{ $statusRequest === 'done' ? 'Sudah diisi' : 'Belum diisi' }}<br>Riwayat capaian kinerja tidak dapat ditemukan</p>
         @endif
     @else
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Riwayat capaian kinerja kosong</p>

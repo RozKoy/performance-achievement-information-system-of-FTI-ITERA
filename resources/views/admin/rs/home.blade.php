@@ -76,6 +76,9 @@
                                     $textRealization = '';
                                     $textTarget = '';
 
+                                    $isPercent = $ik['type'] === 'persen';
+                                    $isText = $ik['type'] === 'teks';
+
                                     foreach ($ik['text_selections'] as $selection) {
                                         $temp = [
                                             'text' => $selection['value'],
@@ -100,16 +103,23 @@
                                                 <td title="{{ $ss['number'] }}" rowspan="{{ $ss['rowspan'] }}">
                                                     {{ $ss['number'] }}
                                                 </td>
+                                                <td title="{{ $ss['ss'] }}" rowspan="{{ $ss['rowspan'] }}" class="w-max min-w-72 text-left">
+                                                    {{ $ss['ss'] }}
+                                                </td>
+                                            @else
+                                                <td title="" rowspan="{{ $ss['rowspan'] }}" class="w-max text-left">
+                                                </td>
                                             @endif
-
-                                            <td title="{{ $ssQuery === 'show' ? $ss['ss'] : '' }}" rowspan="{{ $ss['rowspan'] }}" class="{{ $ssQuery === 'show' ? 'min-w-72' : '' }} w-max text-left">
-                                                {{ $ssQuery === 'show' ? $ss['ss'] : '' }}
-                                            </td>
                                         @endif
 
-                                        <td title="{{ $kQuery === 'show' ? $k['k'] : '' }}" rowspan="{{ $k['rowspan'] }}" class="{{ $kQuery === 'show' ? 'min-w-72' : '' }} w-max text-left">
-                                            {{ $kQuery === 'show' ? $k['k'] : '' }}
-                                        </td>
+                                        @if ($kQuery === 'show')
+                                            <td title="{{ $k['k'] }}" rowspan="{{ $k['rowspan'] }}" class="w-max min-w-72 text-left">
+                                                {{ $k['k'] }}
+                                            </td>
+                                        @else
+                                            <td title="" rowspan="{{ $k['rowspan'] }}" class="w-max text-left">
+                                            </td>
+                                        @endif
                                     @endif
 
                                     <td title="{{ $ik['ik'] }}" class="group relative z-10 w-max min-w-72 text-left">
@@ -119,11 +129,18 @@
                                         </span>
                                     </td>
 
-                                    <td title="{{ $ik['type'] === 'teks' ? $textTarget : $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}">
-                                        {{ $ik['type'] === 'teks' ? $textTarget : $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}
-                                    </td>
-                                    <td title="{{ $ik['yearRealization'] }}{{ $ik['type'] === 'persen' && $ik['yearRealization'] !== null ? '%' : '' }}">
-                                        {{ $ik['yearRealization'] }}{{ $ik['type'] === 'persen' && $ik['yearRealization'] !== null ? '%' : '' }}
+                                    @if ($isText)
+                                        <td title="{{ $textTarget }}">
+                                            {{ $textTarget }}
+                                        </td>
+                                    @else
+                                        <td title="{{ $ik['target'] }}{{ $isPercent && isset($ik['target']) ? '%' : '' }}">
+                                            {{ $ik['target'] }}{{ $isPercent && isset($ik['target']) ? '%' : '' }}
+                                        </td>
+                                    @endif
+
+                                    <td title="{{ $ik['yearRealization'] }}{{ $isPercent && isset($ik['yearRealization']) ? '%' : '' }}">
+                                        {{ $ik['yearRealization'] }}{{ $isPercent && isset($ik['yearRealization']) ? '%' : '' }}
                                     </td>
 
                                     <td>
@@ -131,11 +148,12 @@
                                         @if (isset($ik['realization']))
                                             @php
                                                 $id = $loop->parent->parent->iteration . $loop->parent->iteration . $loop->iteration;
+                                                $realization = $isText ? $textRealization : $ik['realization'];
                                             @endphp
 
                                             <div id="realization-{{ $id }}" class="group relative z-10 flex items-center justify-center gap-1 py-1.5">
-                                                <p title="{{ $ik['type'] === 'teks' ? $textRealization : $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}">
-                                                    {{ $ik['type'] === 'teks' ? $textRealization : $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}
+                                                <p title="{{ $realization }}{{ $isPercent && isset($realization) ? '%' : '' }}">
+                                                    {{ $realization }}{{ $isPercent && isset($realization) ? '%' : '' }}
                                                 </p>
                                                 <a href="{{ $ik['link'] }}" title="Link Bukti" target="__blank" class="text-primary underline">Link Bukti</a>
 
@@ -151,7 +169,7 @@
 
                                                     <div class="mx-auto flex items-start justify-center *:w-full max-lg:flex-wrap">
 
-                                                        @if ($ik['type'] === 'teks')
+                                                        @if ($isText)
                                                             <x-partials.input.select name="realization-{{ $ik['id'] }}" title="realisasi ({{ $ik['type'] }})" :data="$textSelections" />
                                                         @else
                                                             <x-partials.input.text name="realization-{{ $ik['id'] }}" title="realisasi ({{ $ik['type'] }})" value="{{ $ik['realization'] }}" />
@@ -172,7 +190,7 @@
 
                                                     <div class="mx-auto flex items-start justify-center *:w-full max-lg:flex-wrap">
 
-                                                        @if ($ik['type'] === 'teks')
+                                                        @if ($isText)
                                                             <x-partials.input.select name="realization-{{ $ik['id'] }}" title="realisasi ({{ $ik['type'] }})" :data="$textSelections" />
                                                         @else
                                                             <x-partials.input.text name="realization-{{ $ik['id'] }}" title="realisasi ({{ $ik['type'] }})" required />

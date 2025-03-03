@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Admin\RencanaStrategis;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Contracts\View\Factory;
 use App\Http\Controllers\Controller;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Carbon;
-use Illuminate\Http\Request;
 use App\Models\RSPeriod;
 use App\Models\RSYear;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
-class HomeRencanaStrategisAdminController extends Controller
+class HistoryRencanaStrategisAdminController extends Controller
 {
     protected $adminStatus = [
         [
@@ -29,10 +29,6 @@ class HomeRencanaStrategisAdminController extends Controller
         ],
     ];
 
-    /**
-     * @param \Illuminate\Http\Request $request
-     * @return Factory|View
-     */
     public function view(Request $request): Factory|View
     {
         $statusRequest = $request->query('status');
@@ -58,15 +54,10 @@ class HomeRencanaStrategisAdminController extends Controller
         $badge = [];
         $data = [];
 
-        $periodId = '';
-
-        $doneCount = 0;
-        $allCount = 0;
-
         $statusIndex = 0;
-        if ($statusRequest === 'undone') {
+        if ($request->status === 'undone') {
             $statusIndex = 1;
-        } else if ($statusRequest === 'done') {
+        } else if ($request->status === 'done') {
             $statusIndex = 2;
         }
         $status[$statusIndex] = [
@@ -80,16 +71,9 @@ class HomeRencanaStrategisAdminController extends Controller
         $currentPeriod = $currentMonth <= 6 ? '1' : '2';
         $currentYear = $currentDate->format('Y');
 
-        $years = RSPeriod::where('status', true)
-            ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear): void {
-                $query->where('period', $currentPeriod)
-                    ->whereHas('year', function (Builder $query) use ($currentYear): void {
-                        $query->where('year', $currentYear);
-                    });
-            })
+        $years = RSPeriod::where('status', false)
             ->withAggregate('year AS year', 'year')
             ->orderBy('year')
-            ->get()
             ->pluck('year')
             ->flatten()
             ->unique()
@@ -100,15 +84,11 @@ class HomeRencanaStrategisAdminController extends Controller
             $yearInstance = RSYear::where('year', $year)->firstOrFail();
 
             $periods = $yearInstance->periods()
-                ->where('status', true)
-                ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear): void {
-                    $query->where('period', $currentPeriod)
-                        ->whereHas('year', function (Builder $query) use ($currentYear): void {
-                            $query->where('year', $currentYear);
-                        });
-                })
+                ->where('status', false)
                 ->orderBy('period')
                 ->pluck('period')
+                ->flatten()
+                ->unique()
                 ->map(function ($item): array {
                     return [
                         'title' => $item === '1' ? 'Januari - Juni' : 'Juli - Desember',
@@ -123,15 +103,9 @@ class HomeRencanaStrategisAdminController extends Controller
 
             $period = $periodRequest ?? end($periods)['value'];
 
-            $periodInstance = RSPeriod::where('status', true)
+            $periodInstance = RSPeriod::where('status', false)
                 ->where('year_id', $yearInstance->id)
                 ->where('period', $period)
-                ->whereHas('deadline', function (Builder $query) use ($currentPeriod, $currentYear): void {
-                    $query->where('period', $currentPeriod)
-                        ->whereHas('year', function (Builder $query) use ($currentYear): void {
-                            $query->where('year', $currentYear);
-                        });
-                })
                 ->firstOrFail();
 
             $data = $yearInstance->sasaranStrategis()
@@ -214,7 +188,7 @@ class HomeRencanaStrategisAdminController extends Controller
                             ])
                             ->withAggregate([
                                 'realization AS yearRealization' => function (Builder $query) use ($user): void {
-                                    $query->whereBelongsTo($user->unit)
+                                    $query->whereBelongsTo(related: $user->unit)
                                         ->whereDoesntHave('period');
                                 }
                             ], 'realization')
@@ -236,7 +210,7 @@ class HomeRencanaStrategisAdminController extends Controller
                                 }
                             ], 'target');
                     },
-                    'kegiatan.indikatorKinerja.textSelections',
+                    'kegiatan.indikatorKinerja.textSelections'
                 ])
                 ->orderBy('number')
                 ->select([
@@ -263,37 +237,14 @@ class HomeRencanaStrategisAdminController extends Controller
                 ->get()
                 ->toArray();
 
-            $allData = $yearInstance->sasaranStrategis()
-                ->withCount([
-                    'indikatorKinerja AS all' => function (Builder $query): void {
-                        $query->where('status', 'aktif');
-                    },
-                    'indikatorKinerja AS done' => function (Builder $query) use ($periodInstance, $user): void {
-                        $query->where('status', 'aktif')
-                            ->whereHas('realization', function (Builder $query) use ($periodInstance, $user): void {
-                                $query->whereBelongsTo($user->unit)
-                                    ->whereBelongsTo($periodInstance, 'period');
-                            });
-                    },
-                ])
-                ->get();
-
-            $doneCount = $allData->sum('done');
-            $allCount = $allData->sum('all');
-
             $badge = [
                 $period === '1' ? 'Januari - Juni' : 'Juli - Desember',
                 $year
             ];
-
-            $periodId = $periodInstance->id;
         }
 
-        return view('admin.rs.home', compact([
+        return view('admin.history.rs.home', compact([
             'statusRequest',
-            'doneCount',
-            'allCount',
-            'periodId',
             'periods',
             'period',
             'status',
