@@ -68,8 +68,8 @@
                                     $textRealization = $textSelections->firstWhere('id', $ik['realization'])['value'] ?? '';
                                     $textTarget = $textSelections->firstWhere('id', $ik['target'])['value'] ?? '';
 
-                                    $isPercent = $ik['type'] === 'persen';
-                                    $isText = $ik['type'] === 'teks';
+                                    $isPercent = $ik['type'] === \App\Models\IndikatorKinerja::TYPE_PERCENT;
+                                    $isText = $ik['type'] === \App\Models\IndikatorKinerja::TYPE_TEXT;
                                 @endphp
 
                                 <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">

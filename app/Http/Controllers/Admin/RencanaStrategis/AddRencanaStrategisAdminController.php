@@ -59,11 +59,11 @@ class AddRencanaStrategisAdminController extends Controller
             return _ControllerHelpers::BackWithInputWithErrors(["link-$ikId" => 'Link bukti wajib diisi']);
         }
 
-        if ($realization !== null && !is_numeric($realization) && ($ik->type === 'persen' || $ik->type === 'angka')) {
+        if ($realization !== null && !is_numeric($realization) && ($ik->type === IndikatorKinerja::TYPE_PERCENT || $ik->type === IndikatorKinerja::TYPE_NUMBER)) {
             return _ControllerHelpers::BackWithInputWithErrors(["realization-$ikId" => 'Realisasi tidak sesuai dengan tipe data']);
         }
 
-        if ($ik->type !== 'teks' && $realization !== null) {
+        if ($ik->type !== IndikatorKinerja::TYPE_TEXT && $realization !== null) {
             $realization = (float) $realization;
             if ($realization < 0) {
                 $realization *= -1;
@@ -71,7 +71,7 @@ class AddRencanaStrategisAdminController extends Controller
             if (!ctype_digit((string) $realization)) {
                 $realization = number_format($realization, 2);
             }
-        } else if ($ik->type === 'teks' && $realization !== null) {
+        } else if ($ik->type === IndikatorKinerja::TYPE_TEXT && $realization !== null) {
             $selectionExists = $ik->textSelections()->find($realization);
             if ($selectionExists === null) {
                 return _ControllerHelpers::BackWithInputWithErrors(["realization-$ikId" => 'Pilihan tidak dapat ditemukan']);
@@ -115,7 +115,7 @@ class AddRencanaStrategisAdminController extends Controller
             $achievement->forceDelete();
         }
 
-        if ($ik->type !== 'teks') {
+        if ($ik->type !== IndikatorKinerja::TYPE_TEXT) {
             foreach ([$allAchievement, $periodAchievement, $unitAchievement] as $instance) {
                 $all = RSAchievement::whereBelongsTo($ik)
                     ->where(function (Builder $query) use ($instance, $user): void {
@@ -132,7 +132,7 @@ class AddRencanaStrategisAdminController extends Controller
                     })
                     ->get();
 
-                $sum = $ik->type === 'angka' ? $all->sum('realization') : $all->average('realization');
+                $sum = $ik->type === IndikatorKinerja::TYPE_NUMBER ? $all->sum('realization') : $all->average('realization');
 
                 if (!ctype_digit((string) $sum)) {
                     $sum = number_format($sum, 2);
@@ -146,7 +146,7 @@ class AddRencanaStrategisAdminController extends Controller
         $evaluation = $ik->evaluation;
 
         if ($evaluation) {
-            if ($ik->type === 'teks') {
+            if ($ik->type === IndikatorKinerja::TYPE_TEXT) {
                 $unexpectedCount = RSAchievement::whereNotNull('unit_id')
                     ->whereBelongsTo($period, 'period')
                     ->whereBelongsTo($ik)

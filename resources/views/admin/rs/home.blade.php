@@ -76,8 +76,8 @@
                                     $textRealization = '';
                                     $textTarget = '';
 
-                                    $isPercent = $ik['type'] === 'persen';
-                                    $isText = $ik['type'] === 'teks';
+                                    $isPercent = $ik['type'] === \App\Models\IndikatorKinerja::TYPE_PERCENT;
+                                    $isText = $ik['type'] === \App\Models\IndikatorKinerja::TYPE_TEXT;
 
                                     foreach ($ik['text_selections'] as $selection) {
                                         $temp = [
