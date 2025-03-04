@@ -68,7 +68,7 @@ class CreateSasaranStrategisSuperAdminController extends Controller
 
             DB::commit();
 
-            return _ControllerHelpers::RedirectWithRoute('super-admin-rs-ss');
+            return _ControllerHelpers::RedirectWithRoute('super-admin-rs-ss')->with('success', 'Berhasil menambahkan sasaran strategis');
         } catch (\Exception $e) {
             DB::rollBack();
 

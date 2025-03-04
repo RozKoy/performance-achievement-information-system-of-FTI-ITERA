@@ -143,4 +143,8 @@
             <p>Copyright &copy; {{ \Carbon\Carbon::now()->format('Y') }} Fakultas Teknologi Industri - ITERA</p>
         </footer>
     </div>
+
+    @pushIf($errors->has('error'), 'notification')
+    <x-partials.toast.default id="login-error" message="{{ $errors->get('error')[0] ?? 'Gagal' }}" withTimeout danger />
+    @endPushIf
 @endsection

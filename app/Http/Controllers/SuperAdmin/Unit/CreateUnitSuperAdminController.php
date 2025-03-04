@@ -61,6 +61,6 @@ class CreateUnitSuperAdminController extends Controller
             }
         }
 
-        return _ControllerHelpers::RedirectWithRoute('super-admin-unit');
+        return _ControllerHelpers::RedirectWithRoute('super-admin-unit')->with('success', 'Berhasil menambahkan unit');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Requests\IndikatorKinerja;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Traits\RequestErrorMessage;
+use App\Models\IndikatorKinerja;
 
 class AddRequest extends FormRequest
 {
@@ -25,8 +26,8 @@ class AddRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'type' => ['bail', 'required', 'in:' . implode(',', IndikatorKinerja::getTypeValues())],
             'number' => ['bail', 'required', 'numeric', 'integer', 'min:1', 'max_digits:10'],
-            'type' => ['bail', 'required', 'in:persen,angka,teks'],
             'name' => ['bail', 'required', 'string', 'max:65000'],
             'selection.*' => ['bail', 'string', 'max:255'],
             'selection' => ['bail', 'nullable', 'array'],

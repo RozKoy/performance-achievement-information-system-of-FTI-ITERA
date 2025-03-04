@@ -17,6 +17,6 @@ class DeleteUserSuperAdminController extends Controller
     {
         $user->forceDelete();
 
-        return _ControllerHelpers::Back();
+        return _ControllerHelpers::Back()->with('success', 'Berhasil menghapus data pengguna');
     }
 }

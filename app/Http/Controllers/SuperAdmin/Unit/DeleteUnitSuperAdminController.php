@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\SuperAdmin\Unit;
 
+use App\Http\Controllers\_ControllerHelpers;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Models\IKUYear;
@@ -91,6 +92,6 @@ class DeleteUnitSuperAdminController extends Controller
             $unit->delete();
         }
 
-        return back();
+        return _ControllerHelpers::Back()->with('success', 'Berhasil menghapus unit');
     }
 }

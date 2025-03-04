@@ -79,7 +79,7 @@ class CreateKegiatanSuperAdminController extends Controller
 
             DB::commit();
 
-            return _ControllerHelpers::RedirectWithRoute('super-admin-rs-k', ['ss' => $ss->id]);
+            return _ControllerHelpers::RedirectWithRoute('super-admin-rs-k', ['ss' => $ss->id])->with('success', 'Berhasil menambahkan kegiatan');
         } catch (\Exception $e) {
             DB::rollBack();
 

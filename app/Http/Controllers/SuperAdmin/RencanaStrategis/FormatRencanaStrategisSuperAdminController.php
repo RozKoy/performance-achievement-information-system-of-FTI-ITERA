@@ -117,7 +117,7 @@ class FormatRencanaStrategisSuperAdminController extends Controller
             IndikatorKinerjaTextSelection::insert($ikTextSelectionInsertData);
         }
 
-        return _ControllerHelpers::Back();
+        return _ControllerHelpers::Back()->with('success', 'Berhasil menduplikasi format rencana strategis');
     }
 
     /**
@@ -131,6 +131,6 @@ class FormatRencanaStrategisSuperAdminController extends Controller
             $request->file('file')
         );
 
-        return _ControllerHelpers::Back();
+        return _ControllerHelpers::Back()->with('success', 'Berhasil import format rencana strategis');
     }
 }

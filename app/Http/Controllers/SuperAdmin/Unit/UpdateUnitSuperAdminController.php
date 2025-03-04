@@ -88,6 +88,6 @@ class UpdateUnitSuperAdminController extends Controller
             $user->save();
         }
 
-        return _ControllerHelpers::RedirectWithRoute('super-admin-unit');
+        return _ControllerHelpers::RedirectWithRoute('super-admin-unit')->with('success', 'Berhasil memperbaharui unit');
     }
 }

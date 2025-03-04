@@ -108,11 +108,11 @@ class UpdateKegiatanSuperAdminController extends Controller
             DB::commit();
 
             if ($ss->time->year === Carbon::now()->format('Y')) {
-                return _ControllerHelpers::RedirectWithRoute('super-admin-rs-k', ['ss' => $ss->id]);
+                return _ControllerHelpers::RedirectWithRoute('super-admin-rs-k', ['ss' => $ss->id])->with('success', 'Berhasil memperbaharui kegiatan');
             }
             return _ControllerHelpers::RedirectWithRoute('super-admin-achievement-rs', [
                 'year' => $ss->time->year
-            ]);
+            ])->with('success', 'Berhasil memperbaharui kegiatan');
         } catch (\Exception $e) {
             DB::rollBack();
 

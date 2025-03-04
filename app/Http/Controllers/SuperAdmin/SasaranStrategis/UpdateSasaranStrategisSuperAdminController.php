@@ -93,11 +93,11 @@ class UpdateSasaranStrategisSuperAdminController extends Controller
             DB::commit();
 
             if ($time->year === Carbon::now()->format('Y')) {
-                return _ControllerHelpers::RedirectWithRoute('super-admin-rs-ss');
+                return _ControllerHelpers::RedirectWithRoute('super-admin-rs-ss')->with('success', 'Berhasil memperbaharui sasaran strategis');
             } else {
                 return _ControllerHelpers::RedirectWithRoute('super-admin-achievement-rs', [
                     'year' => $time->year
-                ]);
+                ])->with('success', 'Berhasil memperbaharui sasaran strategis');
             }
         } catch (\Exception $e) {
             DB::rollBack();

@@ -25,7 +25,6 @@ use App\Http\Controllers\Admin\User\HomeUserAdminController;
 
 use App\Http\Controllers\IndikatorKinerjaKegiatanController;
 use App\Http\Controllers\IndikatorKinerjaProgramController;
-use App\Http\Controllers\IndikatorKinerjaController;
 use App\Http\Controllers\ProgramStrategisController;
 use App\Http\Controllers\SasaranKegiatanController;
 use App\Http\Controllers\DashboardController;
@@ -43,6 +42,11 @@ use App\Http\Controllers\SuperAdmin\Kegiatan\CreateKegiatanSuperAdminController;
 use App\Http\Controllers\SuperAdmin\Kegiatan\DeleteKegiatanSuperAdminController;
 use App\Http\Controllers\SuperAdmin\Kegiatan\UpdateKegiatanSuperAdminController;
 use App\Http\Controllers\SuperAdmin\Kegiatan\HomeKegiatanSuperAdminController;
+// Indikator Kinerja - Rencana Strategis - Super Admin
+use App\Http\Controllers\SuperAdmin\IndikatorKinerja\CreateIndikatorKinerjaSuperAdminController;
+use App\Http\Controllers\SuperAdmin\IndikatorKinerja\DeleteIndikatorKinerjaSuperAdminController;
+use App\Http\Controllers\SuperAdmin\IndikatorKinerja\UpdateIndikatorKinerjaSuperAdminController;
+use App\Http\Controllers\SuperAdmin\IndikatorKinerja\HomeIndikatorKinerjaSuperAdminController;
 // User - Super Admin
 use App\Http\Controllers\SuperAdmin\User\CreateUserSuperAdminController;
 use App\Http\Controllers\SuperAdmin\User\DeleteUserSuperAdminController;
@@ -175,18 +179,18 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
         });
 
         Route::prefix('{ss}/{k}/indikator-kinerja')->group(function ($route): void {
-            Route::get('/', [IndikatorKinerjaController::class, 'homeView'])->name('super-admin-rs-ik');
+            Route::get('/', [HomeIndikatorKinerjaSuperAdminController::class, 'view'])->name('super-admin-rs-ik');
 
             Route::middleware('editor')->group(function (): void {
-                Route::get('tambah', [IndikatorKinerjaController::class, 'addView'])->name('super-admin-rs-ik-add');
-                Route::post('tambah', [IndikatorKinerjaController::class, 'add']);
+                Route::get('tambah', [CreateIndikatorKinerjaSuperAdminController::class, 'view'])->name('super-admin-rs-ik-add');
+                Route::post('tambah', [CreateIndikatorKinerjaSuperAdminController::class, 'action']);
 
-                Route::get('{ik}/ubah', [IndikatorKinerjaController::class, 'editView'])->name('super-admin-rs-ik-edit');
-                Route::put('{ik}/ubah', [IndikatorKinerjaController::class, 'edit']);
+                Route::get('{ik}/ubah', [UpdateIndikatorKinerjaSuperAdminController::class, 'view'])->name('super-admin-rs-ik-edit');
+                Route::put('{ik}/ubah', [UpdateIndikatorKinerjaSuperAdminController::class, 'action']);
 
-                Route::get('{ik}/status', [IndikatorKinerjaController::class, 'statusToggle'])->name('super-admin-rs-ik-status');
+                Route::get('{ik}/status', [UpdateIndikatorKinerjaSuperAdminController::class, 'statusToggle'])->name('super-admin-rs-ik-status');
 
-                Route::get('{ik}/hapus', [IndikatorKinerjaController::class, 'delete']);
+                Route::get('{ik}/hapus', [DeleteIndikatorKinerjaSuperAdminController::class, 'action']);
             });
         });
     });

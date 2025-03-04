@@ -25,7 +25,7 @@ class DeleteSasaranStrategisSuperAdminController extends Controller
 
             DB::commit();
 
-            return _ControllerHelpers::Back();
+            return _ControllerHelpers::Back()->with('success', 'Berhasil menghapus sasaran strategis');
         } catch (\Exception $e) {
             DB::rollBack();
 

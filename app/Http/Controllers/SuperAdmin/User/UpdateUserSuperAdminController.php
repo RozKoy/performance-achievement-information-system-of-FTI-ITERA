@@ -102,7 +102,7 @@ class UpdateUserSuperAdminController extends Controller
 
             DB::commit();
 
-            return _ControllerHelpers::RedirectWithRoute('super-admin-users');
+            return _ControllerHelpers::RedirectWithRoute('super-admin-users')->with('success', 'Berhasil memperbaharui data pengguna');
         } catch (\Exception $e) {
             DB::rollBack();
 

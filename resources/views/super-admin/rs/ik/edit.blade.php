@@ -78,7 +78,7 @@
             </div>
         </div>
 
-        @if ($ik['type'] === 'teks')
+        @if ($ik['type'] === \App\Models\IndikatorKinerja::TYPE_TEXT)
             <div class="flex flex-col gap-3 rounded-lg border-2 border-dashed border-primary p-3 text-primary">
                 <p>Pilihan</p>
                 @if (count($ik['textSelections']))

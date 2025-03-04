@@ -82,7 +82,7 @@ class CreateUserSuperAdminController extends Controller
 
             DB::commit();
 
-            return _ControllerHelpers::RedirectWithRoute('super-admin-users');
+            return _ControllerHelpers::RedirectWithRoute('super-admin-users')->with('success', 'Berhasil menambahkan pengguna');
         } catch (\Exception $e) {
             DB::rollBack();
 
