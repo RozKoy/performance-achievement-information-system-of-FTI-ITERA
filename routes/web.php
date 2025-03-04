@@ -31,14 +31,18 @@ use App\Http\Controllers\SasaranStrategisController;
 use App\Http\Controllers\SasaranKegiatanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KegiatanController;
-use App\Http\Controllers\UsersController;
 use App\Http\Controllers\IKUController;
 use App\Http\Controllers\RSController;
+// User - Super Admin
+use App\Http\Controllers\SuperAdmin\User\CreateUserSuperAdminController;
+use App\Http\Controllers\SuperAdmin\User\DeleteUserSuperAdminController;
+use App\Http\Controllers\SuperAdmin\User\UpdateUserSuperAdminController;
+use App\Http\Controllers\SuperAdmin\User\HomeUserSuperAdminController;
 // Unit - Super Admin
 use App\Http\Controllers\SuperAdmin\Unit\CreateUnitSuperAdminController;
 use App\Http\Controllers\SuperAdmin\Unit\DeleteUnitSuperAdminController;
-use App\Http\Controllers\SuperAdmin\Unit\HomeUnitSuperAdminController;
 use App\Http\Controllers\SuperAdmin\Unit\UpdateUnitSuperAdminController;
+use App\Http\Controllers\SuperAdmin\Unit\HomeUnitSuperAdminController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -247,15 +251,15 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
 
 
     Route::prefix('pengguna')->middleware('editor')->group(function (): void {
-        Route::get('/', [UsersController::class, 'homeView'])->name('super-admin-users');
+        Route::get('/', [HomeUserSuperAdminController::class, 'view'])->name('super-admin-users');
 
-        Route::get('tambah', [UsersController::class, 'addView'])->name('super-admin-users-add');
-        Route::post('tambah', [UsersController::class, 'add']);
+        Route::get('tambah', [CreateUserSuperAdminController::class, 'view'])->name('super-admin-users-add');
+        Route::post('tambah', [CreateUserSuperAdminController::class, 'action']);
 
-        Route::get('{user}/ubah', [UsersController::class, 'editView'])->name('super-admin-users-edit');
-        Route::put('{user}/ubah', [UsersController::class, 'edit']);
+        Route::get('{user}/ubah', [UpdateUserSuperAdminController::class, 'view'])->name('super-admin-users-edit');
+        Route::put('{user}/ubah', [UpdateUserSuperAdminController::class, 'action']);
 
-        Route::get('{user}/hapus', [UsersController::class, 'delete']);
+        Route::get('{user}/hapus', [DeleteUserSuperAdminController::class, 'action']);
     });
 
 
