@@ -878,21 +878,6 @@ class RSController extends Controller
     }
 
     /**
-     * RS excel import function 
-     * @param \App\Http\Requests\RencanaStrategis\ImportRequest $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function RSImport(ImportRequest $request): RedirectResponse
-    {
-        Excel::import(
-            new RencanaStrategisSheets,
-            $request->file('file')
-        );
-
-        return back();
-    }
-
-    /**
      * RS excel download function 
      * @param \Illuminate\Http\Request $request
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse

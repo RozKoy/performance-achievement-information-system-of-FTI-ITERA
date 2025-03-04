@@ -31,6 +31,11 @@ class IndikatorKinerja extends Model
         'kegiatan_id',
     ];
 
+    // 'type' values
+    public const TYPE_PERCENT = 'persen';
+    public const TYPE_NUMBER = 'angka';
+    public const TYPE_TEXT = 'teks';
+
 
     /*
     | -----------------------------------------------------------------
@@ -83,6 +88,15 @@ class IndikatorKinerja extends Model
     | FUNCTION
     | -----------------------------------------------------------------
     */
+
+    public static function getTypeValues(): array
+    {
+        return [
+            self::TYPE_PERCENT,
+            self::TYPE_NUMBER,
+            self::TYPE_TEXT,
+        ];
+    }
 
     public function deleteOrTrashed(): void
     {

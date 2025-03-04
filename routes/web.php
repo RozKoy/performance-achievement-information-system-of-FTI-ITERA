@@ -27,12 +27,18 @@ use App\Http\Controllers\IndikatorKinerjaKegiatanController;
 use App\Http\Controllers\IndikatorKinerjaProgramController;
 use App\Http\Controllers\IndikatorKinerjaController;
 use App\Http\Controllers\ProgramStrategisController;
-use App\Http\Controllers\SasaranStrategisController;
 use App\Http\Controllers\SasaranKegiatanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\IKUController;
 use App\Http\Controllers\RSController;
+// Rencana Strategis - Super Admin
+use App\Http\Controllers\SuperAdmin\RencanaStrategis\FormatRencanaStrategisSuperAdminController;
+// Sasaran Strategis - Rencana Strategis - Super Admin
+use App\Http\Controllers\SuperAdmin\SasaranStrategis\CreateSasaranStrategisSuperAdminController;
+use App\Http\Controllers\SuperAdmin\SasaranStrategis\DeleteSasaranStrategisSuperAdminController;
+use App\Http\Controllers\SuperAdmin\SasaranStrategis\UpdateSasaranStrategisSuperAdminController;
+use App\Http\Controllers\SuperAdmin\SasaranStrategis\HomeSasaranStrategisSuperAdminController;
 // User - Super Admin
 use App\Http\Controllers\SuperAdmin\User\CreateUserSuperAdminController;
 use App\Http\Controllers\SuperAdmin\User\DeleteUserSuperAdminController;
@@ -131,21 +137,22 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
             return redirect()->route('super-admin-rs-ss');
         })->name('super-admin-rs');
 
-        Route::post('import-excel', [RSController::class, 'RSImport'])->middleware('editor')->name('super-admin-rs-import');
+        Route::middleware('editor')->group(function (): void {
+            Route::post('duplicate', [FormatRencanaStrategisSuperAdminController::class, 'duplicate'])->name('super-admin-rs-duplicate');
+            Route::post('import-excel', [FormatRencanaStrategisSuperAdminController::class, 'import'])->name('super-admin-rs-import');
+        });
 
         Route::prefix('sasaran-strategis')->group(function (): void {
-            Route::get('/', [SasaranStrategisController::class, 'homeView'])->name('super-admin-rs-ss');
+            Route::get('/', [HomeSasaranStrategisSuperAdminController::class, 'view'])->name('super-admin-rs-ss');
 
             Route::middleware('editor')->group(function (): void {
-                Route::get('tambah', [SasaranStrategisController::class, 'addView'])->name('super-admin-rs-ss-add');
-                Route::post('tambah', [SasaranStrategisController::class, 'add']);
+                Route::get('tambah', [CreateSasaranStrategisSuperAdminController::class, 'view'])->name('super-admin-rs-ss-add');
+                Route::post('tambah', [CreateSasaranStrategisSuperAdminController::class, 'action']);
 
-                Route::get('{ss}/ubah', [SasaranStrategisController::class, 'editView'])->name('super-admin-rs-ss-edit');
-                Route::put('{ss}/ubah', [SasaranStrategisController::class, 'edit']);
+                Route::get('{ss}/ubah', [UpdateSasaranStrategisSuperAdminController::class, 'view'])->name('super-admin-rs-ss-edit');
+                Route::put('{ss}/ubah', [UpdateSasaranStrategisSuperAdminController::class, 'action']);
 
-                Route::get('{id}/hapus', [SasaranStrategisController::class, 'delete']);
-
-                Route::post('duplicate', [SasaranStrategisController::class, 'duplicateFormat'])->name('super-admin-rs-duplicate');
+                Route::get('{id}/hapus', [DeleteSasaranStrategisSuperAdminController::class, 'action']);
             });
         });
 

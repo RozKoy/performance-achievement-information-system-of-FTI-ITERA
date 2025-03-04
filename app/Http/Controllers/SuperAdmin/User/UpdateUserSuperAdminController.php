@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\DB;
 use App\Models\Unit;
 use App\Models\User;
 
@@ -94,8 +95,18 @@ class UpdateUserSuperAdminController extends Controller
             }
         }
 
-        $user->save();
+        DB::beginTransaction();
 
-        return _ControllerHelpers::RedirectWithRoute('super-admin-users');
+        try {
+            $user->save();
+
+            DB::commit();
+
+            return _ControllerHelpers::RedirectWithRoute('super-admin-users');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return _ControllerHelpers::BackWithInputWithErrors(['error' => $e->getMessage()]);
+        }
     }
 }
