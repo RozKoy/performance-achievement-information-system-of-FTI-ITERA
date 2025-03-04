@@ -29,7 +29,6 @@ use App\Http\Controllers\IndikatorKinerjaController;
 use App\Http\Controllers\ProgramStrategisController;
 use App\Http\Controllers\SasaranKegiatanController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\IKUController;
 use App\Http\Controllers\RSController;
 // Rencana Strategis - Super Admin
@@ -39,6 +38,11 @@ use App\Http\Controllers\SuperAdmin\SasaranStrategis\CreateSasaranStrategisSuper
 use App\Http\Controllers\SuperAdmin\SasaranStrategis\DeleteSasaranStrategisSuperAdminController;
 use App\Http\Controllers\SuperAdmin\SasaranStrategis\UpdateSasaranStrategisSuperAdminController;
 use App\Http\Controllers\SuperAdmin\SasaranStrategis\HomeSasaranStrategisSuperAdminController;
+// Kegiatan - Rencana Strategis - Super Admin
+use App\Http\Controllers\SuperAdmin\Kegiatan\CreateKegiatanSuperAdminController;
+use App\Http\Controllers\SuperAdmin\Kegiatan\DeleteKegiatanSuperAdminController;
+use App\Http\Controllers\SuperAdmin\Kegiatan\UpdateKegiatanSuperAdminController;
+use App\Http\Controllers\SuperAdmin\Kegiatan\HomeKegiatanSuperAdminController;
 // User - Super Admin
 use App\Http\Controllers\SuperAdmin\User\CreateUserSuperAdminController;
 use App\Http\Controllers\SuperAdmin\User\DeleteUserSuperAdminController;
@@ -157,16 +161,16 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
         });
 
         Route::prefix('{ss}/kegiatan')->group(function ($route): void {
-            Route::get('/', [KegiatanController::class, 'homeView'])->name('super-admin-rs-k');
+            Route::get('/', [HomeKegiatanSuperAdminController::class, 'view'])->name('super-admin-rs-k');
 
             Route::middleware('editor')->group(function (): void {
-                Route::get('tambah', [KegiatanController::class, 'addView'])->name('super-admin-rs-k-add');
-                Route::post('tambah', [KegiatanController::class, 'add']);
+                Route::get('tambah', [CreateKegiatanSuperAdminController::class, 'view'])->name('super-admin-rs-k-add');
+                Route::post('tambah', [CreateKegiatanSuperAdminController::class, 'action']);
 
-                Route::get('{k}/ubah', [KegiatanController::class, 'editView'])->name('super-admin-rs-k-edit');
-                Route::put('{k}/ubah', [KegiatanController::class, 'edit']);
+                Route::get('{k}/ubah', [UpdateKegiatanSuperAdminController::class, 'view'])->name('super-admin-rs-k-edit');
+                Route::put('{k}/ubah', [UpdateKegiatanSuperAdminController::class, 'action']);
 
-                Route::get('{k}/hapus', [KegiatanController::class, 'delete']);
+                Route::get('{k}/hapus', [DeleteKegiatanSuperAdminController::class, 'action']);
             });
         });
 
