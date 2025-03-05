@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\SuperAdmin\SasaranKegiatan;
+namespace App\Http\Controllers\SuperAdmin\IndikatorKinerjaKegiatan;
 
-use App\Http\Requests\SasaranKegiatan\EditRequest;
+use App\Http\Requests\IndikatorKinerjaKegiatan\EditRequest;
 use App\Http\Controllers\_ControllerHelpers;
+use App\Models\IndikatorKinerjaKegiatan;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
@@ -12,15 +13,20 @@ use Illuminate\Support\Facades\DB;
 use App\Models\SasaranKegiatan;
 use Illuminate\Support\Carbon;
 
-class UpdateSasaranKegiatanSuperAdminController extends Controller
+class UpdateIndikatorKinerjaKegiatanSuperAdminController extends Controller
 {
     /**
      * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
      * @return Factory|View
      */
-    public function view(SasaranKegiatan $sk): Factory|View
+    public function view(SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk): Factory|View
     {
-        $count = $sk->time->sasaranKegiatan->count();
+        if ($sk->id !== $ikk->sasaranKegiatan->id) {
+            abort(404);
+        }
+
+        $count = $sk->indikatorKinerjaKegiatan->count();
 
         $data = [];
         for ($i = 0; $i < $count; $i++) {
@@ -29,73 +35,82 @@ class UpdateSasaranKegiatanSuperAdminController extends Controller
                 "text" => strval($i + 1),
             ];
         }
-        $data[$sk->number - 1] = [
-            ...$data[$sk->number - 1],
+        $data[$ikk->number - 1] = [
+            ...$data[$ikk->number - 1],
             'selected' => true,
         ];
 
-        $previousRoute = route('super-admin-iku-sk');
+        $previousRoute = route('super-admin-iku-ikk', ['sk' => $sk->id]);
         if ($sk->time->year !== Carbon::now()->format('Y')) {
             $previousRoute = route('super-admin-achievement-iku', ['year' => $sk->time->year]);
         }
 
         $sk = $sk->only([
+            'number',
+            'name',
+            'id',
+        ]);
+        $ikk = $ikk->only([
             'name',
             'id',
         ]);
 
-        return view('super-admin.iku.sk.edit', compact([
+        return view('super-admin.iku.ikk.edit', compact([
             'previousRoute',
             'data',
+            'ikk',
             'sk',
         ]));
     }
 
     /**
-     * @param \App\Http\Requests\SasaranKegiatan\EditRequest $request
+     * @param \App\Http\Requests\IndikatorKinerjaKegiatan\EditRequest $request
      * @param \App\Models\SasaranKegiatan $sk
+     * @param \App\Models\IndikatorKinerjaKegiatan $ikk
      * @return RedirectResponse
      */
-    public function action(EditRequest $request, SasaranKegiatan $sk): RedirectResponse
+    public function action(EditRequest $request, SasaranKegiatan $sk, IndikatorKinerjaKegiatan $ikk): RedirectResponse
     {
-        $time = $sk->time;
+        if ($sk->id !== $ikk->sasaranKegiatan->id) {
+            abort(404);
+        }
 
         $number = (int) $request['number'];
-        if ($number > $time->sasaranKegiatan->count()) {
+        if ($number > $sk->indikatorKinerjaKegiatan->count()) {
             return _ControllerHelpers::BackWithInputWithErrors(['number' => 'Nomor tidak sesuai dengan jumlah data']);
         }
 
         DB::beginTransaction();
 
         try {
-            $currentNumber = $sk->number;
+            $currentNumber = $ikk->number;
             if ($number !== $currentNumber) {
-                $sk->number = $number;
+                $ikk->number = $number;
 
                 if ($number < $currentNumber) {
-                    $time->sasaranKegiatan()
+                    $sk->indikatorKinerjaKegiatan()
                         ->where('number', '>=', $number)
                         ->where('number', '<', $currentNumber)
                         ->increment('number');
                 } else {
-                    $time->sasaranKegiatan()
+                    $sk->indikatorKinerjaKegiatan()
                         ->where('number', '<=', $number)
                         ->where('number', '>', $currentNumber)
                         ->decrement('number');
                 }
             }
 
-            $sk->name = $request['name'];
-            $sk->save();
+            $ikk->name = $request['name'];
+            $ikk->save();
 
             DB::commit();
 
-            if ($time->year === Carbon::now()->format('Y')) {
-                return _ControllerHelpers::RedirectWithRoute('super-admin-iku-sk')->with('success', 'Berhasil memperbaharui sasaran kegiatan');
+            if ($sk->time->year === Carbon::now()->format('Y')) {
+                return _ControllerHelpers::RedirectWithRoute('super-admin-iku-ikk', ['sk' => $sk->id])->with('success', 'Berhasil memperbaharui indikator kinerja kegiatan');
             }
             return _ControllerHelpers::RedirectWithRoute('super-admin-achievement-iku', [
-                'year' => $time->year
-            ])->with('success', 'Berhasil memperbaharui sasaran kegiatan');
+                'year' => $sk->time->year
+            ])->with('success', 'Berhasil memperbaharui indikator kinerja kegiatan');
         } catch (\Exception $e) {
             DB::rollBack();
 

@@ -40,12 +40,10 @@ class UpdateKegiatanSuperAdminController extends Controller
             'selected' => true,
         ];
 
-        $previousRoute = $ss->time->year === Carbon::now()->format('Y') ? route('super-admin-rs-k', ['ss' => $ss->id]) : route(
-            'super-admin-achievement-rs',
-            [
-                'year' => $ss->time->year
-            ]
-        );
+        $previousRoute = route('super-admin-rs-k', ['ss' => $ss->id]);
+        if ($ss->time->year !== Carbon::now()->format('Y')) {
+            $previousRoute = route('super-admin-achievement-rs', ['year' => $ss->time->year]);
+        }
 
         $ss = $ss->only([
             'number',

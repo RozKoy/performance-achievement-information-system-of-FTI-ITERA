@@ -44,11 +44,10 @@ class UpdateIndikatorKinerjaSuperAdminController extends Controller
             'selected' => true,
         ];
 
-        $previousRoute = $ss->time->year === Carbon::now()->format('Y') ?
-            route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]) :
-            route('super-admin-achievement-rs', [
-                'year' => $ss->time->year
-            ]);
+        $previousRoute = route('super-admin-rs-ik', ['ss' => $ss->id, 'k' => $k->id]);
+        if ($ss->time->year !== Carbon::now()->format('Y')) {
+            $previousRoute = route('super-admin-achievement-rs', ['year' => $ss->time->year]);
+        }
 
         $type = [['value' => $ik->type, 'text' => ucfirst($ik->type)]];
 

@@ -34,12 +34,10 @@ class UpdateSasaranStrategisSuperAdminController extends Controller
             'selected' => true,
         ];
 
-        $previousRoute = $ss->time->year === Carbon::now()->format('Y') ? route('super-admin-rs-ss') : route(
-            'super-admin-achievement-rs',
-            [
-                'year' => $ss->time->year
-            ]
-        );
+        $previousRoute = route('super-admin-rs-ss');
+        if ($ss->time->year !== Carbon::now()->format('Y')) {
+            $previousRoute = route('super-admin-achievement-rs', ['year' => $ss->time->year]);
+        }
 
         $ss = $ss->only([
             'name',
@@ -94,11 +92,10 @@ class UpdateSasaranStrategisSuperAdminController extends Controller
 
             if ($time->year === Carbon::now()->format('Y')) {
                 return _ControllerHelpers::RedirectWithRoute('super-admin-rs-ss')->with('success', 'Berhasil memperbaharui sasaran strategis');
-            } else {
-                return _ControllerHelpers::RedirectWithRoute('super-admin-achievement-rs', [
-                    'year' => $time->year
-                ])->with('success', 'Berhasil memperbaharui sasaran strategis');
             }
+            return _ControllerHelpers::RedirectWithRoute('super-admin-achievement-rs', [
+                'year' => $time->year
+            ])->with('success', 'Berhasil memperbaharui sasaran strategis');
         } catch (\Exception $e) {
             DB::rollBack();
 
