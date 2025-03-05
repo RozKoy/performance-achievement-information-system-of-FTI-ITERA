@@ -24,7 +24,6 @@ use App\Http\Controllers\Admin\User\UpdateUserAdminController;
 use App\Http\Controllers\Admin\User\HomeUserAdminController;
 
 use App\Http\Controllers\IndikatorKinerjaProgramController;
-use App\Http\Controllers\ProgramStrategisController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IKUController;
 use App\Http\Controllers\RSController;
@@ -57,6 +56,11 @@ use App\Http\Controllers\SuperAdmin\IndikatorKinerjaKegiatan\CreateIndikatorKine
 use App\Http\Controllers\SuperAdmin\IndikatorKinerjaKegiatan\DeleteIndikatorKinerjaKegiatanSuperAdminController;
 use App\Http\Controllers\SuperAdmin\IndikatorKinerjaKegiatan\UpdateIndikatorKinerjaKegiatanSuperAdminController;
 use App\Http\Controllers\SuperAdmin\IndikatorKinerjaKegiatan\HomeIndikatorKinerjaKegiatanSuperAdminController;
+// Program Strategis - Indikator Kinerja Utama - Super Admin
+use App\Http\Controllers\SuperAdmin\ProgramStrategis\CreateProgramStrategisSuperAdminController;
+use App\Http\Controllers\SuperAdmin\ProgramStrategis\DeleteProgramStrategisSuperAdminController;
+use App\Http\Controllers\SuperAdmin\ProgramStrategis\UpdateProgramStrategisSuperAdminController;
+use App\Http\Controllers\SuperAdmin\ProgramStrategis\HomeProgramStrategisSuperAdminController;
 // User - Super Admin
 use App\Http\Controllers\SuperAdmin\User\CreateUserSuperAdminController;
 use App\Http\Controllers\SuperAdmin\User\DeleteUserSuperAdminController;
@@ -245,16 +249,16 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
         });
 
         Route::prefix('{sk}/{ikk}/program-strategis')->group(function ($route): void {
-            Route::get('/', [ProgramStrategisController::class, 'homeView'])->name('super-admin-iku-ps');
+            Route::get('/', [HomeProgramStrategisSuperAdminController::class, 'view'])->name('super-admin-iku-ps');
 
             Route::middleware('editor')->group(function (): void {
-                Route::get('tambah', [ProgramStrategisController::class, 'addView'])->name('super-admin-iku-ps-add');
-                Route::post('tambah', [ProgramStrategisController::class, 'add']);
+                Route::get('tambah', [CreateProgramStrategisSuperAdminController::class, 'view'])->name('super-admin-iku-ps-add');
+                Route::post('tambah', [CreateProgramStrategisSuperAdminController::class, 'action']);
 
-                Route::get('{ps}/ubah', [ProgramStrategisController::class, 'editView'])->name('super-admin-iku-ps-edit');
-                Route::put('{ps}/ubah', [ProgramStrategisController::class, 'edit']);
+                Route::get('{ps}/ubah', [UpdateProgramStrategisSuperAdminController::class, 'view'])->name('super-admin-iku-ps-edit');
+                Route::put('{ps}/ubah', [UpdateProgramStrategisSuperAdminController::class, 'action']);
 
-                Route::get('{ps}/hapus', [ProgramStrategisController::class, 'delete']);
+                Route::get('{ps}/hapus', [DeleteProgramStrategisSuperAdminController::class, 'action']);
             });
         });
 
