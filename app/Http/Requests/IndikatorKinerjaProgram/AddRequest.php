@@ -3,6 +3,7 @@
 namespace App\Http\Requests\IndikatorKinerjaProgram;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\IndikatorKinerjaProgram;
 use App\Traits\RequestErrorMessage;
 
 class AddRequest extends FormRequest
@@ -25,9 +26,9 @@ class AddRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'mode' => ['bail', 'nullable', 'string', 'in:' . implode(',', IndikatorKinerjaProgram::getModeValues())],
             'number' => ['bail', 'required', 'numeric', 'integer', 'min:1', 'max_digits:10'],
             'definition' => ['bail', 'required', 'string', 'max:65000'],
-            'mode' => ['bail', 'nullable', 'string', 'in:table,single'],
             'name' => ['bail', 'required', 'string', 'max:65000'],
             'file' => ['bail', 'nullable', 'string', 'max:500'],
             'columns.*' => ['bail', 'string', 'max:500'],

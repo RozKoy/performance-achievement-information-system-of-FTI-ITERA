@@ -23,7 +23,6 @@ use App\Http\Controllers\Admin\User\DeleteUserAdminController;
 use App\Http\Controllers\Admin\User\UpdateUserAdminController;
 use App\Http\Controllers\Admin\User\HomeUserAdminController;
 
-use App\Http\Controllers\IndikatorKinerjaProgramController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IKUController;
 use App\Http\Controllers\RSController;
@@ -61,6 +60,11 @@ use App\Http\Controllers\SuperAdmin\ProgramStrategis\CreateProgramStrategisSuper
 use App\Http\Controllers\SuperAdmin\ProgramStrategis\DeleteProgramStrategisSuperAdminController;
 use App\Http\Controllers\SuperAdmin\ProgramStrategis\UpdateProgramStrategisSuperAdminController;
 use App\Http\Controllers\SuperAdmin\ProgramStrategis\HomeProgramStrategisSuperAdminController;
+// Indikator Kinerja Program - Indikator Kinerja Utama - Super Admin
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaProgram\CreateIndikatorKinerjaProgramSuperAdminController;
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaProgram\DeleteIndikatorKinerjaProgramSuperAdminController;
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaProgram\UpdateIndikatorKinerjaProgramSuperAdminController;
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaProgram\HomeIndikatorKinerjaProgramSuperAdminController;
 // User - Super Admin
 use App\Http\Controllers\SuperAdmin\User\CreateUserSuperAdminController;
 use App\Http\Controllers\SuperAdmin\User\DeleteUserSuperAdminController;
@@ -263,18 +267,18 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
         });
 
         Route::prefix('{sk}/{ikk}/{ps}/indikator-kinerja-program')->group(function ($route): void {
-            Route::get('/', [IndikatorKinerjaProgramController::class, 'homeView'])->name('super-admin-iku-ikp');
+            Route::get('/', [HomeIndikatorKinerjaProgramSuperAdminController::class, 'view'])->name('super-admin-iku-ikp');
 
             Route::middleware('editor')->group(function (): void {
-                Route::get('tambah', [IndikatorKinerjaProgramController::class, 'addView'])->name('super-admin-iku-ikp-add');
-                Route::post('tambah', [IndikatorKinerjaProgramController::class, 'add']);
+                Route::get('tambah', [CreateIndikatorKinerjaProgramSuperAdminController::class, 'view'])->name('super-admin-iku-ikp-add');
+                Route::post('tambah', [CreateIndikatorKinerjaProgramSuperAdminController::class, 'action']);
 
-                Route::get('{ikp}/ubah', [IndikatorKinerjaProgramController::class, 'editView'])->name('super-admin-iku-ikp-edit');
-                Route::put('{ikp}/ubah', [IndikatorKinerjaProgramController::class, 'edit']);
+                Route::get('{ikp}/ubah', [UpdateIndikatorKinerjaProgramSuperAdminController::class, 'view'])->name('super-admin-iku-ikp-edit');
+                Route::put('{ikp}/ubah', [UpdateIndikatorKinerjaProgramSuperAdminController::class, 'action']);
 
-                Route::get('{ikp}/status', [IndikatorKinerjaProgramController::class, 'statusToggle'])->name('super-admin-iku-ikp-status');
+                Route::get('{ikp}/status', [UpdateIndikatorKinerjaProgramSuperAdminController::class, 'statusToggle'])->name('super-admin-iku-ikp-status');
 
-                Route::get('{ikp}/hapus', [IndikatorKinerjaProgramController::class, 'delete']);
+                Route::get('{ikp}/hapus', [DeleteIndikatorKinerjaProgramSuperAdminController::class, 'action']);
             });
         });
     });
