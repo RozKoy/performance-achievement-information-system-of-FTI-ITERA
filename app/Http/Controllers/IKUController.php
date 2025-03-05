@@ -767,21 +767,6 @@ class IKUController extends Controller
     }
 
     /**
-     * IKU excel import function
-     * @param \App\Http\Requests\IndikatorKinerjaUtama\ImportRequest $request
-     * @return RedirectResponse
-     */
-    public function IKUImport(ImportRequest $request): RedirectResponse
-    {
-        Excel::import(
-            new IndikatorKinerjaUtamaSheets,
-            $request->file('file')
-        );
-
-        return back();
-    }
-
-    /**
      * IKU excel download function 
      * @param \Illuminate\Http\Request $request
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse

@@ -26,12 +26,13 @@ use App\Http\Controllers\Admin\User\HomeUserAdminController;
 use App\Http\Controllers\IndikatorKinerjaKegiatanController;
 use App\Http\Controllers\IndikatorKinerjaProgramController;
 use App\Http\Controllers\ProgramStrategisController;
-use App\Http\Controllers\SasaranKegiatanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IKUController;
 use App\Http\Controllers\RSController;
 // Rencana Strategis - Super Admin
 use App\Http\Controllers\SuperAdmin\RencanaStrategis\FormatRencanaStrategisSuperAdminController;
+// Indikator Kinerja Utama - Super Admin
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\FormatIndikatorKinerjaUtamaSuperAdminController;
 // Sasaran Strategis - Rencana Strategis - Super Admin
 use App\Http\Controllers\SuperAdmin\SasaranStrategis\CreateSasaranStrategisSuperAdminController;
 use App\Http\Controllers\SuperAdmin\SasaranStrategis\DeleteSasaranStrategisSuperAdminController;
@@ -47,6 +48,11 @@ use App\Http\Controllers\SuperAdmin\IndikatorKinerja\CreateIndikatorKinerjaSuper
 use App\Http\Controllers\SuperAdmin\IndikatorKinerja\DeleteIndikatorKinerjaSuperAdminController;
 use App\Http\Controllers\SuperAdmin\IndikatorKinerja\UpdateIndikatorKinerjaSuperAdminController;
 use App\Http\Controllers\SuperAdmin\IndikatorKinerja\HomeIndikatorKinerjaSuperAdminController;
+// Sasaran Kegiatan - Indikator Kinerja Utama - Super Admin
+use App\Http\Controllers\SuperAdmin\SasaranKegiatan\CreateSasaranKegiatanSuperAdminController;
+use App\Http\Controllers\SuperAdmin\SasaranKegiatan\DeleteSasaranKegiatanSuperAdminController;
+use App\Http\Controllers\SuperAdmin\SasaranKegiatan\UpdateSasaranKegiatanSuperAdminController;
+use App\Http\Controllers\SuperAdmin\SasaranKegiatan\HomeSasaranKegiatanSuperAdminController;
 // User - Super Admin
 use App\Http\Controllers\SuperAdmin\User\CreateUserSuperAdminController;
 use App\Http\Controllers\SuperAdmin\User\DeleteUserSuperAdminController;
@@ -201,21 +207,22 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
             return redirect()->route('super-admin-iku-sk');
         })->name('super-admin-iku');
 
-        Route::post('import-excel', [IKUController::class, 'IKUImport'])->middleware('editor')->name('super-admin-iku-import');
+        Route::middleware('editor')->group(function (): void {
+            Route::post('duplicate', [FormatIndikatorKinerjaUtamaSuperAdminController::class, 'duplicate'])->name('super-admin-iku-duplicate');
+            Route::post('import', [FormatIndikatorKinerjaUtamaSuperAdminController::class, 'import'])->name('super-admin-iku-import');
+        });
 
         Route::prefix('sasaran-kegiatan')->group(function (): void {
-            Route::get('/', [SasaranKegiatanController::class, 'homeView'])->name('super-admin-iku-sk');
+            Route::get('/', [HomeSasaranKegiatanSuperAdminController::class, 'view'])->name('super-admin-iku-sk');
 
             Route::middleware('editor')->group(function (): void {
-                Route::get('tambah', [SasaranKegiatanController::class, 'addView'])->name('super-admin-iku-sk-add');
-                Route::post('tambah', [SasaranKegiatanController::class, 'add']);
+                Route::get('tambah', [CreateSasaranKegiatanSuperAdminController::class, 'view'])->name('super-admin-iku-sk-add');
+                Route::post('tambah', [CreateSasaranKegiatanSuperAdminController::class, 'action']);
 
-                Route::get('{sk}/ubah', [SasaranKegiatanController::class, 'editView'])->name('super-admin-iku-sk-edit');
-                Route::put('{sk}/ubah', [SasaranKegiatanController::class, 'edit']);
+                Route::get('{sk}/ubah', [UpdateSasaranKegiatanSuperAdminController::class, 'view'])->name('super-admin-iku-sk-edit');
+                Route::put('{sk}/ubah', [UpdateSasaranKegiatanSuperAdminController::class, 'action']);
 
-                Route::get('{sk}/hapus', [SasaranKegiatanController::class, 'delete']);
-
-                Route::post('duplicate', [SasaranKegiatanController::class, 'duplicateFormat'])->name('super-admin-iku-duplicate');
+                Route::get('{sk}/hapus', [DeleteSasaranKegiatanSuperAdminController::class, 'action']);
             });
         });
 

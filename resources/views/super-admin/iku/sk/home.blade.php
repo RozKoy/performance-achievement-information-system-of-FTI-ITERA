@@ -26,7 +26,7 @@
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.stepper.default :$stepper />
     <x-partials.heading.h2 text="manajemen indikator kinerja utama - sasaran kegiatan" tooltip>
-        @if (auth()->user()->access === 'editor')
+        @if ($user->isEditor())
             <p>
                 Halaman ini merupakan halaman untuk melihat, <span class="text-green-400">menambah</span>, <span class="text-yellow-400">mengubah</span>, atau <span class="text-red-400">menghapus</span> sasaran kegiatan.
             </p>
@@ -79,7 +79,7 @@
     </x-partials.heading.h2>
     <x-partials.search.default />
 
-    @if (auth()->user()->access === 'editor')
+    @if ($user->isEditor())
         <div class="flex flex-wrap gap-3">
             <x-partials.button.add href="super-admin-iku-sk-add" style="mr-auto" />
             <button title="Import Excel" type="button" data-modal-target="add-modal" data-modal-toggle="add-modal" class="ml-auto flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
@@ -129,7 +129,7 @@
                         <td class="flex items-center justify-center gap-1">
                             <x-partials.button.manage link="{{ route('super-admin-iku-ikk', ['sk' => $item['id']]) }}" />
 
-                            @if (auth()->user()->access === 'editor')
+                            @if ($user->isEditor())
                                 <x-partials.button.edit link="{{ route('super-admin-iku-sk-edit', ['sk' => $item['id']]) }}" />
                                 <x-partials.button.delete id="{{ $item['id'] }}" modal="delete-modal" :data="$deleteData" />
                             @endif
@@ -145,15 +145,15 @@
     @if (!count($data))
         <div>
 
-            @if (request()->query('search') !== null)
-                <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Pencarian : "{{ request()->query('search') }}"</p>
+            @if ($searchQuery !== null)
+                <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Pencarian : "{{ $searchQuery }}"</p>
             @endif
 
-            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ request()->query('search') !== null ? 'Tidak dapat ditemukan' : 'Tidak ada data sasaran kegiatan' }}</p>
+            <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $searchQuery !== null ? 'Tidak dapat ditemukan' : 'Tidak ada data sasaran kegiatan' }}</p>
         </div>
     @endif
 
-    @if (auth()->user()->access === 'editor')
+    @if ($user->isEditor())
         <x-partials.modal.delete id="delete-modal" />
 
         <div id="add-modal" tabindex="-1" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">

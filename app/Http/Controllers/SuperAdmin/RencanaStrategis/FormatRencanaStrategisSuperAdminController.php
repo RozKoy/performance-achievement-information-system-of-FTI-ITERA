@@ -100,21 +100,21 @@ class FormatRencanaStrategisSuperAdminController extends Controller
                             }
                         }
                     }
+
+                    if (count($ssInsertData)) {
+                        SasaranStrategis::insert($ssInsertData);
+                    }
+                    if (count($kInsertData)) {
+                        Kegiatan::insert($kInsertData);
+                    }
+                    if (count($ikInsertData)) {
+                        IndikatorKinerja::insert($ikInsertData);
+                    }
+                    if (count($ikTextSelectionInsertData)) {
+                        IndikatorKinerjaTextSelection::insert($ikTextSelectionInsertData);
+                    }
                 }
             }
-        }
-
-        if (count($ssInsertData)) {
-            SasaranStrategis::insert($ssInsertData);
-        }
-        if (count($kInsertData)) {
-            Kegiatan::insert($kInsertData);
-        }
-        if (count($ikInsertData)) {
-            IndikatorKinerja::insert($ikInsertData);
-        }
-        if (count($ikTextSelectionInsertData)) {
-            IndikatorKinerjaTextSelection::insert($ikTextSelectionInsertData);
         }
 
         return _ControllerHelpers::Back()->with('success', 'Berhasil menduplikasi format rencana strategis');
