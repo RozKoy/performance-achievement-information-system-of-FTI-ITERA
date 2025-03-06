@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\IndikatorKinerjaUtama;
 
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\HomeIndikatorKinerjaUtamaSuperAdminController;
 use App\Http\Requests\IndikatorKinerjaUtama\AddSingleDataRequest;
 use App\Http\Controllers\_ControllerHelpers;
 use App\Models\IndikatorKinerjaProgram;
@@ -19,6 +20,8 @@ class AddSingleDataIndikatorKinerjaUtamaAdminController extends Controller
      */
     public function action(AddSingleDataRequest $request, string $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
+        HomeIndikatorKinerjaUtamaSuperAdminController::CheckRoutine();
+
         if ($ikp->status !== 'aktif' || $ikp->mode !== 'single') {
             abort(404);
         }

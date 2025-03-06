@@ -38,7 +38,7 @@
             <div class="{{ $period['status'] == 1 ? 'bg-green-200 text-green-500' : 'bg-red-200 text-red-500' }} flex items-center gap-1 rounded-lg px-1.5 py-1 text-xs md:text-sm">
                 <p>{{ $period['title'] }}</p>
 
-                @if (auth()->user()->access == 'editor')
+                @if ($user->isEditor())
                     <label title="Tombol power [status: {{ $period['status'] == 1 ? 'Aktif' : 'Tidak aktif' }}]" onclick="statusToggle('{{ url(route('super-admin-achievement-iku-status', ['period' => $period['id']])) }}')" class="relative inline-flex items-center">
                         <input type="checkbox" value="{{ $period['status'] == 1 }}" class="peer sr-only" @checked($period['status'] == 1) disabled>
                         <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
@@ -95,6 +95,10 @@
                     @foreach ($sk['indikator_kinerja_kegiatan'] as $ikk)
                         @foreach ($ikk['program_strategis'] as $ps)
                             @foreach ($ps['indikator_kinerja_program'] as $ikp)
+                                @php
+                                    $isTable = $ikp['mode'] === \App\Models\IndikatorKinerjaProgram::MODE_TABLE;
+                                @endphp
+
                                 <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
 
                                     @if ($loop->iteration === 1)
@@ -105,7 +109,7 @@
                                                 <td title="{{ $sk['sk'] }}" rowspan="{{ $sk['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                                     {{ $sk['sk'] }}
 
-                                                    @if (auth()->user()->access === 'editor')
+                                                    @if ($user->isEditor())
                                                         <x-partials.button.edit link="{{ route('super-admin-iku-sk-edit', ['sk' => $sk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                                     @endif
 
@@ -115,7 +119,7 @@
                                             <td title="{{ $ikk['ikk'] }}" rowspan="{{ $ikk['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                                 {{ $ikk['ikk'] }}
 
-                                                @if (auth()->user()->access === 'editor')
+                                                @if ($user->isEditor())
                                                     <x-partials.button.edit link="{{ route('super-admin-iku-ikk-edit', ['ikk' => $ikk['id'], 'sk' => $sk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                                 @endif
 
@@ -125,7 +129,7 @@
                                         <td title="{{ $ps['ps'] }}" rowspan="{{ $ps['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                             {{ $ps['ps'] }}
 
-                                            @if (auth()->user()->access === 'editor')
+                                            @if ($user->isEditor())
                                                 <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['ps' => $ps['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                             @endif
 
@@ -135,7 +139,7 @@
                                     <td title="{{ $ikp['ikp'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                         {{ $ikp['ikp'] }}
 
-                                        @if (auth()->user()->access === 'editor')
+                                        @if ($user->isEditor())
                                             <x-partials.button.edit link="{{ route('super-admin-iku-ikp-edit', ['ikp' => $ikp['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                         @endif
 
@@ -144,14 +148,43 @@
 
                                     <td title="{{ $ikp['definition'] }}" class="w-max min-w-72 text-left">{{ $ikp['definition'] }}</td>
 
-                                    <td title="{{ $ikp['target'] }}">{{ $ikp['target'] }}</td>
-                                    <td title="{{ $ikp['mode'] === 'table' ? $ikp['all'] : $ikp['allSingle'] }}">{{ $ikp['mode'] === 'table' ? $ikp['all'] : $ikp['allSingle'] }}</td>
+                                    @if ($isTable)
+                                        <td title="{{ $ikp['target'] }}">{{ $ikp['target'] }}</td>
+                                    @else
+                                        <td title="{{ !ctype_digit(text: (string) $ikp['target']) ? number_format((float) $ikp['target'], 2) : $ikp['target'] }}">
+                                            {{ !ctype_digit(text: (string) $ikp['target']) ? number_format((float) $ikp['target'], 2) : $ikp['target'] }}
+                                        </td>
+                                    @endif
+
+                                    @if ($isTable)
+                                        <td title="{{ $ikp['all'] }}">{{ $ikp['all'] }}</td>
+                                    @else
+                                        <td title="{{ !ctype_digit(text: (string) $ikp['allSingle']) ? number_format((float) $ikp['allSingle'], 2) : $ikp['allSingle'] }}">
+                                            {{ !ctype_digit(text: (string) $ikp['allSingle']) ? number_format((float) $ikp['allSingle'], 2) : $ikp['allSingle'] }}
+                                        </td>
+                                    @endif
+
                                     <td title="{{ $ikp['done'] == 1 ? 'Tercapai' : 'Tidak tercapai' }}" class="{{ $ikp['done'] == 1 ? 'text-green-400' : 'text-red-400' }}">{{ $ikp['done'] == 1 ? 'Tercapai' : 'Tidak tercapai' }}</td>
 
-                                    <td title="{{ $ikp['mode'] === 'table' ? $ikp['tw1'] : $ikp['tw1Single'] }}">{{ $ikp['mode'] === 'table' ? $ikp['tw1'] : $ikp['tw1Single'] }}</td>
-                                    <td title="{{ $ikp['mode'] === 'table' ? $ikp['tw2'] : $ikp['tw2Single'] }}">{{ $ikp['mode'] === 'table' ? $ikp['tw2'] : $ikp['tw2Single'] }}</td>
-                                    <td title="{{ $ikp['mode'] === 'table' ? $ikp['tw3'] : $ikp['tw3Single'] }}">{{ $ikp['mode'] === 'table' ? $ikp['tw3'] : $ikp['tw3Single'] }}</td>
-                                    <td title="{{ $ikp['mode'] === 'table' ? $ikp['tw4'] : $ikp['tw4Single'] }}">{{ $ikp['mode'] === 'table' ? $ikp['tw4'] : $ikp['tw4Single'] }}</td>
+                                    @if ($isTable)
+                                        <td title="{{ $ikp['tw1'] }}">{{ $ikp['tw1'] }}</td>
+                                        <td title="{{ $ikp['tw2'] }}">{{ $ikp['tw2'] }}</td>
+                                        <td title="{{ $ikp['tw3'] }}">{{ $ikp['tw3'] }}</td>
+                                        <td title="{{ $ikp['tw4'] }}">{{ $ikp['tw4'] }}</td>
+                                    @else
+                                        <td title="{{ !ctype_digit(text: (string) $ikp['tw1Single']) ? number_format((float) $ikp['tw1Single'], 2) : $ikp['tw1Single'] }}">
+                                            {{ !ctype_digit(text: (string) $ikp['tw1Single']) ? number_format((float) $ikp['tw1Single'], 2) : $ikp['tw1Single'] }}
+                                        </td>
+                                        <td title="{{ !ctype_digit(text: (string) $ikp['tw2Single']) ? number_format((float) $ikp['tw2Single'], 2) : $ikp['tw2Single'] }}">
+                                            {{ !ctype_digit(text: (string) $ikp['tw2Single']) ? number_format((float) $ikp['tw2Single'], 2) : $ikp['tw2Single'] }}
+                                        </td>
+                                        <td title="{{ !ctype_digit(text: (string) $ikp['tw3Single']) ? number_format((float) $ikp['tw3Single'], 2) : $ikp['tw3Single'] }}">
+                                            {{ !ctype_digit(text: (string) $ikp['tw3Single']) ? number_format((float) $ikp['tw3Single'], 2) : $ikp['tw3Single'] }}
+                                        </td>
+                                        <td title="{{ !ctype_digit(text: (string) $ikp['tw4Single']) ? number_format((float) $ikp['tw4Single'], 2) : $ikp['tw4Single'] }}">
+                                            {{ !ctype_digit(text: (string) $ikp['tw4Single']) ? number_format((float) $ikp['tw4Single'], 2) : $ikp['tw4Single'] }}
+                                        </td>
+                                    @endif
 
                                     <td title="{{ $ikp['evaluation'] }}">{{ $ikp['evaluation'] }}</td>
                                     <td title="{{ $ikp['follow_up'] }}">{{ $ikp['follow_up'] }}</td>
@@ -164,7 +197,7 @@
 
                                     @if ($ikp['status'] === 'aktif')
                                         @php
-                                            $realizationTemp = $ikp['mode'] === 'table' ? $ikp['all'] : $ikp['allSingle'];
+                                            $realizationTemp = $isTable ? $ikp['all'] : $ikp['allSingle'];
                                             $targetTemp = $ikp['target'] ?? 0;
                                             $progress = $ikp['target'] ? number_format((floatval($realizationTemp) * 100) / $targetTemp, 2) : 0;
                                             $progress = $progress > 100 ? 100 : $progress;
@@ -204,7 +237,7 @@
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data capaian kinerja</p>
     @endif
 
-    @pushIf(auth()->user()->access === 'editor' && $period !== '3', 'script')
+    @pushIf($user->isEditor() && $period !== '3', 'script')
     <script>
         function statusToggle(url) {
             window.location.href = url;

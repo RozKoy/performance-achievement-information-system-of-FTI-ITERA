@@ -24,8 +24,8 @@ use App\Http\Controllers\Admin\User\DeleteUserAdminController;
 use App\Http\Controllers\Admin\User\UpdateUserAdminController;
 use App\Http\Controllers\Admin\User\HomeUserAdminController;
 
+// Dashboard - Super Admin
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\IKUController;
 // Rencana Strategis - Super Admin
 use App\Http\Controllers\SuperAdmin\RencanaStrategis\ExcelExportRencanaStrategisSuperAdminController;
 use App\Http\Controllers\SuperAdmin\RencanaStrategis\EvaluationRencanaStrategisSuperAdminController;
@@ -35,7 +35,14 @@ use App\Http\Controllers\SuperAdmin\RencanaStrategis\StatusRencanaStrategisSuper
 use App\Http\Controllers\SuperAdmin\RencanaStrategis\TargetRencanaStrategisSuperAdminController;
 use App\Http\Controllers\SuperAdmin\RencanaStrategis\HomeRencanaStrategisSuperAdminController;
 // Indikator Kinerja Utama - Super Admin
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\ExcelExportIndikatorKinerjaUtamaSuperAdminController;
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\EvaluationIndikatorKinerjaUtamaSuperAdminController;
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\ValidationIndikatorKinerjaUtamaSuperAdminController;
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\DetailIndikatorKinerjaUtamaSuperAdminController;
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\StatusIndikatorKinerjaUtamaSuperAdminController;
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\TargetIndikatorKinerjaUtamaSuperAdminController;
 use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\FormatIndikatorKinerjaUtamaSuperAdminController;
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\HomeIndikatorKinerjaUtamaSuperAdminController;
 // Sasaran Strategis - Rencana Strategis - Super Admin
 use App\Http\Controllers\SuperAdmin\SasaranStrategis\CreateSasaranStrategisSuperAdminController;
 use App\Http\Controllers\SuperAdmin\SasaranStrategis\DeleteSasaranStrategisSuperAdminController;
@@ -148,18 +155,18 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
         });
 
         Route::prefix('indikator-kinerja-utama')->group(function (): void {
-            Route::get('/', [IKUController::class, 'homeView'])->name('super-admin-achievement-iku');
-            Route::get('{ikp}/detail', [IKUController::class, 'detailView'])->name('super-admin-achievement-iku-detail');
-            Route::get('{year}/target', [IKUController::class, 'targetView'])->name('super-admin-achievement-iku-target');
-            Route::get('export', [IKUController::class, 'exportIKU'])->name('super-admin-achievement-iku-export');
-            Route::get('{ikp}/export', [IKUController::class, 'detailExportIKU'])->name('super-admin-achievement-iku-detail-export');
+            Route::get('/', [HomeIndikatorKinerjaUtamaSuperAdminController::class, 'view'])->name('super-admin-achievement-iku');
+            Route::get('{ikp}/detail', [DetailIndikatorKinerjaUtamaSuperAdminController::class, 'view'])->name('super-admin-achievement-iku-detail');
+            Route::get('{year}/target', [TargetIndikatorKinerjaUtamaSuperAdminController::class, 'view'])->name('super-admin-achievement-iku-target');
+            Route::get('export', [ExcelExportIndikatorKinerjaUtamaSuperAdminController::class, 'action'])->name('super-admin-achievement-iku-export');
+            Route::get('{ikp}/export', [ExcelExportIndikatorKinerjaUtamaSuperAdminController::class, 'detailAction'])->name('super-admin-achievement-iku-detail-export');
 
             Route::middleware('editor')->group(function (): void {
-                Route::post('{year}/target', [IKUController::class, 'addTarget'])->name('super-admin-achievement-iku-target-add');
-                Route::get('{period}/status', [IKUController::class, 'statusToggle'])->name('super-admin-achievement-iku-status');
-                Route::post('{period}/deadline', [IKUController::class, 'setDeadline'])->name('super-admin-achievement-iku-deadline');
-                Route::post('{ikp}/evaluation', [IKUController::class, 'addEvaluation'])->name('super-admin-achievement-iku-evaluation');
-                Route::post('{ikp}/validation', [IKUController::class, 'validation'])->name('super-admin-achievement-iku-detail-validation');
+                Route::post('{year}/target', [TargetIndikatorKinerjaUtamaSuperAdminController::class, 'action'])->name('super-admin-achievement-iku-target-add');
+                Route::get('{period}/status', [StatusIndikatorKinerjaUtamaSuperAdminController::class, 'action'])->name('super-admin-achievement-iku-status');
+                Route::post('{period}/deadline', [StatusIndikatorKinerjaUtamaSuperAdminController::class, 'setDeadline'])->name('super-admin-achievement-iku-deadline');
+                Route::post('{ikp}/evaluation', [EvaluationIndikatorKinerjaUtamaSuperAdminController::class, 'action'])->name('super-admin-achievement-iku-evaluation');
+                Route::post('{ikp}/validation', [ValidationIndikatorKinerjaUtamaSuperAdminController::class, 'action'])->name('super-admin-achievement-iku-detail-validation');
             });
         });
     });

@@ -9,7 +9,7 @@
         ],
         [
             'link' => 'super-admin-achievement-iku-target',
-            'name' => 'Target ' . $year,
+            'name' => "Target $year",
             'params' => [
                 'year' => $year,
             ],
@@ -24,14 +24,14 @@
     <form action="{{ route('super-admin-achievement-iku-target-add', ['year' => $year]) }}" method="POST" class="flex w-full flex-col gap-1">
         @csrf
 
-        @if (auth()->user()->access === 'editor')
+        @if ($user->isEditor())
             <x-partials.button.add text="Simpan" style="ml-auto" submit />
         @endif
 
         <div class="w-full overflow-x-auto rounded-lg">
             <table class="min-w-full max-lg:text-sm max-md:text-xs">
                 <thead>
-                    <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap divide-x bg-primary/80 text-white">
+                    <tr class="divide-x bg-primary/80 text-white *:whitespace-nowrap *:px-5 *:py-2.5 *:font-normal">
                         <th title="Nomor">No</th>
                         <th title="Sasaran kegiatan">Sasaran Kegiatan</th>
                         <th title="Indikator kinerja kegiatan">Indikator Kinerja Kegiatan</th>
@@ -51,23 +51,23 @@
                         @foreach ($sk['indikator_kinerja_kegiatan'] as $ikk)
                             @foreach ($ikk['program_strategis'] as $ps)
                                 @foreach ($ps['indikator_kinerja_program'] as $ikp)
-                                    <tr class="*:py-2 *:px-3 *:max-w-[500px] 2xl:*:max-w-[50vw] *:break-words border-y">
+                                    <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
 
                                         @if ($loop->iteration === 1)
                                             @if ($loop->parent->iteration === 1)
                                                 @if ($loop->parent->parent->iteration === 1)
                                                     <td title="{{ $sk['number'] }}" rowspan="{{ $sk['rowspan'] }}">{{ $sk['number'] }}</td>
 
-                                                    <td title="{{ $sk['sk'] }}" rowspan="{{ $sk['rowspan'] }}" class="min-w-72 w-max text-left">{{ $sk['sk'] }}</td>
+                                                    <td title="{{ $sk['sk'] }}" rowspan="{{ $sk['rowspan'] }}" class="w-max min-w-72 text-left">{{ $sk['sk'] }}</td>
                                                 @endif
 
-                                                <td title="{{ $ikk['ikk'] }}" rowspan="{{ $ikk['rowspan'] }}" class="min-w-72 w-max text-left">{{ $ikk['ikk'] }}</td>
+                                                <td title="{{ $ikk['ikk'] }}" rowspan="{{ $ikk['rowspan'] }}" class="w-max min-w-72 text-left">{{ $ikk['ikk'] }}</td>
                                             @endif
 
-                                            <td title="{{ $ps['ps'] }}" rowspan="{{ $ps['rowspan'] }}" class="min-w-72 w-max text-left">{{ $ps['ps'] }}</td>
+                                            <td title="{{ $ps['ps'] }}" rowspan="{{ $ps['rowspan'] }}" class="w-max min-w-72 text-left">{{ $ps['ps'] }}</td>
                                         @endif
 
-                                        <td title="{{ $ikp['ikp'] }}" class="min-w-72 group relative z-10 w-max text-left">
+                                        <td title="{{ $ikp['ikp'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                             {{ $ikp['ikp'] }}
                                             <span title="{{ $ikp['type'] === 'iku' ? 'Indikator kinerja utama' : 'Indikator kinerja tambahan' }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ikp['type'] }}</span>
                                         </td>
@@ -85,10 +85,12 @@
                                                 $errorName = 'target.' . $ikp['id'] . '-' . $unit['id'];
                                             @endphp
 
-                                            <td title="Target {{ $unit['name'] }}">
+                                            <td title="Target {{ $unit['name'] }}" class="relative">
 
-                                                @if (auth()->user()->access === 'editor')
-                                                    <x-partials.input.text name="{{ $inputName }}" title="target" value="{{ $exists['target'] ?? '' }}" />
+                                                @if ($user->isEditor())
+                                                    <x-partials.input.text name="{{ $inputName }}" title="target" value="{{ $exists['target'] ?? '' }}" oldvalue="{{ $exists['target'] ?? '' }}" onblur="blurInput('{{ $inputName }}', '{{ $inputName }}-cover')" disabled />
+
+                                                    <div id="{{ $inputName }}-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, '{{ $inputName }}')"></div>
 
                                                     @error($errorName)
                                                         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
@@ -114,9 +116,33 @@
             <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data capaian kinerja</p>
         @endif
 
-        @if (auth()->user()->access === 'editor')
+        @if ($user->isEditor())
             <x-partials.button.add text="Simpan" style="ml-auto" submit />
         @endif
+
+        @pushIf($user->isEditor(), 'script')
+        <script>
+            function clickInput(self, selfId) {
+                const selfElement = document.getElementById(selfId);
+
+                selfElement.disabled = false;
+                selfElement.focus();
+
+                self.classList.toggle('hidden');
+            }
+
+            function blurInput(selfId, coverId) {
+                const coverElement = document.getElementById(coverId);
+                const selfElement = document.getElementById(selfId);
+
+                if (selfElement.value == selfElement.getAttribute('oldvalue')) {
+                    selfElement.disabled = true;
+
+                    coverElement.classList.toggle('hidden');
+                }
+            }
+        </script>
+        @endPushIf
 
     </form>
 </x-super-admin-template>

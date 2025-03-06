@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\IndikatorKinerjaUtama;
 
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\HomeIndikatorKinerjaUtamaSuperAdminController;
 use App\Http\Controllers\_ControllerHelpers;
 use App\Models\IndikatorKinerjaProgram;
 use Illuminate\Http\RedirectResponse;
@@ -17,6 +18,8 @@ class UpdateUnitStatusIndikatorKinerjaUtamaAdminController extends Controller
      */
     public function yearStatusToggle(IndikatorKinerjaProgram $ikp): RedirectResponse
     {
+        HomeIndikatorKinerjaUtamaSuperAdminController::CheckRoutine();
+
         $user = auth()->user();
 
         $ps = $ikp->programStrategis;
@@ -72,6 +75,8 @@ class UpdateUnitStatusIndikatorKinerjaUtamaAdminController extends Controller
      */
     public function statusToggle(string $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
+        HomeIndikatorKinerjaUtamaSuperAdminController::CheckRoutine();
+
         $user = auth()->user();
 
         $ps = $ikp->programStrategis;

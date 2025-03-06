@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin\IndikatorKinerjaUtama;
 
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\HomeIndikatorKinerjaUtamaSuperAdminController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\IndikatorKinerjaProgram;
 use Illuminate\Contracts\View\Factory;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use App\Models\IKUPeriod;
 use App\Models\IKUYear;
-use App\Models\IndikatorKinerjaProgram;
-use Illuminate\Support\Carbon;
 
 class HistoryIndikatorKinerjaUtamaAdminController extends Controller
 {
@@ -21,6 +21,8 @@ class HistoryIndikatorKinerjaUtamaAdminController extends Controller
      */
     public function view(Request $request): Factory|View
     {
+        HomeIndikatorKinerjaUtamaSuperAdminController::CheckRoutine();
+
         $periodQuery = $request->query('period');
         $yearQuery = $request->query('year');
 
@@ -208,6 +210,8 @@ class HistoryIndikatorKinerjaUtamaAdminController extends Controller
      */
     public function detailView(Request $request, IndikatorKinerjaProgram $ikp): Factory|View
     {
+        HomeIndikatorKinerjaUtamaSuperAdminController::CheckRoutine();
+
         $periodQuery = $request->query('period');
 
         if ($ikp->status !== 'aktif') {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\IndikatorKinerjaUtama;
 
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\HomeIndikatorKinerjaUtamaSuperAdminController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\View\Factory;
@@ -20,6 +21,8 @@ class HomeIndikatorKinerjaUtamaAdminController extends Controller
      */
     public function view(Request $request): Factory|View
     {
+        HomeIndikatorKinerjaUtamaSuperAdminController::CheckRoutine();
+
         $periodRequest = $request->query('period');
         $yearQuery = $request->query('year');
 

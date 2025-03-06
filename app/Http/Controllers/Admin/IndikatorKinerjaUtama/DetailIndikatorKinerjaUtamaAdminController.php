@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\IndikatorKinerjaUtama;
 
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\HomeIndikatorKinerjaUtamaSuperAdminController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\IndikatorKinerjaProgram;
 use Illuminate\Contracts\View\Factory;
@@ -19,6 +20,8 @@ class DetailIndikatorKinerjaUtamaAdminController extends Controller
      */
     public function view(Request $request, IndikatorKinerjaProgram $ikp): Factory|View
     {
+        HomeIndikatorKinerjaUtamaSuperAdminController::CheckRoutine();
+
         $periodRequest = $request->query('period');
 
         if ($ikp->status !== 'aktif') {

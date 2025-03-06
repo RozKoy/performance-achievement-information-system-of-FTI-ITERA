@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\IndikatorKinerjaUtama;
 
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\HomeIndikatorKinerjaUtamaSuperAdminController;
 use App\Http\Requests\IndikatorKinerjaUtama\ImportRequest;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use App\Http\Controllers\_ControllerHelpers;
@@ -22,6 +23,8 @@ class ImportTableDataIndikatorKinerjaUtamaAdminController extends Controller
      */
     public function template(IndikatorKinerjaProgram $ikp): BinaryFileResponse
     {
+        HomeIndikatorKinerjaUtamaSuperAdminController::CheckRoutine();
+
         if ($ikp->status !== 'aktif' || $ikp->mode !== 'table') {
             abort(404);
         }
@@ -50,6 +53,8 @@ class ImportTableDataIndikatorKinerjaUtamaAdminController extends Controller
      */
     public function import(ImportRequest $request, string $period, IndikatorKinerjaProgram $ikp): RedirectResponse
     {
+        HomeIndikatorKinerjaUtamaSuperAdminController::CheckRoutine();
+
         if ($ikp->status !== 'aktif' || $ikp->mode !== 'table') {
             abort(404);
         }

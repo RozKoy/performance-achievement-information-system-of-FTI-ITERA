@@ -33,8 +33,8 @@
     </div>
 
     @if ($period === '5' && $ikp['status'] === 'aktif')
-        <form action="{{ auth()->user()->access === 'editor' ? route('super-admin-achievement-iku-evaluation', ['ikp' => $ikp['id']]) : '' }}" method="POST" class="flex flex-col gap-2">
-            @if (auth()->user()->access === 'editor')
+        <form action="{{ $user->isEditor() ? route('super-admin-achievement-iku-evaluation', ['ikp' => $ikp['id']]) : '' }}" method="POST" class="flex flex-col gap-2">
+            @if ($user->isEditor())
                 @csrf
             @endif
 
@@ -42,7 +42,7 @@
                 <div class="flex flex-1 flex-col gap-2">
                     <x-partials.label.default for="evaluation" title="Kendala" text="Kendala" />
 
-                    @if (auth()->user()->access === 'editor')
+                    @if ($user->isEditor())
                         <x-partials.input.text name="evaluation" title="Evaluasi" value="{{ $evaluation !== null ? $evaluation['evaluation'] : '' }}" autofocus />
                     @else
                         <x-partials.input.text name="evaluation" title="Evaluasi" value="{{ $evaluation !== null ? $evaluation['evaluation'] : '' }}" disabled />
@@ -52,7 +52,7 @@
                 <div class="flex flex-1 flex-col gap-2">
                     <x-partials.label.default for="follow_up" title="Tindak lanjut" text="Tindak Lanjut" />
 
-                    @if (auth()->user()->access === 'editor')
+                    @if ($user->isEditor())
                         <x-partials.input.text name="follow_up" title="Tindak lanjut" value="{{ $evaluation !== null ? $evaluation['follow_up'] : '' }}" />
                     @else
                         <x-partials.input.text name="follow_up" title="Tindak lanjut" value="{{ $evaluation !== null ? $evaluation['follow_up'] : '' }}" disabled />
@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            @if (auth()->user()->access === 'editor')
+            @if ($user->isEditor())
                 <x-partials.button.add style="ml-auto" submit text="Simpan" />
             @endif
 
@@ -81,7 +81,7 @@
                     <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
                         <td>Target</td>
                         <td>:</td>
-                        <td>{{ $evaluation === null ? '' : ($evaluation['target'] ? $evaluation['target'] : '') }}</td>
+                        <td>{{ $evaluation === null ? '' : $evaluation['target'] ?? '' }}</td>
                     </tr>
                 @endif
 
@@ -126,8 +126,10 @@
     @endif
 
     @if ($ikp['status'] === 'aktif')
-        @if ($ikp['mode'] === 'table')
-            <form @if (auth()->user()->access === 'editor') id="data-form" method="POST" action="{{ route('super-admin-achievement-iku-detail-validation', ['ikp' => $ikp['id']]) }}" @endif class="w-full overflow-x-auto rounded-lg">
+        @if ($ikp['mode'] === \App\Models\IndikatorKinerjaProgram::MODE_TABLE)
+            <p class="text-primary max-xl:text-sm max-sm:text-xs">Jumlah Data : {{ $dataCount }}</p>
+
+            <form @if ($user->isEditor()) id="data-form" method="POST" action="{{ route('super-admin-achievement-iku-detail-validation', ['ikp' => $ikp['id']]) }}" @endif class="w-full overflow-x-auto rounded-lg">
                 @csrf
 
                 <table class="min-w-full text-sm max-md:text-xs">
@@ -156,12 +158,20 @@
 
                                 <tr class="{{ !$col['status'] ? 'bg-red-300' : '' }} border-y *:px-1 *:py-1.5">
                                     <td title="Terima/Tolak" class="relative text-center">
-                                        <input id="{{ $id }}" name="" type="checkbox" title="Tolak data?" oldValue="{{ !$col['status'] }}" class="rounded border-2 border-red-500 text-red-500 checked:outline-red-500 focus:outline-red-500 disabled:border-slate-300" @if (auth()->user()->access === 'editor') onblur="blurInput(this, '{{ $id }}-status-cover')" @endif @checked(!$col['status']) disabled>
-                                        <input id="{{ $id }}-status-cover-hidden" type="hidden" name="data[{{ $id }}][status]" value="toggle" disabled>
-                                        <div id="{{ $id }}-status-cover" class="absolute left-0 top-0 h-full w-full" @if (auth()->user()->access === 'editor') onclick="clickInput(this, '{{ $id }}')" @endif></div>
+
+                                        @if ($user->isEditor())
+                                            <input id="{{ $id }}" name="" type="checkbox" title="Tolak data?" oldValue="{{ !$col['status'] }}" class="rounded border-2 border-red-500 text-red-500 checked:outline-red-500 focus:outline-red-500 disabled:border-slate-300" onblur="blurInput(this, '{{ $id }}-status-cover')" @checked(!$col['status']) disabled>
+                                            <input id="{{ $id }}-status-cover-hidden" type="hidden" name="data[{{ $id }}][status]" value="toggle" disabled>
+                                            <div id="{{ $id }}-status-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, '{{ $id }}')"></div>
+                                        @else
+                                            <input id="{{ $id }}" name="" type="checkbox" title="Tolak data?" oldValue="{{ !$col['status'] }}" class="rounded border-2 border-red-500 text-red-500 checked:outline-red-500 focus:outline-red-500 disabled:border-slate-300" @checked(!$col['status']) disabled>
+                                            <input id="{{ $id }}-status-cover-hidden" type="hidden" name="data[{{ $id }}][status]" value="toggle" disabled>
+                                            <div id="{{ $id }}-status-cover" class="absolute left-0 top-0 h-full w-full"></div>
+                                        @endif
+
                                     </td>
                                     <td title="Catatan" class="relative">
-                                        @if (auth()->user()->access === 'editor')
+                                        @if ($user->isEditor())
                                             <x-partials.input.text name="data[{{ $id }}][note]" title="Catatan" value="{{ $col['note'] }}" oldvalue="{{ $col['note'] }}" onblur="blurInput(this, '{{ $id }}-note-cover')" disabled />
 
                                             @error("data.$id.note")
@@ -205,7 +215,7 @@
                 </table>
             </form>
 
-            @if (auth()->user()->access === 'editor')
+            @if ($user->isEditor())
                 <button type="button" onclick="document.getElementById('data-form').submit()" title="Tombol simpan data" class="flex w-full items-center justify-center gap-0.5 rounded-full bg-yellow-500 p-0.5 text-white hover:bg-yellow-400">
                     <p>Simpan</p>
                 </button>
@@ -261,12 +271,16 @@
                         @foreach ($data as $unit => $item)
                             @php
                                 $temp = collect($item);
+                                $tempValue = $temp->average('value');
+                                if (!ctype_digit(text: (string) $tempValue)) {
+                                    $tempValue = number_format((float) $tempValue, 2);
+                                }
                             @endphp
                             <tr class="border-y *:px-1 *:py-1.5">
                                 <td title="{{ $loop->iteration }}" class="text-center">{{ $loop->iteration }}</td>
                                 <td title="{{ $unit }}">{{ $unit }}</td>
-                                <td title="{{ $temp->average('value') }}" class="text-center">
-                                    {{ $temp->average('value') }}
+                                <td title="{{ $tempValue }}" class="text-center">
+                                    {{ $tempValue }}
 
                                     @if ($temp->count() === 1)
                                         <a href="{{ $temp->first()['link'] }}" title="Link bukti" class="text-primary underline">Link</a>
