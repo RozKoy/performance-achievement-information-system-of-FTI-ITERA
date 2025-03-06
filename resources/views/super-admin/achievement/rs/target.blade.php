@@ -9,7 +9,7 @@
         ],
         [
             'link' => 'super-admin-achievement-rs-target',
-            'name' => 'Target ' . $year,
+            'name' => "Target $year",
             'params' => [
                 'year' => $year,
             ],
@@ -18,13 +18,14 @@
     $previousRoute = route('super-admin-achievement-rs', ['year' => $year]);
     $heading = "target $year - rencana strategis";
 @endphp
+
 <x-super-admin-template title="Renstra - Capaian Kinerja - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 :text="$heading" :$previousRoute />
-    <form action="{{ route('super-admin-achievement-rs-target-add', ['year' => $year]) }}" method="POST" class="flex w-full flex-col gap-1">
-        @csrf
+    <form action="{{ $user->isEditor() ? route('super-admin-achievement-rs-target-add', ['year' => $year]) : '' }}" method="POST" class="flex w-full flex-col gap-1">
 
-        @if (auth()->user()->access === 'editor')
+        @if ($user->isEditor())
+            @csrf
             <x-partials.button.add text="Simpan" style="ml-auto" submit />
         @endif
 
@@ -47,7 +48,7 @@
                 <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
 
                     @php
-                        function getSelection($selections = [], $value = null)
+                        function getSelection($selections = [], $value = null): array
                         {
                             $textSelections = [
                                 [
@@ -77,6 +78,9 @@
                                 @php
                                     $textSelections = collect($ik['text_selections']);
                                     $target = collect($ik['target']);
+
+                                    $isPercent = $ik['type'] === \App\Models\IndikatorKinerja::TYPE_PERCENT;
+                                    $isText = $ik['type'] === \App\Models\IndikatorKinerja::TYPE_TEXT;
                                 @endphp
 
                                 <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
@@ -100,20 +104,28 @@
                                         <span title="{{ $ik['type'] }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ik['type'] }}</span>
                                     </td>
 
-                                    <td title="{{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $ik['all_target'])['value'] ?? '' : $ik['all_target'] }}" class="w-max min-w-72">
-                                        <div class="relative">
-                                            @if (auth()->user()->access === 'editor' && $ik['type'] === 'teks')
-                                                <x-partials.input.select name="{{ 'target[' . $ik['id'] . ']' }}" title="target" :data="getSelection($ik['text_selections'], $ik['all_target'])" oldvalue="{{ $ik['all_target'] }}" onblur="blurInput('{{ 'target[' . $ik['id'] . ']' }}', '{{ $ik['id'] }}-cover')" disabled />
-                                                <div id="{{ $ik['id'] }}-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, '{{ 'target[' . $ik['id'] . ']' }}')"></div>
+                                    @if ($isText)
+                                        <td title="{{ $textSelections->firstWhere('id', $ik['all_target'])['value'] ?? '' }}" class="w-max min-w-72">
+                                            <div class="relative">
+                                                @if ($user->isEditor())
+                                                    <x-partials.input.select name="{{ 'target[' . $ik['id'] . ']' }}" title="target" :data="getSelection($ik['text_selections'], $ik['all_target'])" oldvalue="{{ $ik['all_target'] }}" onblur="blurInput('{{ 'target[' . $ik['id'] . ']' }}', '{{ $ik['id'] }}-cover')" disabled />
+                                                    <div id="{{ $ik['id'] }}-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, '{{ 'target[' . $ik['id'] . ']' }}')"></div>
 
-                                                @error('target.' . $ik['id'])
-                                                    <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
-                                                @enderror
-                                            @else
-                                                {{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $ik['all_target'])['value'] ?? '' : $ik['all_target'] }}{{ $ik['type'] === 'persen' && $ik['all_target'] !== null ? '%' : '' }}
-                                            @endif
-                                        </div>
-                                    </td>
+                                                    @error('target.' . $ik['id'])
+                                                        <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
+                                                    @enderror
+                                                @else
+                                                    {{ $textSelections->firstWhere('id', $ik['all_target'])['value'] ?? '' }}
+                                                @endif
+                                            </div>
+                                        </td>
+                                    @else
+                                        <td title="{{ $ik['all_target'] }}" class="w-max min-w-72">
+                                            <div class="relative">
+                                                {{ $ik['all_target'] }}{{ $isPercent && $ik['all_target'] !== null ? '%' : '' }}
+                                            </div>
+                                        </td>
+                                    @endif
 
                                     @foreach ($units as $unit)
                                         @php
@@ -124,8 +136,8 @@
 
                                         <td title="Target {{ $unit['name'] }}" class="relative">
 
-                                            @if (auth()->user()->access === 'editor')
-                                                @if ($ik['type'] === 'teks')
+                                            @if ($user->isEditor())
+                                                @if ($isText)
                                                     <x-partials.input.select name="{{ $inputName }}" title="target" :data="getSelection($ik['text_selections'], $targetUnit)" oldvalue="{{ $targetUnit }}" onblur="blurInput('{{ $inputName }}', '{{ $inputName }}-cover')" disabled />
                                                 @else
                                                     <x-partials.input.text name="{{ $inputName }}" title="target" value="{{ $targetUnit }}" oldvalue="{{ $targetUnit }}" onblur="blurInput('{{ $inputName }}', '{{ $inputName }}-cover')" disabled />
@@ -136,7 +148,7 @@
                                                     <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">{{ $message }}</p>
                                                 @enderror
                                             @else
-                                                <p title="target {{ $unit['name'] }}">{{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $targetUnit)['value'] ?? '' : $targetUnit }}</p>
+                                                <p title="target {{ $unit['name'] }}">{{ $isText ? $textSelections->firstWhere('id', $targetUnit)['value'] ?? '' : $targetUnit }}</p>
                                             @endif
 
                                         </td>
@@ -155,13 +167,13 @@
             <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data capaian kinerja</p>
         @endif
 
-        @if (auth()->user()->access === 'editor')
+        @if ($user->isEditor())
             <x-partials.button.add text="Simpan" style="ml-auto" submit />
         @endif
 
     </form>
 
-    @pushIf(auth()->user()->access === 'editor', 'script')
+    @pushIf($user->isEditor(), 'script')
     <script>
         function clickInput(self, selfId) {
             const selfElement = document.getElementById(selfId);

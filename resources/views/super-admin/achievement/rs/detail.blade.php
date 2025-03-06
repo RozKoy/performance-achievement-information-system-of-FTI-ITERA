@@ -17,7 +17,11 @@
         ],
     ];
     $previousRoute = route('super-admin-achievement-rs', ['year' => $year, 'period' => $period]);
+
+    $isPercent = $ik['type'] === \App\Models\IndikatorKinerja::TYPE_PERCENT;
+    $isText = $ik['type'] === \App\Models\IndikatorKinerja::TYPE_TEXT;
 @endphp
+
 <x-super-admin-template title="Renstra - Capaian Kinerja - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="detail - rencana strategis" :$previousRoute />
@@ -25,8 +29,8 @@
     <x-partials.heading.h3 title="Kegiatan" dataNumber="{{ $k['number'] }}" dataText="{{ $k['name'] }}" />
     <x-partials.heading.h3 title="Indikator Kinerja" dataNumber="{{ $ik['number'] }}" dataText="{{ $ik['name'] }}" />
 
-    <form action="{{ auth()->user()->access === 'editor' ? route('super-admin-achievement-rs-evaluation', ['ik' => $ik['id']]) : '' }}" method="POST" class="flex flex-col gap-2">
-        @if (auth()->user()->access === 'editor')
+    <form action="{{ $user->isEditor() ? route('super-admin-achievement-rs-evaluation', ['ik' => $ik['id']]) : '' }}" method="POST" class="flex flex-col gap-2">
+        @if ($user->isEditor())
             @csrf
             <input type="hidden" name="period" value="{{ $period }}">
         @endif
@@ -35,14 +39,14 @@
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="realization" title="Realisasi" text="Realisasi" required />
 
-                @if (auth()->user()->access === 'editor' && ($ik['type'] === 'teks' || ($ik['status'] !== 'aktif' && $period !== '3')))
-                    @if ($ik['type'] === 'teks')
+                @if ($user->isEditor() && ($isText || ($ik['status'] !== 'aktif' && $period !== '3')))
+                    @if ($isText)
                         <x-partials.input.select name="realization" title="Realisasi" :data="$textRealization" autofocus />
                     @else
                         <x-partials.input.text name="realization" title="Realisasi" value="{{ $realization }}" autofocus />
                     @endif
                 @else
-                    <x-partials.input.text name="realization" title="Realisasi" value="{{ $realization }}{{ $realization && $ik['type'] === 'persen' ? '%' : '' }}" disabled />
+                    <x-partials.input.text name="realization" title="Realisasi" value="{{ $realization }}{{ $realization && $isPercent ? '%' : '' }}" disabled />
                 @endif
 
             </div>
@@ -51,21 +55,29 @@
                 <div class="flex flex-1 flex-col gap-2">
                     <x-partials.label.default for="target" title="Target" text="Target" required />
 
-                    @if (auth()->user()->access === 'editor' && $ik['status'] !== 'aktif')
-                        @if ($ik['type'] === 'teks')
+                    @if ($user->isEditor() && $ik['status'] !== 'aktif')
+                        @if ($isText)
                             <x-partials.input.select name="target" title="Target" :data="$textTarget" autofocus />
                         @else
                             <x-partials.input.text name="target" title="Target" value="{{ isset($evaluation) ? $evaluation['target'] : '' }}" autofocus required />
                         @endif
                     @else
-                        <x-partials.input.text name="target" title="Target" value="{{ isset($evaluation) ? ($ik['type'] === 'teks' ? $textSelections->firstWhere('id', $evaluation['target'])['value'] ?? '' : $evaluation['target']) : '' }}{{ isset($evaluation) && $ik['type'] === 'persen' ? '%' : '' }}" disabled />
+                        @if (isset($evaluation))
+                            @if ($isText)
+                                <x-partials.input.text name="target" title="Target" value="{{ $textSelections->firstWhere('id', $evaluation['target'])['value'] ?? '' }}" disabled />
+                            @else
+                                <x-partials.input.text name="target" title="Target" value="{{ $evaluation['target'] }}{{ $isPercent ? '%' : '' }}" disabled />
+                            @endif
+                        @else
+                            <x-partials.input.text name="target" title="Target" value="" disabled />
+                        @endif
                     @endif
 
                 </div>
                 <div class="flex flex-1 flex-col gap-2">
                     <x-partials.label.default for="evaluation" title="Evaluasi" text="Evaluasi" />
 
-                    @if (auth()->user()->access === 'editor')
+                    @if ($user->isEditor())
                         <x-partials.input.text name="evaluation" title="Evaluasi" value="{{ isset($evaluation) ? $evaluation['evaluation'] : '' }}" />
                     @else
                         <x-partials.input.text name="evaluation" title="Evaluasi" value="{{ isset($evaluation) ? $evaluation['evaluation'] : '' }}" disabled />
@@ -75,7 +87,7 @@
                 <div class="flex flex-1 flex-col gap-2">
                     <x-partials.label.default for="follow_up" title="Tindak lanjut" text="Tindak Lanjut" />
 
-                    @if (auth()->user()->access === 'editor')
+                    @if ($user->isEditor())
                         <x-partials.input.text name="follow_up" title="Tindak lanjut" value="{{ isset($evaluation) ? $evaluation['follow_up'] : '' }}" />
                     @else
                         <x-partials.input.text name="follow_up" title="Tindak lanjut" value="{{ isset($evaluation) ? $evaluation['follow_up'] : '' }}" disabled />
@@ -83,7 +95,7 @@
 
                 </div>
 
-                @if (auth()->user()->access === 'editor' && $ik['type'] === 'teks')
+                @if ($user->isEditor() && $isText)
                     <div class="flex flex-1 flex-col gap-2">
                         <x-partials.label.default for="status" title="Status" text="Status" required />
                         <x-partials.input.select name="status" title="Filter status" :data="$status" required />
@@ -94,7 +106,7 @@
 
         </div>
 
-        @if (auth()->user()->access === 'editor' && ($period === '3' || $ik['status'] !== 'aktif' || $ik['type'] === 'teks'))
+        @if ($user->isEditor() && ($period === '3' || $ik['status'] !== 'aktif' || $isText))
             <x-partials.button.add style="ml-auto" submit text="Simpan" />
         @endif
 
@@ -155,15 +167,32 @@
                             <td title="{{ $item['unit']['name'] }}" class="w-max min-w-72 text-left">{{ $item['unit']['name'] }}</td>
 
                             @if ($period === '3')
-                                <td title="{{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $item['unit']['target'])['value'] ?? '' : $item['unit']['target'] }}">{{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $item['unit']['target'])['value'] ?? '' : $item['unit']['target'] }}</td>
+                                @if ($isText)
+                                    <td title="{{ $textSelections->firstWhere('id', $item['unit']['target'])['value'] ?? '' }}">
+                                        {{ $textSelections->firstWhere('id', $item['unit']['target'])['value'] ?? '' }}
+                                    </td>
+                                @else
+                                    <td title="{{ $item['unit']['target'] }}{{ $item['unit']['target'] && $isPercent ? '%' : '' }}">
+                                        {{ $item['unit']['target'] }}{{ $item['unit']['target'] && $isPercent ? '%' : '' }}
+                                    </td>
+                                @endif
                             @endif
 
-                            <td title="{{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $item['realization'])['value'] ?? '' : $item['realization'] }}">
-                                {{ $ik['type'] === 'teks' ? $textSelections->firstWhere('id', $item['realization'])['value'] ?? '' : $item['realization'] }}
-                                @if ($item['link'])
-                                    <a href="{{ $item['link'] }}" title="Link bukti" class="ms-1 text-primary underline">Link Bukti</a>
-                                @endif
-                            </td>
+                            @if ($isText)
+                                <td title="{{ $textSelections->firstWhere('id', $item['realization'])['value'] ?? '' }}">
+                                    {{ $textSelections->firstWhere('id', $item['realization'])['value'] ?? '' }}
+                                    @if ($item['link'])
+                                        <a href="{{ $item['link'] }}" title="Link bukti" class="ms-1 text-primary underline">Link Bukti</a>
+                                    @endif
+                                </td>
+                            @else
+                                <td title="{{ $item['realization'] }}{{ $item['realization'] && $isPercent ? '%' : '' }}">
+                                    {{ $item['realization'] }}{{ $item['realization'] && $isPercent ? '%' : '' }}
+                                    @if ($item['link'])
+                                        <a href="{{ $item['link'] }}" title="Link bukti" class="ms-1 text-primary underline">Link Bukti</a>
+                                    @endif
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
 

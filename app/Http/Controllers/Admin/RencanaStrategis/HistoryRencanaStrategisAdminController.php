@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\RencanaStrategis;
 
+use App\Http\Controllers\SuperAdmin\RencanaStrategis\HomeRencanaStrategisSuperAdminController;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\View\Factory;
@@ -22,6 +23,8 @@ class HistoryRencanaStrategisAdminController extends Controller
      */
     public function view(Request $request): Factory|View
     {
+        HomeRencanaStrategisSuperAdminController::CheckRoutine();
+
         $statusRequest = $request->query('status');
         $periodRequest = $request->query('period');
         $yearQuery = $request->query('year');

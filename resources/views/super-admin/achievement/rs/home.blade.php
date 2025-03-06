@@ -25,7 +25,7 @@
         <div class="flex items-center justify-center">
 
             @if ($period !== '3' && isset($periodId))
-                @if (auth()->user()->access === 'editor')
+                @if ($user->isEditor())
                     <label title="Tombol power [status: {{ $system === true ? 'Aktif' : 'Tidak aktif' }}]" onclick="statusToggle('{{ url(route('super-admin-achievement-rs-status', ['period' => $periodId])) }}')" class="relative inline-flex items-center">
                         <input type="checkbox" value="{{ $system }}" class="peer sr-only" @checked($system) disabled>
                         <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
@@ -101,7 +101,7 @@
                                         <td title="{{ $ss['ss'] }}" rowspan="{{ $ss['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                             {{ $ss['ss'] }}
 
-                                            @if (auth()->user()->access === 'editor')
+                                            @if ($user->isEditor())
                                                 <x-partials.button.edit link="{{ route('super-admin-rs-ss-edit', ['ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                             @endif
 
@@ -111,7 +111,7 @@
                                     <td title="{{ $k['k'] }}" rowspan="{{ $k['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                         {{ $k['k'] }}
 
-                                        @if (auth()->user()->access === 'editor')
+                                        @if ($user->isEditor())
                                             <x-partials.button.edit link="{{ route('super-admin-rs-k-edit', ['k' => $k['id'], 'ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                         @endif
 
@@ -121,7 +121,7 @@
                                 <td title="{{ $ik['ik'] }}" class="group relative z-10 w-max min-w-72 text-left">
                                     {{ $ik['ik'] }}
 
-                                    @if (auth()->user()->access === 'editor')
+                                    @if ($user->isEditor())
                                         <x-partials.button.edit link="{{ route('super-admin-rs-ik-edit', ['ik' => $ik['id'], 'k' => $k['id'], 'ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                     @endif
 
@@ -129,10 +129,26 @@
                                 </td>
 
                                 @if ($period === '3')
-                                    <td title="{{ $ik['type'] === 'teks' ? collect($ik['text_selections'])->firstWhere('id', $ik['target'])['value'] ?? '' : $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}">{{ $ik['type'] === 'teks' ? collect($ik['text_selections'])->firstWhere('id', $ik['target'])['value'] ?? '' : $ik['target'] }}{{ $ik['type'] === 'persen' && $ik['target'] !== null ? '%' : '' }}</td>
+                                    @if ($ik['type'] === \App\Models\IndikatorKinerja::TYPE_TEXT)
+                                        <td title="{{ collect($ik['text_selections'])->firstWhere('id', $ik['target'])['value'] ?? '' }}">
+                                            {{ collect($ik['text_selections'])->firstWhere('id', $ik['target'])['value'] ?? '' }}
+                                        </td>
+                                    @else
+                                        <td title="{{ $ik['target'] }}{{ $ik['type'] === \App\Models\IndikatorKinerja::TYPE_PERCENT && $ik['target'] !== null ? '%' : '' }}">
+                                            {{ $ik['target'] }}{{ $ik['type'] === \App\Models\IndikatorKinerja::TYPE_PERCENT && $ik['target'] !== null ? '%' : '' }}
+                                        </td>
+                                    @endif
                                 @endif
 
-                                <td title="{{ $ik['type'] === 'teks' ? collect($ik['text_selections'])->firstWhere('id', $ik['realization'])['value'] ?? '' : $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}">{{ $ik['type'] === 'teks' ? collect($ik['text_selections'])->firstWhere('id', $ik['realization'])['value'] ?? '' : $ik['realization'] }}{{ $ik['type'] === 'persen' && $ik['realization'] !== null ? '%' : '' }}</td>
+                                @if ($ik['type'] === \App\Models\IndikatorKinerja::TYPE_TEXT)
+                                    <td title="{{ collect($ik['text_selections'])->firstWhere('id', $ik['realization'])['value'] ?? '' }}">
+                                        {{ collect($ik['text_selections'])->firstWhere('id', $ik['realization'])['value'] ?? '' }}
+                                    </td>
+                                @else
+                                    <td title="{{ $ik['realization'] }}{{ $ik['type'] === \App\Models\IndikatorKinerja::TYPE_PERCENT && $ik['realization'] !== null ? '%' : '' }}">
+                                        {{ $ik['realization'] }}{{ $ik['type'] === \App\Models\IndikatorKinerja::TYPE_PERCENT && $ik['realization'] !== null ? '%' : '' }}
+                                    </td>
+                                @endif
 
                                 @if ($period === '3')
                                     <td title="{{ $ik['done'] == 1 ? 'Tercapai' : 'Tidak tercapai' }}">{{ $ik['done'] == 1 ? 'Iya' : 'Tidak' }}</td>
@@ -186,7 +202,7 @@
         <p class="text-center text-red-500 max-lg:text-sm max-md:text-xs">Tidak ada data capaian kinerja</p>
     @endif
 
-    @pushIf(auth()->user()->access === 'editor' && $period !== '3', 'script')
+    @pushIf($user->isEditor() && $period !== '3', 'script')
     <script>
         function statusToggle(url) {
             window.location.href = url;

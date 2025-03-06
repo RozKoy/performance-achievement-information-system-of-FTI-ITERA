@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\RencanaStrategis;
 
+use App\Http\Controllers\SuperAdmin\RencanaStrategis\HomeRencanaStrategisSuperAdminController;
 use App\Http\Requests\RencanaStrategis\AddRequest;
 use App\Http\Controllers\_ControllerHelpers;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +23,8 @@ class AddRencanaStrategisAdminController extends Controller
      */
     public function action(AddRequest $request, string $periodId, string $ikId): RedirectResponse
     {
+        HomeRencanaStrategisSuperAdminController::CheckRoutine();
+
         [
             "realization-$ikId" => $realization,
             "link-$ikId" => $link,

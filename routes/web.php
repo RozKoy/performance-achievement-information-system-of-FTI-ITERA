@@ -5,6 +5,7 @@ use App\Http\Controllers\Authentication\ChangePasswordController;
 use App\Http\Controllers\Authentication\ForgetPasswordController;
 use App\Http\Controllers\Authentication\LogoutController;
 use App\Http\Controllers\Authentication\LoginController;
+
 // Rencana Strategis - Admin
 use App\Http\Controllers\Admin\RencanaStrategis\HistoryRencanaStrategisAdminController;
 use App\Http\Controllers\Admin\RencanaStrategis\HomeRencanaStrategisAdminController;
@@ -25,9 +26,14 @@ use App\Http\Controllers\Admin\User\HomeUserAdminController;
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IKUController;
-use App\Http\Controllers\RSController;
 // Rencana Strategis - Super Admin
+use App\Http\Controllers\SuperAdmin\RencanaStrategis\ExcelExportRencanaStrategisSuperAdminController;
+use App\Http\Controllers\SuperAdmin\RencanaStrategis\EvaluationRencanaStrategisSuperAdminController;
 use App\Http\Controllers\SuperAdmin\RencanaStrategis\FormatRencanaStrategisSuperAdminController;
+use App\Http\Controllers\SuperAdmin\RencanaStrategis\DetailRencanaStrategisSuperAdminController;
+use App\Http\Controllers\SuperAdmin\RencanaStrategis\StatusRencanaStrategisSuperAdminController;
+use App\Http\Controllers\SuperAdmin\RencanaStrategis\TargetRencanaStrategisSuperAdminController;
+use App\Http\Controllers\SuperAdmin\RencanaStrategis\HomeRencanaStrategisSuperAdminController;
 // Indikator Kinerja Utama - Super Admin
 use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\FormatIndikatorKinerjaUtamaSuperAdminController;
 // Sasaran Strategis - Rencana Strategis - Super Admin
@@ -129,15 +135,15 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
         })->name('super-admin-achievement');
 
         Route::prefix('rencana-strategis')->group(function (): void {
-            Route::get('/', [RSController::class, 'homeView'])->name('super-admin-achievement-rs');
-            Route::get('{ik}/detail', [RSController::class, 'detailView'])->name('super-admin-achievement-rs-detail');
-            Route::get('{year}/target', [RSController::class, 'targetView'])->name('super-admin-achievement-rs-target');
-            Route::get('export', [RSController::class, 'exportRS'])->name('super-admin-achievement-rs-export');
+            Route::get('/', [HomeRencanaStrategisSuperAdminController::class, 'view'])->name('super-admin-achievement-rs');
+            Route::get('{ik}/detail', [DetailRencanaStrategisSuperAdminController::class, 'view'])->name('super-admin-achievement-rs-detail');
+            Route::get('{year}/target', [TargetRencanaStrategisSuperAdminController::class, 'view'])->name('super-admin-achievement-rs-target');
+            Route::get('export', [ExcelExportRencanaStrategisSuperAdminController::class, 'action'])->name('super-admin-achievement-rs-export');
 
             Route::middleware('editor')->group(function (): void {
-                Route::post('{year}/target', [RSController::class, 'addTarget'])->name('super-admin-achievement-rs-target-add');
-                Route::get('{period}/status', [RSController::class, 'statusToggle'])->name('super-admin-achievement-rs-status');
-                Route::post('{ik}/evaluation', [RSController::class, 'addEvaluation'])->name('super-admin-achievement-rs-evaluation');
+                Route::post('{year}/target', [TargetRencanaStrategisSuperAdminController::class, 'action'])->name('super-admin-achievement-rs-target-add');
+                Route::get('{period}/status', [StatusRencanaStrategisSuperAdminController::class, 'action'])->name('super-admin-achievement-rs-status');
+                Route::post('{ik}/evaluation', [EvaluationRencanaStrategisSuperAdminController::class, 'action'])->name('super-admin-achievement-rs-evaluation');
             });
         });
 
