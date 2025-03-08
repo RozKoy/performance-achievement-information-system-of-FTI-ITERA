@@ -53,8 +53,10 @@ class UpdateIndikatorKinerjaProgramSuperAdminController extends Controller
         ];
 
         $previousRoute = route('super-admin-iku-ikp', ['ikk' => $ikk['id'], 'sk' => $sk['id'], 'ps' => $ps['id']]);
+        $current = true;
         if ($sk->time->year !== Carbon::now()->format('Y')) {
             $previousRoute = route('super-admin-achievement-iku', ['year' => $sk->time->year]);
+            $current = false;
         }
 
         $columns = $ikp->columns()

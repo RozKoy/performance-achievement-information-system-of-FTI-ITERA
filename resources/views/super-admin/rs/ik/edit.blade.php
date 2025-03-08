@@ -39,7 +39,7 @@
 
     @if ($current)
         <div class="flex items-center justify-start">
-            <label onclick="statusToggle('{{ url(route('super-admin-rs-ik-status', ['ik' => $ik['id'], 'ss' => $ss['id'], 'k' => $k['id']])) }}')" class="relative inline-flex items-center">
+            <label onclick="pushURL('status-toggle-confirmation', '{{ url(route('super-admin-rs-ik-status', ['ik' => $ik['id'], 'ss' => $ss['id'], 'k' => $k['id']])) }}')" class="relative inline-flex items-center" data-modal-target="status-toggle-confirmation" data-modal-toggle="status-toggle-confirmation">
                 <input type="checkbox" value="{{ $ik['status'] }}" class="peer sr-only" @checked($ik['status'] === 'aktif') disabled>
                 <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
             </label>
@@ -96,12 +96,8 @@
         <x-partials.button.edit />
     </form>
 
-    @pushIf($current, 'script')
-    <script>
-        function statusToggle(url) {
-            window.location.href = url;
-        }
-    </script>
-    @endPushIf
+    @if ($current)
+        <x-partials.modal.confirmation id="status-toggle-confirmation" message="Apakah anda yakin ingin mengubah status?" note="*Merubah status akan menghapus realisasi capaian yang telah diinputkan setiap unit" />
+    @endif
 
 </x-super-admin-template>

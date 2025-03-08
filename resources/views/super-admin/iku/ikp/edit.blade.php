@@ -50,7 +50,7 @@
 
     @if ($current)
         <div class="flex items-center justify-start">
-            <label onclick="statusToggle('{{ url(route('super-admin-iku-ikp-status', ['ikp' => $ikp['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']])) }}')" class="relative inline-flex items-center">
+            <label onclick="pushURL('status-toggle-confirmation', '{{ url(route('super-admin-iku-ikp-status', ['ikp' => $ikp['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']])) }}')" class="relative inline-flex items-center" data-modal-target="status-toggle-confirmation" data-modal-toggle="status-toggle-confirmation">
                 <input type="checkbox" value="{{ $ikp['status'] }}" class="peer sr-only" @checked($ikp['status'] === 'aktif') disabled>
                 <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
             </label>
@@ -65,11 +65,11 @@
         @method('PUT')
 
         <div class="flex flex-wrap gap-2">
-            <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
+            <div class="flex min-w-28 flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="mode" title="Mode" text="Mode" required />
                 <x-partials.input.select name="mode" title="Mode" :data="[['text' => $ikp['mode'], 'value' => $ikp['mode']]]" disabled />
             </div>
-            <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
+            <div class="flex min-w-28 flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="number" title="Nomor" text="Nomor" required />
                 <x-partials.input.select name="number" title="Nomor" :$data required />
 
@@ -78,7 +78,7 @@
                 @enderror
 
             </div>
-            <div class="min-w-28 flex flex-col gap-2 max-sm:flex-1">
+            <div class="flex min-w-28 flex-col gap-2 max-sm:flex-1">
                 <x-partials.label.default for="type" title="Tipe pendukung" text="Tipe Pendukung" required />
                 <x-partials.input.select name="type" title="Tipe pendukung" :data="$types" required />
 
@@ -102,7 +102,7 @@
             <div class="w-full overflow-x-auto rounded-lg">
                 <table class="min-w-full max-lg:text-sm max-md:text-xs">
                     <thead>
-                        <tr class="*:font-normal *:px-5 *:py-2.5 *:whitespace-nowrap *:border bg-primary/80 text-white">
+                        <tr class="bg-primary/80 text-white *:whitespace-nowrap *:border *:px-5 *:py-2.5 *:font-normal">
                             <th title="Nomor">No</th>
 
                             @foreach ($columns as $column)
@@ -127,12 +127,8 @@
         <x-partials.button.edit />
     </form>
 
-    @pushIf($current, 'script')
-    <script>
-        function statusToggle(url) {
-            window.location.href = url;
-        }
-    </script>
-    @endPushIf
+    @if ($current)
+        <x-partials.modal.confirmation id="status-toggle-confirmation" message="Apakah anda yakin ingin mengubah status?" note="*Merubah status akan menghapus realisasi capaian yang telah diinputkan setiap unit" />
+    @endif
 
 </x-super-admin-template>
