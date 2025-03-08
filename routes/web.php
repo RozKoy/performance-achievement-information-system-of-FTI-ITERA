@@ -26,6 +26,9 @@ use App\Http\Controllers\Admin\User\HomeUserAdminController;
 
 // Dashboard - Super Admin
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SuperAdmin\Dashboard\HomeDashboardSuperAdminController;
+use App\Http\Controllers\SuperAdmin\Dashboard\IndikatorKinerjaUtamaDashboardSuperAdminController;
+use App\Http\Controllers\SuperAdmin\Dashboard\RencanaStrategisDashboardSuperAdminController;
 // Rencana Strategis - Super Admin
 use App\Http\Controllers\SuperAdmin\RencanaStrategis\ExcelExportRencanaStrategisSuperAdminController;
 use App\Http\Controllers\SuperAdmin\RencanaStrategis\EvaluationRencanaStrategisSuperAdminController;
@@ -130,10 +133,10 @@ Route::get('keluar', [LogoutController::class, 'action'])->middleware('auth')->n
 
 Route::prefix('super-admin')->middleware('superadmin')->group(function (): void {
     Route::prefix('beranda')->group(function (): void {
-        Route::get('/', [DashboardController::class, 'home'])->name('super-admin-dashboard');
+        Route::get('/', [HomeDashboardSuperAdminController::class, 'view'])->name('super-admin-dashboard');
         Route::get('iku/{year}', [DashboardController::class, 'iku'])->name('super-admin-dashboard-iku');
-        Route::get('iku/{year}/export', [DashboardController::class, 'exportIKU'])->name('super-admin-dashboard-iku-export');
-        Route::get('rs/{year}/export', [DashboardController::class, 'exportRS'])->name('super-admin-dashboard-rs-export');
+        Route::get('iku/{year}/export', [IndikatorKinerjaUtamaDashboardSuperAdminController::class, 'excelExport'])->name('super-admin-dashboard-iku-export');
+        Route::get('rs/{year}/export', [RencanaStrategisDashboardSuperAdminController::class, 'excelExport'])->name('super-admin-dashboard-rs-export');
     });
 
     Route::prefix('capaian-kinerja')->group(function (): void {
