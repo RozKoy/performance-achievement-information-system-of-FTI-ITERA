@@ -5,6 +5,11 @@
             'name' => 'Capaian Kinerja - Rencana Strategis',
         ],
     ];
+
+    $ssQuery = request()->query('ss');
+    $kQuery = request()->query('k');
+    $evaluationQuery = request()->query('evaluation');
+    $followUpQuery = request()->query('follow_up');
 @endphp
 <x-super-admin-template title="Renstra - Capaian Kinerja - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
@@ -65,9 +70,25 @@
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
                 <tr class="divide-x bg-primary/80 text-white *:whitespace-nowrap *:px-5 *:py-2.5 *:font-normal">
-                    <th title="Nomor">No</th>
-                    <th title="Sasaran strategis">Sasaran Strategis</th>
-                    <th title="Kegiatan">Kegiatan</th>
+
+                    @if ($ssQuery === 'show')
+                        <th title="Nomor">No</th>
+                    @endif
+
+                    <th title="{{ $ssQuery === 'show' ? 'Sasaran strategis' : 'Tampilkan sasaran strategis?' }}">
+                        <form action="" method="GET" class="inline">
+                            <x-functions.query-handler :data="['year', 'period', 'k', 'evaluation', 'follow_up']" />
+                            <input type="checkbox" name="ss" title="Tampilkan sasaran strategis?" onchange="this.form.submit()" value="{{ $ssQuery !== null ? '' : 'show' }}" class="rounded border-2 border-white text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($ssQuery === 'show')>
+                        </form>
+                        {{ $ssQuery === 'show' ? 'Sasaran Strategis' : 'SS' }}
+                    </th>
+                    <th title="{{ $kQuery === 'show' ? 'Kegiatan' : 'Tampilkan kegiatan?' }}">
+                        <form action="" method="GET" class="inline">
+                            <x-functions.query-handler :data="['year', 'period', 'ss', 'evaluation', 'follow_up']" />
+                            <input type="checkbox" name="k" title="Tampilkan kegiatan?" onchange="this.form.submit()" value="{{ $kQuery !== null ? '' : 'show' }}" class="rounded border-2 border-white text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($kQuery === 'show')>
+                        </form>
+                        {{ $kQuery === 'show' ? 'Kegiatan' : 'K' }}
+                    </th>
                     <th title="Indikator kinerja">Indikator Kinerja</th>
 
                     @if ($period === '3')
@@ -78,8 +99,20 @@
 
                     @if ($period === '3')
                         <th title="Tercapai">Tercapai</th>
-                        <th title="Evaluasi">Evaluasi</th>
-                        <th title="Tindak lanjut">Tindak Lanjut</th>
+                        <th title="{{ $evaluationQuery === 'show' ? 'Evaluasi' : 'Tampilkan evaluasi?' }}">
+                            <form action="" method="GET" class="inline">
+                                <x-functions.query-handler :data="['year', 'period', 'ss', 'k', 'follow_up']" />
+                                <input type="checkbox" name="evaluation" title="Tampilkan evaluasi?" onchange="this.form.submit()" value="{{ $evaluationQuery !== null ? '' : 'show' }}" class="rounded border-2 border-white text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($evaluationQuery === 'show')>
+                            </form>
+                            {{ $evaluationQuery === 'show' ? 'Evaluasi' : '' }}
+                        </th>
+                        <th title="{{ $followUpQuery === 'show' ? 'Tindak Lanjut' : 'Tampilkan tindak lanjut?' }}">
+                            <form action="" method="GET" class="inline">
+                                <x-functions.query-handler :data="['year', 'period', 'ss', 'k', 'evaluation']" />
+                                <input type="checkbox" name="follow_up" title="Tampilkan tindak lanjut?" onchange="this.form.submit()" value="{{ $followUpQuery !== null ? '' : 'show' }}" class="rounded border-2 border-white text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($followUpQuery === 'show')>
+                            </form>
+                            {{ $followUpQuery === 'show' ? 'Tindak Lanjut' : '' }}
+                        </th>
                     @endif
 
                     <th title="Status penugasan">Status Penugasan</th>
@@ -96,26 +129,37 @@
 
                                 @if ($loop->iteration === 1)
                                     @if ($loop->parent->iteration === 1)
-                                        <td title="{{ $ss['number'] }}" rowspan="{{ $ss['rowspan'] }}">{{ $ss['number'] }}</td>
+                                        @if ($ssQuery === 'show')
+                                            <td title="{{ $ss['number'] }}" rowspan="{{ $ss['rowspan'] }}">
+                                                {{ $ss['number'] }}
+                                            </td>
+                                            <td title="{{ $ss['ss'] }}" rowspan="{{ $ss['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
+                                                {{ $ss['ss'] }}
 
-                                        <td title="{{ $ss['ss'] }}" rowspan="{{ $ss['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
-                                            {{ $ss['ss'] }}
+                                                @if ($user->isEditor())
+                                                    <x-partials.button.edit link="{{ route('super-admin-rs-ss-edit', ['ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                                @endif
+
+                                            </td>
+                                        @else
+                                            <td title="" rowspan="{{ $ss['rowspan'] }}" class="w-max text-left">
+                                            </td>
+                                        @endif
+                                    @endif
+
+                                    @if ($kQuery === 'show')
+                                        <td title="{{ $k['k'] }}" rowspan="{{ $k['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
+                                            {{ $k['k'] }}
 
                                             @if ($user->isEditor())
-                                                <x-partials.button.edit link="{{ route('super-admin-rs-ss-edit', ['ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                                <x-partials.button.edit link="{{ route('super-admin-rs-k-edit', ['k' => $k['id'], 'ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                             @endif
 
                                         </td>
+                                    @else
+                                        <td title="" rowspan="{{ $k['rowspan'] }}" class="w-max text-left">
+                                        </td>
                                     @endif
-
-                                    <td title="{{ $k['k'] }}" rowspan="{{ $k['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
-                                        {{ $k['k'] }}
-
-                                        @if ($user->isEditor())
-                                            <x-partials.button.edit link="{{ route('super-admin-rs-k-edit', ['k' => $k['id'], 'ss' => $ss['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
-                                        @endif
-
-                                    </td>
                                 @endif
 
                                 <td title="{{ $ik['ik'] }}" class="group relative z-10 w-max min-w-72 text-left">
@@ -153,8 +197,17 @@
                                 @if ($period === '3')
                                     <td title="{{ $ik['done'] == 1 ? 'Tercapai' : 'Tidak tercapai' }}">{{ $ik['done'] == 1 ? 'Iya' : 'Tidak' }}</td>
 
-                                    <td title="{{ $ik['evaluation'] }}">{{ $ik['evaluation'] }}</td>
-                                    <td title="{{ $ik['follow_up'] }}">{{ $ik['follow_up'] }}</td>
+                                    @if ($evaluationQuery === 'show')
+                                        <td title="{{ $ik['evaluation'] }}">{{ $ik['evaluation'] }}</td>
+                                    @else
+                                        <td></td>
+                                    @endif
+
+                                    @if ($followUpQuery === 'show')
+                                        <td title="{{ $ik['follow_up'] }}">{{ $ik['follow_up'] }}</td>
+                                    @else
+                                        <td></td>
+                                    @endif
                                 @endif
 
                                 <td title="{{ $ik['status'] }}">

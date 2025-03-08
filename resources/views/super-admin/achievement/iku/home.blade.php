@@ -5,6 +5,12 @@
             'name' => 'Capaian Kinerja - Indikator Kinerja Utama',
         ],
     ];
+
+    $skQuery = request()->query('sk');
+    $ikkQuery = request()->query('ikk');
+    $psQuery = request()->query('ps');
+    $ikpQuery = request()->query('ikp');
+    $noteQuery = request()->query('note');
 @endphp
 <x-super-admin-template title="IKU - Capaian Kinerja - Super Admin">
     <x-partials.breadcrumbs.default :$breadCrumbs />
@@ -65,17 +71,51 @@
         <table class="min-w-full max-lg:text-sm max-md:text-xs">
             <thead>
                 <tr class="bg-primary/80 text-white *:whitespace-nowrap *:border *:px-5 *:py-2.5 *:font-normal">
-                    <th title="Nomor" rowspan="2">No</th>
-                    <th title="Sasaran kegiatan" rowspan="2">Sasaran Kegiatan</th>
-                    <th title="Indikator kinerja kegiatan" rowspan="2">Indikator Kinerja Kegiatan</th>
-                    <th title="Program strategis" rowspan="2">Program Strategis</th>
-                    <th title="Indikator kinerja program" rowspan="2">Indikator Kinerja Program</th>
+
+                    @if ($skQuery === 'show')
+                        <th title="Nomor" rowspan="2">No</th>
+                    @endif
+
+                    <th rowspan="2" title="{{ $skQuery === 'show' ? 'Sasaran kegiatan' : 'Tampilkan sasaran kegiatan?' }}">
+                        <form action="" method="GET" class="inline">
+                            <x-functions.query-handler :data="['year', 'period', 'ikk', 'ps', 'ikp', 'note']" />
+                            <input type="checkbox" name="sk" title="Tampilkan sasaran kegiatan?" onchange="this.form.submit()" value="{{ $skQuery !== null ? '' : 'show' }}" class="rounded border-2 border-white text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($skQuery === 'show')>
+                        </form>
+                        {{ $skQuery === 'show' ? 'Sasaran Kegiatan' : 'SK' }}
+                    </th>
+                    <th rowspan="2" title="{{ $ikkQuery === 'show' ? 'Indikator kinerja kegiatan' : 'Tampilkan indikator kinerja kegiatan?' }}">
+                        <form action="" method="GET" class="inline">
+                            <x-functions.query-handler :data="['year', 'period', 'sk', 'ps', 'ikp', 'note']" />
+                            <input type="checkbox" name="ikk" title="Tampilkan indikator kinerja kegiatan?" onchange="this.form.submit()" value="{{ $ikkQuery !== null ? '' : 'show' }}" class="rounded border-2 border-white text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($ikkQuery === 'show')>
+                        </form>
+                        {{ $ikkQuery === 'show' ? 'Indikator Kinerja Kegiatan' : 'IKK' }}
+                    </th>
+                    <th rowspan="2" title="{{ $psQuery === 'show' ? 'Program strategis' : 'Tampilkan program strategis?' }}">
+                        <form action="" method="GET" class="inline">
+                            <x-functions.query-handler :data="['year', 'period', 'sk', 'ikk', 'ikp', 'note']" />
+                            <input type="checkbox" name="ps" title="Tampilkan program strategis?" onchange="this.form.submit()" value="{{ $psQuery !== null ? '' : 'show' }}" class="rounded border-2 border-white text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($psQuery === 'show')>
+                        </form>
+                        {{ $psQuery === 'show' ? 'Program Strategis' : 'PS' }}
+                    </th>
+                    <th rowspan="2" title="{{ $ikpQuery === 'show' ? 'Indikator kinerja program' : 'Tampilkan indikator kinerja program?' }}">
+                        <form action="" method="GET" class="inline">
+                            <x-functions.query-handler :data="['year', 'period', 'sk', 'ikk', 'ps', 'note']" />
+                            <input type="checkbox" name="ikp" title="Tampilkan indikator kinerja program?" onchange="this.form.submit()" value="{{ $ikpQuery !== null ? '' : 'show' }}" class="rounded border-2 border-white text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($ikpQuery === 'show')>
+                        </form>
+                        {{ $ikpQuery === 'show' ? 'Indikator Kinerja Program' : 'IKP' }}
+                    </th>
                     <th title="Definisi operasional" rowspan="2">Definisi Operasional</th>
                     <th title="Target {{ $year }}" rowspan="2">Target {{ $year }}</th>
                     <th title="Total capaian {{ $year }}" rowspan="2">Total capaian {{ $year }}</th>
                     <th title="Status" rowspan="2">Status</th>
                     <th title="Capaian triwulanan" colspan="4">Capaian Triwulanan</th>
-                    <th title="Analisis progress capaian" colspan="2">Analisis Progress Capaian</th>
+                    <th colspan="2" title="{{ $noteQuery === 'show' ? 'Analisis progress capaian' : 'Tampilkan analisis progress capaian?' }}">
+                        <form action="" method="GET" class="inline">
+                            <x-functions.query-handler :data="['year', 'period', 'sk', 'ikk', 'ps', 'ikp']" />
+                            <input type="checkbox" name="note" title="Tampilkan indikator kinerja program?" onchange="this.form.submit()" value="{{ $noteQuery !== null ? '' : 'show' }}" class="rounded border-2 border-white text-primary checked:outline-primary focus:outline-primary disabled:border-slate-300" @checked($noteQuery === 'show')>
+                        </form>
+                        {{ $noteQuery === 'show' ? 'Analisis progress capaian' : 'APC' }}
+                    </th>
                     <th title="Status penugasan" rowspan="2">Status Penugasan</th>
                     <th title="Status pengisian" rowspan="2">Status Pengisian</th>
                     <th title="Aksi" rowspan="2">Aksi</th>
@@ -85,8 +125,15 @@
                     <th title="TW 2 | April - Juni">TW 2</th>
                     <th title="TW 3 | Juli - September">TW 3</th>
                     <th title="TW 4 | Oktober - Desember">TW 4</th>
-                    <th title="Kendala">Kendala</th>
-                    <th title="Tindak lanjut">Tindak Lanjut</th>
+
+                    @if ($noteQuery === 'show')
+                        <th title="Kendala">Kendala</th>
+                        <th title="Tindak lanjut">Tindak Lanjut</th>
+                    @else
+                        <th></th>
+                        <th></th>
+                    @endif
+
                 </tr>
             </thead>
             <tbody class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
@@ -104,47 +151,69 @@
                                     @if ($loop->iteration === 1)
                                         @if ($loop->parent->iteration === 1)
                                             @if ($loop->parent->parent->iteration === 1)
-                                                <td title="{{ $loop->parent->parent->parent->iteration }}" rowspan="{{ $sk['rowspan'] }}">{{ $loop->parent->parent->parent->iteration }}</td>
+                                                @if ($skQuery === 'show')
+                                                    <td title="{{ $loop->parent->parent->parent->iteration }}" rowspan="{{ $sk['rowspan'] }}">
+                                                        {{ $loop->parent->parent->parent->iteration }}
+                                                    </td>
 
-                                                <td title="{{ $sk['sk'] }}" rowspan="{{ $sk['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
-                                                    {{ $sk['sk'] }}
+                                                    <td title="{{ $sk['sk'] }}" rowspan="{{ $sk['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
+                                                        {{ $sk['sk'] }}
+
+                                                        @if ($user->isEditor())
+                                                            <x-partials.button.edit link="{{ route('super-admin-iku-sk-edit', ['sk' => $sk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                                        @endif
+
+                                                    </td>
+                                                @else
+                                                    <td title="" rowspan="{{ $sk['rowspan'] }}" class="w-max text-left">
+                                                    </td>
+                                                @endif
+                                            @endif
+
+                                            @if ($ikkQuery === 'show')
+                                                <td title="{{ $ikk['ikk'] }}" rowspan="{{ $ikk['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
+                                                    {{ $ikk['ikk'] }}
 
                                                     @if ($user->isEditor())
-                                                        <x-partials.button.edit link="{{ route('super-admin-iku-sk-edit', ['sk' => $sk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                                        <x-partials.button.edit link="{{ route('super-admin-iku-ikk-edit', ['ikk' => $ikk['id'], 'sk' => $sk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                                     @endif
 
                                                 </td>
+                                            @else
+                                                <td title="" rowspan="{{ $ikk['rowspan'] }}" class="w-max text-left">
+                                                </td>
                                             @endif
+                                        @endif
 
-                                            <td title="{{ $ikk['ikk'] }}" rowspan="{{ $ikk['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
-                                                {{ $ikk['ikk'] }}
+                                        @if ($psQuery === 'show')
+                                            <td title="{{ $ps['ps'] }}" rowspan="{{ $ps['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
+                                                {{ $ps['ps'] }}
 
                                                 @if ($user->isEditor())
-                                                    <x-partials.button.edit link="{{ route('super-admin-iku-ikk-edit', ['ikk' => $ikk['id'], 'sk' => $sk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                                    <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['ps' => $ps['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
                                                 @endif
 
                                             </td>
+                                        @else
+                                            <td title="" rowspan="{{ $ps['rowspan'] }}" class="w-max text-left">
+                                            </td>
                                         @endif
-
-                                        <td title="{{ $ps['ps'] }}" rowspan="{{ $ps['rowspan'] }}" class="group relative z-10 w-max min-w-72 text-left">
-                                            {{ $ps['ps'] }}
-
-                                            @if ($user->isEditor())
-                                                <x-partials.button.edit link="{{ route('super-admin-iku-ps-edit', ['ps' => $ps['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
-                                            @endif
-
-                                        </td>
                                     @endif
 
-                                    <td title="{{ $ikp['ikp'] }}" class="group relative z-10 w-max min-w-72 text-left">
-                                        {{ $ikp['ikp'] }}
+                                    @if ($ikpQuery === 'show')
+                                        <td title="{{ $ikp['ikp'] }}" class="group relative z-10 w-max min-w-72 text-left">
+                                            {{ $ikp['ikp'] }}
 
-                                        @if ($user->isEditor())
-                                            <x-partials.button.edit link="{{ route('super-admin-iku-ikp-edit', ['ikp' => $ikp['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
-                                        @endif
+                                            @if ($user->isEditor())
+                                                <x-partials.button.edit link="{{ route('super-admin-iku-ikp-edit', ['ikp' => $ikp['id'], 'sk' => $sk['id'], 'ikk' => $ikk['id'], 'ps' => $ps['id']]) }}" style="absolute hidden top-1.5 right-1.5 group-hover:block group-focus:block" />
+                                            @endif
 
-                                        <span title="{{ $ikp['type'] === 'iku' ? 'Indikator kinerja utama' : 'Indikator kinerja tambahan' }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ikp['type'] }}</span>
-                                    </td>
+                                            <span title="{{ $ikp['type'] === 'iku' ? 'Indikator kinerja utama' : 'Indikator kinerja tambahan' }}" class="absolute bottom-1.5 right-1.5 cursor-default rounded-lg bg-primary/25 p-1 text-xs uppercase text-primary/75">{{ $ikp['type'] }}</span>
+                                        </td>
+                                    @else
+                                        <td title="" class="group relative z-10 w-max text-left">
+                                        </td>
+                                    @endif
 
                                     <td title="{{ $ikp['definition'] }}" class="w-max min-w-72 text-left">{{ $ikp['definition'] }}</td>
 
@@ -186,8 +255,13 @@
                                         </td>
                                     @endif
 
-                                    <td title="{{ $ikp['evaluation'] }}">{{ $ikp['evaluation'] }}</td>
-                                    <td title="{{ $ikp['follow_up'] }}">{{ $ikp['follow_up'] }}</td>
+                                    @if ($noteQuery === 'show')
+                                        <td title="{{ $ikp['evaluation'] }}">{{ $ikp['evaluation'] }}</td>
+                                        <td title="{{ $ikp['follow_up'] }}">{{ $ikp['follow_up'] }}</td>
+                                    @else
+                                        <td></td>
+                                        <td></td>
+                                    @endif
 
                                     <td title="{{ $ikp['status'] }}">
                                         <div class="flex items-center justify-center">
