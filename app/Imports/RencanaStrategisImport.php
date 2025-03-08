@@ -96,7 +96,7 @@ class RencanaStrategisImport implements ToCollection
                         ];
 
                         if ($type === IndikatorKinerja::TYPE_TEXT) {
-                            $options = ['ada', 'tidak ada'];
+                            $options = ['A', 'TA'];
                             if ($row[4]) {
                                 $options = explode('#', $row[4]);
                             }

@@ -112,8 +112,13 @@ class CreateIndikatorKinerjaSuperAdminController extends Controller
 
             $ik->save();
 
-            if ($ik->type === 'teks' && is_array($request['selection'])) {
-                foreach ($request['selection'] as $item) {
+            if ($ik->type === 'teks') {
+                $options = ['A', 'TA'];
+                if (is_array($request['selection'])) {
+                    $options = $request['selection'];
+                }
+
+                foreach ($options as $item) {
                     $ik->textSelections()->create([
                         'value' => $item,
                     ]);
