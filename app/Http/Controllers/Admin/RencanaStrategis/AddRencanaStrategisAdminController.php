@@ -135,14 +135,18 @@ class AddRencanaStrategisAdminController extends Controller
                     })
                     ->get();
 
-                $sum = $ik->type === IndikatorKinerja::TYPE_NUMBER ? $all->sum('realization') : $all->average('realization');
+                if ($all->count()) {
+                    $sum = $ik->type === IndikatorKinerja::TYPE_NUMBER ? $all->sum('realization') : $all->average('realization');
 
-                if (!ctype_digit((string) $sum)) {
-                    $sum = number_format($sum, 2);
+                    if (!ctype_digit((string) $sum)) {
+                        $sum = number_format($sum, 2);
+                    }
+
+                    $instance->realization = (string) $sum;
+                    $instance->save();
+                } else if ($instance->id) {
+                    $instance->forceDelete();
                 }
-
-                $instance->realization = (string) $sum;
-                $instance->save();
             }
         }
 
@@ -158,7 +162,15 @@ class AddRencanaStrategisAdminController extends Controller
 
                 $evaluation->status = $unexpectedCount === 0;
             } else {
-                $evaluation->status = (float) $allAchievement->realization >= (float) $evaluation->target;
+                $allAchievement = RSAchievement::firstWhere([
+                    'indikator_kinerja_id' => $ik->id,
+                    'period_id' => null,
+                    'unit_id' => null,
+                ]);
+
+                if ($allAchievement) {
+                    $evaluation->status = (float) $allAchievement->realization >= (float) $evaluation->target;
+                }
             }
             $evaluation->save();
         }
