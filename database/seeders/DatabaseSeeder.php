@@ -14,7 +14,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UnitSeeder::class,
             UserSeeder::class,
-            // IKUFormat2024Seeder::class,
         ]);
     }
 }
