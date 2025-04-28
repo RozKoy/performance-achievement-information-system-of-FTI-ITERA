@@ -8,7 +8,50 @@
 
     <title>{{ $title }} | {{ env('APP_NAME') }}</title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @else
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+
+        <script>
+            tailwind.config = {
+                theme: {
+                    fontFamily: {
+                        primary: ["Poppins"],
+                    },
+                    extend: {
+                        colors: {
+                            primary: "#B18E63",
+                        },
+                    },
+                },
+            }
+        </script>
+
+        <style>
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: #eeeeee;
+                border-bottom-left-radius: 5px;
+                border-top-left-radius: 5px;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #7c6343;
+                border-bottom-left-radius: 5px;
+                border-top-left-radius: 5px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #c0935c;
+            }
+        </style>
+    @endif
 
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
 
@@ -29,6 +72,8 @@
     </div>
 
     @stack('script')
+
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 
 </body>
 
