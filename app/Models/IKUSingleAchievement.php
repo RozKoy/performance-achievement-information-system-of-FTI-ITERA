@@ -20,6 +20,7 @@ class IKUSingleAchievement extends Model
 
         'indikator_kinerja_program_id',
         'period_id',
+
         'unit_id',
     ];
 
