@@ -38,15 +38,23 @@
     <x-partials.heading.h3 title="Kegiatan" dataNumber="{{ $k['number'] }}" dataText="{{ $k['name'] }}" />
 
     @if ($current)
-        <div class="flex items-center justify-start">
-            <label onclick="pushURL('status-toggle-confirmation', '{{ url(route('super-admin-rs-ik-status', ['ik' => $ik['id'], 'ss' => $ss['id'], 'k' => $k['id']])) }}')" class="relative inline-flex items-center" data-modal-target="status-toggle-confirmation" data-modal-toggle="status-toggle-confirmation">
-                <input type="checkbox" value="{{ $ik['status'] }}" class="peer sr-only" @checked($ik['status'] === 'aktif') disabled>
-                <div class="peer relative h-6 w-11 cursor-pointer rounded-full bg-red-400 after:absolute after:start-[2px] after:top-0.5 after:z-10 after:h-5 after:w-5 after:rounded-full after:border after:border-red-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-400 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-green-300 rtl:peer-checked:after:-translate-x-full"></div>
-            </label>
-        </div>
-        <p class="text-xs font-bold text-red-400">*Merubah status akan menghapus realisasi capaian yang telah diinputkan setiap unit</p>
+        <label
+            onclick="pushURL('status-toggle-confirmation', '{{ url(route('super-admin-rs-ik-status', ['ik' => $ik['id'], 'ss' => $ss['id'], 'k' => $k['id']])) }}')"
+            class="flex items-center justify-start" data-modal-target="status-toggle-confirmation"
+            data-modal-toggle="status-toggle-confirmation">
+            <input type="checkbox" value="{{ $ik['status'] }}" class="peer sr-only" @checked($ik['status'] === 'aktif')
+                disabled>
+            <div class="peer flex w-11 cursor-pointer rounded-full bg-red-400 p-0.5 peer-checked:bg-green-400">
+                <div
+                    class="{{ $ik['status'] === 'aktif' ? 'ml-auto' : 'mr-auto' }} aspect-square w-4 rounded-full bg-white">
+                </div>
+            </div>
+        </label>
+        <p class="text-xs font-bold text-red-400">*Merubah status akan menghapus realisasi capaian yang telah diinputkan
+            setiap unit</p>
     @else
-        <div title="Status penugasan : {{ $ik['status'] }}" class="{{ $ik['status'] === 'aktif' ? 'bg-green-500' : 'bg-red-500' }} ml-auto rounded-full p-3"></div>
+        <div title="Status penugasan : {{ $ik['status'] }}"
+            class="{{ $ik['status'] === 'aktif' ? 'bg-green-500' : 'bg-red-500' }} ml-auto rounded-full p-3"></div>
     @endif
 
     <form action="" method="POST" class="flex flex-col gap-2">
@@ -65,7 +73,8 @@
             </div>
             <div class="flex flex-1 flex-col gap-2">
                 <x-partials.label.default for="name" title="Indikator kinerja" text="Indikator Kinerja" required />
-                <x-partials.input.text name="name" title="Indikator kinerja" value="{{ $ik['name'] }}" autofocus required />
+                <x-partials.input.text name="name" title="Indikator kinerja" value="{{ $ik['name'] }}" autofocus
+                    required />
             </div>
             <div class="flex flex-col gap-2 max-xl:flex-1">
                 <x-partials.label.default for="type" title="Tipe data" text="Tipe Data" required />
@@ -97,7 +106,9 @@
     </form>
 
     @if ($current)
-        <x-partials.modal.confirmation id="status-toggle-confirmation" message="Apakah anda yakin ingin mengubah status?" note="*Merubah status akan menghapus realisasi capaian yang telah diinputkan setiap unit" />
+        <x-partials.modal.confirmation id="status-toggle-confirmation"
+            message="Apakah anda yakin ingin mengubah status?"
+            note="*Merubah status akan menghapus realisasi capaian yang telah diinputkan setiap unit" />
     @endif
 
 </x-super-admin-template>
