@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Admin\IndikatorKinerjaUtama;
+namespace App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama;
 
-use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\HomeIndikatorKinerjaUtamaSuperAdminController;
 use App\Http\Requests\IndikatorKinerjaUtama\AddSingleDataRequest;
 use App\Http\Controllers\_ControllerHelpers;
 use App\Models\IndikatorKinerjaProgram;
@@ -10,7 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
 
-class AddSingleDataIndikatorKinerjaUtamaAdminController extends Controller
+class AddSingleIndikatorKinerjaUtamaSuperAdminController extends Controller
 {
     /**
      * @param \App\Http\Requests\IndikatorKinerjaUtama\AddSingleDataRequest $request
@@ -22,11 +21,9 @@ class AddSingleDataIndikatorKinerjaUtamaAdminController extends Controller
     {
         HomeIndikatorKinerjaUtamaSuperAdminController::CheckRoutine();
 
-        if ($ikp->status !== 'aktif' || $ikp->mode !== 'single') {
+        if ($ikp->status === 'aktif' || $ikp->mode !== 'single') {
             abort(404);
         }
-
-        $user = auth()->user();
 
         [
             'value' => $valueRequest,
@@ -56,12 +53,12 @@ class AddSingleDataIndikatorKinerjaUtamaAdminController extends Controller
                 [
                     'indikator_kinerja_program_id' => $ikp->id,
                     'period_id' => $periodInstance->id,
-                    'unit_id' => $user->unit->id,
+                    'unit_id' => null,
                 ],
                 [
                     'indikator_kinerja_program_id' => $ikp->id,
                     'period_id' => $periodInstance->id,
-                    'unit_id' => $user->unit->id,
+                    'unit_id' => null,
                 ],
             );
 
@@ -76,7 +73,7 @@ class AddSingleDataIndikatorKinerjaUtamaAdminController extends Controller
         } else {
             $ikp->singleAchievements()
                 ->whereBelongsTo($periodInstance, 'period')
-                ->whereBelongsTo($user->unit)
+                ->whereNull('unit_id')
                 ->forceDelete();
         }
 
@@ -90,11 +87,6 @@ class AddSingleDataIndikatorKinerjaUtamaAdminController extends Controller
             $evaluation->status = $status;
             $evaluation->save();
         }
-
-        $ikp->unitStatus()
-            ->whereBelongsTo($periodInstance, 'period')
-            ->whereBelongsTo($user->unit, 'unit')
-            ->forceDelete();
 
         return _ControllerHelpers::Back()->with('success', 'Berhasil memperbarui data');
     }

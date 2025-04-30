@@ -279,8 +279,8 @@
                                         <td title="{{ $ikp['target'] }}">{{ $ikp['target'] }}</td>
                                     @else
                                         <td
-                                            title="{{ !ctype_digit(text: (string) $ikp['target']) ? number_format((float) $ikp['target'], 2) : $ikp['target'] }}">
-                                            {{ !ctype_digit(text: (string) $ikp['target']) ? number_format((float) $ikp['target'], 2) : $ikp['target'] }}
+                                            title="{{ !ctype_digit(text: (string) $ikp['target']) && $ikp['target'] ? number_format((float) $ikp['target'], 2) : $ikp['target'] }}">
+                                            {{ !ctype_digit(text: (string) $ikp['target']) && $ikp['target'] ? number_format((float) $ikp['target'], 2) : $ikp['target'] }}
                                         </td>
                                     @endif
 
@@ -288,8 +288,8 @@
                                         <td title="{{ $ikp['all'] }}">{{ $ikp['all'] }}</td>
                                     @else
                                         <td
-                                            title="{{ !ctype_digit(text: (string) $ikp['allSingle']) ? number_format((float) $ikp['allSingle'], 2) : $ikp['allSingle'] }}">
-                                            {{ !ctype_digit(text: (string) $ikp['allSingle']) ? number_format((float) $ikp['allSingle'], 2) : $ikp['allSingle'] }}
+                                            title="{{ !ctype_digit(text: (string) $ikp['allSingle']) && $ikp['allSingle'] ? number_format((float) $ikp['allSingle'], 2) : $ikp['allSingle'] }}">
+                                            {{ !ctype_digit(text: (string) $ikp['allSingle']) && $ikp['allSingle'] ? number_format((float) $ikp['allSingle'], 2) : $ikp['allSingle'] }}
                                         </td>
                                     @endif
 
@@ -304,20 +304,20 @@
                                         <td title="{{ $ikp['tw4'] }}">{{ $ikp['tw4'] }}</td>
                                     @else
                                         <td
-                                            title="{{ !ctype_digit(text: (string) $ikp['tw1Single']) ? number_format((float) $ikp['tw1Single'], 2) : $ikp['tw1Single'] }}">
-                                            {{ !ctype_digit(text: (string) $ikp['tw1Single']) ? number_format((float) $ikp['tw1Single'], 2) : $ikp['tw1Single'] }}
+                                            title="{{ !ctype_digit(text: (string) $ikp['tw1Single']) && $ikp['tw1Single'] ? number_format((float) $ikp['tw1Single'], 2) : $ikp['tw1Single'] }}">
+                                            {{ !ctype_digit(text: (string) $ikp['tw1Single']) && $ikp['tw1Single'] ? number_format((float) $ikp['tw1Single'], 2) : $ikp['tw1Single'] }}
                                         </td>
                                         <td
-                                            title="{{ !ctype_digit(text: (string) $ikp['tw2Single']) ? number_format((float) $ikp['tw2Single'], 2) : $ikp['tw2Single'] }}">
-                                            {{ !ctype_digit(text: (string) $ikp['tw2Single']) ? number_format((float) $ikp['tw2Single'], 2) : $ikp['tw2Single'] }}
+                                            title="{{ !ctype_digit(text: (string) $ikp['tw2Single']) && $ikp['tw2Single'] ? number_format((float) $ikp['tw2Single'], 2) : $ikp['tw2Single'] }}">
+                                            {{ !ctype_digit(text: (string) $ikp['tw2Single']) && $ikp['tw2Single'] ? number_format((float) $ikp['tw2Single'], 2) : $ikp['tw2Single'] }}
                                         </td>
                                         <td
-                                            title="{{ !ctype_digit(text: (string) $ikp['tw3Single']) ? number_format((float) $ikp['tw3Single'], 2) : $ikp['tw3Single'] }}">
-                                            {{ !ctype_digit(text: (string) $ikp['tw3Single']) ? number_format((float) $ikp['tw3Single'], 2) : $ikp['tw3Single'] }}
+                                            title="{{ !ctype_digit(text: (string) $ikp['tw3Single']) && $ikp['tw3Single'] ? number_format((float) $ikp['tw3Single'], 2) : $ikp['tw3Single'] }}">
+                                            {{ !ctype_digit(text: (string) $ikp['tw3Single']) && $ikp['tw3Single'] ? number_format((float) $ikp['tw3Single'], 2) : $ikp['tw3Single'] }}
                                         </td>
                                         <td
-                                            title="{{ !ctype_digit(text: (string) $ikp['tw4Single']) ? number_format((float) $ikp['tw4Single'], 2) : $ikp['tw4Single'] }}">
-                                            {{ !ctype_digit(text: (string) $ikp['tw4Single']) ? number_format((float) $ikp['tw4Single'], 2) : $ikp['tw4Single'] }}
+                                            title="{{ !ctype_digit(text: (string) $ikp['tw4Single']) && $ikp['tw4Single'] ? number_format((float) $ikp['tw4Single'], 2) : $ikp['tw4Single'] }}">
+                                            {{ !ctype_digit(text: (string) $ikp['tw4Single']) && $ikp['tw4Single'] ? number_format((float) $ikp['tw4Single'], 2) : $ikp['tw4Single'] }}
                                         </td>
                                     @endif
 

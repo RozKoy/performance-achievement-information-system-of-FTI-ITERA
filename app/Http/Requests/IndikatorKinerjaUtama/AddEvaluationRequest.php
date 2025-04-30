@@ -27,6 +27,7 @@ class AddEvaluationRequest extends FormRequest
         return [
             'evaluation' => ['bail', 'nullable', 'string', 'max:255'],
             'follow_up' => ['bail', 'nullable', 'string', 'max:255'],
+            'target' => ['bail', 'nullable', 'numeric'],
         ];
     }
 
@@ -39,6 +40,7 @@ class AddEvaluationRequest extends FormRequest
         return [
             'follow_up' => 'Tindak lanjut',
             'evaluation' => 'Kendala',
+            'target' => 'Target',
         ];
     }
 }

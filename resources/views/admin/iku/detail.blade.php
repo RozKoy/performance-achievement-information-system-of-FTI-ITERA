@@ -429,7 +429,7 @@
                     <tbody id="data-body" class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
                         <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
 
-                            @if ($data['value'] ?? false)
+                            @if (isset($data['value']))
                                 <td title="{{ $data['value'] ?? '' }}">{{ $data['value'] ?? '' }}</td>
                                 <td><a href="{{ $data['link'] ?? '' }}" title="Link bukti" class="text-primary underline">Link</a></td>
                             @else

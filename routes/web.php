@@ -41,6 +41,7 @@ use App\Http\Controllers\SuperAdmin\RencanaStrategis\HomeRencanaStrategisSuperAd
 use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\ExcelExportIndikatorKinerjaUtamaSuperAdminController;
 use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\EvaluationIndikatorKinerjaUtamaSuperAdminController;
 use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\ValidationIndikatorKinerjaUtamaSuperAdminController;
+use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\AddSingleIndikatorKinerjaUtamaSuperAdminController;
 use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\DetailIndikatorKinerjaUtamaSuperAdminController;
 use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\StatusIndikatorKinerjaUtamaSuperAdminController;
 use App\Http\Controllers\SuperAdmin\IndikatorKinerjaUtama\TargetIndikatorKinerjaUtamaSuperAdminController;
@@ -170,6 +171,7 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
                 Route::post('{period}/deadline', [StatusIndikatorKinerjaUtamaSuperAdminController::class, 'setDeadline'])->name('super-admin-achievement-iku-deadline');
                 Route::post('{ikp}/evaluation', [EvaluationIndikatorKinerjaUtamaSuperAdminController::class, 'action'])->name('super-admin-achievement-iku-evaluation');
                 Route::post('{ikp}/validation', [ValidationIndikatorKinerjaUtamaSuperAdminController::class, 'action'])->name('super-admin-achievement-iku-detail-validation');
+                Route::post('{period}/{ikp}/data-single', [AddSingleIndikatorKinerjaUtamaSuperAdminController::class, 'action'])->name('super-admin-achievement-iku-add-single-data');
             });
         });
     });

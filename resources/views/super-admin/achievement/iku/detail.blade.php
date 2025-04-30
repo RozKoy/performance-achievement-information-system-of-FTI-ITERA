@@ -21,9 +21,11 @@
     <x-partials.breadcrumbs.default :$breadCrumbs />
     <x-partials.heading.h2 text="detail - indikator kinerja utama" :$previousRoute />
     <x-partials.heading.h3 title="Sasaran kinerja" dataNumber="{{ $sk['number'] }}" dataText="{{ $sk['name'] }}" />
-    <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="{{ $ikk['number'] }}" dataText="{{ $ikk['name'] }}" />
+    <x-partials.heading.h3 title="Indikator kinerja kegiatan" dataNumber="{{ $ikk['number'] }}"
+        dataText="{{ $ikk['name'] }}" />
     <x-partials.heading.h3 title="Program strategis" dataNumber="{{ $ps['number'] }}" dataText="{{ $ps['name'] }}" />
-    <x-partials.heading.h3 title="Indikator kinerja program" dataNumber="{{ $ikp['number'] }}" dataText="{{ $ikp['name'] }}" />
+    <x-partials.heading.h3 title="Indikator kinerja program" dataNumber="{{ $ikp['number'] }}"
+        dataText="{{ $ikp['name'] }}" />
     <div id="filter" class="hidden flex-col gap-5">
         <x-partials.filter.period :$periods :$period />
     </div>
@@ -32,20 +34,42 @@
         <x-partials.button.filter />
     </div>
 
-    @if ($period === '5' && $ikp['status'] === 'aktif')
-        <form action="{{ $user->isEditor() ? route('super-admin-achievement-iku-evaluation', ['ikp' => $ikp['id']]) : '' }}" method="POST" class="flex flex-col gap-2">
+    @if (
+        $period === '5' &&
+            !($ikp['status'] !== 'aktif' && $ikp['mode'] === \App\Models\IndikatorKinerjaProgram::MODE_TABLE))
+        <form
+            action="{{ $user->isEditor() ? route('super-admin-achievement-iku-evaluation', ['ikp' => $ikp['id']]) : '' }}"
+            method="POST" class="flex flex-col gap-2">
             @if ($user->isEditor())
                 @csrf
             @endif
 
             <div class="flex flex-wrap gap-2">
+
+                @if ($ikp['status'] !== 'aktif')
+                    <div class="flex flex-1 flex-col gap-2">
+                        <x-partials.label.default for="target" title="Target" text="Target" />
+
+                        @if ($user->isEditor())
+                            <x-partials.input.text name="target" title="Evaluasi"
+                                value="{{ $evaluation !== null ? $evaluation['target'] : '' }}" autofocus />
+                        @else
+                            <x-partials.input.text name="evaluation" title="Evaluasi"
+                                value="{{ $evaluation !== null ? $evaluation['target'] : '' }}" disabled />
+                        @endif
+
+                    </div>
+                @endif
+
                 <div class="flex flex-1 flex-col gap-2">
                     <x-partials.label.default for="evaluation" title="Kendala" text="Kendala" />
 
                     @if ($user->isEditor())
-                        <x-partials.input.text name="evaluation" title="Evaluasi" value="{{ $evaluation !== null ? $evaluation['evaluation'] : '' }}" autofocus />
+                        <x-partials.input.text name="evaluation" title="Evaluasi"
+                            value="{{ $evaluation !== null ? $evaluation['evaluation'] : '' }}" autofocus />
                     @else
-                        <x-partials.input.text name="evaluation" title="Evaluasi" value="{{ $evaluation !== null ? $evaluation['evaluation'] : '' }}" disabled />
+                        <x-partials.input.text name="evaluation" title="Evaluasi"
+                            value="{{ $evaluation !== null ? $evaluation['evaluation'] : '' }}" disabled />
                     @endif
 
                 </div>
@@ -53,9 +77,11 @@
                     <x-partials.label.default for="follow_up" title="Tindak lanjut" text="Tindak Lanjut" />
 
                     @if ($user->isEditor())
-                        <x-partials.input.text name="follow_up" title="Tindak lanjut" value="{{ $evaluation !== null ? $evaluation['follow_up'] : '' }}" />
+                        <x-partials.input.text name="follow_up" title="Tindak lanjut"
+                            value="{{ $evaluation !== null ? $evaluation['follow_up'] : '' }}" />
                     @else
-                        <x-partials.input.text name="follow_up" title="Tindak lanjut" value="{{ $evaluation !== null ? $evaluation['follow_up'] : '' }}" disabled />
+                        <x-partials.input.text name="follow_up" title="Tindak lanjut"
+                            value="{{ $evaluation !== null ? $evaluation['follow_up'] : '' }}" disabled />
                     @endif
 
                 </div>
@@ -71,27 +97,27 @@
     <div class="text-primary max-xl:text-sm max-sm:text-xs">
         <table class="*:align-top">
 
-            @if ($ikp['status'] === 'aktif')
-                @if ($period === '5')
-                    <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
-                        <td>Status</td>
-                        <td>:</td>
-                        <td>{{ $evaluation === null ? '' : ($evaluation['status'] == 1 ? 'Tercapai' : 'Tidak tercapai') }}</td>
-                    </tr>
-                    <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
-                        <td>Target</td>
-                        <td>:</td>
-                        <td>{{ $evaluation === null ? '' : $evaluation['target'] ?? '' }}</td>
-                    </tr>
-                @endif
-
+            @if (
+                $period === '5' &&
+                    !($ikp['status'] !== 'aktif' && $ikp['mode'] === \App\Models\IndikatorKinerjaProgram::MODE_TABLE))
                 <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
-                    <td>Realisasi</td>
+                    <td>Status</td>
                     <td>:</td>
-                    <td>{{ $achievement }}</td>
+                    <td>{{ $evaluation === null ? '' : ($evaluation['status'] == 1 ? 'Tercapai' : 'Tidak tercapai') }}
+                    </td>
+                </tr>
+                <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
+                    <td>Target</td>
+                    <td>:</td>
+                    <td>{{ $evaluation === null ? '' : $evaluation['target'] ?? '' }}</td>
                 </tr>
             @endif
 
+            <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
+                <td>Realisasi</td>
+                <td>:</td>
+                <td>{{ $achievement }}</td>
+            </tr>
             <tr class="*:px-1 first:*:whitespace-nowrap first:*:font-semibold">
                 <td>Status Penugasan</td>
                 <td>:</td>
@@ -112,29 +138,34 @@
 
     @if ($ikp['status'] === 'aktif')
         <div class="flex justify-end">
-            <a href="{{ route('super-admin-achievement-iku-detail-export', ['ikp' => $ikp['id'], ...request()->query()]) }}" title="Unduh Excel" type="button" class="flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
+            <a href="{{ route('super-admin-achievement-iku-detail-export', ['ikp' => $ikp['id'], ...request()->query()]) }}"
+                title="Unduh Excel" type="button"
+                class="flex items-center gap-1 rounded-lg border px-1.5 py-1 text-sm text-green-500 hover:bg-slate-50 max-md:text-xs">
                 <img src="{{ url(asset('storage/assets/icons/excel.png')) }}" alt="Excel" class="w-7 max-md:w-6">
                 Unduh
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="aspect-square w-2.5 max-md:w-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                    class="aspect-square w-2.5 max-md:w-2">
                     <g>
-                        <path d="M12.032,19a2.991,2.991,0,0,0,2.122-.878L18.073,14.2,16.659,12.79l-3.633,3.634L13,0,11,0l.026,16.408-3.62-3.62L5.992,14.2l3.919,3.919A2.992,2.992,0,0,0,12.032,19Z" />
+                        <path
+                            d="M12.032,19a2.991,2.991,0,0,0,2.122-.878L18.073,14.2,16.659,12.79l-3.633,3.634L13,0,11,0l.026,16.408-3.62-3.62L5.992,14.2l3.919,3.919A2.992,2.992,0,0,0,12.032,19Z" />
                         <path d="M22,16v5a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V16H0v5a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3V16Z" />
                     </g>
                 </svg>
             </a>
         </div>
-    @endif
 
-    @if ($ikp['status'] === 'aktif')
         @if ($ikp['mode'] === \App\Models\IndikatorKinerjaProgram::MODE_TABLE)
             <p class="text-primary max-xl:text-sm max-sm:text-xs">Jumlah Data : {{ $dataCount }}</p>
 
-            <form @if ($user->isEditor()) id="data-form" method="POST" action="{{ route('super-admin-achievement-iku-detail-validation', ['ikp' => $ikp['id']]) }}" @endif class="w-full overflow-x-auto rounded-lg">
+            <form
+                @if ($user->isEditor()) id="data-form" method="POST" action="{{ route('super-admin-achievement-iku-detail-validation', ['ikp' => $ikp['id']]) }}" @endif
+                class="w-full overflow-x-auto rounded-lg">
                 @csrf
 
                 <table class="min-w-full text-sm max-md:text-xs">
                     <thead>
-                        <tr class="divide-x bg-primary/80 text-white *:max-w-[500px] *:break-words *:px-5 *:py-2.5 *:font-normal 2xl:*:max-w-[50vw]">
+                        <tr
+                            class="divide-x bg-primary/80 text-white *:max-w-[500px] *:break-words *:px-5 *:py-2.5 *:font-normal 2xl:*:max-w-[50vw]">
                             <th title="Tolak">Tolak</th>
                             <th title="Catatan">Catatan</th>
                             <th title="Nomor">No</th>
@@ -148,8 +179,10 @@
                     <tbody class="border-b-2 border-primary/80 text-left align-top">
 
                         @foreach ($data as $unit => $item)
-                            <tr class="border-y font-semibold *:break-words *:bg-primary/5 *:px-3 *:py-2 *:text-primary">
-                                <td title="{{ $unit }}" colspan="{{ count($columns) + 3 }}">{{ $unit }} (Data : {{ count($item) }})</td>
+                            <tr
+                                class="border-y font-semibold *:break-words *:bg-primary/5 *:px-3 *:py-2 *:text-primary">
+                                <td title="{{ $unit }}" colspan="{{ count($columns) + 3 }}">
+                                    {{ $unit }} (Data : {{ count($item) }})</td>
                             </tr>
                             @foreach ($item as $col)
                                 @php
@@ -160,30 +193,48 @@
                                     <td title="Terima/Tolak" class="relative text-center">
 
                                         @if ($user->isEditor())
-                                            <input id="{{ $id }}" name="" type="checkbox" title="Tolak data?" oldValue="{{ !$col['status'] }}" class="rounded border-2 border-red-500 text-red-500 checked:outline-red-500 focus:outline-red-500 disabled:border-slate-300" onblur="blurInput(this, '{{ $id }}-status-cover')" @checked(!$col['status']) disabled>
-                                            <input id="{{ $id }}-status-cover-hidden" type="hidden" name="data[{{ $id }}][status]" value="toggle" disabled>
-                                            <div id="{{ $id }}-status-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, '{{ $id }}')"></div>
+                                            <input id="{{ $id }}" name="" type="checkbox"
+                                                title="Tolak data?" oldValue="{{ !$col['status'] }}"
+                                                class="rounded border-2 border-red-500 text-red-500 checked:outline-red-500 focus:outline-red-500 disabled:border-slate-300"
+                                                onblur="blurInput(this, '{{ $id }}-status-cover')"
+                                                @checked(!$col['status']) disabled>
+                                            <input id="{{ $id }}-status-cover-hidden" type="hidden"
+                                                name="data[{{ $id }}][status]" value="toggle" disabled>
+                                            <div id="{{ $id }}-status-cover"
+                                                class="absolute left-0 top-0 h-full w-full"
+                                                onclick="clickInput(this, '{{ $id }}')"></div>
                                         @else
-                                            <input id="{{ $id }}" name="" type="checkbox" title="Tolak data?" oldValue="{{ !$col['status'] }}" class="rounded border-2 border-red-500 text-red-500 checked:outline-red-500 focus:outline-red-500 disabled:border-slate-300" @checked(!$col['status']) disabled>
-                                            <input id="{{ $id }}-status-cover-hidden" type="hidden" name="data[{{ $id }}][status]" value="toggle" disabled>
-                                            <div id="{{ $id }}-status-cover" class="absolute left-0 top-0 h-full w-full"></div>
+                                            <input id="{{ $id }}" name="" type="checkbox"
+                                                title="Tolak data?" oldValue="{{ !$col['status'] }}"
+                                                class="rounded border-2 border-red-500 text-red-500 checked:outline-red-500 focus:outline-red-500 disabled:border-slate-300"
+                                                @checked(!$col['status']) disabled>
+                                            <input id="{{ $id }}-status-cover-hidden" type="hidden"
+                                                name="data[{{ $id }}][status]" value="toggle" disabled>
+                                            <div id="{{ $id }}-status-cover"
+                                                class="absolute left-0 top-0 h-full w-full"></div>
                                         @endif
 
                                     </td>
                                     <td title="Catatan" class="relative">
                                         @if ($user->isEditor())
-                                            <x-partials.input.text name="data[{{ $id }}][note]" title="Catatan" value="{{ $col['note'] }}" oldvalue="{{ $col['note'] }}" onblur="blurInput(this, '{{ $id }}-note-cover')" disabled />
+                                            <x-partials.input.text name="data[{{ $id }}][note]"
+                                                title="Catatan" value="{{ $col['note'] }}"
+                                                oldvalue="{{ $col['note'] }}"
+                                                onblur="blurInput(this, '{{ $id }}-note-cover')" disabled />
 
                                             @error("data.$id.note")
                                                 <p class="text-xs text-red-500 lg:text-sm">{{ $message }}</p>
                                             @enderror
 
-                                            <div id="{{ $id }}-note-cover" class="absolute left-0 top-0 h-full w-full" onclick="clickInput(this, 'data[{{ $id }}][note]')"></div>
+                                            <div id="{{ $id }}-note-cover"
+                                                class="absolute left-0 top-0 h-full w-full"
+                                                onclick="clickInput(this, 'data[{{ $id }}][note]')"></div>
                                         @else
                                             {{ $col['note'] }}
                                         @endif
                                     </td>
-                                    <td title="{{ $loop->iteration }}" class="text-center">{{ $loop->iteration }}</td>
+                                    <td title="{{ $loop->iteration }}" class="text-center">{{ $loop->iteration }}
+                                    </td>
 
                                     @php
                                         $collection = collect($col['data']);
@@ -197,7 +248,10 @@
                                         @if ($dataFind !== null)
                                             @if ($dataFind['file'] == 1)
                                                 <td class="text-center">
-                                                    <a href="{{ url(asset('storage/' . $dataFind['data'])) }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-primary hover:text-primary/75" download>Unduh</a>
+                                                    <a href="{{ url(asset('storage/' . $dataFind['data'])) }}"
+                                                        target="_blank" rel="noopener noreferrer"
+                                                        class="font-semibold text-primary hover:text-primary/75"
+                                                        download>Unduh</a>
                                                 </td>
                                             @else
                                                 <td title="{{ $dataFind['data'] }}">{{ $dataFind['data'] }}</td>
@@ -215,8 +269,10 @@
                 </table>
             </form>
 
-            @if ($user->isEditor())
-                <button type="button" onclick="document.getElementById('data-form').submit()" title="Tombol simpan data" class="flex w-full items-center justify-center gap-0.5 rounded-full bg-yellow-500 p-0.5 text-white hover:bg-yellow-400">
+            @if ($user->isEditor() && $dataCount)
+                <button type="button" onclick="document.getElementById('data-form').submit()"
+                    title="Tombol simpan data"
+                    class="flex w-full items-center justify-center gap-0.5 rounded-full bg-yellow-500 p-0.5 text-white hover:bg-yellow-400">
                     <p>Simpan</p>
                 </button>
 
@@ -260,7 +316,8 @@
             <div class="w-full overflow-x-auto rounded-lg">
                 <table class="min-w-full text-sm max-md:text-xs">
                     <thead>
-                        <tr class="divide-x bg-primary/80 text-white *:max-w-[500px] *:break-words *:px-5 *:py-2.5 *:font-normal 2xl:*:max-w-[50vw]">
+                        <tr
+                            class="divide-x bg-primary/80 text-white *:max-w-[500px] *:break-words *:px-5 *:py-2.5 *:font-normal 2xl:*:max-w-[50vw]">
                             <th title="Nomor">No</th>
                             <th title="Program studi">Program Studi</th>
                             <th title="Realisasi">Realisasi</th>
@@ -283,7 +340,8 @@
                                     {{ $tempValue }}
 
                                     @if ($temp->count() === 1)
-                                        <a href="{{ $temp->first()['link'] }}" title="Link bukti" class="text-primary underline">Link</a>
+                                        <a href="{{ $temp->first()['link'] }}" title="Link bukti"
+                                            class="text-primary underline">Link</a>
                                     @endif
 
                                 </td>
@@ -293,6 +351,70 @@
                     </tbody>
                 </table>
             </div>
+        @endif
+    @else
+        @if ($ikp['mode'] === \App\Models\IndikatorKinerjaProgram::MODE_TABLE)
+            <div></div>
+        @else
+            @if ($period !== '5' && $user->isEditor())
+                <form
+                    action="{{ route('super-admin-achievement-iku-add-single-data', ['period' => $period, 'ikp' => $ikp['id']]) }}"
+                    method="POST" enctype="multipart/form-data"
+                    class="flex w-full flex-col gap-2 overflow-x-auto rounded-lg text-primary">
+                    @csrf
+                    <div class="flex flex-wrap gap-2 *:flex-1">
+                        <div>
+                            <x-partials.label.default for="value" title="Nilai" text="Nilai" />
+                            <x-partials.input.text name="value" title="Nilai"
+                                value="{{ isset($data[0]) ? $data[0]['value'] ?? '' : '' }}" />
+                        </div>
+                        <div>
+                            <x-partials.label.default for="link" title="Link bukti" text="Link bukti" />
+                            <x-partials.input.text name="link" title="Link bukti"
+                                value="{{ isset($data[0]) ? $data[0]['link'] ?? '' : '' }}" />
+                        </div>
+                    </div>
+
+                    <x-partials.button.add style="ml-auto" text="Simpan" submit />
+                </form>
+            @else
+                <div class="w-full overflow-hidden rounded-lg">
+                    <table class="min-w-full max-lg:text-sm max-md:text-xs">
+                        <thead>
+                            <tr
+                                class="bg-primary/80 text-white *:whitespace-nowrap *:border *:px-5 *:py-2.5 *:font-normal">
+                                <th title="Realisasi">Realisasi</th>
+                                <th title="Link bukti">Link Bukti</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="data-body"
+                            class="border-b-2 border-primary/80 text-center align-top text-sm max-md:text-xs">
+
+                            @foreach ($data as $item)
+                                <tr class="border-y *:max-w-[500px] *:break-words *:px-3 *:py-2 2xl:*:max-w-[50vw]">
+
+                                    @if (isset($item['value']))
+                                        <td title="{{ $item['value'] ?? '' }}">
+                                            {{ $item['value'] ?? '' }}</td>
+                                        <td>
+                                            <a href="{{ $item['link'] ?? '' }}" title="Link bukti"
+                                                class="text-primary underline">
+                                                Link
+                                            </a>
+                                        </td>
+                                    @else
+                                        <td></td>
+                                        <td></td>
+                                    @endif
+
+                                </tr>
+                            @endforeach
+
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         @endif
     @endif
 

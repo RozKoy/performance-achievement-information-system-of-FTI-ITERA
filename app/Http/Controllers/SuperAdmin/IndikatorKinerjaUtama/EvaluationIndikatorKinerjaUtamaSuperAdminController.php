@@ -37,9 +37,22 @@ class EvaluationIndikatorKinerjaUtamaSuperAdminController extends Controller
             $evaluation->evaluation = $request['evaluation'];
             $evaluation->follow_up = $request['follow_up'];
 
-            $achievementCount = $ikp->achievements->count();
-            if ($achievementCount) {
-                $evaluation->status = $achievementCount >= $evaluation->target;
+            if ($ikp->status !== 'aktif') {
+                $target = $request['target'] && $ikp->status !== 'aktif' ? $request['target'] : 0;
+
+                $evaluation->target = !ctype_digit(text: (string) $target) && $target ? number_format((float) $target, 2) : (int) $target;
+            }
+
+            if ($ikp->mode === IndikatorKinerjaProgram::MODE_TABLE) {
+                $achievementCount = $ikp->achievements->count();
+                if ($achievementCount) {
+                    $evaluation->status = $achievementCount >= $evaluation->target;
+                }
+            } else {
+                $achievements = $ikp->singleAchievements;
+                if ($achievements->count()) {
+                    $evaluation->status = $achievements->average('value') >= $evaluation->target;
+                }
             }
 
             $evaluation->save();

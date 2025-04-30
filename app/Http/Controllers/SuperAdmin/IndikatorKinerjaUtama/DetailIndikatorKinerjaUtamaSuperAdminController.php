@@ -136,12 +136,12 @@ class DetailIndikatorKinerjaUtamaSuperAdminController extends Controller
                 ->get();
 
             $achievement = $data->average('value');
-            if (!ctype_digit(text: (string) $achievement)) {
+            if (!ctype_digit(text: (string) $achievement) && $achievement) {
                 $achievement = number_format((float) $achievement, 2);
             }
         }
 
-        $data = $data->groupBy('unit')->toArray();
+        $data = $ikp->status === 'aktif' ? $data->groupBy('unit')->toArray() : $data->toArray();
 
         $evaluation = $ikp->evaluation;
 
