@@ -43,9 +43,7 @@ class AddSingleIndikatorKinerjaUtamaSuperAdminController extends Controller
         $currentDate = Carbon::now();
 
         $periodInstance = $year->periods()
-            ->whereDate('deadline', '>=', $currentDate)
             ->where('period', $period)
-            ->where('status', true)
             ->firstOrFail();
 
         if ($valueRequest !== null && $linkRequest) {
