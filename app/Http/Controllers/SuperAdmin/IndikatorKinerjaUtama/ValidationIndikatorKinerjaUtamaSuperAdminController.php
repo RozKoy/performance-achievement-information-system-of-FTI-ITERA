@@ -37,6 +37,15 @@ class ValidationIndikatorKinerjaUtamaSuperAdminController extends Controller
             }
         }
 
+        $evaluation = $ikp->evaluation;
+
+        if ($evaluation) {
+            $all = $ikp->achievements()->where('status', true)->count();
+
+            $evaluation->status = $all >= $evaluation->target;
+            $evaluation->save();
+        }
+
         return _ControllerHelpers::Back()->with('success', 'Berhasil melakukan validasi data indikator kinerja utama');
     }
 }
