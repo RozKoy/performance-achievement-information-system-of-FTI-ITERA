@@ -112,6 +112,7 @@ class IndikatorKinerjaProgram extends Model
     {
         $this->singleAchievements()->forceDelete();
         $this->evaluation()->forceDelete();
+        $this->unitStatus()->forceDelete();
         $this->target()->forceDelete();
 
         $this->achievements()->each(function (IKUAchievement $item): void {

@@ -182,6 +182,7 @@ class UpdateIndikatorKinerjaProgramSuperAdminController extends Controller
 
         $ikp->singleAchievements()->forceDelete();
         $ikp->evaluation()->forceDelete();
+        $ikp->unitStatus()->forceDelete();
         $ikp->target()->forceDelete();
 
         $ikp->achievements()->each(function ($item): void {
