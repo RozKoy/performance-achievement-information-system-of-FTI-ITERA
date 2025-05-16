@@ -212,7 +212,7 @@ class TargetIndikatorKinerjaUtamaSuperAdminController extends Controller
             }
 
             if ($newTarget) {
-                $realization = $ikp->achievements()->count();
+                $realization = $ikp->achievements()->where('status', true)->count();
                 if ($ikp->mode === IndikatorKinerjaProgram::MODE_SINGLE) {
                     $realization = $ikp->singleAchievements()->average('value') ?? $newTarget - 1;
                     if (!ctype_digit(text: (string) $realization)) {
