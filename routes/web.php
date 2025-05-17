@@ -136,6 +136,7 @@ Route::prefix('super-admin')->middleware('superadmin')->group(function (): void 
     Route::prefix('beranda')->group(function (): void {
         Route::get('/', [HomeDashboardSuperAdminController::class, 'view'])->name('super-admin-dashboard');
         Route::get('iku/{year}', [DashboardController::class, 'iku'])->name('super-admin-dashboard-iku');
+        Route::get('rs/{year}', [DashboardController::class, 'rs'])->name('super-admin-dashboard-rs');
         Route::get('iku/{year}/export', [IndikatorKinerjaUtamaDashboardSuperAdminController::class, 'excelExport'])->name('super-admin-dashboard-iku-export');
         Route::get('rs/{year}/export', [RencanaStrategisDashboardSuperAdminController::class, 'excelExport'])->name('super-admin-dashboard-rs-export');
     });

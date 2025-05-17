@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
+use App\Models\IndikatorKinerja;
 use App\Exports\MultipleSheets;
+use Illuminate\Support\Str;
 use App\Exports\RSExport;
 use App\Models\RSYear;
 use App\Models\Unit;
@@ -171,19 +173,22 @@ class RencanaStrategisDashboardSuperAdminController extends Controller
                                 ->whereHas('period', function ($query) use ($period): void {
                                     $query->whereIn('period', $period);
                                 });
-                            if ($ik->type === 'teks') {
+                            if ($ik->type === IndikatorKinerja::TYPE_TEXT) {
                                 $temp[] = $ik->textSelections->firstWhere('id', $ik->target->firstWhere('unit_id', $unit->id)?->target ?? '')?->value ?? '';
-                                $temp[] = implode(
-                                    ',',
-                                    $ik->textSelections
-                                        ->whereIn('id', $tempQuery->pluck('realization')->toArray())
-                                        ->pluck('value')
-                                        ->toArray()
-                                );
-                            } else if ($ik->type === 'angka') {
+                                $tempArray = [];
+                                foreach ($tempQuery->pluck('realization')->toArray() as $tempRealization) {
+                                    $tempArray[] = Str::isUuid($tempRealization)
+                                        ? collect($item['text_selections'])->firstWhere(
+                                            'id',
+                                            $tempRealization,
+                                        )?->value ?? 'NONE'
+                                        : $tempRealization;
+                                }
+                                $temp[] = join(',', $tempArray);
+                            } else if ($ik->type === IndikatorKinerja::TYPE_NUMBER) {
                                 $temp[] = $ik->target->firstWhere('unit_id', $unit->id)?->target ?? '';
                                 $temp[] = $tempQuery->sum('realization');
-                            } else if ($ik->type === 'persen') {
+                            } else if ($ik->type === IndikatorKinerja::TYPE_PERCENT) {
                                 $temp[] = $ik->target->firstWhere('unit_id', $unit->id)?->target ?? '';
                                 $temp[] = $tempQuery->average('realization');
                             }

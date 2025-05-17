@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SuperAdmin\Dashboard;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\IndikatorKinerjaProgram;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
 use App\Exports\MultipleSheets;
@@ -211,7 +212,7 @@ class IndikatorKinerjaUtamaDashboardSuperAdminController extends Controller
 
                             foreach ($units as $unit) {
                                 $temp[] = $ikp->target->firstWhere('unit_id', $unit->id)?->target ?? '';
-                                if ($ikp->mode === 'table') {
+                                if ($ikp->mode === IndikatorKinerjaProgram::MODE_TABLE) {
                                     $temp[] = $ikp->achievements()
                                         ->where('status', true)
                                         ->where('unit_id', $unit->id)
@@ -219,14 +220,14 @@ class IndikatorKinerjaUtamaDashboardSuperAdminController extends Controller
                                             $query->whereIn('period', $period);
                                         })
                                         ->count();
-                                } else {
-                                    $temp[] = $ikp->singleAchievements()
-                                        ->where('unit_id', $unit->id)
-                                        ->whereHas('period', function ($query) use ($period): void {
-                                            $query->whereIn('period', $period);
-                                        })
-                                        ->average('value');
+                                    continue;
                                 }
+                                $temp[] = $ikp->singleAchievements()
+                                    ->where('unit_id', $unit->id)
+                                    ->whereHas('period', function ($query) use ($period): void {
+                                        $query->whereIn('period', $period);
+                                    })
+                                    ->average('value');
                             }
 
                             $item->add($temp);

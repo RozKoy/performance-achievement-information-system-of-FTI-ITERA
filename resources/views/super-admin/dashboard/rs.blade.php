@@ -1,44 +1,33 @@
-<x-super-admin-template title="Beranda Indikator Kinerja Utama - Super Admin">
+<x-super-admin-template title="Beranda Rencana Strategis - Super Admin">
 
-    <x-partials.heading.h2 text="Indikator Kinerja Utama Tahun {{ $year }}" :$previousRoute />
+    <x-partials.heading.h2 text="Rencana Strategis Tahun {{ $year }}" :$previousRoute />
     <div class="flex w-full flex-col gap-1 text-xs sm:text-sm md:text-base 2xl:text-lg">
 
-        @foreach ($data as $sk)
+        @foreach ($data as $ss)
             <div class="flex w-full flex-col gap-1">
                 <h3>
-                    {{ $loop->iteration }}. {{ $sk->sk }}
+                    {{ $loop->iteration }}. {{ $ss->ss }}
                 </h3>
 
-                @foreach ($sk->indikatorKinerjaKegiatan as $ikk)
+                @foreach ($ss->kegiatan as $k)
                     <div
                         class="flex w-full flex-col gap-1 border-l-2 border-dashed border-primary pl-2.5 md:pl-5 2xl:pl-8">
-                        <h4>
-                            {{ $loop->parent->iteration }}.{{ $loop->iteration }}. {{ $ikk->ikk }}
-                        </h4>
+                        <h5>
+                            {{ $loop->parent->iteration }}.{{ $loop->iteration }}. {{ $k->k }}
+                        </h5>
 
-                        @foreach ($ikk->programStrategis as $ps)
+                        @foreach ($k->indikatorKinerja as $ik)
                             <div
                                 class="flex w-full flex-col gap-1 border-l-2 border-dashed border-primary/90 pl-2.5 md:pl-5 2xl:pl-8">
-                                <h5>
+                                <h6>
                                     {{ $loop->parent->parent->iteration }}.{{ $loop->parent->iteration }}.{{ $loop->iteration }}.
-                                    {{ $ps->ps }}
-                                </h5>
-
-                                @foreach ($ps->indikatorKinerjaProgram as $ikp)
-                                    <div
-                                        class="flex w-full flex-col gap-1 border-l-2 border-dashed border-primary/80 pl-2.5 md:pl-5 2xl:pl-8">
-                                        <h6>
-                                            {{ $loop->parent->parent->parent->iteration }}.{{ $loop->parent->parent->iteration }}.{{ $loop->parent->iteration }}.{{ $loop->iteration }}.
-                                            {{ $ikp->ikp }}
-                                        </h6>
-                                        <div class="flex w-full items-center justify-center overflow-x-auto">
-                                            <div class="aspect-video w-full min-w-96 max-w-screen-lg px-5">
-                                                <canvas id="chart-{{ $ikp->id }}"></canvas>
-                                            </div>
-                                        </div>
+                                    {{ $ik->ik }}
+                                </h6>
+                                <div class="flex w-full items-center justify-center overflow-x-auto">
+                                    <div class="aspect-video w-full min-w-96 max-w-screen-lg px-5">
+                                        <canvas id="chart-{{ $ik->id }}"></canvas>
                                     </div>
-                                @endforeach
-
+                                </div>
                             </div>
                         @endforeach
 
